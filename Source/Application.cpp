@@ -175,17 +175,9 @@ void Application::update() {
                 quit = true;
             }
         }
-
-        // Check collisions all the time
-        for (int i = 0; i < NUM_BLOCKS; i++) {
-            //check_collision(&player_, platforms[i]);
-        }
             
         // Update player
         player_.update();
-
-        // Do gravity
-        player_.get_state();
 
         // Calculate and correct fps
         float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
@@ -224,99 +216,8 @@ void Application::update() {
             // Wait remaining time
             SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
         }
-
-        // Collide
-        for (int i = 0; i < NUM_BLOCKS; i++) {
-            //check_collision(&player_, platforms[i]);
-        }
     }
 }
-
-// check collision between entity and platform
-/*
-void Application::check_collision(Entity* entity, Platform* platform) {
-    // Platform metrics
-    int obj_left, obj_right, obj_top, obj_bottom;
-
-    // Entity matrics
-    int entity_left, entity_right, entity_top, entity_bottom;
-    int entity_next_left, entity_next_right, entity_next_top, entity_next_bottom;
-
-    // Set the objects metrics
-    obj_left = platform->get_x();
-    obj_right = platform->get_x() + platform->get_width(); 
-    obj_top = platform->get_y();
-    obj_bottom = platform->get_y() + platform->get_height();
-
-    // Set the entity's metrics
-    entity_left = entity->get_x() + 20;
-    entity_right = entity->get_x() + entity->get_width() - 20;
-    entity_top = entity->get_y() + 15;
-    entity_bottom = entity->get_y() + entity->get_height() - 18;
-
-    // Set entity's next metrics
-    entity_next_left = entity->get_next_x() + 15;
-    entity_next_right = entity->get_next_x() + entity->get_width() - 15;
-    entity_next_top = entity->get_next_y() + 15;
-    entity_next_bottom = entity->get_next_y() + entity->get_height();
-    
-    //std::cout << "platform_right = " << obj_right << " platform_left = " << obj_left << " entity_left = " << entity_left << " entity_right = " << entity_right << " entity_top = " << entity_top << " entity_bottom = " << entity_bottom << " obj_top = " << obj_top << " obj_bottom = " << obj_bottom << std::endl;
-
-    // Another option is to have a collision detection box around objects so that anytime
-    // an entity enters that area, it gets ready for a collision (could be 2 pixels from
-    // either side)
-
-    // If its within the x coords
-    bool within_x = (entity_left > obj_left && entity_left < obj_right) ||
-                    (entity_right > obj_left && entity_right < obj_right);
-    bool collided_with_top = (entity_bottom >= obj_top && entity_top <= obj_top);
-   *|| (entity_next_bottom >= obj_top && entity_next_top <= obj_top);*
-    bool collided_with_bottom = (entity_top <= obj_bottom && entity_bottom >= obj_bottom);
-                 *|| (entity_next_top <= obj_bottom && entity_next_bottom >= obj_bottom);*
-
-    // If its within the y coords
-    bool within_y = (entity_bottom < obj_bottom && entity_bottom > obj_top) ||
-                    (entity_top < obj_bottom && entity_top > obj_top) || 
-                    (entity_bottom >= obj_bottom && entity_top <= obj_top);
-    bool collided_with_right = (entity_left <= obj_right && entity_right >= obj_right);
-    bool collided_with_left = (entity_right >= obj_left && entity_left <= obj_left);
-
-    // Check collisions
-    if (within_y && (collided_with_right || collided_with_left) && (entity->get_center_x() > obj_right || entity->get_center_x() < obj_left)) {
-        //std::cout << "In within y " << obj_right << std::endl;
-        if (collided_with_left) {
-            entity->collision_sides[1] = true;
-            //std::cout << "Collided with left side of platform----------------\n";
-        } else if (collided_with_right) {
-            entity->collision_sides[0] = true;
-            //std::cout << "Collided with right side of platform--------------\n";
-        }
-
-        // Set platform collision
-        entity->collided_platform_ = platform;
-    } 
-    else if (within_x && (collided_with_top || collided_with_bottom) && (entity->get_center_y() > obj_bottom || entity->get_center_y() < obj_top)) { 
-        //std::cout << "In within x " << obj_right << " " << entity_top << std::endl;
-        if (collided_with_top) {
-            entity->collision_sides[3] = true;
-            //std::cout << "Collided with top of platform-----------------------\n";
-        }
-        else if (collided_with_bottom) {
-            entity->collision_sides[2] = true;
-            //std::cout << "Collided with bottom of platform--------------------\n";
-        }
-
-        // Set platform collision
-        entity->collided_platform_ = platform;
-    }
-    
-    // No collision
-    if (!entity->collision_sides[0] && !entity->collision_sides[1] && !entity->collision_sides[2] && !entity->collision_sides[3]) {
-        //std::cout << "No collision\n";
-        entity->collision_sides[4] = true;
-    }
-}
-*/
 
 // Set the viewport for minimaps and stuff like that if needed
 void Application::setViewport() {

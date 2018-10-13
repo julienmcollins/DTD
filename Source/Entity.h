@@ -48,23 +48,15 @@ class Entity {
         Texture texture_;
         void render();
 
-        // Get the application
-        Application* get_application();
-        Platform* collided_platform_;
-        
         // Flags
         bool has_jumped_;
-        bool collision_sides[5];
-
-        // Collide function between entities
-        //virtual void collide(Entity* entity) = 0;
-
-        // Collide function between entity and platform
-        //virtual void collide(Platform* platform) = 0;
 
         // Movement and updating
         virtual void move() = 0;
         void update();
+
+        // Application
+        Application* get_application();
 
         // Make body public so that it can be accessed
         b2Body* body_;
@@ -99,39 +91,14 @@ class Entity {
         b2FixtureDef fixtureDef_;
 };
 
+// Player class
 class Player : public Entity {
     public:
         // Construct the player
         Player(Application* application);
 
-        // Flip player
-        
-        // Gravity management
-        //void fall();
-
-        // Jumping physics
-        //void jump();
-
-        // Collide function
-        //virtual void collide(Entity* entity);
-
-        // Collide function for platform
-        //virtual void collide(Platform* platform);
-
-        // Check collide function
-        //bool check_collide();
-
         // Move the player using keyboard
         virtual void move();
-
-        // Get the state of the player
-        void get_state();
-
-        // Get fall
-        double get_fall() const;
-
-        // Get direction
-        //DIRS get_direction();
 
         // Virtual destructor
         virtual ~Player();

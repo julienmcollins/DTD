@@ -58,8 +58,13 @@ class Entity {
         // Application
         Application* get_application();
 
+        /***** Box2D Related Variables *****/
         // Make body public so that it can be accessed
         b2Body* body_;
+
+        // Get world factor
+        const float get_world_factor();
+        /***********************************/
 
         // Destructor
         virtual ~Entity();

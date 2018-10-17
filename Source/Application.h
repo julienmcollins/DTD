@@ -35,9 +35,6 @@ class Application {
         // Update the application
         void update();
 
-        // Collision between platform and entity
-        //void check_collision(Entity* entity, Platform* platform);
-    
         // The main window of the application
         SDL_Window* mainWindow;
         
@@ -65,6 +62,9 @@ class Application {
         
         // Public world object so that other entities can access it
         b2World world_;
+
+        // Get world factor
+        const float get_world_factor();
 
         // Destructrs the application
         ~Application();
@@ -104,6 +104,9 @@ class Application {
         b2BodyDef groundBodyDef_;
         b2Body* groundBody_;
         b2PolygonShape groundBox_;
+
+        // Need a scaling factor since Box2D doesn't work with pixels
+        float world_factor_;
         /***************************/
 
         // Timestep for the engine

@@ -244,6 +244,11 @@ Texture Application::get_ground() {
     return platforms[0]->texture_;
 }
 
+// Get world factor
+const float Application::get_world_factor() {
+   return world_factor_;
+}
+
 // Destructs application
 Application::~Application() {
     //Free loaded image

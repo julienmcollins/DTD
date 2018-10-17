@@ -150,6 +150,11 @@ Application* Entity::get_application() {
     return application_main_;
 }
 
+// Get world factor
+const float Entity::get_world_factor() {
+   return application_main_->get_world_factor();
+}
+
 // Update function for all entities. For now all it does is call move
 void Entity::update() {
     move();

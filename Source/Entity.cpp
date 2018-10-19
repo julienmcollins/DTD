@@ -26,9 +26,11 @@ Entity::Entity(int x_pos, int y_pos, int height, int width, Application* applica
 
     // Setup Box2D
     bodyDef_.type = b2_dynamicBody;
-    bodyDef_.position.Set(0.0f, 4.0f);
+    float x = 200.0 / 100.0;
+    float y = 600.0 / 100.0;
+    bodyDef_.position.Set(x, y);
     body_ = application_main_->world_.CreateBody(&bodyDef_);
-    dynamicBox_.SetAsBox(1.0f, 1.0f);
+    dynamicBox_.SetAsBox(0.5f, 1.0f);
     fixtureDef_.shape = &dynamicBox_;
     fixtureDef_.density = 1.0f;
     fixtureDef_.friction = 0.3f;
@@ -67,40 +69,6 @@ void Entity::add_y(int add) {
 
 void Entity::sub_y(int sub) {
     y_pos_ -= sub;
-}
-
-// Set and get next x
-void Entity::set_next_x(int new_x) {
-    next_x_ = new_x;
-}
-
-int Entity::get_next_x() const {
-    return next_x_;
-}
-
-void Entity::add_next_x(int add) {
-    next_x_ += add;
-}
-
-void Entity::sub_next_x(int sub) {
-    next_x_ -= sub;
-}
-
-// Set and get next y
-void Entity::set_next_y(int new_y) {
-    next_y_ = new_y;
-}
-
-int Entity::get_next_y() const {
-    return next_y_;
-}
-
-void Entity::add_next_y(int add) {
-    next_y_ += add;
-}
-
-void Entity::sub_next_y(int sub) {
-    next_y_ -= sub;
 }
 
 // Set and get height
@@ -169,10 +137,6 @@ Entity::~Entity() {}
 Player::Player(Application* application) : 
     Entity(200, 600, 200, 100, application), init_vel_x_(20), init_vel_y_(20), init_vel_y_next_(20), final_vel_x_(0), final_vel_y_(0), gravity_(1.05), fall_(5), player_state_(FALL), player_directions_(NEUTRAL), num_jumps_(0) {
     mass_ = 0.0;
-
-    // Set next y and x
-    set_next_x(200);
-    set_next_y(605);
 }
 
 // Movement logic of the player. Done through keyboard.
@@ -214,6 +178,10 @@ void Player::move() {
         // Need to revisit this
         //add_y(5);
     }
+
+    // Testing
+    set_x(100 * body_->GetPosition().x);
+    set_y(920 - (100 * body_->GetPosition().y));
 }
 
 // Virtual destructor

@@ -17,8 +17,6 @@ class Entity {
         // Setters
         void set_x(int new_x);
         void set_y(int new_y);
-        void set_next_x(int new_x);
-        void set_next_y(int new_y);
         void set_height(int new_height);
         void set_width(int new_width);
         void set_center_x(double new_center_x);
@@ -27,8 +25,6 @@ class Entity {
         // Getters
         int get_x() const;
         int get_y() const;
-        int get_next_x() const;
-        int get_next_y() const;
         int get_height() const;
         int get_width() const;
         double get_center_x();
@@ -39,10 +35,6 @@ class Entity {
         void sub_x(int sub);
         void add_y(int add);
         void sub_y(int add);
-        void add_next_x(int add);
-        void sub_next_x(int sub);
-        void add_next_y(int add);
-        void sub_next_y(int sub);
 
         // Rendering functions (no need for texture getter, in load media simply use directly)
         Texture texture_;

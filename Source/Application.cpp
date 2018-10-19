@@ -19,7 +19,7 @@
 //#define NUM_BLOCKS 11
 
 // Constructs application
-Application::Application() : SCREEN_WIDTH(1660), SCREEN_HEIGHT(920), SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), current_key_states_(NULL), player_(this), mouseButtonPressed(false), quit(false), world_(gravity_), timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2) {
+Application::Application() : SCREEN_WIDTH(1660), SCREEN_HEIGHT(920), SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), current_key_states_(NULL), player_(this), mouseButtonPressed(false), quit(false), world_(gravity_), world_factor_(100), timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2) {
     
     //Initialize SDL
     if (init()) {
@@ -48,10 +48,10 @@ Application::Application() : SCREEN_WIDTH(1660), SCREEN_HEIGHT(920), SCREEN_FPS(
         }
 
         // Create ground
-        gravity_ = {0.0f, -9.81f};
+        gravity_ = {0.0f, -.981f};
         world_.SetGravity(gravity_);
         platforms[0] = new Platform(0, SCREEN_HEIGHT - 10);
-        groundBodyDef_.position.Set(0.0f, -10.0f);
+        groundBodyDef_.position.Set(0.0f, -9.1f);
         groundBody_ = world_.CreateBody(&groundBodyDef_);
         groundBox_.SetAsBox(50.0f, 10.0f);
         groundBody_->CreateFixture(&groundBox_, 0.0f);
@@ -161,6 +161,7 @@ void Application::update() {
         b2Vec2 position = player_.body_->GetPosition();
         float32 angle = player_.body_->GetAngle();
         printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
+        printf("%d %d\n", player_.get_x(), player_.get_y());
 
         // Start cap timer
         capTimer.start();

@@ -51,9 +51,9 @@ Application::Application() : SCREEN_WIDTH(1660), SCREEN_HEIGHT(920), SCREEN_FPS(
         gravity_ = {0.0f, -.981f};
         world_.SetGravity(gravity_);
         platforms[0] = new Platform(0, SCREEN_HEIGHT - 10);
-        groundBodyDef_.position.Set(0.0f, -9.1f);
+        groundBodyDef_.position.Set(0.0f, -0.2f);
         groundBody_ = world_.CreateBody(&groundBodyDef_);
-        groundBox_.SetAsBox(50.0f, 10.0f);
+        groundBox_.SetAsBox(50.0f, 0.05f);
         groundBody_->CreateFixture(&groundBox_, 0.0f);
         
         // Create platforms

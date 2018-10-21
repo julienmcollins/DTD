@@ -16,10 +16,6 @@
 // Entity constructor which will provide basic establishment for all entities
 Entity::Entity(int x_pos, int y_pos, int height, int width, Application* application) : 
     has_jumped_(false), center_x_(0.0), center_y_(0.0) {
-    x_pos_ = x_pos;
-    y_pos_ = y_pos;
-    next_x_ = 0;
-    next_y_ = 0;
     height_ = height;
     width_ = width;
     application_main_ = application;
@@ -29,11 +25,12 @@ Entity::Entity(int x_pos, int y_pos, int height, int width, Application* applica
     float x = 200.0 / 100.0;
     float y = 600.0 / 100.0;
     bodyDef_.position.Set(x, y);
+    bodyDef_.linearDamping = 1.0f;
     body_ = application_main_->world_.CreateBody(&bodyDef_);
     dynamicBox_.SetAsBox(0.5f, 1.0f);
     fixtureDef_.shape = &dynamicBox_;
     fixtureDef_.density = 1.0f;
-    fixtureDef_.friction = 0.3f;
+    fixtureDef_.friction = 1.0f;
     body_->CreateFixture(&fixtureDef_);
 }
 
@@ -110,7 +107,7 @@ void Entity::set_center_y(double new_center_y) {
 
 // Rendering function for all entities
 void Entity::render() {
-    texture_.render(x_pos_, y_pos_, NULL, 0.0, NULL, SDL_FLIP_NONE);
+    texture_.render(100 * body_->GetPosition().x, 920 - (100 * body_->GetPosition().y), NULL, 0.0, NULL, SDL_FLIP_NONE);
 }
 
 // Get application
@@ -135,53 +132,51 @@ Entity::~Entity() {}
 
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
-    Entity(200, 600, 200, 100, application), init_vel_x_(20), init_vel_y_(20), init_vel_y_next_(20), final_vel_x_(0), final_vel_y_(0), gravity_(1.05), fall_(5), player_state_(FALL), player_directions_(NEUTRAL), num_jumps_(0) {
-    mass_ = 0.0;
+    Entity(200, 600, 200, 100, application), player_state_(FALL), player_directions_(NEUTRAL) {
+    // Setup Box2D
+    bodyDef_.type = b2_dynamicBody;
+    float x = 200.0 / 100.0;
+    float y = 600.0 / 100.0;
+    bodyDef_.position.Set(x, y);
+    bodyDef_.linearDamping = 1.0f;
+    body_ = get_application()->world_.CreateBody(&bodyDef_);
+    dynamicBox_.SetAsBox(0.5f, 1.0f);
+    fixtureDef_.shape = &dynamicBox_;
+    fixtureDef_.density = 1.0f;
+    fixtureDef_.friction = 1.0f;
+    body_->CreateFixture(&fixtureDef_);
 }
 
 // Movement logic of the player. Done through keyboard.
 void Player::move() {
-    // Deal with basic movement for now
-    if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) {
-        // Update movement. Basic at this point but will make better
-        add_x(5);
-        
-        // Set player direction to right
-        player_directions_ = RIGHT;
-    } if (get_application()->current_key_states_[SDL_SCANCODE_LEFT]) {
-        // Update movement towards left. Same as above
-        sub_x(5);
+   // Deal with basic movement for now
+   if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) {
+      // Use Box2D version for moving
+      const b2Vec2 force = {0.4f, 0};
+      body_->ApplyLinearImpulse(force, body_->GetPosition(), true);
 
-        // Set player direction to left
-        player_directions_ = LEFT;
-    } if (!has_jumped_ && get_application()->current_key_states_[SDL_SCANCODE_UP]) {
-        if (!has_jumped_) {
-            // Set player directions and states
-            // For simple jump, directions is neutral and state is jump
-            player_directions_ = NEUTRAL;
-            player_state_ = JUMP;
+   } if (get_application()->current_key_states_[SDL_SCANCODE_LEFT]) {
+      // Use Box2D version for moving
+      const b2Vec2 force = {-0.4f, 0};
+      body_->ApplyLinearImpulse(force, body_->GetPosition(), true);
 
-            // Reset the final velocities of each component
-            final_vel_y_ = 0;
-            final_vel_x_ = 0;
+   } if (get_application()->current_key_states_[SDL_SCANCODE_UP]) {
+      if (!has_jumped_) {
+         // Apply an impulse
+         const b2Vec2 force = {0, 9.0f};
+         body_->ApplyLinearImpulse(force, body_->GetPosition(), true);
 
-            // Set the flags
-            has_jumped_ = true;
-            
-            // Reset the timer
-            jump_timer_.stop();
-
-            // Increase num_jumps_
-            num_jumps_ = 1;
-        }
-    } if (get_application()->current_key_states_[SDL_SCANCODE_DOWN]) {
-        // Need to revisit this
-        //add_y(5);
-    }
-
-    // Testing
-    set_x(100 * body_->GetPosition().x);
-    set_y(920 - (100 * body_->GetPosition().y));
+         // Set the flags
+         has_jumped_ = true;
+      } else {
+         if (body_->GetLinearVelocity().y == 0) {
+            has_jumped_ = false;
+         }
+      }
+   } if (get_application()->current_key_states_[SDL_SCANCODE_DOWN]) {
+     // Need to revisit this
+     //add_y(5);
+   }
 }
 
 // Virtual destructor

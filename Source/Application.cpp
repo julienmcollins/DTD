@@ -48,7 +48,7 @@ Application::Application() : SCREEN_WIDTH(1660), SCREEN_HEIGHT(920), SCREEN_FPS(
         }
 
         // Create ground
-        gravity_ = {0.0f, -.981f};
+        gravity_ = {0.0f, -9.81f};
         world_.SetGravity(gravity_);
         platforms[0] = new Platform(0, SCREEN_HEIGHT - 10);
         groundBodyDef_.position.Set(0.0f, -0.2f);
@@ -159,9 +159,10 @@ void Application::update() {
         // Update world timer
         world_.Step(timeStep_, velocityIterations_, positionIterations_);
         b2Vec2 position = player_.body_->GetPosition();
+        b2Vec2 velocity = player_.body_->GetLinearVelocity();
         float32 angle = player_.body_->GetAngle();
-        printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
-        printf("%d %d\n", player_.get_x(), player_.get_y());
+        //printf("%4.2f %4.2f %4.2f\n", velocity.x, velocity.y, angle);
+        //printf("%d %d\n", player_.get_x(), player_.get_y());
 
         // Start cap timer
         capTimer.start();

@@ -66,11 +66,6 @@ class Entity {
         int x_pos_;
         int y_pos_;
 
-        // Prediction analysis for collision detection will need future x and y coords
-        // Essentially, if current x/y is not colliding, but next x/y is, then collide preemptively
-        int next_x_;
-        int next_y_;
-
         // Height and width
         int height_;
         int width_;
@@ -81,6 +76,8 @@ class Entity {
 
         // Application pointer for reference
         Application* application_main_;
+
+    protected:
 
         // Box2D definitions
         b2BodyDef bodyDef_;
@@ -101,26 +98,6 @@ class Player : public Entity {
         virtual ~Player();
 
     private:
-        // Stats of the player
-        double mass_;
-        
-        // Add initial velocity
-        double init_vel_x_;
-        double init_vel_y_;
-        double init_vel_y_next_;
-        double final_vel_x_;
-        double final_vel_y_;
-        double final_vel_x_next_;
-        double final_vel_y_next_;
-        
-        // Add timer
-        Timer jump_timer_;
-        int num_jumps_;
-
-        // States for gravity 
-        double gravity_;
-        double fall_;
-        
         // State construct for state machine
         enum STATE {
             JUMP,
@@ -136,9 +113,6 @@ class Player : public Entity {
             LEFT,
             RIGHT
         };
-
-        // Current time
-        double curr_time_;
 
         // Player state
         STATE player_state_;

@@ -1,6 +1,7 @@
 #ifndef OBJECT_H_
 #define OBJECT_H_
 
+#include <Box2D/Box2D.h>
 #include "Texture.h"
 
 class Entity;
@@ -30,9 +31,6 @@ class Object {
         // Pure virtual function to make this abstract base class
         virtual void doNothing() = 0;
 
-        // Virtual collision function
-        //virtual void collide(Entity* entity) = 0;
-
     private:
         // Metrics of the object
         double x_pos_;
@@ -52,8 +50,11 @@ class Platform : public Object {
 
         // Other functions
         virtual void doNothing();
-        //virtual void collide(Entity* entity);
-    // Might need to add a function that changes texture
+
+        // Add Box2D components
+        b2BodyDef BodyDef_;
+        b2Body* Body_;
+        b2PolygonShape Box_;
 };
 
 #endif

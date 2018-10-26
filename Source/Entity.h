@@ -25,8 +25,8 @@ class Entity {
         // Getters
         int get_x() const;
         int get_y() const;
-        int get_height() const;
-        int get_width() const;
+        float get_height() const;
+        float get_width() const;
         double get_center_x();
         double get_center_y();
 
@@ -55,7 +55,7 @@ class Entity {
         b2Body* body_;
 
         // Get world factor
-        const float get_world_factor();
+        //const float get_world_factor();
         /***********************************/
 
         // Destructor
@@ -67,8 +67,8 @@ class Entity {
         int y_pos_;
 
         // Height and width
-        int height_;
-        int width_;
+        float height_;
+        float width_;
 
         // Character center
         double center_x_;

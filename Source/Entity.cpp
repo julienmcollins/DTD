@@ -27,7 +27,7 @@ Entity::Entity(int x_pos, int y_pos, int height, int width, Application* applica
     bodyDef_.position.Set(x, y);
     bodyDef_.linearDamping = 1.0f;
     body_ = application_main_->world_.CreateBody(&bodyDef_);
-    dynamicBox_.SetAsBox(0.5f, 1.0f);
+    dynamicBox_.SetAsBox(0.365f, 0.825f);
     fixtureDef_.shape = &dynamicBox_;
     fixtureDef_.density = 1.0f;
     fixtureDef_.friction = 1.0f;
@@ -73,7 +73,7 @@ void Entity::set_height(int new_height) {
     height_ = new_height;
 }
 
-int Entity::get_height() const {
+float Entity::get_height() const {
     return height_;
 }
 
@@ -82,7 +82,7 @@ void Entity::set_width(int new_width) {
     width_ = new_width;
 }
 
-int Entity::get_width() const {
+float Entity::get_width() const {
     return width_;
 }
 
@@ -107,7 +107,8 @@ void Entity::set_center_y(double new_center_y) {
 
 // Rendering function for all entities
 void Entity::render() {
-    texture_.render(100 * body_->GetPosition().x, 920 - (100 * body_->GetPosition().y), NULL, 0.0, NULL, SDL_FLIP_NONE);
+    // NEED TO TAKE INTO ACCOUNT THAT BOTTOM OF IMAGE ISN'T ALLIGNED WITH FEET
+    texture_.render(100 * body_->GetPosition().x, 1025 - (get_height() / 2) - (100 * body_->GetPosition().y), NULL, 0.0, NULL, SDL_FLIP_NONE);
 }
 
 // Get application
@@ -115,10 +116,12 @@ Application* Entity::get_application() {
     return application_main_;
 }
 
+/*
 // Get world factor
 const float Entity::get_world_factor() {
    return application_main_->get_world_factor();
 }
+*/
 
 // Update function for all entities. For now all it does is call move
 void Entity::update() {
@@ -132,18 +135,18 @@ Entity::~Entity() {}
 
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
-    Entity(200, 600, 200, 100, application), player_state_(FALL), player_directions_(NEUTRAL) {
+    Entity(1400, 600, 155, 63, application), player_state_(FALL), player_directions_(NEUTRAL) {
     // Setup Box2D
     bodyDef_.type = b2_dynamicBody;
-    float x = 200.0 / 100.0;
+    float x = 600.0 / 100.0;
     float y = 600.0 / 100.0;
     bodyDef_.position.Set(x, y);
-    bodyDef_.linearDamping = 1.0f;
+    //bodyDef_.linearDamping = 0.8f;
     body_ = get_application()->world_.CreateBody(&bodyDef_);
-    dynamicBox_.SetAsBox(0.5f, 1.0f);
+    dynamicBox_.SetAsBox(get_width() / 200, get_height() / 200);
     fixtureDef_.shape = &dynamicBox_;
     fixtureDef_.density = 1.0f;
-    fixtureDef_.friction = 1.0f;
+    fixtureDef_.friction = 0.8f;
     body_->CreateFixture(&fixtureDef_);
 }
 
@@ -152,18 +155,18 @@ void Player::move() {
    // Deal with basic movement for now
    if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) {
       // Use Box2D version for moving
-      const b2Vec2 force = {0.4f, 0};
-      body_->ApplyLinearImpulse(force, body_->GetPosition(), true);
+      const b2Vec2 force = {9.4f, 0};
+      body_->ApplyForce(force, body_->GetPosition(), true);
 
    } if (get_application()->current_key_states_[SDL_SCANCODE_LEFT]) {
       // Use Box2D version for moving
-      const b2Vec2 force = {-0.4f, 0};
-      body_->ApplyLinearImpulse(force, body_->GetPosition(), true);
+      const b2Vec2 force = {-9.4f, 0};
+      body_->ApplyForce(force, body_->GetPosition(), true);
 
    } if (get_application()->current_key_states_[SDL_SCANCODE_UP]) {
       if (!has_jumped_) {
          // Apply an impulse
-         const b2Vec2 force = {0, 9.0f};
+         const b2Vec2 force = {0, 8.0f};
          body_->ApplyLinearImpulse(force, body_->GetPosition(), true);
 
          // Set the flags

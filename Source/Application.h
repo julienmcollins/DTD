@@ -19,7 +19,12 @@
 #include "Timer.h"
 #include "Object.h"
 
-#define NUM_BLOCKS 11
+#define NUM_BLOCKS 5
+
+// For returning the screen position
+typedef struct {
+   int x, y;
+} Screen;
 
 class Application {
     public:
@@ -63,16 +68,17 @@ class Application {
         // Public world object so that other entities can access it
         b2World world_;
 
-        // Get world factor
-        const float get_world_factor();
+        // Need a scaling factor since Box2D doesn't work with pixels
+        float to_pixels_;
+        float to_meters_;
 
         // Destructrs the application
         ~Application();
     
     private:
         // Screen Dimensions
-        int SCREEN_WIDTH;
-        int SCREEN_HEIGHT;
+        float SCREEN_WIDTH;
+        float SCREEN_HEIGHT;
 
         // Frame rate capping    
         const int SCREEN_FPS;
@@ -85,34 +91,24 @@ class Application {
         // Viewport
         SDL_Rect viewport;
     
-        // Platform object
-        
         // Player object
         Player player_;
 
         // Background texture
         Texture background;
 
-        // Ground texture
-        //Platform ground;
-
-        // Block texture
-        //Platform blocks[NUM_BLOCKS]; 
-
         /***** Box2D Variables *****/
         b2Vec2 gravity_;
-        b2BodyDef groundBodyDef_;
-        b2Body* groundBody_;
-        b2PolygonShape groundBox_;
 
-        // Need a scaling factor since Box2D doesn't work with pixels
-        float world_factor_;
         /***************************/
 
         // Timestep for the engine
         float32 timeStep_;
         int32 velocityIterations_;
         int32 positionIterations_;
+
+        // Ground
+        Platform* ground;
 
         // Platforms
         Platform* platforms[NUM_BLOCKS];

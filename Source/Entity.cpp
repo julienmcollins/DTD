@@ -19,19 +19,6 @@ Entity::Entity(int x_pos, int y_pos, int height, int width, Application* applica
     height_ = height;
     width_ = width;
     application_main_ = application;
-
-    // Setup Box2D
-    bodyDef_.type = b2_dynamicBody;
-    float x = 200.0 / 100.0;
-    float y = 600.0 / 100.0;
-    bodyDef_.position.Set(x, y);
-    bodyDef_.linearDamping = 1.0f;
-    body_ = application_main_->world_.CreateBody(&bodyDef_);
-    dynamicBox_.SetAsBox(0.365f, 0.825f);
-    fixtureDef_.shape = &dynamicBox_;
-    fixtureDef_.density = 1.0f;
-    fixtureDef_.friction = 1.0f;
-    body_->CreateFixture(&fixtureDef_);
 }
 
 // Set and get x
@@ -106,9 +93,11 @@ void Entity::set_center_y(double new_center_y) {
 }
 
 // Rendering function for all entities
-void Entity::render() {
+void Entity::render(Texture *texture, SDL_Rect *clip) {
     // NEED TO TAKE INTO ACCOUNT THAT BOTTOM OF IMAGE ISN'T ALLIGNED WITH FEET
-    texture_.render(100 * body_->GetPosition().x, 1025 - (get_height() / 2) - (100 * body_->GetPosition().y), NULL, 0.0, NULL, SDL_FLIP_NONE);
+    set_x((100.0f * body_->GetPosition().x) - (get_width() / 2.0f));
+    set_y((100.0f * -body_->GetPosition().y) - (get_height() / 2.0f));
+    texture->render((x_pos_), (y_pos_), clip);
 }
 
 // Get application
@@ -135,18 +124,21 @@ Entity::~Entity() {}
 
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
-    Entity(1400, 600, 155, 63, application), player_state_(FALL), player_directions_(NEUTRAL) {
+    Entity(960, 512, 140, 45, application), player_state_(FALL), player_directions_(NEUTRAL) {
     // Setup Box2D
     bodyDef_.type = b2_dynamicBody;
-    float x = 600.0 / 100.0;
-    float y = 600.0 / 100.0;
+    float x = 960.0f * application->to_meters_;
+    float y = -512.5f * application->to_meters_;
     bodyDef_.position.Set(x, y);
+    bodyDef_.fixedRotation = true;
     //bodyDef_.linearDamping = 0.8f;
     body_ = get_application()->world_.CreateBody(&bodyDef_);
-    dynamicBox_.SetAsBox(get_width() / 200, get_height() / 200);
+    dynamicBox_.SetAsBox((get_width() / 2) * application->to_meters_ - 0.01f, 
+                         (get_height() / 2) * application->to_meters_ - 0.01f);
+    //printf("%f %f\n", get_width() / 200.0f - 0.01f, get_height() / 200.0f - 0.01f);
     fixtureDef_.shape = &dynamicBox_;
     fixtureDef_.density = 1.0f;
-    fixtureDef_.friction = 0.8f;
+    fixtureDef_.friction = 0.75f;
     body_->CreateFixture(&fixtureDef_);
 }
 
@@ -155,12 +147,12 @@ void Player::move() {
    // Deal with basic movement for now
    if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) {
       // Use Box2D version for moving
-      const b2Vec2 force = {9.4f, 0};
+      const b2Vec2 force = {3.4f, 0};
       body_->ApplyForce(force, body_->GetPosition(), true);
 
    } if (get_application()->current_key_states_[SDL_SCANCODE_LEFT]) {
       // Use Box2D version for moving
-      const b2Vec2 force = {-9.4f, 0};
+      const b2Vec2 force = {-3.4f, 0};
       body_->ApplyForce(force, body_->GetPosition(), true);
 
    } if (get_application()->current_key_states_[SDL_SCANCODE_UP]) {

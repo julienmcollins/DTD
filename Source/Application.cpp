@@ -19,7 +19,7 @@
 //#define NUM_BLOCKS 11
 
 // Constructs application
-Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), current_key_states_(NULL), player_(this), mouseButtonPressed(false), quit(false), world_(gravity_), to_meters_(1.0/100.0), to_pixels_(100.0), timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2) {
+Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), current_key_states_(NULL), player_(this), mouseButtonPressed(false), quit(false), world_(gravity_), to_meters_(0.01f), to_pixels_(100.0f), debugDraw(this), timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2) {
     
     //Initialize SDL
     if (init()) {
@@ -50,33 +50,20 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), SCRE
         // Set gravity up
         gravity_ = {0.0f, -9.81f};
         world_.SetGravity(gravity_);
+        
+        // Set up debug drawer
+        world_.SetDebugDraw(&debugDraw);
+        debugDraw.AppendFlags( b2Draw::e_shapeBit );
+        debugDraw.AppendFlags( b2Draw::e_aabbBit );
+        debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
 
         // Set the platforms up
-        ground = new Platform(0, SCREEN_HEIGHT - 50);//SCREEN_HEIGHT - 10);
-        ground->BodyDef_.position.Set(0.0f,
-                     (SCREEN_HEIGHT - (SCREEN_HEIGHT - 50.0f)) * to_meters_);
-                     //(SCREEN_HEIGHT - (SCREEN_HEIGHT - 4 * (0.05f * 2 * to_pixels_))) * to_meters_);
-        ground->Body_ = world_.CreateBody(&ground->BodyDef_);
-        ground->Box_.SetAsBox(19.2f, 0.25f);
-        ground->Body_->CreateFixture(&ground->Box_, 0.0f);
+        ground_ = new Platform(0, SCREEN_HEIGHT - 50.0f - 0.0f);//SCREEN_HEIGHT - 10);
         
         // Create platforms
         for (int i = 0; i < NUM_BLOCKS; i++) {
-            platforms[i] = new Platform(150 * i, 150 * i);
-            //ground->BodyDef_.position.Set(0.0f, -0.2f);
-            //ground->Body_ = world_.CreateBody(&ground->BodyDef_);
-            //ground->Box_.SetAsBox((100.0 / 100.0) / 2, (100.0 / 100.0) / 2);
-            //ground->Body_->CreateFixture(&ground->Box_, 0.0f);
-
+           platforms_[i] = new Platform(i * 150.0f, i * 150.0f);
         }
-
-        // Test last platform
-        platforms[NUM_BLOCKS - 1]->
-           BodyDef_.position.Set((150 * (NUM_BLOCKS - 1)) * to_meters_,
-                                 (SCREEN_HEIGHT - (150.0 * (NUM_BLOCKS - 1)) - 25.0f) * to_meters_);
-        platforms[NUM_BLOCKS - 1]->Body_ = world_.CreateBody(&platforms[NUM_BLOCKS - 1]->BodyDef_);
-        platforms[NUM_BLOCKS - 1]->Box_.SetAsBox(0.5f, 0.5f);
-        platforms[NUM_BLOCKS - 1]->Body_->CreateFixture(&platforms[NUM_BLOCKS - 1]->Box_, 0.0f);
     }
 }
 
@@ -91,7 +78,7 @@ bool Application::init() {
         success = false;
     } else {
         //Initialize PNG loading
-        int imgFlags = IMG_INIT_PNG;
+      int imgFlags = IMG_INIT_PNG;
         if (!(IMG_Init(imgFlags) & imgFlags)) {
             printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
             success = false;
@@ -105,10 +92,58 @@ bool Application::loadMedia() {
     
     bool success = true;
     
-    // Load player
-    if (!player_.texture_.loadFromFile("images/man.png")) {
+    // Load player idle
+    if (!player_.idle_texture_.loadFromFile("images/idle.png")) {
         printf("Failed to load Texture image!\n");
         success = false;
+    } else {
+       // Allocat enough room for the clips
+       player_.idle_texture_.clips_ = new SDL_Rect[16];
+       SDL_Rect *temp = player_.idle_texture_.clips_;
+
+       // Calculate locations
+       for (int i = 0; i < 16; i++) {
+          temp[i].x = i * 75;
+          temp[i].y = 0;
+          temp[i].w = 75;
+          temp[i].h = 150;
+       }
+    }
+
+    // Load player running
+    if (!player_.running_texture_.loadFromFile("images/running.png")) {
+        printf("Failed to load Texture image!\n");
+        success = false;
+    } else {
+       // Allocat enough room for the clips
+       player_.running_texture_.clips_ = new SDL_Rect[20];
+       SDL_Rect *temp = player_.running_texture_.clips_;
+
+       // Calculate locations
+       for (int i = 0; i < 20; i++) {
+          temp[i].x = i * 75;
+          temp[i].y = 0;
+          temp[i].w = 75;
+          temp[i].h = 150;
+       }
+    }
+
+    // Load player kicking
+    if (!player_.kick_texture_.loadFromFile("images/kick.png")) {
+        printf("Failed to load Texture image!\n");
+        success = false;
+    } else {
+       // Allocat enough room for the clips
+       player_.running_texture_.clips_ = new SDL_Rect[16];
+       SDL_Rect *temp = player_.running_texture_.clips_;
+
+       // Calculate locations
+       for (int i = 0; i < 16; i++) {
+          temp[i].x = i * 75;
+          temp[i].y = 0;
+          temp[i].w = 75;
+          temp[i].h = 150;
+       }
     }
 
     // Load background 
@@ -117,18 +152,30 @@ bool Application::loadMedia() {
         success = false;
     }
     
-    // Load ground
-    if (!ground->texture_.loadFromFile("images/floor.png")) {
+    // Load ground_
+    if (!ground_->texture_.loadFromFile("images/floor.png")) {
         printf("Failed to load thinstrip.png\n");
         success = false;
+    } else {
+        float x_ground = 19.20f / 2.0f;
+        float y_ground = 10.55f - 0.6f; 
+        ground_->BodyDef_.position.Set(x_ground, -y_ground);
+        ground_->Body_ = world_.CreateBody(&ground_->BodyDef_);
+        ground_->Box_.SetAsBox(9.6f, 0.25f);
+        ground_->Body_->CreateFixture(&ground_->Box_, 0.0f);
     }
 
     // Load platform
     for (int i = 0; i < NUM_BLOCKS; i++) {
-        if (!platforms[i]->texture_.loadFromFile("images/block1.png")) {
-            printf("Failed to load block1.png\n");
-            success = false;
-        }
+       if (!platforms_[i]->texture_.loadFromFile("images/block1.png")) {
+           printf("Failed to load block1.png\n");
+           success = false;
+       } else {
+           platforms_[i]->BodyDef_.position.Set(i * 1.50f, -(i * 1.50f));
+           platforms_[i]->Body_ = world_.CreateBody(&platforms_[i]->BodyDef_);
+           platforms_[i]->Box_.SetAsBox(0.5f, 0.5f);
+           platforms_[i]->Body_->CreateFixture(&platforms_[i]->Box_, 0.0f);
+       }
     }
 
     // Return state
@@ -171,6 +218,9 @@ void Application::update() {
     int countedFrames = 0;
     fpsTimer.start();
 
+    // Pointers to texture
+    Texture *idle_ptr = &player_.idle_texture_;
+
     // Game loop
     while(!quit) {
         // Update world timer
@@ -178,7 +228,9 @@ void Application::update() {
         b2Vec2 position = player_.body_->GetPosition();
         b2Vec2 velocity = player_.body_->GetLinearVelocity();
         float32 angle = player_.body_->GetAngle();
-        printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
+        //printf("%f %f %f\n", position.x, position.y, angle);
+
+        //printf("%f %f %f\n", ground_->Body_->GetPosition().x, ground_->Body_->GetPosition().y);
         //printf("%d %d\n", player_.get_x(), player_.get_y());
 
         // Start cap timer
@@ -208,26 +260,53 @@ void Application::update() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(renderer);
         
+        // DEBUG DRAW
+        //world_.DrawDebugData();
+
         /* Eventually add sprite animations. It'll have to be based on if a character has appeared and stuff like that. Figure it out later. */
         
         // Render background image
         background.render(0, 0);
-    
-        // Render thin strip
-        ground->texture_.render(0, SCREEN_HEIGHT - 50);
 
-        // Render the texture
-        player_.render();
+        // Render thin strip
+        float x_ground = (ground_->Body_->GetPosition().x - 19.20f / 2.0f) * to_pixels_;
+        float y_ground = -(ground_->Body_->GetPosition().y + 0.25f - 0.06f) * to_pixels_; 
+
+        ground_->texture_.render(x_ground, y_ground);
+
+        // Render the idle texture
+        idle_ptr->curr_clip_ = &idle_ptr->clips_[idle_ptr->frame_];
+
+        // Render player
+        player_.render(idle_ptr, idle_ptr->curr_clip_);
+
+        
+        SDL_Rect m;
+        m.x = r.x;
+        m.y = r.y - 150;
+        m.w = r.w;
+        m.h = 150;
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        SDL_RenderDrawRect(renderer, &m);
 
         // Render blocks
+        float x_block, y_block;
         for (int i = 0; i < NUM_BLOCKS; i++) {
-            //std::cout << blocks[i].get_x() << " " << blocks[i].get_y() << std::endl;
-            platforms[i]->texture_.render(150 * i, 150 * i);
+            x_block = (platforms_[i]->Body_->GetPosition().x - 0.5f + 0.05f) * to_pixels_;
+            y_block = -(platforms_[i]->Body_->GetPosition().y + 0.5f - 0.05f) * to_pixels_;
+            platforms_[i]->texture_.render(x_block, y_block);
         }
-    
+
         // Update the screen
         SDL_RenderPresent(renderer);
         ++countedFrames;
+        ++idle_ptr->frame_;
+
+        // Reset frame
+        if (idle_ptr->frame_ >= 16) {
+           idle_ptr->frame_ = 0;
+        }
 
         // If frame finished early
         int frameTicks = capTimer.getTicks();
@@ -258,9 +337,9 @@ const int Application::get_width() {
     return SCREEN_WIDTH;
 }
 
-// Get ground
+// Get ground_
 Texture Application::get_ground() {
-    return ground->texture_;
+    return ground_->texture_;
 }
 
 // Destructs application
@@ -271,8 +350,8 @@ Application::~Application() {
 
     // Delete platforms
     for (int i = 0; i < NUM_BLOCKS; i++) {
-       platforms[i]->texture_.free();
-       delete platforms[i];
+       platforms_[i]->texture_.free();
+       delete platforms_[i];
     }
 
     //Destroy window

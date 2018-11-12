@@ -18,6 +18,7 @@
 #include "Entity.h"
 #include "Timer.h"
 #include "Object.h"
+#include "DebugDraw.h"
 
 #define NUM_BLOCKS 5
 
@@ -72,6 +73,10 @@ class Application {
         float to_pixels_;
         float to_meters_;
 
+        // DebugDraw
+        DebugDraw debugDraw;
+        SDL_Rect r;
+
         // Destructrs the application
         ~Application();
     
@@ -108,10 +113,10 @@ class Application {
         int32 positionIterations_;
 
         // Ground
-        Platform* ground;
+        Platform* ground_;
 
         // Platforms
-        Platform* platforms[NUM_BLOCKS];
+        Platform* platforms_[NUM_BLOCKS];
     
         // Quit flag for application
         bool quit;

@@ -38,7 +38,7 @@ class Entity {
 
         // Rendering functions (no need for texture getter, in load media simply use directly)
         Texture texture_;
-        void render();
+        void render(Texture *texture, SDL_Rect *clip);
 
         // Flags
         bool has_jumped_;
@@ -90,6 +90,11 @@ class Player : public Entity {
     public:
         // Construct the player
         Player(Application* application);
+
+        // Different textures
+        Texture idle_texture_;
+        Texture running_texture_;
+        Texture kick_texture_;
 
         // Move the player using keyboard
         virtual void move();

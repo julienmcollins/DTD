@@ -8,11 +8,11 @@
 
 #include "Texture.h"
 #include "Global.h"
+#include "Element.h"
 
 // Texture constructor
-Texture::Texture() : m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {
-    
-}
+Texture::Texture(Element *element) : clips_(NULL), curr_clip_(NULL), frame_(0), flip_(SDL_FLIP_NONE),
+   has_flipped_(false), element_(element), m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {}
 
 // Loads textures from files
 bool Texture::loadFromFile(std::string path) {
@@ -38,6 +38,7 @@ bool Texture::loadFromFile(std::string path) {
             // Get image dimensions
             m_width = loadedSurface->w;
             m_height = loadedSurface->h;
+            center_ = {m_width / 2, m_height / 2};
         }
         
         // Get rid of old loaded surface

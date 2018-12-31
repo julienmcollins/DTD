@@ -11,7 +11,8 @@
 #include "Timer.h"
 
 // Initialize timer
-Timer::Timer() : m_startTicks(0), m_pausedTicks(0), m_paused(false), m_started(false) {}
+Timer::Timer() : m_startTicks(0), m_pausedTicks(0), delta_(0), last_tick_(0),
+   m_paused(false), m_started(false) {}
 
 // Start timer function
 void Timer::start() {
@@ -68,9 +69,9 @@ void Timer::unpause() {
 }
 
 // Get tick functions
-Uint32 Timer::getTicks() {
+uint32_t Timer::getTicks() {
     // The actual timer time
-    Uint32 time = 0;
+    uint32_t time = 0;
     
     // If the timer is running
     if (m_started) {
@@ -85,6 +86,13 @@ Uint32 Timer::getTicks() {
     }
     // Return
     return time;
+}
+
+// Get delta time function
+uint32_t Timer::getDeltaTime() {
+   uint32_t ticks = SDL_GetTicks();
+   delta_ = ticks - last_tick_;
+   last_tick_ = ticks;
 }
 
 // Check states

@@ -13,7 +13,9 @@
 #include <SDL2/SDL_image.h>
 #include <string>
 #include <Box2D/Box2D.h>
+#include <vector>
 
+#include "Element.h"
 #include "Texture.h"
 #include "Entity.h"
 #include "Timer.h"
@@ -75,15 +77,26 @@ class Application {
 
         // DebugDraw
         DebugDraw debugDraw;
-        SDL_Rect r;
+        SDL_Rect r[7];
+
+        // Animation speed
+        float animation_speed_;
+        float animation_update_time_;
+        float time_since_last_frame_;
+        int test;
+
+        // Get FPS timer
+        Timer getFPSTimer() const {
+           return fpsTimer;
+        }
 
         // Destructrs the application
         ~Application();
     
     private:
         // Screen Dimensions
-        float SCREEN_WIDTH;
-        float SCREEN_HEIGHT;
+        int SCREEN_WIDTH;
+        int SCREEN_HEIGHT;
 
         // Frame rate capping    
         const int SCREEN_FPS;
@@ -100,23 +113,46 @@ class Application {
         Player player_;
 
         // Background texture
-        Texture background;
+        Object *background_;
 
         /***** Box2D Variables *****/
         b2Vec2 gravity_;
-
-        /***************************/
 
         // Timestep for the engine
         float32 timeStep_;
         int32 velocityIterations_;
         int32 positionIterations_;
 
+        /***************************/
+
         // Ground
         Platform* ground_;
 
         // Platforms
         Platform* platforms_[NUM_BLOCKS];
+
+        /********* APPLICATION STATE -- CRITICAL *************/
+        // Fps counter
+        int countedFrames;
+
+        // Two flags for now, update as levels increase
+        enum APP_STATE {
+           MAIN_SCREEN,
+           PLAYGROUND
+        };
+
+        // MAIN SCREEN FUNCTION
+        void main_screen();
+
+        // PLAYGROUND FUNCTION
+        void playground();
+
+        // GAME FLAG
+        APP_STATE game_flag_;
+
+        // TEXTURE VECTOR
+        std::vector<Texture> sprites_;        
+        /*****************************************************/
     
         // Quit flag for application
         bool quit;

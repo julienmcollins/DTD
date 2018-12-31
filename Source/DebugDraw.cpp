@@ -6,11 +6,15 @@
 void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
 {
    SDL_Rect poly;
+   //std::cout << "vertices[0].x = " << vertices[0].x << std::endl;
+   //std::cout << "vertices[1].x = " << vertices[1].x << std::endl;
    poly.x = vertices[0].x * 100.0f;
    poly.y = -vertices[0].y * 100.0f;
    poly.w = (vertices[0].x - vertices[1].x) > 0 ? (vertices[0].x - vertices[1].x) * 100.0f : (vertices[1].x - vertices[0].x) * 100.0f;
-   poly.h = (vertices[0].y - vertices[1].y) > 0 ? (vertices[0].y - vertices[1].y) * 100.0f : (vertices[1].y - vertices[0].y) * 100.0f;
-   application_->r = poly;
+   poly.h = (vertices[0].y - vertices[3].y) > 0 ? (vertices[0].y - vertices[3].y) * 100.0f : (vertices[3].y - vertices[0].y) * 100.0f;
+   //std::cout << "poly.w = " << poly.w << std::endl;
+   application_->r[application_->test++] = poly;
+   if (application_->test >= 7) application_->test = 0;
 }
 
 void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
@@ -20,8 +24,6 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, cons
    poly.y = -vertices[0].y * 100.0f;
    poly.w = (vertices[0].x - vertices[1].x) > 0 ? (vertices[0].x - vertices[1].x) * 100.0f : (vertices[1].x - vertices[0].x) * 100.0f;
    poly.h = (vertices[0].y - vertices[1].y) > 0 ? (vertices[0].y - vertices[1].y) * 100.0f : (vertices[1].y - vertices[0].y) * 100.0f;
-   SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-   SDL_RenderFillRect(renderer, &poly);
 }
 
 void DebugDraw::DrawCircle(const b2Vec2& center, float32 radius, const b2Color& color)

@@ -5,39 +5,17 @@
 #include <Box2D/Box2D.h>
 #include "Texture.h"
 #include "Timer.h"
+#include "Element.h"
 
 class Application;
 class Platform;
 
-class Entity {
+class Entity : public Element {
     public:
         // Constructor
-        Entity(int x_pos, int y_pos, int height, int width, Application* application);
-
-        // Setters
-        void set_x(int new_x);
-        void set_y(int new_y);
-        void set_height(int new_height);
-        void set_width(int new_width);
-        void set_center_x(double new_center_x);
-        void set_center_y(double new_center_y);
-
-        // Getters
-        int get_x() const;
-        int get_y() const;
-        float get_height() const;
-        float get_width() const;
-        double get_center_x();
-        double get_center_y();
-
-        // Adders
-        void add_x(int add);
-        void sub_x(int sub);
-        void add_y(int add);
-        void sub_y(int add);
+        Entity(int x_pos, int y_pos, double height, double width, Application* application);
 
         // Rendering functions (no need for texture getter, in load media simply use directly)
-        Texture texture_;
         void render(Texture *texture, SDL_Rect *clip);
 
         // Flags
@@ -47,81 +25,70 @@ class Entity {
         virtual void move() = 0;
         void update();
 
-        // Application
-        Application* get_application();
-
         /***** Box2D Related Variables *****/
-        // Make body public so that it can be accessed
-        b2Body* body_;
 
-        // Get world factor
-        //const float get_world_factor();
+        // Make body public so that it can be accessed
+        b2FixtureDef fixture_def;
+
         /***********************************/
 
         // Destructor
         virtual ~Entity();
-
-    private:
-        // Entity positions
-        int x_pos_;
-        int y_pos_;
-
-        // Height and width
-        float height_;
-        float width_;
-
-        // Character center
-        double center_x_;
-        double center_y_;
-
-        // Application pointer for reference
-        Application* application_main_;
-
-    protected:
-
-        // Box2D definitions
-        b2BodyDef bodyDef_;
-        b2PolygonShape dynamicBox_;
-        b2FixtureDef fixtureDef_;
 };
 
 // Player class
 class Player : public Entity {
-    public:
-        // Construct the player
-        Player(Application* application);
+   public:
+      // Construct the player
+      Player(Application* application);
 
-        // Different textures
-        Texture idle_texture_;
-        Texture running_texture_;
-        Texture kick_texture_;
+      // State construct for state machine
+      enum STATE {
+         STAND,
+         RUN,
+         JUMP,
+         STOP,
+         CROUCH,
+         SHOOT,
+         RUN_AND_JUMP
+      };
 
-        // Move the player using keyboard
-        virtual void move();
+      // Different textures
+      Texture idle_texture_;
+      Texture running_texture_;
+      Texture kick_texture_;
+      Texture running_jump_texture_;
+      Texture arm_texture_;
 
-        // Virtual destructor
-        virtual ~Player();
+      // Function to get the proper texture based on the state
+      Texture *get_texture();
 
-    private:
-        // State construct for state machine
-        enum STATE {
-            JUMP,
-            FALL,
-            CROUCH,
-            SHOOT,
-            STAND
-        };
+      // Get current clip
+      SDL_Rect *get_curr_clip();
 
-        // Directions
-        enum DIRS {
-            NEUTRAL,
-            LEFT,
-            RIGHT
-        };
+      // Get player state
+      STATE get_player_state();
 
-        // Player state
-        STATE player_state_;
-        DIRS player_directions_;
+      // Animate based on state
+      void animate();
+
+      // Move the player using keyboard
+      virtual void move();
+
+      // Virtual destructor
+      virtual ~Player();
+
+   private:
+      // Directions
+      enum DIRS {
+          NEUTRAL,
+          LEFT,
+          RIGHT
+      };
+
+      // Player state
+      STATE player_state_;
+      DIRS player_direction_;
 };
 
 #endif

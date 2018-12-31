@@ -3,58 +3,57 @@
 
 #include <Box2D/Box2D.h>
 #include "Texture.h"
+#include "Element.h"
 
 class Entity;
 
 // A parent class because I might add other objects in the future
-class Object {
+class Object : public Element {
     public:
         // Constructor
-        Object(double x, double y, double length, double width);
-
-        // Getters
-        double get_x() const;
-        double get_y() const;
-        double get_height() const;
-        double get_width() const;
-
-        // Setters
-        void set_x(double new_x);
-        void set_y(double new_y);
-        void set_height(double new_height);
-        void set_width(double new_width);
-
-        // Object texture
-        Texture texture_;
+        Object(int x, int y, double height, double width, Application *application);
 
         // Might need to add a function that gets texture
         // Pure virtual function to make this abstract base class
-        virtual void doNothing() = 0;
-
-    private:
-        // Metrics of the object
-        double x_pos_;
-        double y_pos_;
-        double height_;
-        double width_;
+        //virtual void doNothing() = 0;
 };
 
 // Platform class will be a subclass of Object (through inheritance)
 class Platform : public Object {
     public:
         // Constructor
-        Platform(double x, double y);
-
-        // Default constructor
-        Platform();
+        Platform(int x, int y, Application *application);
 
         // Other functions
-        virtual void doNothing();
+        //virtual void doNothing();
+};
 
-        // Add Box2D components
-        b2BodyDef BodyDef_;
-        b2Body* Body_;
-        b2PolygonShape Box_;
+// Projectile class is also a subclass of object
+class Projectile : public Object {
+   public:
+      // Constructor
+      Projectile(int x, int y, bool owner, bool damage, Application *application);
+
+      // doNothing function
+      //virtual void doNothing();
+
+      // Get owner
+      bool get_owner() const;
+
+      // Get damage amount
+      int get_damage() const;
+
+      // Add Box2D components
+      b2BodyDef BodyDef_;
+      b2Body* Body_;
+      b2PolygonShape Box_;
+
+   private:
+      // Owner flag: 1 if belongs to player, 0 if enemy
+      bool owner_;
+
+      // Damage amount
+      int damage_;
 };
 
 #endif

@@ -1,59 +1,38 @@
 #include <iostream>
 #include "Object.h"
 #include "Texture.h"
-#include "Entity.h"
 
 /******************** Object Implementations **********************/
 
 // Constructor
-Object::Object(double x, double y, double height, double width) :
-   x_pos_(x), y_pos_(y), height_(height), width_(width) {}
-
-// Get and set x
-double Object::get_x() const {
-    return x_pos_;
-}
-
-void Object::set_x(double new_x) {
-    x_pos_ = new_x;
-}
-
-// Get and set y
-double Object::get_y() const {
-    return y_pos_;
-}
-
-void Object::set_y(double new_y) {
-    y_pos_ = new_y;
-}
-
-// Get and set height
-double Object::get_height() const {
-    return texture_.getHeight();
-}
-
-void Object::set_height(double new_height) {
-    height_ = new_height;
-}
-
-// Get and set width
-double Object::get_width() const {
-    return texture_.getWidth();
-}
-
-void Object::set_width(double new_width) {
-    width_ = new_width;
-}
+Object::Object(int x, int y, double height, double width, Application *application) :
+   Element(x, y, height, width, application) {}
 
 /***************** Platform Implementations *************************/
 
 // Constructor
-Platform::Platform(double x, double y) :
-   Object(x, y, texture_.getHeight(), texture_.getWidth()) {}
-
-// Default constructor
-Platform::Platform() : 
-    Object(0, 0, texture_.getHeight(), texture_.getWidth()) {}
+Platform::Platform(int x, int y, Application *application) :
+   Object(x, y, texture_.getHeight(), texture_.getWidth(), application) {}
 
 // doNothing
-void Platform::doNothing() {}
+//void Platform::doNothing() {}
+
+/************** Projectile Implementations  *************************/
+
+// Constructor
+Projectile::Projectile(int x, int y, bool owner, bool damage, Application *application) :
+   Object(x, y, texture_.getHeight(), texture_.getWidth(), application), 
+   owner_(owner), damage_(damage) {}
+
+// Do nothing function
+//void Projectile::doNothing() {}
+
+// Get owner of projectile
+bool Projectile::get_owner() const {
+   return owner_;
+}
+
+// Get damage of projectile
+int Projectile::get_damage() const {
+   return damage_;
+}

@@ -21,8 +21,8 @@
 
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
-   SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), 
-   current_key_states_(NULL), player_(this), mouseButtonPressed(false), quit(false), 
+   SCREEN_FPS(20), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), 
+   current_key_states_(NULL), player(this), mouseButtonPressed(false), quit(false), 
    countedFrames(0), game_flag_(PLAYGROUND), world_(gravity_), to_meters_(0.01f), 
    to_pixels_(100.0f), debugDraw(this), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2), animation_speed_(20.0f), 
@@ -103,13 +103,13 @@ bool Application::loadMedia() {
     bool success = true;
     
     // Load player idle
-    if (!player_.idle_texture_.loadFromFile("images/idle_na.png")) {
+    if (!player.idle_texture.loadFromFile("images/idle_na.png")) {
         printf("Failed to load Texture image!\n");
         success = false;
     } else {
        // Allocat enough room for the clips
-       player_.idle_texture_.clips_ = new SDL_Rect[16];
-       SDL_Rect *temp = player_.idle_texture_.clips_;
+       player.idle_texture.clips_ = new SDL_Rect[16];
+       SDL_Rect *temp = player.idle_texture.clips_;
 
        // Calculate locations
        for (int i = 0; i < 16; i++) {
@@ -121,13 +121,13 @@ bool Application::loadMedia() {
     }
 
     // Load player running
-    if (!player_.running_texture_.loadFromFile("images/running_na.png")) {
+    if (!player.running_texture.loadFromFile("images/running_na.png")) {
         printf("Failed to load Texture image!\n");
         success = false;
     } else {
        // Allocat enough room for the clips
-       player_.running_texture_.clips_ = new SDL_Rect[20];
-       SDL_Rect *temp = player_.running_texture_.clips_;
+       player.running_texture.clips_ = new SDL_Rect[20];
+       SDL_Rect *temp = player.running_texture.clips_;
 
        // Calculate locations
        for (int i = 0; i < 20; i++) {
@@ -139,13 +139,13 @@ bool Application::loadMedia() {
     }
 
     // Load player kicking
-    if (!player_.kick_texture_.loadFromFile("images/kick.png")) {
+    if (!player.kick_texture.loadFromFile("images/kick.png")) {
         printf("Failed to load Texture image!\n");
         success = false;
     } else {
        // Allocat enough room for the clips
-       player_.kick_texture_.clips_ = new SDL_Rect[16];
-       SDL_Rect *temp = player_.kick_texture_.clips_;
+       player.kick_texture.clips_ = new SDL_Rect[16];
+       SDL_Rect *temp = player.kick_texture.clips_;
 
        // Calculate locations
        for (int i = 0; i < 16; i++) {
@@ -157,13 +157,13 @@ bool Application::loadMedia() {
     }
 
     // Load jump and run
-    if (!player_.running_jump_texture_.loadFromFile("images/running_jump.png")) {
+    if (!player.running_jump_texture.loadFromFile("images/running_jump_na.png")) {
        printf("Failed to load Running Jump image!\n");
        success = false;
     } else {
        // Allocate enough room for the clips
-       player_.running_jump_texture_.clips_ = new SDL_Rect[17];
-       SDL_Rect *temp = player_.running_jump_texture_.clips_;
+       player.running_jump_texture.clips_ = new SDL_Rect[17];
+       SDL_Rect *temp = player.running_jump_texture.clips_;
 
        // Calculate the locations
        for (int i = 0; i < 17; i++) {
@@ -177,10 +177,48 @@ bool Application::loadMedia() {
     // Turn animation width 52 --> turns from facing right to left
 
     // Load arm
-    if (!player_.arm_texture_.loadFromFile("images/idle_arm_na.png")) {
+    if (!player.arm_texture.loadFromFile("images/idle_arm_na.png")) {
        printf("Failed to load Arm image!\n");
        success = false;
     }
+
+    // Load shooting arm
+    if (!player.arm_shoot_texture.loadFromFile("images/arm.png")) {
+       printf("Failed to load arm shooting texture!\n");
+       success = false;
+    } else {
+      // Allocate enough room for the clips
+      player.arm_shoot_texture.clips_ = new SDL_Rect[9];
+      SDL_Rect *temp = player.arm_shoot_texture.clips_;
+
+      // Calculate the locations
+      for (int i = 0; i < 9; i++) {
+         temp[i].x = i * 63;
+         temp[i].y = 0;
+         temp[i].w = 63;
+         temp[i].h = 49;
+      }
+    }
+
+    // Running arm
+    if (!player.arm_running_texture.loadFromFile("images/running_arm.png")) {
+       printf("Failed to load arm shooting texture!\n");
+       success = false;
+    } else {
+       // Allocate enough room for the clips
+       player.arm_running_texture.clips_ = new SDL_Rect[4];
+       SDL_Rect *temp = player.arm_running_texture.clips_;
+
+       // Calculate the locations
+       for (int i = 0; i < 4; i++) {
+          temp[i].x = i * 10;
+          temp[i].y = 0;
+          temp[i].w = 10;
+          temp[i].h = 33;
+       }
+    }
+
+    // Eraser
 
     // Load background_ 
     if (!background_->texture_.loadFromFile("images/whitebackground.jpg")) {
@@ -337,15 +375,33 @@ void Application::playground() {
     * certain height length of model, shoot. */
 
    // Update player
-   player_.update();
+   player.update();
 
    // Render player
-   Texture *player_texture = player_.get_texture();
-   SDL_Rect *curr_clip = player_.get_curr_clip();
+   Texture *playertexture = player.get_texture();
+   SDL_Rect *curr_clip = player.get_curr_clip();
    if (curr_clip) {
-     player_.render(player_texture, curr_clip);
-     player_.arm_texture_.render(player_.get_x() + player_.get_width() + 12, player_.get_y() + 62,
-           NULL, 0.0, &player_.arm_texture_.center_, player_.arm_texture_.flip_);
+     // Render player
+     player.render(playertexture, curr_clip);
+
+     // Render arm if idle, render shooting if not
+     if (!player.shooting) {
+         if (player.get_player_state() == 1) {
+            player.arm_running_texture.render(player.get_x() + player.get_width() +
+               player.arm_delta_x, player.get_y() + player.arm_delta_y,
+               player.arm_running_texture.curr_clip_, 0.0,
+               &player.arm_running_texture.center_, player.arm_running_texture.flip_);
+         } else {
+            player.arm_texture.render(player.get_x() + player.get_width() + 
+               player.arm_delta_x, player.get_y() + player.arm_delta_y, NULL, 0.0, 
+               &player.arm_texture.center_, player.arm_texture.flip_);
+         }
+     } else {
+         player.arm_shoot_texture.render(player.get_x() + player.get_width() + 
+            player.arm_delta_shoot_x, player.get_y() + player.arm_delta_shoot_y, 
+            player.arm_shoot_texture.curr_clip_, 0.0, 
+            &player.arm_shoot_texture.center_, player.arm_shoot_texture.flip_);
+     }
    }
 
    /* 
@@ -401,10 +457,10 @@ Texture Application::get_ground() {
 // Destructs application
 Application::~Application() {
     //Free loaded image
-    player_.idle_texture_.free();
-    player_.running_texture_.free();
-    player_.kick_texture_.free();
-    player_.running_jump_texture_.free();
+    player.idle_texture.free();
+    player.running_texture.free();
+    player.kick_texture.free();
+    player.running_jump_texture.free();
     background_->texture_.free();
 
     // Delete platforms

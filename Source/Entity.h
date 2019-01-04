@@ -49,19 +49,29 @@ class Player : public Entity {
          JUMP,
          STOP,
          CROUCH,
-         SHOOT,
          RUN_AND_JUMP
       };
 
+      // Shooting flag
+      bool shooting;
+
       // Different textures
-      Texture idle_texture_;
-      Texture running_texture_;
-      Texture kick_texture_;
-      Texture running_jump_texture_;
-      Texture arm_texture_;
+      Texture idle_texture;
+      Texture running_texture;
+      Texture kick_texture;
+      Texture running_jump_texture;
+      Texture arm_texture;
+      Texture arm_shoot_texture;
+      Texture arm_running_texture;
 
       // Function to get the proper texture based on the state
       Texture *get_texture();
+
+      // Arm delta displacement
+      int arm_delta_x;
+      int arm_delta_y;
+      int arm_delta_shoot_x;
+      int arm_delta_shoot_y;
 
       // Get current clip
       SDL_Rect *get_curr_clip();

@@ -110,7 +110,7 @@ class Application {
         SDL_Rect viewport;
     
         // Player object
-        Player player_;
+        Player player;
 
         // Background texture
         Object *background_;

@@ -40,8 +40,10 @@ Entity::~Entity() {}
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
     Entity(960, 412, 150, 46, application), player_state_(STAND), player_direction_(NEUTRAL),
-    idle_texture_(this), running_texture_(this), kick_texture_(this), running_jump_texture_(this),
-    arm_texture_(this) {
+    idle_texture(this), running_texture(this), kick_texture(this), running_jump_texture(this),
+    arm_texture(this), arm_shoot_texture(this), arm_running_texture(this),
+    shooting(false), arm_delta_x(12), arm_delta_y(64),
+    arm_delta_shoot_x(12), arm_delta_shoot_y(51) {
 
     // Set width and height
     set_height(150.0);
@@ -76,12 +78,18 @@ Player::Player(Application* application) :
 
 // Get texture based on state
 Texture *Player::get_texture() {
+   // Return run or stop texture (aka running texture)
    if (player_state_ == RUN || player_state_ == STOP) {
-      return &running_texture_;
+      return &running_texture;
+   }
+
+   // Return run and jump texture
+   if (player_state_ == RUN_AND_JUMP) {
+      return &running_jump_texture;
    }
 
    // Return idle texture for now
-   return &idle_texture_;
+   return &idle_texture;
 }
 
 // Get current clip
@@ -97,47 +105,111 @@ Player::STATE Player::get_player_state() {
 
 // Animate based on state
 void Player::animate() {
-   // Animate arm next to the player if it's not shooting
-   /*
-   if (player_state_ != SHOOT) {
-      printf("x = %d, y = %d\n", get_x(), get_y());
-      arm_texture_.render(get_x() + get_width() + 12, get_y() + 62, NULL, 0.0, 
-            &arm_texture_.center_, arm_texture_.flip_);
+   // Shooting animation
+   if (shooting) {
+      if (arm_shoot_texture.frame_ > 6) {
+         arm_shoot_texture.frame_ = 0;
+         shooting = false;
+      }
+      arm_shoot_texture.curr_clip_ = &arm_shoot_texture.clips_[arm_shoot_texture.frame_];
+      ++arm_shoot_texture.frame_;
    }
-   */
 
    // Choose animation based on what state player is in
    if (player_state_ == STAND) {
-      if (idle_texture_.frame_ > 15) {
-         idle_texture_.frame_ = 0;
+      // Animate
+      if (idle_texture.frame_ > 15) {
+         idle_texture.frame_ = 0;
       }
-      idle_texture_.curr_clip_ = &idle_texture_.clips_[idle_texture_.frame_];
-      ++idle_texture_.frame_;
+      idle_texture.curr_clip_ = &idle_texture.clips_[idle_texture.frame_];
+      ++idle_texture.frame_;
+
+      // Adjust deltas
+      if (player_direction_ == RIGHT) {
+         arm_delta_x = 12;
+         arm_delta_y = 64;
+         arm_delta_shoot_x = 12;
+         arm_delta_shoot_y = 51;
+      } else {
+         // Adjust the deltas
+         arm_delta_x = -12;
+         arm_delta_y = 64;
+         arm_delta_shoot_x = -75;
+         arm_delta_shoot_y = 51;
+      }
    } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
-      if (running_texture_.frame_ > 14) {
-         running_texture_.frame_ = 4;
+      // Animation man
+      if (running_texture.frame_ > 14) {
+         running_texture.frame_ = 4;
       }
-      running_texture_.curr_clip_ = &running_texture_.clips_[running_texture_.frame_];
-      ++running_texture_.frame_;
+      running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
+      ++running_texture.frame_;
+
+      // Animate arm
+      if (arm_running_texture.frame_ > 3) {
+         arm_running_texture.frame_ = 3;
+      }
+      arm_running_texture.curr_clip_ = &arm_running_texture.clips_[arm_running_texture.frame_];
+      ++arm_running_texture.frame_;
+
+      // Adjust deltas
+      if (player_direction_ == RIGHT) {
+         arm_delta_x = 10;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = 12;
+         arm_delta_shoot_y = 51;
+      } else {
+         arm_delta_x = -20;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = -75;
+         arm_delta_shoot_y = 51;
+      }
    } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
-      if (running_texture_.frame_ > 19) {
-         running_texture_.frame_ = 19;
+      // Animate stopping
+      if (running_texture.frame_ > 19) {
+         running_texture.frame_ = 19;
       }
-      running_texture_.curr_clip_ = &running_texture_.clips_[running_texture_.frame_];
-      ++running_texture_.frame_;
+      running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
+      ++running_texture.frame_;
+
+      // Adjust deltas
+      if (player_direction_ == RIGHT) {
+         arm_delta_x = 10;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = 12;
+         arm_delta_shoot_y = 51;
+      } else {
+         arm_delta_x = -20;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = -75;
+         arm_delta_shoot_y = 51;
+      }
    } else if (player_state_ == RUN_AND_JUMP) {
-      std::cout << "RUNNING AND JUMPING" << std::endl;
-      if (running_jump_texture_.frame_ > 16) {
-         running_jump_texture_.frame_ = 0;
+      // Animate
+      if (running_jump_texture.frame_ > 16) {
+         running_jump_texture.frame_ = 0;
       }
-      running_jump_texture_.curr_clip_ = &running_jump_texture_.clips_[running_jump_texture_.frame_];
-      ++running_jump_texture_.frame_;
+      running_jump_texture.curr_clip_ = &running_jump_texture.clips_[running_jump_texture.frame_];
+      ++running_jump_texture.frame_;
+
+      // Adjust deltas
+      if (player_direction_ == RIGHT) {
+         arm_delta_x = 8;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = 8;
+         arm_delta_shoot_y = 51;
+      } else {
+         arm_delta_x = -28;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = -83;
+         arm_delta_shoot_y = 51;
+      }
    }
 }
 
 // Movement logic of the player. Done through keyboard.
 void Player::move() {
-   //printf("Player state = %d\n", player_state_);
+   printf("Player state = %d\n", player_state_);
    //printf("x = %f, y = %f\n", body->GetPosition().x, body->GetPosition().y);
    // Default texture
    if (body->GetLinearVelocity().x == 0 && body->GetLinearVelocity().y == 0) {
@@ -147,22 +219,50 @@ void Player::move() {
    // Check for stopping
    if ((!get_application()->current_key_states_[SDL_SCANCODE_RIGHT] 
             || !get_application()->current_key_states_[SDL_SCANCODE_LEFT]) && 
-         body->GetLinearVelocity().x != 0) {
+         body->GetLinearVelocity().x != 0 && body->GetLinearVelocity().y == 0) {
 
       // Set state
       player_state_ = STOP;
    }
 
    // Deal with basic movement for now
-   if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) {
+   if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) { //&& 
+         //body->GetLinearVelocity().y == 0) {
       // Check for flag
-      if (running_texture_.has_flipped_) {
-         running_texture_.has_flipped_ = false;
-         running_texture_.flip_ = SDL_FLIP_NONE;
+      if (running_texture.has_flipped_) {
+         running_texture.has_flipped_ = false;
+         running_texture.flip_ = SDL_FLIP_NONE;
 
          // Idle texture flip
-         idle_texture_.has_flipped_ = false;
-         idle_texture_.flip_ = SDL_FLIP_NONE;
+         idle_texture.has_flipped_ = false;
+         idle_texture.flip_ = SDL_FLIP_NONE;
+
+         // Running and jumping texture flip
+         running_jump_texture.has_flipped_ = false;
+         running_jump_texture.flip_ = SDL_FLIP_NONE;
+
+         // Shooting arm and idle arm flip
+         arm_texture.has_flipped_ = false;
+         arm_texture.flip_ = SDL_FLIP_NONE;
+         arm_shoot_texture.has_flipped_ = false;
+         arm_shoot_texture.flip_ = SDL_FLIP_NONE;
+         arm_running_texture.has_flipped_ = false;
+         arm_running_texture.flip_ = SDL_FLIP_NONE;
+
+         // Adjust the deltas
+         /*
+         if (player_state_ != RUN_AND_JUMP) {
+            arm_delta_x = 10;
+            arm_delta_y = 63;
+            arm_delta_shoot_x = 12;
+            arm_delta_shoot_y = 51;
+         } else {
+            arm_delta_x = 6;
+            arm_delta_y = 63;
+            arm_delta_shoot_x = 8;
+            arm_delta_shoot_y = 51;
+         }
+         */
       }
       
       // Set direction
@@ -177,16 +277,44 @@ void Player::move() {
    } 
 
    // Player running left
-   if (get_application()->current_key_states_[SDL_SCANCODE_LEFT]) {
+   if (get_application()->current_key_states_[SDL_SCANCODE_LEFT]) { //&&
+         //body->GetLinearVelocity().y == 0) {
       // Check for flag
-      if (!running_texture_.has_flipped_) {
+      if (!running_texture.has_flipped_) {
          // Running texture flip
-         running_texture_.has_flipped_ = true;
-         running_texture_.flip_ = SDL_FLIP_HORIZONTAL;
+         running_texture.has_flipped_ = true;
+         running_texture.flip_ = SDL_FLIP_HORIZONTAL;
 
          // Idle texture flip
-         idle_texture_.has_flipped_ = true;
-         idle_texture_.flip_ = SDL_FLIP_HORIZONTAL;
+         idle_texture.has_flipped_ = true;
+         idle_texture.flip_ = SDL_FLIP_HORIZONTAL;
+
+         // Running and jumping texture flip
+         running_jump_texture.has_flipped_ = true;
+         running_jump_texture.flip_ = SDL_FLIP_HORIZONTAL;
+
+         // Shooting arm and idle arm flip
+         arm_texture.has_flipped_ = true;
+         arm_texture.flip_ = SDL_FLIP_HORIZONTAL;
+         arm_shoot_texture.has_flipped_ = true;
+         arm_shoot_texture.flip_ = SDL_FLIP_HORIZONTAL;
+         arm_running_texture.has_flipped_ = true;
+         arm_running_texture.flip_ = SDL_FLIP_HORIZONTAL;
+
+         // Adjust the deltas
+         /*
+         if (player_state_ != RUN_AND_JUMP) {
+            arm_delta_x = -20;
+            arm_delta_y = 63;
+            arm_delta_shoot_x = -75;
+            arm_delta_shoot_y = 51;
+         } else {
+            arm_delta_x = -28;
+            arm_delta_y = 63;
+            arm_delta_shoot_x = -83;
+            arm_delta_shoot_y = 51;
+         }
+         */
       }
       
       // Set direction
@@ -206,7 +334,15 @@ void Player::move() {
          // Set state
          if (player_state_ == RUN) {
             player_state_ = RUN_AND_JUMP;
-            std::cout << "In run and jump" << std::endl;
+            /*
+            if (player_direction_ == LEFT) {
+               arm_delta_x = -28;
+               arm_delta_shoot_x = -83;
+            } else {
+               arm_delta_x = 6;
+               arm_delta_shoot_x = 8;
+            }
+            */
          } else {
             player_state_ = JUMP;
          }
@@ -222,9 +358,21 @@ void Player::move() {
             has_jumped_ = false;
          }
       }
-   } if (get_application()->current_key_states_[SDL_SCANCODE_DOWN]) {
+   } 
+   
+   if (get_application()->current_key_states_[SDL_SCANCODE_DOWN]) {
      // Need to revisit this
      //add_y(5);
+   }
+
+   // Mid air?
+   if (body->GetLinearVelocity().x != 0 && body->GetLinearVelocity().y != 0) {
+      player_state_ = RUN_AND_JUMP;
+   }
+
+   // Shooting
+   if (get_application()->current_key_states_[SDL_SCANCODE_SPACE]) {
+      shooting = true;
    }
 
    // Update frames

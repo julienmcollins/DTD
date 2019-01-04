@@ -43,11 +43,6 @@ class Projectile : public Object {
       // Get damage amount
       int get_damage() const;
 
-      // Add Box2D components
-      b2BodyDef BodyDef_;
-      b2Body* Body_;
-      b2PolygonShape Box_;
-
    private:
       // Owner flag: 1 if belongs to player, 0 if enemy
       bool owner_;

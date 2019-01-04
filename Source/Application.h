@@ -91,7 +91,7 @@ class Application {
         }
 
         // Return the vector
-        std::vector<Texture> *getObjectVector() {
+        std::vector<Element *> *getObjectVector() {
            return &sprites_;
         }
 
@@ -156,7 +156,7 @@ class Application {
         APP_STATE game_flag_;
 
         // TEXTURE VECTOR
-        std::vector<Texture> sprites_;        
+        std::vector<Element *> sprites_;        
         /*****************************************************/
     
         // Quit flag for application

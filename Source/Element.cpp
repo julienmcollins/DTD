@@ -1,7 +1,7 @@
 #include "Element.h"
 
 // Constructor for element
-Element::Element(int x, int y, double height, double width, Application *application) :
+Element::Element(int x, int y, int height, int width, Application *application) :
    texture(this) {
 
    // Set application
@@ -22,7 +22,12 @@ void Element::set_x(int new_x) {
 }
 
 int Element::get_x() const {
-   return x_pos_;
+   if (body) {
+      //printf("x = %f\n", body->GetPosition().x);
+      return (int) ((100.0f * body->GetPosition().x) - (get_width() / 2.0f));
+   } else {
+      return x_pos_;
+   }
 }
 
 // Add and sub x
@@ -40,7 +45,12 @@ void Element::set_y(int new_y) {
 }
 
 int Element::get_y() const {
-   return y_pos_;
+   if (body) {
+      //printf("y = %f\n", (100.0f * body->GetPosition().y) - (get_height() / 2.0f));
+      return (int) ((100.0f * -body->GetPosition().y) - (get_height() / 2.0f));
+   } else {
+      return x_pos_;
+   }
 }
 
 // Add and sub y
@@ -53,11 +63,11 @@ void Element::sub_y(int sub) {
 }
 
 // Set and get height
-void Element::set_height(double new_height) {
+void Element::set_height(int new_height) {
     height_ = new_height;
 }
 
-double Element::get_height() const {
+int Element::get_height() const {
    if (height_ == 0)
       return texture.getHeight();
    else
@@ -65,11 +75,11 @@ double Element::get_height() const {
 }
 
 // Set and get width
-void Element::set_width(double new_width) {
+void Element::set_width(int new_width) {
     width_ = new_width;
 }
 
-double Element::get_width() const {
+int Element::get_width() const {
    if (width_ == 0)
       return texture.getWidth();
    else

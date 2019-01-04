@@ -66,6 +66,8 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 
         // Set background
         background = new Object(0, 0, 0, 0, this);
+        background->set_width(0);
+        background->set_height(0);
 
         // Set the platforms up
         ground = new Platform(0, SCREEN_HEIGHT - 50, this);//SCREEN_HEIGHT - 10);
@@ -229,7 +231,7 @@ bool Application::loadMedia() {
         printf("Failed to load Texture image!\n");
         success = false;
     } else {
-       sprites_.push_back(background->texture);
+       sprites_.push_back(background);
     }
     
     // Load ground
@@ -243,11 +245,13 @@ bool Application::loadMedia() {
         ground->body = world_.CreateBody(&ground->body_def);
         ground->box.SetAsBox(9.6f - 0.01f, 0.25f - 0.01f);
         ground->body->CreateFixture(&ground->box, 0.0f);
-        x_ground = (ground->body->GetPosition().x - 19.20f / 2.0f) * to_pixels_;
-        y_ground = -(ground->body->GetPosition().y + 0.25f) * to_pixels_; 
-        ground->set_x(x_ground);
-        ground->set_y(y_ground);
-        sprites_.push_back(ground->texture);
+        //x_ground = (ground->body->GetPosition().x - 19.20f / 2.0f) * to_pixels_;
+        //y_ground = -(ground->body->GetPosition().y + 0.25f) * to_pixels_; 
+        //ground->set_x(x_ground);
+        //ground->set_y(y_ground);
+        ground->set_height(ground->texture.getHeight());
+        ground->set_width(ground->texture.getWidth());
+        sprites_.push_back(ground);
     }
 
     // Load platform
@@ -260,11 +264,17 @@ bool Application::loadMedia() {
            platforms_[i]->body = world_.CreateBody(&platforms_[i]->body_def);
            platforms_[i]->box.SetAsBox(0.5f - 0.01f, 0.5f - 0.01f);
            platforms_[i]->body->CreateFixture(&platforms_[i]->box, 0.0f);
-           float x_block = ((platforms_[i]->body->GetPosition().x - 0.5f) * to_pixels_);
-           float y_block = (-(platforms_[i]->body->GetPosition().y + 0.5f) * to_pixels_);
-           platforms_[i]->set_x(x_block);
-           platforms_[i]->set_y(y_block);
-           sprites_.push_back(platforms_[i]->texture);
+           //float x_block = ((platforms_[i]->body->GetPosition().x - 0.5f) * to_pixels_);
+           //float y_block = (-(platforms_[i]->body->GetPosition().y + 0.5f) * to_pixels_);
+           //platforms_[i]->set_x(x_block);
+           //platforms_[i]->set_y(y_block);
+           //printf("x = %f, y = %f\n", (100 * platforms_[i]->body->GetPosition().x) - (platforms_[i]->get_width() / 2),
+           //      platforms_[i]->body->GetPosition().y);
+           //printf("x = %d, y = %d\n", platforms_[i]->get_x(), platforms_[i]->get_y());
+           platforms_[i]->set_height(100);
+           platforms_[i]->set_width(100);
+           printf("width = %d\n", platforms_[i]->texture.getWidth());
+           sprites_.push_back(platforms_[i]);
        }
     }
 
@@ -368,9 +378,9 @@ void Application::playground() {
    //world_.DrawDebugData();
 
    // ITERATE THROUGH THE SPRITES AND DRAW THEM
-   for (std::vector<Texture>::iterator it = sprites_.begin(); it != sprites_.end(); ++it) {
-      it->render(it->element_->get_x(), it->element_->get_y());
-      //printf("x = %d, y = %d\n", it->element_->get_x(), it->element_->get_y());
+   for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end(); ++it) {
+      (*it)->texture.render((*it)->get_x(), (*it)->get_y());
+      //printf("x = %d, y = %d\n", (*it)->get_x(), (*it)->get_y());
    }
 
    /* For poop enemy shooting and turning: If you're on the left side of him, turn to left, 

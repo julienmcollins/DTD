@@ -22,8 +22,8 @@ Entity::Entity(int x_pos, int y_pos, double height, double width, Application* a
 void Entity::render(Texture *texture, SDL_Rect *clip) {
     // NEED TO TAKE INTO ACCOUNT THAT BOTTOM OF IMAGE ISN'T ALLIGNED WITH FEET
     // Rendering the textures according to their centers
-    set_x((100.0f * body->GetPosition().x) - (get_width() / 2.0f));
-    set_y((100.0f * -body->GetPosition().y) - (get_height() / 2.0f));
+    //set_x((100.0f * body->GetPosition().x) - (get_width() / 2.0f));
+    //set_y((100.0f * -body->GetPosition().y) - (get_height() / 2.0f));
     //printf("x = %d, y = %d\n", get_x(), get_y());
     texture->render(get_x(), get_y(), clip, 0.0, &texture->center_, texture->flip_);
 }
@@ -66,7 +66,7 @@ Player::Player(Application* application) :
     // Set box dimensions
     float width = (get_width() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
     float height = (get_height() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
-    printf("width = %f, height = %f\n", width, height);
+    //printf("width = %f, height = %f\n", width, height);
     const b2Vec2 center = {(92.0f - get_width()) / 2.0f * application->to_meters_ - 0.02f, 0.0f};
     box.SetAsBox(width, height, center, 0.0f);
 
@@ -338,7 +338,8 @@ void Player::move() {
       shooting = true;
 
       // Create eraser
-      create_eraser();
+      if (arm_shoot_texture.frame_ == 1)
+         create_eraser();
    }
 
    // Update frames
@@ -370,10 +371,17 @@ void Player::create_eraser() {
    eraser->body_def.type = b2_dynamicBody;
 
    // Set initial position and set fixed rotation
-   float x = get_x() + get_width() + 63;
-   float y = get_y() + 51;
+   float x, y;
+   if (player_direction_ == RIGHT) {
+      x = (get_x() + get_width() + 73.0f) * tmp->to_meters_;
+   } else {
+      x = (get_x() - 27.0f) * tmp->to_meters_;
+   }
+   y = -(get_y() + 60.0f) * tmp->to_meters_;
+
+   //printf("x = %f,  y = %f\n", x, y);
    eraser->body_def.position.Set(x, y);
-   eraser->body_def.fixedRotation = true;
+   eraser->body_def.fixedRotation = false;
 
    // Attach body to world
    eraser->body = tmp->world_.CreateBody(&eraser->body_def);
@@ -388,9 +396,18 @@ void Player::create_eraser() {
    eraser->fixture_def.density = 1.0f;
    eraser->fixture_def.friction = 1.0f;
    eraser->body->CreateFixture(&eraser->fixture_def);
+
+   // Give it an x direction impulse
+   b2Vec2 force;
+   if (player_direction_ == RIGHT) {
+      force = {5.4f, 0.0f};
+   } else {
+      force = {-5.4f, 0};
+   }
+   eraser->body->ApplyForce(force, eraser->body->GetPosition(), true);
    
    // Now add it to the things the world needs to render
-   tmp->getObjectVector()->push_back(eraser->texture);
+   tmp->getObjectVector()->push_back(eraser);
 }
 
 // Virtual destructor

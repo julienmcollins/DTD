@@ -11,19 +11,19 @@ class Application;
 class Element {
    public:
       // Constructor
-      Element(int x, int y, double height, double width, Application *application);
+      Element(int x, int y, int height, int width, Application *application);
 
       // Setters
       void set_x(int new_x);
       void set_y(int new_y);
-      void set_height(double new_height);
-      void set_width(double new_width);
+      void set_height(int new_height);
+      void set_width(int new_width);
 
       // Getters
       int get_x() const;
       int get_y() const;
-      double get_height() const;
-      double get_width() const;
+      int get_height() const;
+      int get_width() const;
 
       // Adders
       void add_x(int add);
@@ -52,8 +52,8 @@ class Element {
       int y_pos_;
 
       // Height and widths
-      double height_;
-      double width_;
+      int height_;
+      int width_;
 
       // Application pointer
       Application *application_;

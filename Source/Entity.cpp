@@ -24,6 +24,7 @@ void Entity::render(Texture *texture, SDL_Rect *clip) {
     // Rendering the textures according to their centers
     set_x((100.0f * body->GetPosition().x) - (get_width() / 2.0f));
     set_y((100.0f * -body->GetPosition().y) - (get_height() / 2.0f));
+    //printf("x = %d, y = %d\n", get_x(), get_y());
     texture->render(get_x(), get_y(), clip, 0.0, &texture->center_, texture->flip_);
 }
 
@@ -39,9 +40,9 @@ Entity::~Entity() {}
 
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
-    Entity(960, 412, 150, 46, application), player_state_(STAND), player_direction_(NEUTRAL),
+    Entity(960, 412, 150, 46, application), player_state_(STAND), player_direction_(RIGHT),
     idle_texture(this), running_texture(this), kick_texture(this), running_jump_texture(this),
-    arm_texture(this), arm_shoot_texture(this), arm_running_texture(this),
+    arm_texture(this), arm_shoot_texture(this), arm_running_texture(this), eraser_texture(this),
     shooting(false), arm_delta_x(12), arm_delta_y(64),
     arm_delta_shoot_x(12), arm_delta_shoot_y(51) {
 
@@ -132,7 +133,7 @@ void Player::animate() {
          arm_delta_shoot_y = 51;
       } else {
          // Adjust the deltas
-         arm_delta_x = -12;
+         arm_delta_x = -22;
          arm_delta_y = 64;
          arm_delta_shoot_x = -75;
          arm_delta_shoot_y = 51;
@@ -209,7 +210,7 @@ void Player::animate() {
 
 // Movement logic of the player. Done through keyboard.
 void Player::move() {
-   printf("Player state = %d\n", player_state_);
+   //printf("Player state = %d\n", player_state_);
    //printf("x = %f, y = %f\n", body->GetPosition().x, body->GetPosition().y);
    // Default texture
    if (body->GetLinearVelocity().x == 0 && body->GetLinearVelocity().y == 0) {
@@ -248,21 +249,6 @@ void Player::move() {
          arm_shoot_texture.flip_ = SDL_FLIP_NONE;
          arm_running_texture.has_flipped_ = false;
          arm_running_texture.flip_ = SDL_FLIP_NONE;
-
-         // Adjust the deltas
-         /*
-         if (player_state_ != RUN_AND_JUMP) {
-            arm_delta_x = 10;
-            arm_delta_y = 63;
-            arm_delta_shoot_x = 12;
-            arm_delta_shoot_y = 51;
-         } else {
-            arm_delta_x = 6;
-            arm_delta_y = 63;
-            arm_delta_shoot_x = 8;
-            arm_delta_shoot_y = 51;
-         }
-         */
       }
       
       // Set direction
@@ -300,21 +286,6 @@ void Player::move() {
          arm_shoot_texture.flip_ = SDL_FLIP_HORIZONTAL;
          arm_running_texture.has_flipped_ = true;
          arm_running_texture.flip_ = SDL_FLIP_HORIZONTAL;
-
-         // Adjust the deltas
-         /*
-         if (player_state_ != RUN_AND_JUMP) {
-            arm_delta_x = -20;
-            arm_delta_y = 63;
-            arm_delta_shoot_x = -75;
-            arm_delta_shoot_y = 51;
-         } else {
-            arm_delta_x = -28;
-            arm_delta_y = 63;
-            arm_delta_shoot_x = -83;
-            arm_delta_shoot_y = 51;
-         }
-         */
       }
       
       // Set direction
@@ -334,15 +305,6 @@ void Player::move() {
          // Set state
          if (player_state_ == RUN) {
             player_state_ = RUN_AND_JUMP;
-            /*
-            if (player_direction_ == LEFT) {
-               arm_delta_x = -28;
-               arm_delta_shoot_x = -83;
-            } else {
-               arm_delta_x = 6;
-               arm_delta_shoot_x = 8;
-            }
-            */
          } else {
             player_state_ = JUMP;
          }
@@ -372,7 +334,11 @@ void Player::move() {
 
    // Shooting
    if (get_application()->current_key_states_[SDL_SCANCODE_SPACE]) {
+      // Set shooting to true
       shooting = true;
+
+      // Create eraser
+      create_eraser();
    }
 
    // Update frames
@@ -385,6 +351,46 @@ void Player::move() {
       animate();
       get_application()->time_since_last_frame_ = 0.0f;
    }
+}
+
+// Create eraser function
+void Player::create_eraser() {
+   // First, create a new projectile
+   Application *tmp = get_application();
+   Projectile *eraser = new Projectile(get_x() + get_width() + 15 + 63, get_y() + 51, 1, 10, tmp);
+   eraser->texture = eraser_texture;
+
+   // Then set the box2d physics
+   // Set width and height
+   eraser->set_height(12.0);
+   eraser->set_width(21.0);
+
+   // Setup Box2D
+   // Set body type
+   eraser->body_def.type = b2_dynamicBody;
+
+   // Set initial position and set fixed rotation
+   float x = get_x() + get_width() + 63;
+   float y = get_y() + 51;
+   eraser->body_def.position.Set(x, y);
+   eraser->body_def.fixedRotation = true;
+
+   // Attach body to world
+   eraser->body = tmp->world_.CreateBody(&eraser->body_def);
+
+   // Set box dimensions
+   float width = (eraser->get_width() / 2.0f) * tmp->to_meters_ - 0.02f;// - 0.11f;
+   float height = (eraser->get_height() / 2.0f) * tmp->to_meters_ - 0.02f;// - 0.11f;
+   eraser->box.SetAsBox(width, height);
+
+   // Set various fixture definitions and create fixture
+   eraser->fixture_def.shape = &eraser->box;
+   eraser->fixture_def.density = 1.0f;
+   eraser->fixture_def.friction = 1.0f;
+   eraser->body->CreateFixture(&eraser->fixture_def);
+   
+   // Now add it to the things the world needs to render
+   tmp->getObjectVector()->push_back(eraser->texture);
 }
 
 // Virtual destructor

@@ -90,6 +90,11 @@ class Application {
            return fpsTimer;
         }
 
+        // Return the vector
+        std::vector<Texture> *getObjectVector() {
+           return &sprites_;
+        }
+
         // Destructrs the application
         ~Application();
     
@@ -113,7 +118,7 @@ class Application {
         Player player;
 
         // Background texture
-        Object *background_;
+        Object *background;
 
         /***** Box2D Variables *****/
         b2Vec2 gravity_;
@@ -126,7 +131,7 @@ class Application {
         /***************************/
 
         // Ground
-        Platform* ground_;
+        Platform* ground;
 
         // Platforms
         Platform* platforms_[NUM_BLOCKS];

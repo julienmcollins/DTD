@@ -35,13 +35,14 @@ class Element {
       Application *get_application();
 
       // Texture for each element
-      Texture texture_;
+      Texture texture;
 
       /***** BOX2D Variables *********/
 
       b2Body *body;
       b2BodyDef body_def;
       b2PolygonShape box;
+      b2FixtureDef fixture_def;
 
       /*******************************/
 

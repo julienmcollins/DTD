@@ -2,7 +2,7 @@
 
 // Constructor for element
 Element::Element(int x, int y, double height, double width, Application *application) :
-   texture_(this) {
+   texture(this) {
 
    // Set application
    application_ = application;
@@ -22,7 +22,7 @@ void Element::set_x(int new_x) {
 }
 
 int Element::get_x() const {
-    return x_pos_;
+   return x_pos_;
 }
 
 // Add and sub x
@@ -40,7 +40,7 @@ void Element::set_y(int new_y) {
 }
 
 int Element::get_y() const {
-    return y_pos_;
+   return y_pos_;
 }
 
 // Add and sub y
@@ -59,7 +59,7 @@ void Element::set_height(double new_height) {
 
 double Element::get_height() const {
    if (height_ == 0)
-      return texture_.getHeight();
+      return texture.getHeight();
    else
       return height_;
 }
@@ -71,7 +71,7 @@ void Element::set_width(double new_width) {
 
 double Element::get_width() const {
    if (width_ == 0)
-      return texture_.getWidth();
+      return texture.getWidth();
    else
       return width_;
 }

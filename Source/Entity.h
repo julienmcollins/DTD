@@ -63,6 +63,7 @@ class Player : public Entity {
       Texture arm_texture;
       Texture arm_shoot_texture;
       Texture arm_running_texture;
+      Texture eraser_texture;
 
       // Function to get the proper texture based on the state
       Texture *get_texture();
@@ -84,6 +85,9 @@ class Player : public Entity {
 
       // Move the player using keyboard
       virtual void move();
+
+      // Create eraser
+      void create_eraser();
 
       // Virtual destructor
       virtual ~Player();

@@ -12,7 +12,7 @@ Object::Object(int x, int y, double height, double width, Application *applicati
 
 // Constructor
 Platform::Platform(int x, int y, Application *application) :
-   Object(x, y, texture_.getHeight(), texture_.getWidth(), application) {}
+   Object(x, y, texture.getHeight(), texture.getWidth(), application) {}
 
 // doNothing
 //void Platform::doNothing() {}
@@ -21,7 +21,7 @@ Platform::Platform(int x, int y, Application *application) :
 
 // Constructor
 Projectile::Projectile(int x, int y, bool owner, bool damage, Application *application) :
-   Object(x, y, texture_.getHeight(), texture_.getWidth(), application), 
+   Object(x, y, texture.getHeight(), texture.getWidth(), application), 
    owner_(owner), damage_(damage) {}
 
 // Do nothing function

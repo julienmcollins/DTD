@@ -65,10 +65,10 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         //debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
 
         // Set background
-        background_ = new Object(0, 0, 0, 0, this);
+        background = new Object(0, 0, 0, 0, this);
 
         // Set the platforms up
-        ground_ = new Platform(0, SCREEN_HEIGHT - 50, this);//SCREEN_HEIGHT - 10);
+        ground = new Platform(0, SCREEN_HEIGHT - 50, this);//SCREEN_HEIGHT - 10);
         
         // Create platforms
         for (int i = 0; i < NUM_BLOCKS; i++) {
@@ -219,36 +219,40 @@ bool Application::loadMedia() {
     }
 
     // Eraser
+    if (!player.eraser_texture.loadFromFile("images/eraser.png")) {
+       printf("Failed to load eraser texture!\n");
+       success = false;
+    }
 
-    // Load background_ 
-    if (!background_->texture_.loadFromFile("images/whitebackground.jpg")) {
+    // Load background 
+    if (!background->texture.loadFromFile("images/whitebackground.jpg")) {
         printf("Failed to load Texture image!\n");
         success = false;
     } else {
-       sprites_.push_back(background_->texture_);
+       sprites_.push_back(background->texture);
     }
     
-    // Load ground_
-    if (!ground_->texture_.loadFromFile("images/floor.png")) {
+    // Load ground
+    if (!ground->texture.loadFromFile("images/floor.png")) {
         printf("Failed to load thinstrip.png\n");
         success = false;
     } else {
         float x_ground = 19.20f / 2.0f;
         float y_ground = 10.55f - 0.6f; 
-        ground_->body_def.position.Set(x_ground, -y_ground);
-        ground_->body = world_.CreateBody(&ground_->body_def);
-        ground_->box.SetAsBox(9.6f - 0.01f, 0.25f - 0.01f);
-        ground_->body->CreateFixture(&ground_->box, 0.0f);
-        x_ground = (ground_->body->GetPosition().x - 19.20f / 2.0f) * to_pixels_;
-        y_ground = -(ground_->body->GetPosition().y + 0.25f) * to_pixels_; 
-        ground_->set_x(x_ground);
-        ground_->set_y(y_ground);
-        sprites_.push_back(ground_->texture_);
+        ground->body_def.position.Set(x_ground, -y_ground);
+        ground->body = world_.CreateBody(&ground->body_def);
+        ground->box.SetAsBox(9.6f - 0.01f, 0.25f - 0.01f);
+        ground->body->CreateFixture(&ground->box, 0.0f);
+        x_ground = (ground->body->GetPosition().x - 19.20f / 2.0f) * to_pixels_;
+        y_ground = -(ground->body->GetPosition().y + 0.25f) * to_pixels_; 
+        ground->set_x(x_ground);
+        ground->set_y(y_ground);
+        sprites_.push_back(ground->texture);
     }
 
     // Load platform
     for (int i = 0; i < NUM_BLOCKS; i++) {
-       if (!platforms_[i]->texture_.loadFromFile("images/block1.png")) {
+       if (!platforms_[i]->texture.loadFromFile("images/block1.png")) {
            printf("Failed to load block1.png\n");
            success = false;
        } else {
@@ -260,7 +264,7 @@ bool Application::loadMedia() {
            float y_block = (-(platforms_[i]->body->GetPosition().y + 0.5f) * to_pixels_);
            platforms_[i]->set_x(x_block);
            platforms_[i]->set_y(y_block);
-           sprites_.push_back(platforms_[i]->texture_);
+           sprites_.push_back(platforms_[i]->texture);
        }
     }
 
@@ -365,9 +369,8 @@ void Application::playground() {
 
    // ITERATE THROUGH THE SPRITES AND DRAW THEM
    for (std::vector<Texture>::iterator it = sprites_.begin(); it != sprites_.end(); ++it) {
-      //printf("Element x = %f, element y = %f\n", it->element_->body->GetPosition().x,
-      //      it->element_->body->GetPosition().y);
       it->render(it->element_->get_x(), it->element_->get_y());
+      //printf("x = %d, y = %d\n", it->element_->get_x(), it->element_->get_y());
    }
 
    /* For poop enemy shooting and turning: If you're on the left side of him, turn to left, 
@@ -449,9 +452,9 @@ const int Application::get_width() {
     return SCREEN_WIDTH;
 }
 
-// Get ground_
+// Get ground
 Texture Application::get_ground() {
-    return ground_->texture_;
+    return ground->texture;
 }
 
 // Destructs application
@@ -461,11 +464,11 @@ Application::~Application() {
     player.running_texture.free();
     player.kick_texture.free();
     player.running_jump_texture.free();
-    background_->texture_.free();
+    background->texture.free();
 
     // Delete platforms
     for (int i = 0; i < NUM_BLOCKS; i++) {
-       platforms_[i]->texture_.free();
+       platforms_[i]->texture.free();
        delete platforms_[i];
     }
 

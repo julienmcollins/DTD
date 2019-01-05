@@ -73,7 +73,7 @@ Player::Player(Application* application) :
     // Set various fixture definitions and create fixture
     fixture_def.shape = &box;
     fixture_def.density = 1.0f;
-    fixture_def.friction = 0.75f;
+    fixture_def.friction = 1.8f;
     body->CreateFixture(&fixture_def);
 }
 
@@ -258,7 +258,7 @@ void Player::move() {
       player_state_ = RUN;
 
       // Use Box2D version for moving
-      const b2Vec2 force = {3.4f, 0};
+      const b2Vec2 force = {5.4f, 0};
       body->ApplyForce(force, body->GetPosition(), true);
    } 
 
@@ -295,7 +295,7 @@ void Player::move() {
       player_state_ = RUN;
 
       // Use Box2D version for moving
-      const b2Vec2 force = {-3.4f, 0};
+      const b2Vec2 force = {-5.4f, 0};
       body->ApplyForce(force, body->GetPosition(), true);
    } 
    
@@ -400,9 +400,9 @@ void Player::create_eraser() {
    // Give it an x direction impulse
    b2Vec2 force;
    if (player_direction_ == RIGHT) {
-      force = {5.4f, 0.0f};
+      force = {10.4f, 0.0f};
    } else {
-      force = {-5.4f, 0};
+      force = {-10.4f, 0};
    }
    eraser->body->ApplyForce(force, eraser->body->GetPosition(), true);
    

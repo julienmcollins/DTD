@@ -22,7 +22,7 @@
 #include "Object.h"
 #include "DebugDraw.h"
 
-#define NUM_BLOCKS 5
+#define NUM_BLOCKS 6
 
 // For returning the screen position
 typedef struct {
@@ -134,7 +134,7 @@ class Application {
         Platform* ground;
 
         // Platforms
-        Platform* platforms_[NUM_BLOCKS];
+        Platform* platforms[NUM_BLOCKS];
 
         /********* APPLICATION STATE -- CRITICAL *************/
         // Fps counter
@@ -151,6 +151,10 @@ class Application {
 
         // PLAYGROUND FUNCTION
         void playground();
+
+        // Setup level 1
+        void setup_lv1();
+        bool lv1_flag;
 
         // GAME FLAG
         APP_STATE game_flag_;

@@ -12,6 +12,7 @@
 #include <cmath>
 #include <Box2D/Box2D.h>
 #include <vector>
+#include <string>
 
 #include "Application.h"
 #include "Entity.h"
@@ -21,9 +22,9 @@
 
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
-   SCREEN_FPS(20), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), 
+   SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), 
    current_key_states_(NULL), player(this), mouseButtonPressed(false), quit(false), 
-   countedFrames(0), game_flag_(PLAYGROUND), world_(gravity_), to_meters_(0.01f), 
+   countedFrames(0), lv1_flag(true), game_flag_(PLAYGROUND), world_(gravity_), to_meters_(0.01f), 
    to_pixels_(100.0f), debugDraw(this), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2), animation_speed_(20.0f), 
    animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f) {
@@ -74,7 +75,7 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         
         // Create platforms
         for (int i = 0; i < NUM_BLOCKS; i++) {
-           platforms_[i] = new Platform(i * 150, i * 150, this);
+           platforms[i] = new Platform(i * 150, i * 150, this);
         }
     }
 }
@@ -227,10 +228,12 @@ bool Application::loadMedia() {
     }
 
     // Load background 
-    if (!background->texture.loadFromFile("images/whitebackground.jpg")) {
+    if (!background->texture.loadFromFile("images/lv1bg.png")) {
         printf("Failed to load Texture image!\n");
         success = false;
     } else {
+       background->set_x(0);
+       background->set_y(0);
        sprites_.push_back(background);
     }
     
@@ -239,42 +242,15 @@ bool Application::loadMedia() {
         printf("Failed to load thinstrip.png\n");
         success = false;
     } else {
-        float x_ground = 19.20f / 2.0f;
-        float y_ground = 10.55f - 0.6f; 
-        ground->body_def.position.Set(x_ground, -y_ground);
-        ground->body = world_.CreateBody(&ground->body_def);
-        ground->box.SetAsBox(9.6f - 0.01f, 0.25f - 0.01f);
-        ground->body->CreateFixture(&ground->box, 0.0f);
-        //x_ground = (ground->body->GetPosition().x - 19.20f / 2.0f) * to_pixels_;
-        //y_ground = -(ground->body->GetPosition().y + 0.25f) * to_pixels_; 
-        //ground->set_x(x_ground);
-        //ground->set_y(y_ground);
-        ground->set_height(ground->texture.getHeight());
-        ground->set_width(ground->texture.getWidth());
-        sprites_.push_back(ground);
     }
 
     // Load platform
     for (int i = 0; i < NUM_BLOCKS; i++) {
-       if (!platforms_[i]->texture.loadFromFile("images/block1.png")) {
-           printf("Failed to load block1.png\n");
+       std::string name ("images/lv1pf");
+       name += std::to_string(i + 1) + ".png";
+       if (!platforms[i]->texture.loadFromFile(name)) {
+           printf("Failed to load platforms\n");
            success = false;
-       } else {
-           platforms_[i]->body_def.position.Set(i * 1.50f + 0.5f, -(i * 1.50f) - 0.5f);
-           platforms_[i]->body = world_.CreateBody(&platforms_[i]->body_def);
-           platforms_[i]->box.SetAsBox(0.5f - 0.01f, 0.5f - 0.01f);
-           platforms_[i]->body->CreateFixture(&platforms_[i]->box, 0.0f);
-           //float x_block = ((platforms_[i]->body->GetPosition().x - 0.5f) * to_pixels_);
-           //float y_block = (-(platforms_[i]->body->GetPosition().y + 0.5f) * to_pixels_);
-           //platforms_[i]->set_x(x_block);
-           //platforms_[i]->set_y(y_block);
-           //printf("x = %f, y = %f\n", (100 * platforms_[i]->body->GetPosition().x) - (platforms_[i]->get_width() / 2),
-           //      platforms_[i]->body->GetPosition().y);
-           //printf("x = %d, y = %d\n", platforms_[i]->get_x(), platforms_[i]->get_y());
-           platforms_[i]->set_height(100);
-           platforms_[i]->set_width(100);
-           printf("width = %d\n", platforms_[i]->texture.getWidth());
-           sprites_.push_back(platforms_[i]);
        }
     }
 
@@ -347,6 +323,12 @@ void Application::main_screen() {
 
 // PLAYGROUND FUNCTION
 void Application::playground() {
+   // First setup level 1
+   if (lv1_flag) {
+      setup_lv1();
+      lv1_flag = false;
+   }
+
    // Clear screen as the first things that's done?
    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
    SDL_RenderClear(renderer);
@@ -442,6 +424,78 @@ void Application::playground() {
    }
 }
 
+// Setup level 1
+void Application::setup_lv1() {
+   // Do ground 
+   ground->body_def.position.Set(19.20f / 2.0f, -10.50f);
+   ground->body = world_.CreateBody(&ground->body_def);
+   ground->box.SetAsBox(9.6f - 0.01f, 0.25f - 0.01f);
+   ground->body->CreateFixture(&ground->box, 0.0f);
+   ground->set_height(ground->texture.getHeight());
+   ground->set_width(ground->texture.getWidth());
+   sprites_.push_back(ground);
+
+   // Do level platform 1
+   platforms[0]->body_def.position.Set(9.5f, -3.05f);
+   platforms[0]->body = world_.CreateBody(&platforms[0]->body_def);
+   platforms[0]->box.SetAsBox((platforms[0]->texture.getWidth() / 2) * to_meters_ - 0.01f,
+         (platforms[0]->texture.getHeight() / 2) * to_meters_ - 0.01f);
+   platforms[0]->body->CreateFixture(&platforms[0]->box, 0.0f);
+   platforms[0]->set_width(platforms[0]->texture.getWidth());
+   platforms[0]->set_height(platforms[0]->texture.getHeight());
+   sprites_.push_back(platforms[0]);
+
+   // Do level platform 2
+   platforms[1]->body_def.position.Set(3.0f, -5.05f);
+   platforms[1]->body = world_.CreateBody(&platforms[1]->body_def);
+   platforms[1]->box.SetAsBox((platforms[1]->texture.getWidth() / 2) * to_meters_ - 0.01f,
+         (platforms[1]->texture.getHeight() / 2) * to_meters_ - 0.01f);
+   platforms[1]->body->CreateFixture(&platforms[1]->box, 0.0f);
+   platforms[1]->set_width(platforms[1]->texture.getWidth());
+   platforms[1]->set_height(platforms[1]->texture.getHeight());
+   sprites_.push_back(platforms[1]);
+
+   // Do level platform 3
+   platforms[2]->body_def.position.Set(16.3f, -5.05f);
+   platforms[2]->body = world_.CreateBody(&platforms[2]->body_def);
+   platforms[2]->box.SetAsBox((platforms[2]->texture.getWidth() / 2) * to_meters_ - 0.01f,
+         (platforms[2]->texture.getHeight() / 2) * to_meters_ - 0.01f);
+   platforms[2]->body->CreateFixture(&platforms[2]->box, 0.0f);
+   platforms[2]->set_width(platforms[2]->texture.getWidth());
+   platforms[2]->set_height(platforms[2]->texture.getHeight());
+   sprites_.push_back(platforms[2]);
+
+   // Do level platform 4
+   platforms[3]->body_def.position.Set(10.45f, -7.05f);
+   platforms[3]->body = world_.CreateBody(&platforms[3]->body_def);
+   platforms[3]->box.SetAsBox((platforms[3]->texture.getWidth() / 2) * to_meters_ - 0.01f,
+         (platforms[3]->texture.getHeight() / 2) * to_meters_ - 0.01f);
+   platforms[3]->body->CreateFixture(&platforms[3]->box, 0.0f);
+   platforms[3]->set_width(platforms[3]->texture.getWidth());
+   platforms[3]->set_height(platforms[3]->texture.getHeight());
+   sprites_.push_back(platforms[3]);
+
+   // Do level platform 5
+   platforms[4]->body_def.position.Set(5.5f, -9.05f);
+   platforms[4]->body = world_.CreateBody(&platforms[4]->body_def);
+   platforms[4]->box.SetAsBox((platforms[4]->texture.getWidth() / 2) * to_meters_ - 0.01f,
+         (platforms[4]->texture.getHeight() / 2) * to_meters_ - 0.01f);
+   platforms[4]->body->CreateFixture(&platforms[4]->box, 0.0f);
+   platforms[4]->set_width(platforms[4]->texture.getWidth());
+   platforms[4]->set_height(platforms[4]->texture.getHeight());
+   sprites_.push_back(platforms[4]);
+
+   // Do level platform 6
+   platforms[5]->body_def.position.Set(15.1f, -9.0f);
+   platforms[5]->body = world_.CreateBody(&platforms[5]->body_def);
+   platforms[5]->box.SetAsBox((platforms[5]->texture.getWidth() / 2) * to_meters_ - 0.01f,
+         (platforms[5]->texture.getHeight() / 2) * to_meters_ - 0.01f);
+   platforms[5]->body->CreateFixture(&platforms[5]->box, 0.0f);
+   platforms[5]->set_width(platforms[5]->texture.getWidth());
+   platforms[5]->set_height(platforms[5]->texture.getHeight());
+   sprites_.push_back(platforms[5]);
+}
+
 // Set the viewport for minimaps and stuff like that if needed
 void Application::setViewport() {
     // Change these values depending on if and where you want your minimap or whatever to be at
@@ -478,8 +532,8 @@ Application::~Application() {
 
     // Delete platforms
     for (int i = 0; i < NUM_BLOCKS; i++) {
-       platforms_[i]->texture.free();
-       delete platforms_[i];
+       platforms[i]->texture.free();
+       delete platforms[i];
     }
 
     //Destroy window

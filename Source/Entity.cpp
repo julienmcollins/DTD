@@ -255,7 +255,12 @@ void Player::move() {
       player_direction_ = RIGHT;
 
       // Set state
-      player_state_ = RUN;
+      // Set to jump and run if not on the ground
+      if (body->GetLinearVelocity().y != 0) {
+         player_state_ = RUN_AND_JUMP;
+      } else { 
+         player_state_ = RUN;
+      }
 
       // Use Box2D version for moving
       const b2Vec2 force = {5.4f, 0};
@@ -292,7 +297,12 @@ void Player::move() {
       player_direction_ = LEFT;
 
       // Set state
-      player_state_ = RUN;
+      // Set to jump and run
+      if (body->GetLinearVelocity().y != 0) {
+         player_state_ = RUN_AND_JUMP;
+      } else { 
+         player_state_ = RUN;
+      }
 
       // Use Box2D version for moving
       const b2Vec2 force = {-5.4f, 0};

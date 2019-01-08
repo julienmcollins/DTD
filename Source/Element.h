@@ -31,6 +31,9 @@ class Element {
       void add_y(int add);
       void sub_y(int add);
 
+      // Check to see if it's still alive
+      virtual bool is_alive();
+
       // Get application
       Application *get_application();
 

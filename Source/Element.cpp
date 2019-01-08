@@ -86,6 +86,23 @@ int Element::get_width() const {
       return width_;
 }
 
+// Is alive function
+bool Element::is_alive() {
+   // Out of bounds?
+   if (get_x() < 0) {
+      return false;
+   } else if (get_x() > 1900) {
+      return false;
+   } else if (get_y() < 0) {
+      return false;
+   } else if (get_y() > 1055) {
+      return false;
+   }
+
+   // Return true otherwise
+   return true;
+}
+
 // Get application
 Application *Element::get_application() {
    return application_;

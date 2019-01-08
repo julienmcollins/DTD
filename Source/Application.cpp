@@ -360,9 +360,15 @@ void Application::playground() {
    //world_.DrawDebugData();
 
    // ITERATE THROUGH THE SPRITES AND DRAW THEM
-   for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end(); ++it) {
-      (*it)->texture.render((*it)->get_x(), (*it)->get_y());
+   for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end();) {
       //printf("x = %d, y = %d\n", (*it)->get_x(), (*it)->get_y());
+      // Check if it's alive or not
+      if (!(*it)->is_alive()) {
+         it = sprites_.erase(it);
+      } else {
+         (*it)->texture.render((*it)->get_x(), (*it)->get_y());
+         ++it;
+      }
    }
 
    /* For poop enemy shooting and turning: If you're on the left side of him, turn to left, 

@@ -47,6 +47,22 @@ class Texture {
         int getWidth() const;
         int getHeight() const;
 
+        // Set image positions
+        void set_x(int new_x) {
+           x = new_x;
+        }
+        void set_y(int new_y) {
+           y = new_y;
+        }
+
+        // Add to image positions
+        void add_x(int new_x) {
+           x += new_x;
+        }
+        void add_y(int new_y) {
+           y += new_y;
+        }
+
         // Get image positions
         int get_x() const;
         int get_y() const;

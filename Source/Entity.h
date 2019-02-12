@@ -23,7 +23,12 @@ class Entity : public Element {
 
         // Movement and updating
         virtual void move() = 0;
-        void update();
+        virtual void animate() = 0;
+        virtual void update();
+
+        // Texture and SDL stuff
+        virtual Texture *get_texture() = 0;
+        SDL_Rect *get_curr_clip();
 
         /***** Box2D Related Variables *****/
 
@@ -66,7 +71,7 @@ class Player : public Entity {
       Texture eraser_texture;
 
       // Function to get the proper texture based on the state
-      Texture *get_texture();
+      virtual Texture *get_texture();
 
       // Arm delta displacement
       int arm_delta_x;
@@ -74,14 +79,14 @@ class Player : public Entity {
       int arm_delta_shoot_x;
       int arm_delta_shoot_y;
 
-      // Get current clip
-      SDL_Rect *get_curr_clip();
-
       // Get player state
       STATE get_player_state();
 
+      // Update function now done in player
+      virtual void update();
+
       // Animate based on state
-      void animate();
+      virtual void animate();
 
       // Move the player using keyboard
       virtual void move();
@@ -103,6 +108,37 @@ class Player : public Entity {
       // Player state
       STATE player_state_;
       DIRS player_direction_;
+};
+
+class Enemy : public Entity {
+   public:
+      // Construct the enemy
+      Enemy(Application *application);
+      
+      // Different enemy states
+      enum STATE {
+         IDLE,
+         SHOOT
+      };
+
+      // Different textures
+      Texture idle_texture;
+      Texture shoot_texture;
+
+      // Enemy's update function
+      virtual void update();
+
+      // Dummy move function
+      virtual void move() {}
+
+      // Animate function
+      virtual void animate();
+
+      // Get texture for enemies
+      virtual Texture *get_texture();
+   
+   protected:
+      STATE enemy_state_;
 };
 
 #endif

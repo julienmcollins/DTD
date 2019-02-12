@@ -34,6 +34,9 @@ class Element {
       // Check to see if it's still alive
       virtual bool is_alive();
 
+      // Update function for all elements
+      virtual void update();
+
       // Get application
       Application *get_application();
 

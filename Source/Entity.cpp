@@ -15,22 +15,24 @@
 
 // Entity constructor which will provide basic establishment for all entities
 Entity::Entity(int x_pos, int y_pos, double height, double width, Application* application) : 
-    Element(x_pos, y_pos, height, width, application),
-    has_jumped_(false) {}
+   Element(x_pos, y_pos, height, width, application),
+   has_jumped_(false) {}
 
 // Rendering function for all entities
 void Entity::render(Texture *texture, SDL_Rect *clip) {
-    // NEED TO TAKE INTO ACCOUNT THAT BOTTOM OF IMAGE ISN'T ALLIGNED WITH FEET
-    // Rendering the textures according to their centers
-    //set_x((100.0f * body->GetPosition().x) - (get_width() / 2.0f));
-    //set_y((100.0f * -body->GetPosition().y) - (get_height() / 2.0f));
-    //printf("x = %d, y = %d\n", get_x(), get_y());
-    texture->render(get_x(), get_y(), clip, 0.0, &texture->center_, texture->flip_);
+   // NEED TO TAKE INTO ACCOUNT THAT BOTTOM OF IMAGE ISN'T ALLIGNED WITH FEET
+   texture->render(get_x(), get_y(), clip, 0.0, &texture->center_, texture->flip_);
 }
 
 // Update function for all entities. For now all it does is call move
 void Entity::update() {
-    move();
+   move();
+}
+
+// Get current clip
+SDL_Rect *Entity::get_curr_clip() {
+   Texture *tmp = get_texture();
+   return tmp->curr_clip_;
 }
 
 // Destructor
@@ -40,41 +42,37 @@ Entity::~Entity() {}
 
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
-    Entity(960, 412, 150, 46, application), player_state_(STAND), player_direction_(RIGHT),
-    idle_texture(this), running_texture(this), kick_texture(this), running_jump_texture(this),
-    arm_texture(this), arm_shoot_texture(this), arm_running_texture(this), eraser_texture(this),
-    shooting(false), arm_delta_x(12), arm_delta_y(64),
-    arm_delta_shoot_x(12), arm_delta_shoot_y(51) {
+   Entity(960, 412, 150, 46, application), player_state_(STAND), player_direction_(RIGHT),
+   idle_texture(this), running_texture(this), kick_texture(this), running_jump_texture(this),
+   arm_texture(this), arm_shoot_texture(this), arm_running_texture(this), eraser_texture(this),
+   shooting(false), arm_delta_x(12), arm_delta_y(64),
+   arm_delta_shoot_x(12), arm_delta_shoot_y(51) {
 
-    // Set width and height
-    set_height(150.0);
-    set_width(46.0);
+   // Setup Box2D
+   // Set body type
+   body_def.type = b2_dynamicBody;
 
-    // Setup Box2D
-    // Set body type
-    body_def.type = b2_dynamicBody;
+   // Set initial position and set fixed rotation
+   float x = 600.0f * application->to_meters_;
+   float y = -412.5f * application->to_meters_;
+   body_def.position.Set(x, y);
+   body_def.fixedRotation = true;
 
-    // Set initial position and set fixed rotation
-    float x = 600.0f * application->to_meters_;
-    float y = -412.5f * application->to_meters_;
-    body_def.position.Set(x, y);
-    body_def.fixedRotation = true;
+   // Attach body to world
+   body = get_application()->world_.CreateBody(&body_def);
 
-    // Attach body to world
-    body = get_application()->world_.CreateBody(&body_def);
+   // Set box dimensions
+   float width = (get_width() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
+   float height = (get_height() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
+   //printf("width = %d, height = %d\n", get_width(), get_height());
+   const b2Vec2 center = {(92.0f - get_width()) / 2.0f * application->to_meters_ - 0.02f, 0.0f};
+   box.SetAsBox(width, height, center, 0.0f);
 
-    // Set box dimensions
-    float width = (get_width() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
-    float height = (get_height() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
-    //printf("width = %f, height = %f\n", width, height);
-    const b2Vec2 center = {(92.0f - get_width()) / 2.0f * application->to_meters_ - 0.02f, 0.0f};
-    box.SetAsBox(width, height, center, 0.0f);
-
-    // Set various fixture definitions and create fixture
-    fixture_def.shape = &box;
-    fixture_def.density = 1.0f;
-    fixture_def.friction = 1.8f;
-    body->CreateFixture(&fixture_def);
+   // Set various fixture definitions and create fixture
+   fixture_def.shape = &box;
+   fixture_def.density = 1.0f;
+   fixture_def.friction = 1.8f;
+   body->CreateFixture(&fixture_def);
 }
 
 // Get texture based on state
@@ -93,15 +91,42 @@ Texture *Player::get_texture() {
    return &idle_texture;
 }
 
-// Get current clip
-SDL_Rect *Player::get_curr_clip() {
-   Texture *tmp = get_texture();
-   return tmp->curr_clip_;
-}
-
 // Get player state
 Player::STATE Player::get_player_state() {
    return player_state_;
+}
+
+// Update function
+void Player::update() {
+   // Update player
+   move();
+
+   // Render player
+   Texture *playertexture = get_texture();
+   SDL_Rect *curr_clip = get_curr_clip();
+   if (curr_clip) {
+     // Render player
+     render(playertexture, curr_clip);
+
+     // Render arm if idle, render shooting if not
+     if (!shooting) {
+         if (get_player_state() == 1) {
+            arm_running_texture.render(get_x() + get_width() +
+               arm_delta_x, get_y() + arm_delta_y,
+               arm_running_texture.curr_clip_, 0.0,
+               &arm_running_texture.center_, arm_running_texture.flip_);
+         } else {
+            arm_texture.render(get_x() + get_width() + 
+               arm_delta_x, get_y() + arm_delta_y, NULL, 0.0, 
+               &arm_texture.center_, arm_texture.flip_);
+         }
+     } else {
+         arm_shoot_texture.render(get_x() + get_width() + 
+            arm_delta_shoot_x, get_y() + arm_delta_shoot_y, 
+            arm_shoot_texture.curr_clip_, 0.0, 
+            &arm_shoot_texture.center_, arm_shoot_texture.flip_);
+     }
+   }
 }
 
 // Animate based on state
@@ -195,15 +220,15 @@ void Player::animate() {
 
       // Adjust deltas
       if (player_direction_ == RIGHT) {
-         arm_delta_x = 8;
-         arm_delta_y = 63;
-         arm_delta_shoot_x = 8;
-         arm_delta_shoot_y = 51;
+         arm_delta_x = 10;
+         arm_delta_y = 69;
+         arm_delta_shoot_x = 10;
+         arm_delta_shoot_y = 57;
       } else {
-         arm_delta_x = -28;
-         arm_delta_y = 63;
-         arm_delta_shoot_x = -83;
-         arm_delta_shoot_y = 51;
+         arm_delta_x = -20;
+         arm_delta_y = 69;
+         arm_delta_shoot_x = -75;
+         arm_delta_shoot_y = 57;
       }
    }
 }
@@ -422,3 +447,76 @@ void Player::create_eraser() {
 
 // Virtual destructor
 Player::~Player() {}
+
+/********************* ENEMY IMPLEMENTATIONS ******************/
+
+Enemy::Enemy(Application *application) :
+   Entity(1260, 412, 92, 82, application), enemy_state_(IDLE),
+   idle_texture(this), shoot_texture(this) {
+
+   // Setup Box2D
+   // Set body type
+   body_def.type = b2_dynamicBody;
+
+   // Set initial position and set fixed rotation
+   float x = 1000.0f * application->to_meters_;
+   float y = -412.5f * application->to_meters_;
+   body_def.position.Set(x, y);
+   body_def.fixedRotation = true;
+
+   // Attach body to world
+   body = get_application()->world_.CreateBody(&body_def);
+
+   // Set box dimensions
+   float width = (get_width() / 2.0f) * application->to_meters_ - 0.02f;
+   float height = (get_height() / 2.0f) * application->to_meters_ - 0.02f;
+   box.SetAsBox(width, height);
+
+   // Set various fixture definitions and create fixture
+   fixture_def.shape = &box;
+   fixture_def.density = 1.0f;
+   fixture_def.friction = 1.8f;
+   body->CreateFixture(&fixture_def);
+}
+
+void Enemy::update() {
+   // Animate
+   animate();
+
+   // Render enemy
+   Texture *enemytexture = get_texture();
+   SDL_Rect *curr_clip = get_curr_clip();
+   if (curr_clip) {
+     // Render player
+     render(enemytexture, curr_clip);
+   }
+}
+
+void Enemy::animate() {
+   // Run idle texture
+   if (enemy_state_ == IDLE) {
+      if (idle_texture.frame_ > 17) {
+         idle_texture.frame_ = 0;
+      }
+      idle_texture.curr_clip_ = &idle_texture.clips_[idle_texture.frame_];
+      ++idle_texture.frame_;
+   } else if (enemy_state_ == SHOOT) {
+      if (shoot_texture.frame_ > 6) {
+         shoot_texture.frame_ = 0;
+      }
+      shoot_texture.curr_clip_ = &shoot_texture.clips_[shoot_texture.frame_];
+      ++shoot_texture.frame_;
+   }
+}
+
+Texture *Enemy::get_texture() {
+   // Get idle texture
+   if (enemy_state_ == IDLE) {
+      return &idle_texture;
+   }
+   
+   // Get shoot texture
+   if (enemy_state_ == SHOOT) {
+      return &shoot_texture;
+   }
+}

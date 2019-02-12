@@ -103,6 +103,12 @@ bool Element::is_alive() {
    return true;
 }
 
+// Update function for basic stuff just calls render
+void Element::update() {
+   // Simply render the texture
+   texture.render(get_x(), get_y());
+}
+
 // Get application
 Application *Element::get_application() {
    return application_;

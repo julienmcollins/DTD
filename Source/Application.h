@@ -117,6 +117,9 @@ class Application {
         // Player object
         Player player;
 
+        // Enemy object
+        Enemy enemy;
+
         // Background texture
         Object *background;
 
@@ -146,8 +149,22 @@ class Application {
            PLAYGROUND
         };
 
+        // Menu Items
+        enum MENU {
+           START = 680,
+           OPTIONS = 780,
+           EGGS = 880
+        };
+
         // MAIN SCREEN FUNCTION
         void main_screen();
+
+        // Finger
+        Texture finger_;
+        int item_;
+
+        // Background
+        Texture title_screen_;
 
         // PLAYGROUND FUNCTION
         void playground();

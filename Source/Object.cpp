@@ -27,6 +27,19 @@ Projectile::Projectile(int x, int y, bool owner, bool damage, Application *appli
 // Do nothing function
 //void Projectile::doNothing() {}
 
+// Update function
+void Projectile::update() {
+   // Update projectile
+   if (texture.frame_ > texture.max_frame_) {
+      texture.frame_ = 0;
+   }
+   texture.curr_clip_ = &texture.clips_[texture.frame_];
+   ++texture.frame_;
+
+   // Render
+   texture.render(get_x(), get_y(), texture.curr_clip_);
+}
+
 // Get owner of projectile
 bool Projectile::get_owner() const {
    return owner_;

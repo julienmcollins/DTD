@@ -14,6 +14,7 @@
 #include <string>
 #include <Box2D/Box2D.h>
 #include <vector>
+#include <unordered_map>
 
 #include "Element.h"
 #include "Texture.h"
@@ -93,6 +94,14 @@ class Application {
         // Return the vector
         std::vector<Element *> *getObjectVector() {
            return &sprites_;
+        }
+
+        std::vector<Projectile *> *getProjectileVector() {
+           return &projectiles_;
+        }
+
+        Player get_player() {
+           return player;
         }
 
         // Destructrs the application
@@ -176,8 +185,9 @@ class Application {
         // GAME FLAG
         APP_STATE game_flag_;
 
-        // TEXTURE VECTOR
+        // TEXTURE VECTORS (Might be able to combine the two, since the objects update themselves)
         std::vector<Element *> sprites_;        
+        std::vector<Projectile *> projectiles_;
         /*****************************************************/
     
         // Quit flag for application

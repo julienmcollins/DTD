@@ -52,6 +52,13 @@ class Element {
 
       /*******************************/
 
+      // Enum for directions
+      enum DIRS {
+         LEFT,
+         RIGHT,
+         NEUTRAL
+      };
+
    private:
       // X and Y locations
       int x_pos_;

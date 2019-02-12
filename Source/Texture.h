@@ -18,7 +18,7 @@ class Element;
 class Texture {
     public:
         // Initialize
-        Texture(Element *element);
+        Texture(Element *element, int max_frame);
         
         // Load image at specified path
         bool loadFromFile(std::string path);
@@ -35,6 +35,9 @@ class Texture {
 
         // Frame number
         int frame_;
+
+        // Max frame
+        int max_frame_;
 
         // Flip parameter
         SDL_RendererFlip flip_;

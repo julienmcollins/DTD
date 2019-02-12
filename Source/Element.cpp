@@ -2,7 +2,7 @@
 
 // Constructor for element
 Element::Element(int x, int y, int height, int width, Application *application) :
-   texture(this), body(NULL) {
+   texture(this, 0), body(NULL) {
 
    // Set application
    application_ = application;

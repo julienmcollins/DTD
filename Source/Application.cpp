@@ -13,6 +13,7 @@
 #include <cmath>
 #include <Box2D/Box2D.h>
 #include <vector>
+#include <unordered_map>
 #include <string>
 
 #include "Application.h"
@@ -28,8 +29,8 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    countedFrames(0), lv1_flag(true), game_flag_(MAIN_SCREEN), world_(gravity_), to_meters_(0.01f), 
    to_pixels_(100.0f), debugDraw(this), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2), animation_speed_(20.0f), 
-   animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), finger_(NULL),
-   item_(0), title_screen_(NULL) {
+   animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), finger_(NULL, 0),
+   item_(0), title_screen_(NULL, 0) {
     
     //Initialize SDL
     if (init()) {
@@ -257,10 +258,27 @@ bool Application::loadMedia() {
 
       // Calculate sprite locations
       for (int i = 0; i < 7; i++) {
-         temp[i].x = i * 92;
+         temp[i].x = i * 82;
          temp[i].y = 0;
-         temp[i].w = 92;
-         temp[i].h = 82;
+         temp[i].w = 82;
+         temp[i].h = 92;
+      }
+   }
+
+   if (!enemy.poojectile_texture.loadFromFile("images/enemies/poojectile.png")) {
+      printf("Failed to load poojectile texture!\n");
+      success = false;
+   } else {
+      // Allocate enough room
+      enemy.poojectile_texture.clips_ = new SDL_Rect[8];
+      SDL_Rect *temp = enemy.poojectile_texture.clips_;
+
+      // Calculate sprite locations
+      for (int i = 0; i < 8; i++) {
+         temp[i].x = i * 24;
+         temp[i].y = 0;
+         temp[i].w = 24;
+         temp[i].h = 15;
       }
    }
    /**************************/
@@ -463,12 +481,22 @@ void Application::playground() {
 
    // ITERATE THROUGH THE SPRITES AND DRAW THEM
    for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end();) {
-      //printf("x = %d, y = %d\n", (*it)->get_x(), (*it)->get_y());
       // Check if it's alive or not
       if (!(*it)->is_alive()) {
          it = sprites_.erase(it);
       } else {
-         //(*it)->texture.render((*it)->get_x(), (*it)->get_y());
+         (*it)->update();
+         ++it;
+      }
+   }
+
+   // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
+   for (std::vector<Projectile *>::iterator it = projectiles_.begin(); 
+         it != projectiles_.end();) {
+      // Check if it's alive or not
+      if (!(*it)->is_alive()) {
+         it = projectiles_.erase(it);
+      } else {
          (*it)->update();
          ++it;
       }
@@ -477,38 +505,6 @@ void Application::playground() {
    /* For poop enemy shooting and turning: If you're on the left side of him, turn to left, 
     * if on right side of him, turn to right. For shooting, if center of character within 
     * certain height length of model, shoot. */
-
-   /*
-   // Update player
-   player.update();
-
-   // Render player
-   Texture *playertexture = player.get_texture();
-   SDL_Rect *curr_clip = player.get_curr_clip();
-   if (curr_clip) {
-     // Render player
-     player.render(playertexture, curr_clip);
-
-     // Render arm if idle, render shooting if not
-     if (!player.shooting) {
-         if (player.get_player_state() == 1) {
-            player.arm_running_texture.render(player.get_x() + player.get_width() +
-               player.arm_delta_x, player.get_y() + player.arm_delta_y,
-               player.arm_running_texture.curr_clip_, 0.0,
-               &player.arm_running_texture.center_, player.arm_running_texture.flip_);
-         } else {
-            player.arm_texture.render(player.get_x() + player.get_width() + 
-               player.arm_delta_x, player.get_y() + player.arm_delta_y, NULL, 0.0, 
-               &player.arm_texture.center_, player.arm_texture.flip_);
-         }
-     } else {
-         player.arm_shoot_texture.render(player.get_x() + player.get_width() + 
-            player.arm_delta_shoot_x, player.get_y() + player.arm_delta_shoot_y, 
-            player.arm_shoot_texture.curr_clip_, 0.0, 
-            &player.arm_shoot_texture.center_, player.arm_shoot_texture.flip_);
-     }
-   }
-   */
 
    // Update player
    player.update();

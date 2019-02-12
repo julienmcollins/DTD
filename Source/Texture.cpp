@@ -11,8 +11,9 @@
 #include "Element.h"
 
 // Texture constructor
-Texture::Texture(Element *element) : clips_(NULL), curr_clip_(NULL), frame_(0), flip_(SDL_FLIP_NONE),
-   has_flipped_(false), element_(element), m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {}
+Texture::Texture(Element *element, int max_frame) : clips_(NULL), curr_clip_(NULL), frame_(0), 
+   max_frame_(max_frame), flip_(SDL_FLIP_NONE), has_flipped_(false), element_(element), 
+   m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {}
 
 // Loads textures from files
 bool Texture::loadFromFile(std::string path) {

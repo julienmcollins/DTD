@@ -98,13 +98,6 @@ class Player : public Entity {
       virtual ~Player();
 
    private:
-      // Directions
-      enum DIRS {
-          NEUTRAL,
-          LEFT,
-          RIGHT
-      };
-
       // Player state
       STATE player_state_;
       DIRS player_direction_;
@@ -124,21 +117,27 @@ class Enemy : public Entity {
       // Different textures
       Texture idle_texture;
       Texture shoot_texture;
+      Texture poojectile_texture;
 
       // Enemy's update function
       virtual void update();
 
       // Dummy move function
-      virtual void move() {}
+      virtual void move();
 
       // Animate function
       virtual void animate();
+
+      // Shoot function will probably need to take in some texture to change the shot
+      void shoot();
 
       // Get texture for enemies
       virtual Texture *get_texture();
    
    protected:
       STATE enemy_state_;
+      DIRS enemy_direction_;
+      int shoot_timer_;
 };
 
 #endif

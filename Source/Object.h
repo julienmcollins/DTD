@@ -37,6 +37,9 @@ class Projectile : public Object {
       // doNothing function
       //virtual void doNothing();
 
+      // Update functions will just animate them
+      virtual void update();
+
       // Get owner
       bool get_owner() const;
 

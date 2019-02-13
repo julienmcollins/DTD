@@ -228,6 +228,11 @@ bool Application::loadMedia() {
    if (!player.eraser_texture.loadFromFile("images/player/eraser.png")) {
       printf("Failed to load eraser texture!\n");
       success = false;
+   } else {
+      // Allocate one image for it
+      player.eraser_texture.clips_ = new SDL_Rect[1];
+      SDL_Rect *temp = player.eraser_texture.clips_;
+      temp[0].x = 0; temp[0].y = 0; temp[0].w = 21; temp[0].h = 12;
    }
 
    /******** ENEMY **********/

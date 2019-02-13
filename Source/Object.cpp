@@ -29,6 +29,7 @@ Projectile::Projectile(int x, int y, bool owner, bool damage, Application *appli
 
 // Update function
 void Projectile::update() {
+   //std::cout << texture.max_frame_ << std::endl;
    // Update projectile
    if (texture.frame_ > texture.max_frame_) {
       texture.frame_ = 0;

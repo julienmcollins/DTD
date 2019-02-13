@@ -5,7 +5,7 @@
 //  Created by Julien Collins on 9/14/17.
 //  Copyright © 2017 The Boys. All rights reserved.
 //
-
+#include <iostream>
 #include "Texture.h"
 #include "Global.h"
 #include "Element.h"
@@ -14,6 +14,17 @@
 Texture::Texture(Element *element, int max_frame) : clips_(NULL), curr_clip_(NULL), frame_(0), 
    max_frame_(max_frame), flip_(SDL_FLIP_NONE), has_flipped_(false), element_(element), 
    m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {}
+
+// Copy constructor
+   /*
+Texture::Texture(const Texture &tex) {
+   max_frame_ = tex.max_frame_;
+   clips_ = new SDL_Rect[max_frame_ + 1];
+   for (int i = 0; i < max_frame_ + 1; i++) {
+      clips_[i] = tex.clips_[i];
+   }
+}
+*/
 
 // Loads textures from files
 bool Texture::loadFromFile(std::string path) {
@@ -102,16 +113,23 @@ int Texture::get_y() const {
 }
 
 Texture &Texture::operator=(const Texture &src) {
-    // Set render equal to it
-    // renderer = src.renderer;
-    
-    // Set textures equal to eachother
-    m_texture = src.m_texture;
-    
-    // Set dimensions equal to image dimension
-    m_width = src.m_width;
-    m_height = src.m_height;
-    
-    // Return
-    return (*this);
+   // Set render equal to it
+   // renderer = src.renderer;
+   
+   // Set textures equal to eachother
+   m_texture = src.m_texture;
+   
+   // Set dimensions equal to image dimension
+   m_width = src.m_width;
+   m_height = src.m_height;
+
+   // Add a bunch of other missing variables
+   max_frame_ = src.max_frame_;
+   clips_ = new SDL_Rect[max_frame_ + 1];
+   for (int i = 0; i < max_frame_ + 1; i++) {
+      clips_[i] = src.clips_[i];
+   }
+   
+   // Return
+   return (*this);
 }

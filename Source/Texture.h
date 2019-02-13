@@ -19,6 +19,9 @@ class Texture {
     public:
         // Initialize
         Texture(Element *element, int max_frame);
+
+        // Copy constructor
+        //Texture(const Texture &tex);
         
         // Load image at specified path
         bool loadFromFile(std::string path);

@@ -68,18 +68,8 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         //debugDraw.AppendFlags( b2Draw::e_aabbBit );
         //debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
 
-        // Set background
-        background = new Object(0, 0, 0, 0, this);
-        background->set_width(0);
-        background->set_height(0);
-
-        // Set the platforms up
-        ground = new Platform(0, SCREEN_HEIGHT - 50, this);//SCREEN_HEIGHT - 10);
-        
-        // Create platforms
-        for (int i = 0; i < NUM_BLOCKS; i++) {
-           platforms[i] = new Platform(i * 150, i * 150, this);
-        }
+        // Set contact listener
+        world_.SetContactListener(&contact_listener_);
     }
 }
 
@@ -288,33 +278,6 @@ bool Application::loadMedia() {
    }
    /**************************/
 
-   // Load background 
-   if (!background->texture.loadFromFile("images/levels/lv1bg.png")) {
-       printf("Failed to load Texture image!\n");
-       success = false;
-   } else {
-      background->set_x(0);
-      background->set_y(0);
-      sprites_.push_back(background);
-   }
-   
-   // Load ground
-   if (!ground->texture.loadFromFile("images/miscealaneous/floor.png")) {
-       printf("Failed to load thinstrip.png\n");
-       success = false;
-   } else {
-   }
-
-   // Load platform
-   for (int i = 0; i < NUM_BLOCKS; i++) {
-      std::string name ("images/levels/lv1pf");
-      name += std::to_string(i + 1) + ".png";
-      if (!platforms[i]->texture.loadFromFile(name)) {
-          printf("Failed to load platforms\n");
-          success = false;
-      }
-   }
-
    // Load finger
    if (!finger_.loadFromFile("images/miscealaneous/finger.png")) {
       printf("Failed to load finger.png\n");
@@ -332,6 +295,55 @@ bool Application::loadMedia() {
    }
       
    // Return state
+   return success;
+}
+
+// Load level 1 media
+bool Application::loadMediaLvl1() {
+   // Flag for quitting
+   bool success = true;
+
+   // Load background 
+   if (!background->texture.loadFromFile("images/levels/lv1bg.png")) {
+       printf("Failed to load Texture image!\n");
+       success = false;
+   } else {
+      background->set_x(0);
+      background->set_y(0);
+      sprites_.push_back(background);
+   }
+   
+   // Load ground
+   if (!ground->texture.loadFromFile("images/miscealaneous/floor.png")) {
+       printf("Failed to load thinstrip.png\n");
+       success = false;
+   } else {
+      // Set the heights and widths of the stuff
+      ground->set_height(ground->texture.getHeight());
+      ground->set_width(ground->texture.getWidth());
+
+      // Setup the platform
+      ground->setup();
+   }
+
+   // Load platform
+   for (int i = 0; i < NUM_BLOCKS; i++) {
+      std::string name ("images/levels/lv1pf");
+      name += std::to_string(i + 1) + ".png";
+      if (!platforms[i]->texture.loadFromFile(name)) {
+          printf("Failed to load platforms\n");
+          success = false;
+      } else {
+         // Set height and width
+         platforms[i]->set_height(platforms[i]->texture.getHeight());
+         platforms[i]->set_width(platforms[i]->texture.getWidth());
+
+         // Setup
+         platforms[i]->setup();
+      }
+   }
+
+   // Return success
    return success;
 }
 
@@ -486,24 +498,34 @@ void Application::playground() {
 
    // ITERATE THROUGH THE SPRITES AND DRAW THEM
    for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end();) {
-      // Check if it's alive or not
-      if (!(*it)->is_alive()) {
-         it = sprites_.erase(it);
+      // Check to see if it's allocated
+      if (*it) {
+         // Check if it's alive or not
+         if (!(*it)->is_alive()) {
+            it = sprites_.erase(it);
+         } else {
+            (*it)->update();
+            ++it;
+         }
       } else {
-         (*it)->update();
-         ++it;
+         it = sprites_.erase(it);
       }
    }
 
    // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
-   for (std::vector<Projectile *>::iterator it = projectiles_.begin(); 
-         it != projectiles_.end();) {
-      // Check if it's alive or not
-      if (!(*it)->is_alive()) {
-         it = projectiles_.erase(it);
+   for (std::vector<Projectile *>::iterator it = projectiles_.begin(); it != projectiles_.end();) {
+      // Check to see if it's still allocated
+      if (*it) {
+         // Check if it's alive or not
+         if (!(*it)->is_alive()) {
+            delete (*it);
+            it = projectiles_.erase(it);
+         } else {
+            (*it)->update();
+            ++it;
+         }
       } else {
-         (*it)->update();
-         ++it;
+         it = projectiles_.erase(it);
       }
    }
 
@@ -541,73 +563,35 @@ void Application::playground() {
 
 // Setup level 1
 void Application::setup_lv1() {
-   // Do ground 
-   ground->body_def.position.Set(19.20f / 2.0f, -10.50f);
-   ground->body = world_.CreateBody(&ground->body_def);
-   ground->box.SetAsBox(9.6f - 0.01f, 0.25f - 0.01f);
-   ground->body->CreateFixture(&ground->box, 0.0f);
-   ground->set_height(ground->texture.getHeight());
-   ground->set_width(ground->texture.getWidth());
+   // Set background
+   background = new Object(0, 0, 0, 0, NULL, this);
+
+   // Set the platforms up
+   ground = new Platform(960, 1050, this);
+   
+   // Do level platform 1-6
+   platforms[0] = new Platform(950, 305, this);
+   platforms[1] = new Platform(300, 505, this);
+   platforms[2] = new Platform(1630, 505, this);
+   platforms[3] = new Platform(1045, 705, this);
+   platforms[4] = new Platform(550, 905, this);
+   platforms[5] = new Platform(1510, 900, this);
+
+   // Load media for level 1
+   if (loadMediaLvl1() == false) {
+      quit = true;
+      return;
+   }
+
+   // Push back ground
    sprites_.push_back(ground);
 
-   // Do level platform 1
-   platforms[0]->body_def.position.Set(9.5f, -3.05f);
-   platforms[0]->body = world_.CreateBody(&platforms[0]->body_def);
-   platforms[0]->box.SetAsBox((platforms[0]->texture.getWidth() / 2) * to_meters_ - 0.01f,
-         (platforms[0]->texture.getHeight() / 2) * to_meters_ - 0.01f);
-   platforms[0]->body->CreateFixture(&platforms[0]->box, 0.0f);
-   platforms[0]->set_width(platforms[0]->texture.getWidth());
-   platforms[0]->set_height(platforms[0]->texture.getHeight());
+   // Push back platforms 1-6
    sprites_.push_back(platforms[0]);
-
-   // Do level platform 2
-   platforms[1]->body_def.position.Set(3.0f, -5.05f);
-   platforms[1]->body = world_.CreateBody(&platforms[1]->body_def);
-   platforms[1]->box.SetAsBox((platforms[1]->texture.getWidth() / 2) * to_meters_ - 0.01f,
-         (platforms[1]->texture.getHeight() / 2) * to_meters_ - 0.01f);
-   platforms[1]->body->CreateFixture(&platforms[1]->box, 0.0f);
-   platforms[1]->set_width(platforms[1]->texture.getWidth());
-   platforms[1]->set_height(platforms[1]->texture.getHeight());
    sprites_.push_back(platforms[1]);
-
-   // Do level platform 3
-   platforms[2]->body_def.position.Set(16.3f, -5.05f);
-   platforms[2]->body = world_.CreateBody(&platforms[2]->body_def);
-   platforms[2]->box.SetAsBox((platforms[2]->texture.getWidth() / 2) * to_meters_ - 0.01f,
-         (platforms[2]->texture.getHeight() / 2) * to_meters_ - 0.01f);
-   platforms[2]->body->CreateFixture(&platforms[2]->box, 0.0f);
-   platforms[2]->set_width(platforms[2]->texture.getWidth());
-   platforms[2]->set_height(platforms[2]->texture.getHeight());
    sprites_.push_back(platforms[2]);
-
-   // Do level platform 4
-   platforms[3]->body_def.position.Set(10.45f, -7.05f);
-   platforms[3]->body = world_.CreateBody(&platforms[3]->body_def);
-   platforms[3]->box.SetAsBox((platforms[3]->texture.getWidth() / 2) * to_meters_ - 0.01f,
-         (platforms[3]->texture.getHeight() / 2) * to_meters_ - 0.01f);
-   platforms[3]->body->CreateFixture(&platforms[3]->box, 0.0f);
-   platforms[3]->set_width(platforms[3]->texture.getWidth());
-   platforms[3]->set_height(platforms[3]->texture.getHeight());
    sprites_.push_back(platforms[3]);
-
-   // Do level platform 5
-   platforms[4]->body_def.position.Set(5.5f, -9.05f);
-   platforms[4]->body = world_.CreateBody(&platforms[4]->body_def);
-   platforms[4]->box.SetAsBox((platforms[4]->texture.getWidth() / 2) * to_meters_ - 0.01f,
-         (platforms[4]->texture.getHeight() / 2) * to_meters_ - 0.01f);
-   platforms[4]->body->CreateFixture(&platforms[4]->box, 0.0f);
-   platforms[4]->set_width(platforms[4]->texture.getWidth());
-   platforms[4]->set_height(platforms[4]->texture.getHeight());
    sprites_.push_back(platforms[4]);
-
-   // Do level platform 6
-   platforms[5]->body_def.position.Set(15.1f, -9.0f);
-   platforms[5]->body = world_.CreateBody(&platforms[5]->body_def);
-   platforms[5]->box.SetAsBox((platforms[5]->texture.getWidth() / 2) * to_meters_ - 0.01f,
-         (platforms[5]->texture.getHeight() / 2) * to_meters_ - 0.01f);
-   platforms[5]->body->CreateFixture(&platforms[5]->box, 0.0f);
-   platforms[5]->set_width(platforms[5]->texture.getWidth());
-   platforms[5]->set_height(platforms[5]->texture.getHeight());
    sprites_.push_back(platforms[5]);
 
    // Push back enemy

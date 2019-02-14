@@ -35,6 +35,11 @@ SDL_Rect *Entity::get_curr_clip() {
    return tmp->curr_clip_;
 }
 
+// Get direction
+int Entity::get_dir() const {
+   return entity_direction;
+}
+
 // Destructor
 Entity::~Entity() {}
 
@@ -42,12 +47,15 @@ Entity::~Entity() {}
 
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
-   Entity(960, 412, 150, 46, application), player_state_(STAND), player_direction_(RIGHT),
+   Entity(960, 412, 150, 46, application), player_state_(STAND),
    idle_texture(this, 15), running_texture(this, 19), kick_texture(this, 15), 
    running_jump_texture(this, 16), arm_texture(this, 0), arm_shoot_texture(this, 8), 
    arm_running_texture(this, 3), eraser_texture(this, 0),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51) {
+
+   // Set entity direction
+   entity_direction = RIGHT;
 
    // Setup Box2D
    // Set body type
@@ -74,6 +82,9 @@ Player::Player(Application* application) :
    fixture_def.density = 1.0f;
    fixture_def.friction = 1.8f;
    body->CreateFixture(&fixture_def);
+
+   // Set user data
+   body->SetUserData(this);
 }
 
 // Get texture based on state
@@ -152,7 +163,7 @@ void Player::animate() {
       ++idle_texture.frame_;
 
       // Adjust deltas
-      if (player_direction_ == RIGHT) {
+      if (entity_direction == RIGHT) {
          arm_delta_x = 12;
          arm_delta_y = 64;
          arm_delta_shoot_x = 12;
@@ -180,7 +191,7 @@ void Player::animate() {
       ++arm_running_texture.frame_;
 
       // Adjust deltas
-      if (player_direction_ == RIGHT) {
+      if (entity_direction == RIGHT) {
          arm_delta_x = 10;
          arm_delta_y = 63;
          arm_delta_shoot_x = 12;
@@ -200,7 +211,7 @@ void Player::animate() {
       ++running_texture.frame_;
 
       // Adjust deltas
-      if (player_direction_ == RIGHT) {
+      if (entity_direction == RIGHT) {
          arm_delta_x = 10;
          arm_delta_y = 63;
          arm_delta_shoot_x = 12;
@@ -220,7 +231,7 @@ void Player::animate() {
       ++running_jump_texture.frame_;
 
       // Adjust deltas
-      if (player_direction_ == RIGHT) {
+      if (entity_direction == RIGHT) {
          arm_delta_x = 10;
          arm_delta_y = 69;
          arm_delta_shoot_x = 10;
@@ -278,7 +289,7 @@ void Player::move() {
       }
       
       // Set direction
-      player_direction_ = RIGHT;
+      entity_direction = RIGHT;
 
       // Set state
       // Set to jump and run if not on the ground
@@ -320,7 +331,7 @@ void Player::move() {
       }
       
       // Set direction
-      player_direction_ = LEFT;
+      entity_direction = LEFT;
 
       // Set state
       // Set to jump and run
@@ -394,54 +405,20 @@ void Player::move() {
 void Player::create_eraser() {
    // First, create a new projectile
    Application *tmp = get_application();
-   Projectile *eraser = new Projectile(get_x() + get_width() + 15 + 63, get_y() + 51, 1, 10, tmp);
+   Projectile *eraser;
+
+   // Create based on direction
+   if (entity_direction == RIGHT) {
+      eraser = new Projectile(get_x() + get_width() + 73, get_y() + 60, 12, 21, 1, 10, this, tmp);
+   } else {
+      eraser = new Projectile(get_x() - 27, get_y() + 51, 12, 21, 1, 10, this, tmp);
+   }
+
+   // Set texture
    eraser->texture = eraser_texture;
 
-   // Then set the box2d physics
-   // Set width and height
-   eraser->set_height(12.0);
-   eraser->set_width(21.0);
-
-   // Setup Box2D
-   // Set body type
-   eraser->body_def.type = b2_dynamicBody;
-
-   // Set initial position and set fixed rotation
-   float x, y;
-   if (player_direction_ == RIGHT) {
-      x = (get_x() + get_width() + 73.0f) * tmp->to_meters_;
-   } else {
-      x = (get_x() - 27.0f) * tmp->to_meters_;
-   }
-   y = -(get_y() + 60.0f) * tmp->to_meters_;
-   eraser->body_def.position.Set(x, y);
-   eraser->body_def.fixedRotation = false;
-
-   // Attach body to world
-   eraser->body = tmp->world_.CreateBody(&eraser->body_def);
-
-   // Set box dimensions
-   float width = (eraser->get_width() / 2.0f) * tmp->to_meters_ - 0.02f;// - 0.11f;
-   float height = (eraser->get_height() / 2.0f) * tmp->to_meters_ - 0.02f;// - 0.11f;
-   eraser->box.SetAsBox(width, height);
-
-   // Set various fixture definitions and create fixture
-   eraser->fixture_def.shape = &eraser->box;
-   eraser->fixture_def.density = 1.0f;
-   eraser->fixture_def.friction = 1.0f;
-   eraser->body->CreateFixture(&eraser->fixture_def);
-
-   // Give it an x direction impulse
-   b2Vec2 force;
-   if (player_direction_ == RIGHT) {
-      force = {10.4f, 0};
-   } else {
-      force = {-10.4f, 0};
-   }
-   eraser->body->ApplyForce(force, eraser->body->GetPosition(), true);
-   
-   // Now add it to the things the world needs to render
-   tmp->getProjectileVector()->push_back(eraser);
+   // Set shot direction
+   eraser->shot_dir = entity_direction;
 }
 
 // Virtual destructor
@@ -494,9 +471,9 @@ void Enemy::update() {
 void Enemy::move() {
    // Check to see what direction the enemy should be facing
    if (get_application()->get_player().get_x() <= get_x()) {
-      enemy_direction_ = LEFT;
+      entity_direction = LEFT;
    } else if (get_application()->get_player().get_x() > get_x()) {
-      enemy_direction_ = RIGHT;
+      entity_direction = RIGHT;
    }
 
    // Check to see if get_player() within bounds of enemy
@@ -542,54 +519,22 @@ void Enemy::animate() {
 void Enemy::shoot() {
    // First, create a new projectile
    Application *tmp = get_application();
-   Projectile *proj = new Projectile(get_x() + get_width() + 15 + 63, get_y() + 51, 0, 10, tmp);
+   Projectile *proj;
+
+   // Check to see direction of enemy
+   if (entity_direction == RIGHT) {
+      proj = new Projectile(get_x() + get_width(), get_y() + 40,
+            15, 24, 0, 10, this, tmp);
+   } else {
+      proj = new Projectile(get_x(), get_y() + 40,
+            15, 24, 0, 10, this, tmp);
+   }
+
+   // Set texture to the correct one
    proj->texture = poojectile_texture;
 
-   // Then set the box2d physics
-   // Set width and height
-   proj->set_height(15.0);
-   proj->set_width(24.0);
-
-   // Setup Box2D
-   // Set body type
-   proj->body_def.type = b2_dynamicBody;
-
-   // Set initial position and set fixed rotation
-   float x, y;
-   if (enemy_direction_ == RIGHT) {
-      x = (get_x() + get_width()) * tmp->to_meters_;
-   } else {
-      x = (get_x()) * tmp->to_meters_;
-   }
-   y = -(get_y() + 20.0f) * tmp->to_meters_;
-   proj->body_def.position.Set(x, y);
-   proj->body_def.fixedRotation = false;
-
-   // Attach body to world
-   proj->body = tmp->world_.CreateBody(&proj->body_def);
-
-   // Set box dimensions
-   float width = (proj->get_width() / 2.0f) * tmp->to_meters_ - 0.02f;// - 0.11f;
-   float height = (proj->get_height() / 2.0f) * tmp->to_meters_ - 0.02f;// - 0.11f;
-   proj->box.SetAsBox(width, height);
-
-   // Set various fixture definitions and create fixture
-   proj->fixture_def.shape = &proj->box;
-   proj->fixture_def.density = 1.0f;
-   proj->fixture_def.friction = 1.0f;
-   proj->body->CreateFixture(&proj->fixture_def);
-
-   // Give it an x direction impulse
-   b2Vec2 force;
-   if (enemy_direction_ == RIGHT) {
-      force = {10.4f, 0};
-   } else {
-      force = {-10.4f, 0};
-   }
-   proj->body->ApplyForce(force, proj->body->GetPosition(), true);
-   
-   // Now add it to the things the world needs to render
-   tmp->getProjectileVector()->push_back(proj);
+   // Set shot direction
+   proj->shot_dir = entity_direction;
 }
 
 Texture *Enemy::get_texture() {

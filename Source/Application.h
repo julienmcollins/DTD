@@ -22,6 +22,7 @@
 #include "Timer.h"
 #include "Object.h"
 #include "DebugDraw.h"
+#include "ContactListener.h"
 
 #define NUM_BLOCKS 6
 
@@ -40,6 +41,9 @@ class Application {
     
         // Load Media
         bool loadMedia();
+
+        // Load Level 1
+        bool loadMediaLvl1();
     
         // Update the application
         void update();
@@ -140,6 +144,8 @@ class Application {
         int32 velocityIterations_;
         int32 positionIterations_;
 
+        // Contact listener instance
+        ContactListener contact_listener_;
         /***************************/
 
         // Ground

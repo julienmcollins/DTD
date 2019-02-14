@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <Box2D/Box2D.h>
+#include <string>
 #include "Texture.h"
 #include "Timer.h"
 #include "Element.h"
@@ -36,6 +37,17 @@ class Entity : public Element {
         b2FixtureDef fixture_def;
 
         /***********************************/
+
+        // Entity direction
+        DIRS entity_direction;
+
+        // Get the direction
+        int get_dir() const;
+
+        // Get type
+        virtual std::string type() {
+           return "Entity";
+        }
 
         // Destructor
         virtual ~Entity();
@@ -94,13 +106,17 @@ class Player : public Entity {
       // Create eraser
       void create_eraser();
 
+      // Get type
+      virtual std::string type() {
+         return "Player";
+      }
+
       // Virtual destructor
       virtual ~Player();
 
    private:
       // Player state
       STATE player_state_;
-      DIRS player_direction_;
 };
 
 class Enemy : public Entity {
@@ -133,10 +149,14 @@ class Enemy : public Entity {
 
       // Get texture for enemies
       virtual Texture *get_texture();
+
+      // Get type
+      virtual std::string type() {
+         return "Enemy";
+      }
    
    protected:
       STATE enemy_state_;
-      DIRS enemy_direction_;
       int shoot_timer_;
 };
 

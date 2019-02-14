@@ -2,7 +2,7 @@
 
 // Constructor for element
 Element::Element(int x, int y, int height, int width, Application *application) :
-   texture(this, 0), body(NULL) {
+   alive(true), texture(this, 0), body(NULL) {
 
    // Set application
    application_ = application;
@@ -88,6 +88,11 @@ int Element::get_width() const {
 
 // Is alive function
 bool Element::is_alive() {
+   // Check to see if alive is false
+   if (alive == false) {
+      return alive;
+   }
+
    // Out of bounds?
    if (get_x() < 0) {
       return false;

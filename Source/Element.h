@@ -2,6 +2,8 @@
 #define ELEMENT_H_
 
 #include <Box2D/Box2D.h>
+#include <iostream>
+#include <string>
 #include "Texture.h"
 
 // Dependencies
@@ -33,6 +35,7 @@ class Element {
 
       // Check to see if it's still alive
       virtual bool is_alive();
+      bool alive;
 
       // Update function for all elements
       virtual void update();
@@ -58,6 +61,15 @@ class Element {
          RIGHT,
          NEUTRAL
       };
+
+      // Get type of object
+      virtual std::string type() {
+         return "Element";
+      }
+
+      // Start and end contact
+      virtual void start_contact() {}
+      virtual void end_contact() {}
 
    private:
       // X and Y locations

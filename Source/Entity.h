@@ -49,6 +49,12 @@ class Entity : public Element {
            return "Entity";
         }
 
+        // Each entity must have their own FPS timer
+        Timer fps_timer;
+
+        // Last frame update
+        float last_frame;
+
         // Destructor
         virtual ~Entity();
 };

@@ -20,6 +20,7 @@ Platform::Platform(int x, int y, Application *application) :
    float x_pos = x * application->to_meters_;
    float y_pos = -y * application->to_meters_;
    body_def.position.Set(x_pos, y_pos);
+   body_def.fixedRotation = true;
 }
 
 // Setup function for Box2D stuff

@@ -16,7 +16,11 @@
 // Entity constructor which will provide basic establishment for all entities
 Entity::Entity(int x_pos, int y_pos, double height, double width, Application* application) : 
    Element(x_pos, y_pos, height, width, application),
-   has_jumped_(false) {}
+   has_jumped_(false), last_frame(0) {
+
+   // Start timer
+   fps_timer.start();   
+}
 
 // Rendering function for all entities
 void Entity::render(Texture *texture, SDL_Rect *clip) {
@@ -388,16 +392,13 @@ void Player::move() {
       if (arm_shoot_texture.frame_ == 1)
          create_eraser();
    }
-
+   
    // Update frames
-   // Change FPS
-   //printf("time since last frame = %f, animation update time = %f\n",
-         //get_application()->time_since_last_frame_, get_application()->animation_update_time_);
-   get_application()->time_since_last_frame_ += get_application()->getFPSTimer().getDeltaTime();
-   //printf("delta time = %u\n", get_application()->getFPSTimer().getDeltaTime());
-   if (get_application()->time_since_last_frame_ > get_application()->animation_update_time_) {
+   last_frame += 
+      (fps_timer.getDeltaTime() / 1000.0f);
+   if (last_frame > get_application()->animation_update_time_) {
       animate();
-      get_application()->time_since_last_frame_ = 0.0f;
+      last_frame = 0.0f;
    }
 }
 
@@ -486,7 +487,7 @@ void Enemy::move() {
       ++shoot_timer_;
 
       // Shoot if timer goes off
-      if (shoot_timer_ >= 100) {
+      if (shoot_timer_ >= 50) {
          shoot();
          shoot_timer_ = 0;
       }
@@ -494,8 +495,13 @@ void Enemy::move() {
       enemy_state_ = IDLE;
    }
 
-   // Animate
-   animate();
+   // Update frames
+   last_frame += 
+      (fps_timer.getDeltaTime() / 1000.0f);
+   if (last_frame > get_application()->animation_update_time_) {
+      animate();
+      last_frame = 0.0f;
+   }
 }
 
 void Enemy::animate() {
@@ -523,10 +529,10 @@ void Enemy::shoot() {
 
    // Check to see direction of enemy
    if (entity_direction == RIGHT) {
-      proj = new Projectile(get_x() + get_width(), get_y() + 40,
+      proj = new Projectile(get_x() + get_width(), get_y() + 70,
             15, 24, 0, 10, this, tmp);
    } else {
-      proj = new Projectile(get_x(), get_y() + 40,
+      proj = new Projectile(get_x(), get_y() + 70,
             15, 24, 0, 10, this, tmp);
    }
 

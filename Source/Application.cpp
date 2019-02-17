@@ -30,7 +30,7 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    to_pixels_(100.0f), debugDraw(this), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2), animation_speed_(20.0f), 
    animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), finger_(NULL, 0),
-   item_(0), title_screen_(NULL, 0) {
+   item_(0), title_screen_(NULL, 0), background_(NULL, 0) {
     
     //Initialize SDL
     if (init()) {
@@ -71,6 +71,9 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         // Set contact listener
         world_.SetContactListener(&contact_listener_);
     }
+
+   // Start counting frames per second
+   fpsTimer.start();
 }
 
 // Checks initialization of SDL functions
@@ -304,13 +307,9 @@ bool Application::loadMediaLvl1() {
    bool success = true;
 
    // Load background 
-   if (!background->texture.loadFromFile("images/levels/lv1bg.png")) {
+   if (!background_.loadFromFile("images/levels/lv1bg.png")) {
        printf("Failed to load Texture image!\n");
        success = false;
-   } else {
-      background->set_x(0);
-      background->set_y(0);
-      sprites_.push_back(background);
    }
    
    // Load ground
@@ -378,9 +377,6 @@ SDL_Texture* Application::loadTexture(std::string path) {
 void Application::update() {
    //SDL_SetWindowFullscreen(mainWindow, SDL_WINDOW_FULLSCREEN);
    //SDL_SetWindowDisplayMode(mainWindow, NULL);
-
-   // Start counting frames per second
-   fpsTimer.start();
 
    // Game loop
    while(!quit) {
@@ -496,6 +492,9 @@ void Application::playground() {
    // DEBUG DRAW
    //world_.DrawDebugData();
 
+   // Render the background
+   background_.render(0, -55);
+
    // ITERATE THROUGH THE SPRITES AND DRAW THEM
    for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end();) {
       // Check to see if it's allocated
@@ -563,19 +562,16 @@ void Application::playground() {
 
 // Setup level 1
 void Application::setup_lv1() {
-   // Set background
-   background = new Object(0, 0, 0, 0, NULL, this);
-
    // Set the platforms up
    ground = new Platform(960, 1050, this);
    
    // Do level platform 1-6
-   platforms[0] = new Platform(950, 305, this);
-   platforms[1] = new Platform(300, 505, this);
-   platforms[2] = new Platform(1630, 505, this);
-   platforms[3] = new Platform(1045, 705, this);
-   platforms[4] = new Platform(550, 905, this);
-   platforms[5] = new Platform(1510, 900, this);
+   platforms[0] = new Platform(950, 305 - 55, this);
+   platforms[1] = new Platform(300, 505 - 55, this);
+   platforms[2] = new Platform(1630, 505 - 55, this);
+   platforms[3] = new Platform(1045, 705 - 55, this);
+   platforms[4] = new Platform(550, 905 - 55, this);
+   platforms[5] = new Platform(1510, 900 - 55, this);
 
    // Load media for level 1
    if (loadMediaLvl1() == false) {
@@ -630,7 +626,7 @@ Application::~Application() {
     player.running_texture.free();
     player.kick_texture.free();
     player.running_jump_texture.free();
-    background->texture.free();
+    background_.free();
 
     // Delete platforms
     for (int i = 0; i < NUM_BLOCKS; i++) {

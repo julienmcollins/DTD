@@ -49,7 +49,7 @@ int Element::get_y() const {
       //printf("y = %f\n", (100.0f * body->GetPosition().y) - (get_height() / 2.0f));
       return (int) ((100.0f * -body->GetPosition().y) - (get_height() / 2.0f));
    } else {
-      return x_pos_;
+      return y_pos_;
    }
 }
 

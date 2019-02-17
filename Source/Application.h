@@ -91,8 +91,8 @@ class Application {
         int test;
 
         // Get FPS timer
-        Timer getFPSTimer() const {
-           return fpsTimer;
+        Timer* getFPSTimer() {
+           return &fpsTimer;
         }
 
         // Return the vector
@@ -132,9 +132,6 @@ class Application {
 
         // Enemy object
         Enemy enemy;
-
-        // Background texture
-        Object *background;
 
         /***** Box2D Variables *****/
         b2Vec2 gravity_;
@@ -180,6 +177,9 @@ class Application {
 
         // Background
         Texture title_screen_;
+
+        // Background texture
+        Texture background_;
 
         // PLAYGROUND FUNCTION
         void playground();

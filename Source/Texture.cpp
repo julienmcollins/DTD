@@ -15,17 +15,6 @@ Texture::Texture(Element *element, int max_frame) : clips_(NULL), curr_clip_(NUL
    max_frame_(max_frame), flip_(SDL_FLIP_NONE), has_flipped_(false), element_(element), 
    m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {}
 
-// Copy constructor
-   /*
-Texture::Texture(const Texture &tex) {
-   max_frame_ = tex.max_frame_;
-   clips_ = new SDL_Rect[max_frame_ + 1];
-   for (int i = 0; i < max_frame_ + 1; i++) {
-      clips_[i] = tex.clips_[i];
-   }
-}
-*/
-
 // Loads textures from files
 bool Texture::loadFromFile(std::string path) {
     // Free preexisting textures

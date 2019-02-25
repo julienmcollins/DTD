@@ -78,6 +78,9 @@ Projectile::Projectile(int x, int y, int height, int width,
    fixture_def.friction = 1.0f;
    body->CreateFixture(&fixture_def);
 
+   // Set gravity scale to 0
+   //body->SetGravityScale(0);
+
    // Give it an x direction impulse
    b2Vec2 force;
    if (owning_entity->entity_direction == RIGHT) {

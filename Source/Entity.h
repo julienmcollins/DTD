@@ -10,6 +10,7 @@
 
 class Application;
 class Platform;
+class Projectile;
 
 class Entity : public Element {
     public:
@@ -54,6 +55,10 @@ class Entity : public Element {
 
         // Last frame update
         float last_frame;
+
+        // Create projectile (might need to add an entity pointer just in case)
+        Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+              int height, int width, bool owner, bool damage, Texture texture);
 
         // Destructor
         virtual ~Entity();
@@ -109,9 +114,6 @@ class Player : public Entity {
       // Move the player using keyboard
       virtual void move();
 
-      // Create eraser
-      void create_eraser();
-
       // Get type
       virtual std::string type() {
          return "Player";
@@ -149,9 +151,6 @@ class Enemy : public Entity {
 
       // Animate function
       virtual void animate();
-
-      // Shoot function will probably need to take in some texture to change the shot
-      void shoot();
 
       // Get texture for enemies
       virtual Texture *get_texture();

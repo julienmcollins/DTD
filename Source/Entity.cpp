@@ -44,6 +44,32 @@ int Entity::get_dir() const {
    return entity_direction;
 }
 
+// Create projectile
+Projectile* Entity::create_projectile(int delta_x_r, int delta_x_l, int delta_y, int height, int width,
+     bool owner, bool damage, Texture texture) {
+   // First, create a new projectile
+   Application *tmp = get_application();
+   Projectile *proj;
+
+   // Create based on direction
+   if (entity_direction == RIGHT) {
+      proj = new Projectile(get_x() + get_width() + delta_x_r, get_y() + delta_y, 
+            height, width, owner, damage, this, tmp);
+   } else {
+      proj = new Projectile(get_x() + delta_x_l, get_y() + delta_y, height, width, owner,
+            damage, this, tmp);
+   }
+
+   // Set texture
+   proj->texture = texture;
+
+   // Set shot direction
+   proj->shot_dir = entity_direction;
+
+   // Return projectile reference
+   return proj;
+}
+
 // Destructor
 Entity::~Entity() {}
 
@@ -258,6 +284,12 @@ void Player::move() {
       player_state_ = STAND;
    }
 
+   // If not running or running and jumping, then set linear velocity to 0
+   if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP) {
+      b2Vec2 vel = {0, 0};
+      body->SetLinearVelocity(vel);
+   }
+
    // Check for stopping
    if ((!get_application()->current_key_states_[SDL_SCANCODE_RIGHT] 
             || !get_application()->current_key_states_[SDL_SCANCODE_LEFT]) && 
@@ -390,7 +422,7 @@ void Player::move() {
 
       // Create eraser
       if (arm_shoot_texture.frame_ == 1)
-         create_eraser();
+         create_projectile(53, -7, 75, 12, 21, 1, 10, eraser_texture);
    }
    
    // Update frames
@@ -400,26 +432,6 @@ void Player::move() {
       animate();
       last_frame = 0.0f;
    }
-}
-
-// Create eraser function
-void Player::create_eraser() {
-   // First, create a new projectile
-   Application *tmp = get_application();
-   Projectile *eraser;
-
-   // Create based on direction
-   if (entity_direction == RIGHT) {
-      eraser = new Projectile(get_x() + get_width() + 73, get_y() + 60, 12, 21, 1, 10, this, tmp);
-   } else {
-      eraser = new Projectile(get_x() - 27, get_y() + 51, 12, 21, 1, 10, this, tmp);
-   }
-
-   // Set texture
-   eraser->texture = eraser_texture;
-
-   // Set shot direction
-   eraser->shot_dir = entity_direction;
 }
 
 // Virtual destructor
@@ -488,7 +500,8 @@ void Enemy::move() {
 
       // Shoot if timer goes off
       if (shoot_timer_ >= 50) {
-         shoot();
+         Projectile *tmp = create_projectile(0, 0, 70, 15, 24, 0, 10, poojectile_texture);
+         tmp->body->SetGravityScale(0);
          shoot_timer_ = 0;
       }
    } else {
@@ -520,27 +533,6 @@ void Enemy::animate() {
       shoot_texture.curr_clip_ = &shoot_texture.clips_[shoot_texture.frame_];
       ++shoot_texture.frame_;
    }
-}
-
-void Enemy::shoot() {
-   // First, create a new projectile
-   Application *tmp = get_application();
-   Projectile *proj;
-
-   // Check to see direction of enemy
-   if (entity_direction == RIGHT) {
-      proj = new Projectile(get_x() + get_width(), get_y() + 70,
-            15, 24, 0, 10, this, tmp);
-   } else {
-      proj = new Projectile(get_x(), get_y() + 70,
-            15, 24, 0, 10, this, tmp);
-   }
-
-   // Set texture to the correct one
-   proj->texture = poojectile_texture;
-
-   // Set shot direction
-   proj->shot_dir = entity_direction;
 }
 
 Texture *Enemy::get_texture() {

@@ -169,7 +169,7 @@ bool Application::loadMedia() {
          temp[i].x = i * 92;
          temp[i].y = 0;
          temp[i].w = 92;
-         temp[i].h = 150;
+         temp[i].h = 156;
       }
    }
 

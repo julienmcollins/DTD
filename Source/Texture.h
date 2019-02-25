@@ -13,10 +13,15 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+class Element;
+
 class Texture {
     public:
         // Initialize
-        Texture();
+        Texture(Element *element, int max_frame);
+
+        // Copy constructor
+        //Texture(const Texture &tex);
         
         // Load image at specified path
         bool loadFromFile(std::string path);
@@ -27,16 +32,49 @@ class Texture {
         // Render texture at given point
         void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
     
-        // The renderer for the textures
-        // SDL_Renderer* renderer;
-    
+        // Rect for sprite
+        SDL_Rect *clips_;
+        SDL_Rect *curr_clip_;
+
+        // Frame number
+        int frame_;
+
+        // Max frame
+        int max_frame_;
+
+        // Flip parameter
+        SDL_RendererFlip flip_;
+        bool has_flipped_;
+
+        // Center parameter
+        SDL_Point center_;
+
         // Get image dimensions
         int getWidth() const;
         int getHeight() const;
 
+        // Set image positions
+        void set_x(int new_x) {
+           x = new_x;
+        }
+        void set_y(int new_y) {
+           y = new_y;
+        }
+
+        // Add to image positions
+        void add_x(int new_x) {
+           x += new_x;
+        }
+        void add_y(int new_y) {
+           y += new_y;
+        }
+
         // Get image positions
         int get_x() const;
         int get_y() const;
+
+        // Element referring to the texture
+        Element *element_;
     
         // Assignement operator
         Texture &operator= (const Texture &src);

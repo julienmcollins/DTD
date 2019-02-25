@@ -21,7 +21,10 @@ class Timer {
         void unpause();
         
         // Get timer time
-        Uint32 getTicks();
+        uint32_t getTicks();
+
+        // Get delta time
+        int getDeltaTime();
         
         // Checks timer status
         bool isStarted();
@@ -29,10 +32,15 @@ class Timer {
     
     private:
         // The clock start time
-        Uint32 m_startTicks;
+        uint32_t m_startTicks;
     
         // The ticks sstored when the timer was paused
-        Uint32 m_pausedTicks;
+        uint32_t m_pausedTicks;
+
+        // Delta ticks
+        int delta_;
+        int curr_tick_;
+        int last_tick_;
     
         // The timer status
         bool m_paused;

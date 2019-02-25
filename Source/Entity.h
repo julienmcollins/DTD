@@ -3,182 +3,166 @@
 
 #include <SDL2/SDL.h>
 #include <Box2D/Box2D.h>
+#include <string>
 #include "Texture.h"
 #include "Timer.h"
+#include "Element.h"
 
 class Application;
 class Platform;
+class Projectile;
 
-class Entity {
+class Entity : public Element {
     public:
         // Constructor
-        Entity(int x_pos, int y_pos, int height, int width, Application* application);
-
-        // Setters
-        void set_x(int new_x);
-        void set_y(int new_y);
-        void set_next_x(int new_x);
-        void set_next_y(int new_y);
-        void set_height(int new_height);
-        void set_width(int new_width);
-        void set_center_x(double new_center_x);
-        void set_center_y(double new_center_y);
-
-        // Getters
-        int get_x() const;
-        int get_y() const;
-        int get_next_x() const;
-        int get_next_y() const;
-        int get_height() const;
-        int get_width() const;
-        double get_center_x();
-        double get_center_y();
-
-        // Adders
-        void add_x(int add);
-        void sub_x(int sub);
-        void add_y(int add);
-        void sub_y(int add);
-        void add_next_x(int add);
-        void sub_next_x(int sub);
-        void add_next_y(int add);
-        void sub_next_y(int sub);
+        Entity(int x_pos, int y_pos, double height, double width, Application* application);
 
         // Rendering functions (no need for texture getter, in load media simply use directly)
-        Texture texture_;
-        void render();
+        void render(Texture *texture, SDL_Rect *clip);
 
-        // Get the application
-        Application* get_application();
-        Platform* collided_platform_;
-        
         // Flags
         bool has_jumped_;
-        bool collision_sides[5];
-
-        // Collide function between entities
-        //virtual void collide(Entity* entity) = 0;
-
-        // Collide function between entity and platform
-        //virtual void collide(Platform* platform) = 0;
 
         // Movement and updating
         virtual void move() = 0;
-        void update();
+        virtual void animate() = 0;
+        virtual void update();
+
+        // Texture and SDL stuff
+        virtual Texture *get_texture() = 0;
+        SDL_Rect *get_curr_clip();
+
+        /***** Box2D Related Variables *****/
 
         // Make body public so that it can be accessed
-        b2Body* body_;
+        b2FixtureDef fixture_def;
+
+        /***********************************/
+
+        // Entity direction
+        DIRS entity_direction;
+
+        // Get the direction
+        int get_dir() const;
+
+        // Get type
+        virtual std::string type() {
+           return "Entity";
+        }
+
+        // Each entity must have their own FPS timer
+        Timer fps_timer;
+
+        // Last frame update
+        float last_frame;
+
+        // Create projectile (might need to add an entity pointer just in case)
+        Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+              int height, int width, bool owner, bool damage, Texture texture);
 
         // Destructor
         virtual ~Entity();
-
-    private:
-        // Entity positions
-        int x_pos_;
-        int y_pos_;
-
-        // Prediction analysis for collision detection will need future x and y coords
-        // Essentially, if current x/y is not colliding, but next x/y is, then collide preemptively
-        int next_x_;
-        int next_y_;
-
-        // Height and width
-        int height_;
-        int width_;
-
-        // Character center
-        double center_x_;
-        double center_y_;
-
-        // Application pointer for reference
-        Application* application_main_;
-
-        // Box2D definitions
-        b2BodyDef bodyDef_;
-        b2PolygonShape dynamicBox_;
-        b2FixtureDef fixtureDef_;
 };
 
+// Player class
 class Player : public Entity {
-    public:
-        // Construct the player
-        Player(Application* application);
+   public:
+      // Construct the player
+      Player(Application* application);
 
-        // Flip player
-        
-        // Gravity management
-        //void fall();
+      // State construct for state machine
+      enum STATE {
+         STAND,
+         RUN,
+         JUMP,
+         STOP,
+         CROUCH,
+         RUN_AND_JUMP
+      };
 
-        // Jumping physics
-        //void jump();
+      // Shooting flag
+      bool shooting;
 
-        // Collide function
-        //virtual void collide(Entity* entity);
+      // Different textures
+      Texture idle_texture;
+      Texture running_texture;
+      Texture kick_texture;
+      Texture running_jump_texture;
+      Texture arm_texture;
+      Texture arm_shoot_texture;
+      Texture arm_running_texture;
+      Texture eraser_texture;
 
-        // Collide function for platform
-        //virtual void collide(Platform* platform);
+      // Function to get the proper texture based on the state
+      virtual Texture *get_texture();
 
-        // Check collide function
-        //bool check_collide();
+      // Arm delta displacement
+      int arm_delta_x;
+      int arm_delta_y;
+      int arm_delta_shoot_x;
+      int arm_delta_shoot_y;
 
-        // Move the player using keyboard
-        virtual void move();
+      // Get player state
+      STATE get_player_state();
 
-        // Get the state of the player
-        void get_state();
+      // Update function now done in player
+      virtual void update();
 
-        // Get fall
-        double get_fall() const;
+      // Animate based on state
+      virtual void animate();
 
-        // Get direction
-        //DIRS get_direction();
+      // Move the player using keyboard
+      virtual void move();
 
-        // Virtual destructor
-        virtual ~Player();
+      // Get type
+      virtual std::string type() {
+         return "Player";
+      }
 
-    private:
-        // Stats of the player
-        double mass_;
-        
-        // Add initial velocity
-        double init_vel_x_;
-        double init_vel_y_;
-        double init_vel_y_next_;
-        double final_vel_x_;
-        double final_vel_y_;
-        double final_vel_x_next_;
-        double final_vel_y_next_;
-        
-        // Add timer
-        Timer jump_timer_;
-        int num_jumps_;
+      // Virtual destructor
+      virtual ~Player();
 
-        // States for gravity 
-        double gravity_;
-        double fall_;
-        
-        // State construct for state machine
-        enum STATE {
-            JUMP,
-            FALL,
-            CROUCH,
-            SHOOT,
-            STAND
-        };
+   private:
+      // Player state
+      STATE player_state_;
+};
 
-        // Directions
-        enum DIRS {
-            NEUTRAL,
-            LEFT,
-            RIGHT
-        };
+class Enemy : public Entity {
+   public:
+      // Construct the enemy
+      Enemy(Application *application);
+      
+      // Different enemy states
+      enum STATE {
+         IDLE,
+         SHOOT
+      };
 
-        // Current time
-        double curr_time_;
+      // Different textures
+      Texture idle_texture;
+      Texture shoot_texture;
+      Texture poojectile_texture;
 
-        // Player state
-        STATE player_state_;
-        DIRS player_directions_;
+      // Enemy's update function
+      virtual void update();
+
+      // Dummy move function
+      virtual void move();
+
+      // Animate function
+      virtual void animate();
+
+      // Get texture for enemies
+      virtual Texture *get_texture();
+
+      // Get type
+      virtual std::string type() {
+         return "Enemy";
+      }
+   
+   protected:
+      STATE enemy_state_;
+      int shoot_timer_;
 };
 
 #endif

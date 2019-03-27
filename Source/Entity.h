@@ -102,6 +102,9 @@ class Player : public Entity {
       int arm_delta_shoot_x;
       int arm_delta_shoot_y;
 
+      // Adjust delta function
+      void adjust_deltas();
+
       // Get player state
       STATE get_player_state();
 

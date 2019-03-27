@@ -143,6 +143,9 @@ void Player::update() {
    // Update player
    move();
 
+   // Adjust deltas first
+   adjust_deltas();
+
    // Render player
    Texture *playertexture = get_texture();
    SDL_Rect *curr_clip = get_curr_clip();
@@ -171,27 +174,9 @@ void Player::update() {
    }
 }
 
-// Animate based on state
-void Player::animate() {
-   // Shooting animation
-   if (shooting) {
-      if (arm_shoot_texture.frame_ > 6) {
-         arm_shoot_texture.frame_ = 0;
-         shooting = false;
-      }
-      arm_shoot_texture.curr_clip_ = &arm_shoot_texture.clips_[arm_shoot_texture.frame_];
-      ++arm_shoot_texture.frame_;
-   }
-
-   // Choose animation based on what state player is in
+// Adjust delta function
+void Player::adjust_deltas() {
    if (player_state_ == STAND) {
-      // Animate
-      if (idle_texture.frame_ > 15) {
-         idle_texture.frame_ = 0;
-      }
-      idle_texture.curr_clip_ = &idle_texture.clips_[idle_texture.frame_];
-      ++idle_texture.frame_;
-
       // Adjust deltas
       if (entity_direction == RIGHT) {
          arm_delta_x = 12;
@@ -206,20 +191,6 @@ void Player::animate() {
          arm_delta_shoot_y = 51;
       }
    } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
-      // Animation man
-      if (running_texture.frame_ > 14) {
-         running_texture.frame_ = 4;
-      }
-      running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
-      ++running_texture.frame_;
-
-      // Animate arm
-      if (arm_running_texture.frame_ > 3) {
-         arm_running_texture.frame_ = 3;
-      }
-      arm_running_texture.curr_clip_ = &arm_running_texture.clips_[arm_running_texture.frame_];
-      ++arm_running_texture.frame_;
-
       // Adjust deltas
       if (entity_direction == RIGHT) {
          arm_delta_x = 10;
@@ -233,13 +204,6 @@ void Player::animate() {
          arm_delta_shoot_y = 51;
       }
    } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
-      // Animate stopping
-      if (running_texture.frame_ > 19) {
-         running_texture.frame_ = 19;
-      }
-      running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
-      ++running_texture.frame_;
-
       // Adjust deltas
       if (entity_direction == RIGHT) {
          arm_delta_x = 10;
@@ -253,13 +217,6 @@ void Player::animate() {
          arm_delta_shoot_y = 51;
       }
    } else if (player_state_ == RUN_AND_JUMP) {
-      // Animate
-      if (running_jump_texture.frame_ > 16) {
-         running_jump_texture.frame_ = 0;
-      }
-      running_jump_texture.curr_clip_ = &running_jump_texture.clips_[running_jump_texture.frame_];
-      ++running_jump_texture.frame_;
-
       // Adjust deltas
       if (entity_direction == RIGHT) {
          arm_delta_x = 10;
@@ -275,8 +232,124 @@ void Player::animate() {
    }
 }
 
+// Animate based on state
+void Player::animate() {
+   // Shooting animation
+   if (shooting) {
+      if (arm_shoot_texture.frame_ > 6) {
+         arm_shoot_texture.frame_ = 0;
+         shooting = false;
+      }
+      arm_shoot_texture.curr_clip_ = &arm_shoot_texture.clips_[arm_shoot_texture.frame_];
+      ++arm_shoot_texture.frame_;
+   }
+
+   // Choose animation based on what state player is in
+   if (player_state_ == STAND) {
+      /*
+      // Adjust deltas
+      if (entity_direction == RIGHT) {
+         arm_delta_x = 12;
+         arm_delta_y = 64;
+         arm_delta_shoot_x = 12;
+         arm_delta_shoot_y = 51;
+      } else {
+         // Adjust the deltas
+         arm_delta_x = -22;
+         arm_delta_y = 64;
+         arm_delta_shoot_x = -75;
+         arm_delta_shoot_y = 51;
+      }*/
+
+      // Animate
+      if (idle_texture.frame_ > 15) {
+         idle_texture.frame_ = 0;
+      }
+      idle_texture.curr_clip_ = &idle_texture.clips_[idle_texture.frame_];
+      ++idle_texture.frame_;
+   } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
+      /*
+      // Adjust deltas
+      if (entity_direction == RIGHT) {
+         arm_delta_x = 10;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = 12;
+         arm_delta_shoot_y = 51;
+      } else {
+         arm_delta_x = -20;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = -75;
+         arm_delta_shoot_y = 51;
+      }*/
+
+      // Animation man
+      if (running_texture.frame_ > 14) {
+         running_texture.frame_ = 4;
+      }
+      running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
+      ++running_texture.frame_;
+
+      // Animate arm
+      if (arm_running_texture.frame_ > 3) {
+         arm_running_texture.frame_ = 3;
+      }
+      arm_running_texture.curr_clip_ = &arm_running_texture.clips_[arm_running_texture.frame_];
+      ++arm_running_texture.frame_;
+   } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
+      /*
+      // Adjust deltas
+      if (entity_direction == RIGHT) {
+         arm_delta_x = 10;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = 12;
+         arm_delta_shoot_y = 51;
+      } else {
+         arm_delta_x = -20;
+         arm_delta_y = 63;
+         arm_delta_shoot_x = -75;
+         arm_delta_shoot_y = 51;
+      }*/
+
+      // Animate stopping
+      if (running_texture.frame_ > 19) {
+         running_texture.frame_ = 19;
+      }
+      running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
+      ++running_texture.frame_;
+   } else if (player_state_ == RUN_AND_JUMP) {
+      /*
+      // Adjust deltas
+      if (entity_direction == RIGHT) {
+         arm_delta_x = 10;
+         arm_delta_y = 69;
+         arm_delta_shoot_x = 10;
+         arm_delta_shoot_y = 57;
+      } else {
+         arm_delta_x = -20;
+         arm_delta_y = 69;
+         arm_delta_shoot_x = -75;
+         arm_delta_shoot_y = 57;
+      }*/
+
+      // Animate
+      if (running_jump_texture.frame_ > 16) {
+         running_jump_texture.frame_ = 0;
+      }
+      running_jump_texture.curr_clip_ = &running_jump_texture.clips_[running_jump_texture.frame_];
+      ++running_jump_texture.frame_;
+   }
+}
+
 // Movement logic of the player. Done through keyboard.
 void Player::move() {
+   // Update frames
+   last_frame += 
+      (fps_timer.getDeltaTime() / 1000.0f);
+   if (last_frame > get_application()->animation_update_time_) {
+      animate();
+      last_frame = 0.0f;
+   }
+
    //printf("Player state = %d\n", player_state_);
    //printf("x = %f, y = %f\n", body->GetPosition().x, body->GetPosition().y);
    // Default texture
@@ -299,52 +372,21 @@ void Player::move() {
       player_state_ = STOP;
    }
 
-   // Deal with basic movement for now
-   if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) { //&& 
-         //body->GetLinearVelocity().y == 0) {
-      // Check for flag
-      if (running_texture.has_flipped_) {
-         running_texture.has_flipped_ = false;
-         running_texture.flip_ = SDL_FLIP_NONE;
+   // Shooting
+   if (get_application()->current_key_states_[SDL_SCANCODE_SPACE]) {
+      // Set shooting to true
+      shooting = true;
 
-         // Idle texture flip
-         idle_texture.has_flipped_ = false;
-         idle_texture.flip_ = SDL_FLIP_NONE;
-
-         // Running and jumping texture flip
-         running_jump_texture.has_flipped_ = false;
-         running_jump_texture.flip_ = SDL_FLIP_NONE;
-
-         // Shooting arm and idle arm flip
-         arm_texture.has_flipped_ = false;
-         arm_texture.flip_ = SDL_FLIP_NONE;
-         arm_shoot_texture.has_flipped_ = false;
-         arm_shoot_texture.flip_ = SDL_FLIP_NONE;
-         arm_running_texture.has_flipped_ = false;
-         arm_running_texture.flip_ = SDL_FLIP_NONE;
-      }
-      
-      // Set direction
-      entity_direction = RIGHT;
-
-      // Set state
-      // Set to jump and run if not on the ground
-      if (body->GetLinearVelocity().y != 0) {
-         player_state_ = RUN_AND_JUMP;
-      } else { 
-         player_state_ = RUN;
-      }
-
-      // Use Box2D version for moving
-      const b2Vec2 force = {5.4f, 0};
-      body->ApplyForce(force, body->GetPosition(), true);
-   } 
+      // Create eraser
+      if (arm_shoot_texture.frame_ == 1)
+         create_projectile(53, -7, 75, 12, 21, 1, 10, eraser_texture);
+   }
 
    // Player running left
    if (get_application()->current_key_states_[SDL_SCANCODE_LEFT]) { //&&
          //body->GetLinearVelocity().y == 0) {
       // Check for flag
-      if (!running_texture.has_flipped_) {
+      if (entity_direction == RIGHT) {//if (!running_texture.has_flipped_) {
          // Running texture flip
          running_texture.has_flipped_ = true;
          running_texture.flip_ = SDL_FLIP_HORIZONTAL;
@@ -378,9 +420,62 @@ void Player::move() {
       }
 
       // Use Box2D version for moving
-      const b2Vec2 force = {-5.4f, 0};
-      body->ApplyForce(force, body->GetPosition(), true);
+      /*
+      if (body->GetLinearVelocity().x > -4.0f) {
+         const b2Vec2 force = {-5.4f, 0};
+         body->ApplyForce(force, body->GetPosition(), true);
+      }
+      */
+      b2Vec2 vel = {-3.4f, body->GetLinearVelocity().y};
+      body->SetLinearVelocity(vel);
    } 
+
+   // Deal with basic movement for now
+   if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) { //&& 
+         //body->GetLinearVelocity().y == 0) {
+      // Check for flag
+      if (entity_direction == LEFT) {//if (running_texture.has_flipped_) {
+         running_texture.has_flipped_ = false;
+         running_texture.flip_ = SDL_FLIP_NONE;
+
+         // Idle texture flip
+         idle_texture.has_flipped_ = false;
+         idle_texture.flip_ = SDL_FLIP_NONE;
+
+         // Running and jumping texture flip
+         running_jump_texture.has_flipped_ = false;
+         running_jump_texture.flip_ = SDL_FLIP_NONE;
+
+         // Shooting arm and idle arm flip
+         arm_texture.has_flipped_ = false;
+         arm_texture.flip_ = SDL_FLIP_NONE;
+         arm_shoot_texture.has_flipped_ = false;
+         arm_shoot_texture.flip_ = SDL_FLIP_NONE;
+         arm_running_texture.has_flipped_ = false;
+         arm_running_texture.flip_ = SDL_FLIP_NONE;
+      }
+      
+      // Set direction
+      entity_direction = RIGHT;
+
+      // Set state
+      // Set to jump and run if not on the ground
+      if (body->GetLinearVelocity().y != 0) {
+         player_state_ = RUN_AND_JUMP;
+      } else { 
+         player_state_ = RUN;
+      }
+
+      // Use Box2D version for moving
+      /*
+      if (body->GetLinearVelocity().x < 4.0f) {
+         const b2Vec2 force = {5.4f, 0};
+         body->ApplyForce(force, body->GetPosition(), true);
+      }
+      */
+      b2Vec2 vel = {3.4f, body->GetLinearVelocity().y};
+      body->SetLinearVelocity(vel);
+   }
    
    // Player jumping
    if (get_application()->current_key_states_[SDL_SCANCODE_UP]) {
@@ -413,24 +508,6 @@ void Player::move() {
    // Mid air?
    if (body->GetLinearVelocity().x != 0 && body->GetLinearVelocity().y != 0) {
       player_state_ = RUN_AND_JUMP;
-   }
-
-   // Shooting
-   if (get_application()->current_key_states_[SDL_SCANCODE_SPACE]) {
-      // Set shooting to true
-      shooting = true;
-
-      // Create eraser
-      if (arm_shoot_texture.frame_ == 1)
-         create_projectile(53, -7, 75, 12, 21, 1, 10, eraser_texture);
-   }
-   
-   // Update frames
-   last_frame += 
-      (fps_timer.getDeltaTime() / 1000.0f);
-   if (last_frame > get_application()->animation_update_time_) {
-      animate();
-      last_frame = 0.0f;
    }
 }
 

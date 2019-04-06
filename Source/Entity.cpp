@@ -30,12 +30,6 @@ void Entity::update() {
    move();
 }
 
-// Get current clip
-SDL_Rect *Entity::get_curr_clip() {
-   Texture *tmp = get_texture();
-   return tmp->curr_clip_;
-}
-
 // Get direction
 int Entity::get_dir() const {
    return entity_direction;

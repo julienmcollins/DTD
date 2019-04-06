@@ -30,11 +30,11 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    world_(gravity_), to_meters_(0.01f), to_pixels_(100.0f), debugDraw(this), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2), animation_speed_(20.0f), 
    animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), 
-   finger_(700, 665, 67, 124, this), 
+   finger_(this),
    menu_background_(0, 0, 1080, 1920, this),
    menu_title_(0, 0, 513, 646, this),
    menu_items_(800, 650, 299, 321, this),
-   item_(0), gameover_screen_(NULL, 0), 
+   point_(false), item_(0), gameover_screen_(NULL, 0), 
    background_(NULL, 0),
    clicked (false) {
     
@@ -481,11 +481,6 @@ bool Application::loadMediaLvl1() {
 
 // Setup main menu
 void Application::setup_menu() {
-   // Setup finger
-   finger_.fps = 1.0f / 20.0f;
-   finger_.textures["shake"].max_frame_ = 7;
-   finger_.textures["point"].max_frame_ = 5;
-
    // Setup menu background
    menu_background_.fps = 1.0f / 4.0f;
    menu_background_.texture.max_frame_ = 2;
@@ -550,6 +545,7 @@ void Application::animate(const float &fps, Element *element,
    if (last_frame > fps) {
       if (texture->frame_ > texture->max_frame_) {
          texture->frame_ = 0;
+         texture->completed_ = true;
       }
       texture->curr_clip_ = &texture->clips_[texture->frame_];
       ++texture->frame_;
@@ -608,21 +604,13 @@ void Application::main_screen() {
    if (menu_flag) {
       setup_menu();
       menu_flag = false;
+
+      // Start cap timer
+      capTimer.start();
    }
 
    // Get current keyboard states
    current_key_states_ = SDL_GetKeyboardState(NULL);
-
-   // Handle events on queue
-   while (SDL_PollEvent( &e )) {
-      //User requests quit
-      if(e.type == SDL_QUIT) {
-          quit = true;
-      }
-   }
-
-   // Start cap timer
-   capTimer.start();
 
    // Clear screen
    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -634,6 +622,30 @@ void Application::main_screen() {
       avgFPS = 0;
    }
 
+   // Handle events on queue
+   while (SDL_PollEvent( &e )) {
+      //User requests quit
+      if(e.type == SDL_QUIT) {
+          quit = true;
+      } else if (e.type == SDL_KEYDOWN) {
+         if (finger_.get_y() == OPTIONS && e.key.keysym.sym == SDLK_UP) {
+            finger_.set_y(START);
+            finger_.set_x(700);
+         } else if (finger_.get_y() == EGGS && e.key.keysym.sym == SDLK_UP) {
+            finger_.set_y(OPTIONS);
+            finger_.set_x(650);
+         } else if (finger_.get_y() == START && e.key.keysym.sym == SDLK_DOWN) {
+            finger_.set_y(OPTIONS);
+            finger_.set_x(650);
+         } else if (finger_.get_y() == OPTIONS && e.key.keysym.sym == SDLK_DOWN) {
+            finger_.set_y(EGGS);
+            finger_.set_x(720);
+         } else if (e.key.keysym.sym == SDLK_RETURN) {
+            finger_.finger_state = Finger::POINT;
+         }
+      }
+   }
+
    /* ANIMATION FOR TITLE SCREEN */
    // Animate background
    animate(menu_background_.fps, &menu_background_, &menu_background_.texture, 
@@ -643,31 +655,17 @@ void Application::main_screen() {
    animate(menu_items_.fps, &menu_items_, &menu_items_.texture, 
          menu_items_.fps_timer, menu_items_.last_frame);
 
-   // Animate picking
-   if (finger_.get_y() == OPTIONS && current_key_states_[SDL_SCANCODE_UP]) {
-      finger_.set_y(START);
-      usleep(150000);
-   } else if (finger_.get_y() == EGGS && current_key_states_[SDL_SCANCODE_UP]) {
-      finger_.set_y(OPTIONS);
-      usleep(150000);
-   } else if (finger_.get_y() == START && current_key_states_[SDL_SCANCODE_DOWN]) {
-      finger_.set_y(OPTIONS);
-      usleep(150000);
-   } else if (finger_.get_y() == OPTIONS && current_key_states_[SDL_SCANCODE_DOWN]) {
-      finger_.set_y(EGGS);
-      usleep(150000);
-   }
-
-   // Render
-   animate(finger_.fps, &finger_, &finger_.textures["shake"], finger_.fps_timer, finger_.last_frame);
-
    // Check enter key state
-   if (current_key_states_[SDL_SCANCODE_RETURN]) {
+   if (finger_.finger_state == Finger::POINT) {
       if (finger_.get_y() == START) {
-         animate(finger_.fps, &finger_, &finger_.textures["point"], finger_.fps_timer, finger_.last_frame);
-         game_flag_ = PLAYGROUND;
+         if (finger_.textures["point"].completed_) {
+            game_flag_ = PLAYGROUND;
+         }
       }
    }
+
+   // Update finger
+   finger_.update();
 
    // Update the screen
    SDL_RenderPresent(renderer);
@@ -872,7 +870,22 @@ Texture Application::get_ground() {
 
 // Destructs application
 Application::~Application() {
+   // Clear the screen
+   SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+   SDL_RenderClear(renderer);
+   
+   // Stop fps timer
+   fpsTimer.stop();
+   capTimer.stop();
+
+   // Free textures
    background_.free();
+   finger_.textures["shake"].free();
+   finger_.textures["point"].free();
+   menu_background_.texture.free();
+   menu_title_.texture.free();
+   menu_items_.texture.free();
+   gameover_screen_.free();
 
    // Delete platforms
    if (!lv1_flag) {
@@ -891,4 +904,40 @@ Application::~Application() {
    //Quit SDL subsystems
    IMG_Quit();
    SDL_Quit();
+}
+
+/********** FINGER ***************/
+
+// Constructor
+Finger::Finger(Application *application) : Element(700, 665, 67, 124, application), finger_state(SHAKE) {
+   // Setup finger
+   fps = 1.0f / 20.0f;
+   textures["shake"].max_frame_ = 7;
+   textures["point"].max_frame_ = 5;
+}
+
+// Get texture
+Texture *Finger::get_texture() {
+   if (finger_state == SHAKE) {
+      return &textures["shake"];
+   } else if (finger_state == POINT) {
+      return &textures["point"];
+   }
+}
+
+// Update function
+void Finger::update() {
+   // Animate based on state
+   if (finger_state == SHAKE) {
+      animate(&textures["shake"]);
+   } else if (finger_state == POINT) {
+      animate(&textures["point"]);
+   }
+
+   // Get texture and render it
+   Texture *tex = get_texture();
+   SDL_Rect *curr_clip = get_curr_clip();
+   if (curr_clip) {
+      render(tex, curr_clip);
+   }
 }

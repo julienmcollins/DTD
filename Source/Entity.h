@@ -30,7 +30,6 @@ class Entity : public Element {
 
         // Texture and SDL stuff
         virtual Texture *get_texture() = 0;
-        SDL_Rect *get_curr_clip();
 
         /***** Box2D Related Variables *****/
 

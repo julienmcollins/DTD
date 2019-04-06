@@ -39,6 +39,9 @@ class Element {
       virtual bool is_alive();
       bool alive;
 
+      // Render function
+      void render(Texture *texture, SDL_Rect *clip);
+
       // Update function for all elements
       virtual void move();
       virtual void animate(Texture *tex = NULL, int reset = 0);
@@ -46,6 +49,10 @@ class Element {
 
       // Draw function if immediate drawing is desired
       void draw(Texture *tex = NULL, int reset = 0);
+
+      // Texture related stuff
+      virtual Texture *get_texture();
+      SDL_Rect *get_curr_clip();
 
       // Get application
       Application *get_application();

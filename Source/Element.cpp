@@ -114,6 +114,12 @@ bool Element::is_alive() {
    return true;
 }
 
+// Render function
+void Element::render(Texture *texture, SDL_Rect *clip) {
+   // Render based on texture
+   texture->render(get_x(), get_y(), clip, 0.0, &texture->center_, texture->flip_);
+}
+
 // Move function (does nothing)
 void Element::move() {}
 
@@ -131,6 +137,7 @@ void Element::animate(Texture *tex, int reset) {
    if (last_frame > fps) {
       if (curr->frame_ > curr->max_frame_) {
          curr->frame_ = reset;
+         curr->completed_ = true;
       }
       curr->curr_clip_ = &curr->clips_[curr->frame_];
       ++curr->frame_;
@@ -150,6 +157,17 @@ void Element::draw(Texture *tex, int reset) {
    else
       texture.render(texture.get_x(), texture.get_y(), texture.curr_clip_, 0.0,
             &texture.center_, texture.flip_);
+}
+
+// get texture
+Texture *Element::get_texture() {
+   return &texture;
+}
+
+// Get current clip
+SDL_Rect *Element::get_curr_clip() {
+   Texture *tmp = get_texture();
+   return tmp->curr_clip_;
 }
 
 // Update function for basic stuff just calls render

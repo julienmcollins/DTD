@@ -42,6 +42,9 @@ class Texture {
         // Max frame
         int max_frame_;
 
+        // Flag for completed animation
+        bool completed_;
+
         // Flip parameter
         SDL_RendererFlip flip_;
         bool has_flipped_;

@@ -31,6 +31,28 @@ typedef struct {
    int x, y;
 } Screen;
 
+// Finger class because it's easier
+class Finger : public Element {
+   public:
+      // Constructor
+      Finger(Application *application);
+
+      // Get texture
+      virtual Texture *get_texture();
+
+      // Update function
+      virtual void update();
+
+      // FINGER STATE
+      enum FINGER_STATE {
+         POINT,
+         SHAKE   
+      };  
+
+      // Finger state
+      FINGER_STATE finger_state;
+};
+
 class Application {
     public:
         // Initialize the application
@@ -180,31 +202,14 @@ class Application {
         void gameover_screen();
 
         // Finger
-        /*
-        Texture finger_point_;
-        Texture finger_shake_;
-        Timer finger_point_timer_;
-        Timer finger_shake_timer_;
-        float finger_last_frame_;
-        */
-        Element finger_;
+        Finger finger_;
+        bool point_;
         int item_;
 
         // Clicked flag
         bool clicked;
 
         // Background
-        /*
-        Texture title_screen_;
-        Texture title_;
-        Texture menu_;
-        float menu_last_frame_;
-        float background_last_frame_;
-        float title_last_frame_;
-        Timer background_timer_;
-        Timer menu_timer_;
-        Timer title_timer_;
-        */
         Element menu_background_;
         Element menu_title_;
         Element menu_items_;

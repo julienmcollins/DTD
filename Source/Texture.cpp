@@ -11,7 +11,7 @@
 #include "Element.h"
 
 // Texture constructor
-Texture::Texture(Element *element, int max_frame) : clips_(NULL), curr_clip_(NULL), frame_(0), 
+Texture::Texture(Element *element, int max_frame) : clips_(NULL), curr_clip_(NULL), frame_(1), 
    max_frame_(max_frame), flip_(SDL_FLIP_NONE), has_flipped_(false), element_(element), 
    m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {}
 
@@ -54,7 +54,7 @@ bool Texture::loadFromFile(std::string path) {
 // Free textures
 void Texture::free() {
     // Free texture if it exists
-    if (m_texture != NULL) {
+    if (m_texture) {
         SDL_DestroyTexture(m_texture);
         m_texture = NULL;
         m_width = 0;

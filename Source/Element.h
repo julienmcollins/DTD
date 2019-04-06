@@ -4,7 +4,9 @@
 #include <Box2D/Box2D.h>
 #include <iostream>
 #include <string>
+#include <unordered_map>
 #include "Texture.h"
+#include "Timer.h"
 
 // Dependencies
 class Application;
@@ -22,8 +24,8 @@ class Element {
       void set_width(int new_width);
 
       // Getters
-      int get_x() const;
-      int get_y() const;
+      int get_x();
+      int get_y();
       int get_height() const;
       int get_width() const;
 
@@ -38,13 +40,26 @@ class Element {
       bool alive;
 
       // Update function for all elements
+      virtual void move();
+      virtual void animate(Texture *tex = NULL, int reset = 0);
       virtual void update();
+
+      // Draw function if immediate drawing is desired
+      void draw(Texture *tex = NULL, int reset = 0);
 
       // Get application
       Application *get_application();
 
       // Texture for each element
       Texture texture;
+
+      // Hash map of texture names to textures
+      std::unordered_map<std::string, Texture> textures;
+
+      // Fps timer for animations
+      Timer fps_timer;
+      float last_frame;
+      float fps;
 
       /***** BOX2D Variables *********/
 

@@ -104,8 +104,8 @@ class Application {
            return &projectiles_;
         }
 
-        Player get_player() {
-           return player;
+        Player* get_player() {
+           return &player;
         }
 
         // Destructrs the application
@@ -158,28 +158,66 @@ class Application {
         // Two flags for now, update as levels increase
         enum APP_STATE {
            MAIN_SCREEN,
+           GAMEOVER_SCREEN,
            PLAYGROUND
         };
 
         // Menu Items
         enum MENU {
-           START = 680,
+           START = 665,
            OPTIONS = 780,
            EGGS = 880
         };
 
+        // ANIMATE FUNCTION
+        void animate(const float &fps, Element* element, 
+              Texture *texture, Timer &timer, float &last_frame);
+
         // MAIN SCREEN FUNCTION
         void main_screen();
 
+        // GAMEOVER FUNCTION
+        void gameover_screen();
+
         // Finger
-        Texture finger_;
+        /*
+        Texture finger_point_;
+        Texture finger_shake_;
+        Timer finger_point_timer_;
+        Timer finger_shake_timer_;
+        float finger_last_frame_;
+        */
+        Element finger_;
         int item_;
 
+        // Clicked flag
+        bool clicked;
+
         // Background
+        /*
         Texture title_screen_;
+        Texture title_;
+        Texture menu_;
+        float menu_last_frame_;
+        float background_last_frame_;
+        float title_last_frame_;
+        Timer background_timer_;
+        Timer menu_timer_;
+        Timer title_timer_;
+        */
+        Element menu_background_;
+        Element menu_title_;
+        Element menu_items_;
+
+        // Gameove texture
+        Texture gameover_screen_;
 
         // Background texture
         Texture background_;
+
+        // Setup main menu
+        void setup_menu();
+        bool menu_flag;
 
         // PLAYGROUND FUNCTION
         void playground();

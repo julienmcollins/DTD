@@ -181,7 +181,7 @@ SDL_Rect *Element::get_curr_clip() {
 }
 
 // Update function for basic stuff just calls render
-void Element::update() {
+void Element::update(bool freeze) {
    // Simply render the texture
    texture.render(get_x(), get_y());
 }

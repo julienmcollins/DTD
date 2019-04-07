@@ -199,7 +199,8 @@ class Application {
         // Menu
         enum MENU_SCREENS {
            FIRST,
-           SECOND
+           SECOND,
+           THIRD
         };
 
         // ANIMATE FUNCTION

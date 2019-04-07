@@ -20,7 +20,7 @@ Entity::Entity(int x_pos, int y_pos, double height, double width, Application* a
 }
 
 // Update function for all entities. For now all it does is call move
-void Entity::update() {
+void Entity::update(bool freeze) {
    move();
 }
 
@@ -132,10 +132,19 @@ Player::STATE Player::get_player_state() {
 }
 
 // Update function
-void Player::update() {
+void Player::update(bool freeze) {
    //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: CROUCH, 5: RUN_AND_JUMP)" << std::endl;
-   // Update player
-   move();
+   // Update frames
+   last_frame += 
+      (fps_timer.getDeltaTime() / 1000.0f);
+   if (last_frame > get_application()->animation_update_time_) {
+      animate();
+      last_frame = 0.0f;
+   }
+
+   // Update player if not frozen
+   if (!freeze)
+      move();
 
    // Adjust deltas first
    adjust_deltas();
@@ -337,13 +346,6 @@ void Player::change_player_state() {
 
 // Movement logic of the player. Done through keyboard.
 void Player::move() {
-   // Update frames
-   last_frame += 
-      (fps_timer.getDeltaTime() / 1000.0f);
-   if (last_frame > get_application()->animation_update_time_) {
-      animate();
-      last_frame = 0.0f;
-   }
 
    // If not running or running and jumping, then set linear velocity to 0
    /*
@@ -537,7 +539,7 @@ Enemy::Enemy(Application *application) :
    health = 100;
 }
 
-void Enemy::update() {
+void Enemy::update(bool freeze) {
    // Move first
    move();
 

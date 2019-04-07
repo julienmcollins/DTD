@@ -45,7 +45,7 @@ class Element {
       // Update function for all elements
       virtual void move();
       virtual void animate(Texture *tex = NULL, int reset = 0);
-      virtual void update();
+      virtual void update(bool freeze = false);
 
       // Draw function if immediate drawing is desired
       void draw(Texture *tex = NULL, int reset = 0);
@@ -54,14 +54,14 @@ class Element {
       virtual Texture *get_texture();
       SDL_Rect *get_curr_clip();
 
-      // Get application
-      Application *get_application();
-
       // Texture for each element
       Texture texture;
 
       // Hash map of texture names to textures
       std::unordered_map<std::string, Texture> textures;
+
+      // Get application
+      Application *get_application();
 
       // Fps timer for animations
       Timer fps_timer;

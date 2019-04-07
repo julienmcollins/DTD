@@ -23,7 +23,7 @@ class Entity : public Element {
         // Movement and updating
         virtual void move() = 0;
         virtual void animate(Texture *tex = NULL, int reset = 0) = 0;
-        virtual void update();
+        virtual void update(bool freeze = false);
 
         // Texture and SDL stuff
         virtual Texture *get_texture() = 0;
@@ -106,7 +106,7 @@ class Player : public Entity {
       void change_player_state();
 
       // Update function now done in player
-      virtual void update();
+      virtual void update(bool freeze = false);
 
       // Animate based on state
       virtual void animate(Texture *tex = NULL, int reset = 0);
@@ -154,7 +154,7 @@ class Enemy : public Entity {
       Texture death_texture;
 
       // Enemy's update function
-      virtual void update();
+      virtual void update(bool freeze = false);
 
       // Dummy move function
       virtual void move();

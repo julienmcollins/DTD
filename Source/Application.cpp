@@ -126,6 +126,9 @@ bool Application::loadMedia() {
          temp[i].w = 92;
          temp[i].h = 150;
       }
+
+      // Set curr clip
+      player.idle_texture.curr_clip_ = &temp[0];
    }
 
    // Load player jumping idly
@@ -144,6 +147,9 @@ bool Application::loadMedia() {
          temp[i].w = 92;
          temp[i].h = 156;
       }
+
+      // Set curr clip
+      player.idle_jump_texture.curr_clip_ = &temp[0];
    }
 
    // Load player running
@@ -162,6 +168,9 @@ bool Application::loadMedia() {
          temp[i].w = 92;
          temp[i].h = 150;
       }
+
+      // Set curr clip
+      player.running_texture.curr_clip_ = &temp[0];
    }
 
    // Load player kicking
@@ -180,6 +189,9 @@ bool Application::loadMedia() {
          temp[i].w = 75;
          temp[i].h = 150;
       }
+
+      // Set curr clip
+      player.kick_texture.curr_clip_ = &temp[0];
    }
 
    // Load jump and run
@@ -198,6 +210,9 @@ bool Application::loadMedia() {
          temp[i].w = 92;
          temp[i].h = 156;
       }
+
+      // Set curr clip
+      player.running_jump_texture.curr_clip_ = &temp[0];
    }
 
    // Turn animation width 52 --> turns from facing right to left
@@ -224,6 +239,9 @@ bool Application::loadMedia() {
         temp[i].w = 63;
         temp[i].h = 49;
      }
+
+     // Set curr_clip
+     player.arm_shoot_texture.curr_clip_ = &temp[0];
    }
 
    // Running arm
@@ -242,6 +260,9 @@ bool Application::loadMedia() {
          temp[i].w = 10;
          temp[i].h = 33;
       }
+
+      // Set curr clip
+      player.arm_running_texture.curr_clip_ = &temp[0];
    }
 
    // Eraser
@@ -253,6 +274,9 @@ bool Application::loadMedia() {
       player.eraser_texture.clips_ = new SDL_Rect[1];
       SDL_Rect *temp = player.eraser_texture.clips_;
       temp[0].x = 0; temp[0].y = 0; temp[0].w = 21; temp[0].h = 12;
+
+      // Set curr clip
+      player.eraser_texture.curr_clip_ = &temp[0];
    }
 
    /************** MAIN MENU STUFF *********************************/
@@ -262,10 +286,6 @@ bool Application::loadMedia() {
       printf("Failed to load finger_point.png\n");
       success = false;
    } else {
-      // Display finger
-      //finger_point_.set_x(700);
-      //finger_point_.set_y(665);
-
       // Allocate enough room
       finger_.textures["point"].clips_ = new SDL_Rect[6];
       SDL_Rect *temp = finger_.textures["point"].clips_;
@@ -277,6 +297,9 @@ bool Application::loadMedia() {
          temp[i].w = 124;
          temp[i].h = 67;
       }
+
+      // Set curr clip
+      finger_.textures["point"].curr_clip_ = &temp[0];
    }
 
    // Load finger shake
@@ -285,10 +308,6 @@ bool Application::loadMedia() {
       printf("Failed to load finger_shake.png\n");
       success = false;
    } else {
-      // Display finger
-      //finger_shake_.set_x(700);
-      //finger_shake_.set_y(665);
-
       // Allocate enough room
       finger_.textures["shake"].clips_ = new SDL_Rect[8];
       SDL_Rect *temp = finger_.textures["shake"].clips_;
@@ -300,6 +319,9 @@ bool Application::loadMedia() {
          temp[i].w = 124;
          temp[i].h = 67;
       }
+
+      // Set curr clip
+      finger_.textures["shake"].curr_clip_ = &temp[0];
    }
 
    // Load title screen
@@ -318,6 +340,9 @@ bool Application::loadMedia() {
          temp[i].w = 1920;
          temp[i].h = 1080;
       }
+
+      // Set curr clip
+      menu_background_.texture.curr_clip_ = &temp[0];
    }
 
    // Load title
@@ -334,6 +359,9 @@ bool Application::loadMedia() {
          temp[i].w = 646;
          temp[i].h = 513;
       }
+
+      // Set curr clip
+      menu_title_.texture.curr_clip_ = &temp[0];
    }
 
    // Load menu
@@ -341,10 +369,6 @@ bool Application::loadMedia() {
       printf("Failed to load menu.png\n");
       success = false;
    } else {
-      // Set position
-      //menu_.set_x(800);
-      //menu_.set_y(650);
-
       // Allocate room
       menu_items_.texture.clips_ = new SDL_Rect[3];
       SDL_Rect *temp = menu_items_.texture.clips_;
@@ -356,6 +380,9 @@ bool Application::loadMedia() {
          temp[i].w = 321;
          temp[i].h = 299;
       }
+
+      // Set curr clip
+      menu_items_.texture.curr_clip_ = &temp[0];
    }
 
    // Load world items
@@ -374,6 +401,9 @@ bool Application::loadMedia() {
          temp[i].w = 193;
          temp[i].h = 332;
       }
+
+      // Set curr clip
+      world_items_.texture.curr_clip_ = &temp[0];
    }
 
    // Gameover screen
@@ -443,6 +473,9 @@ bool Application::loadMediaLvl1() {
          temp[i].w = 82;
          temp[i].h = 92;
       }
+
+      // Set curr clip
+      enemy->idle_texture.curr_clip_ = &temp[0];
    }
 
    if (!enemy->shoot_texture.loadFromFile("images/enemies/fecreez_shoot.png")) {
@@ -460,6 +493,9 @@ bool Application::loadMediaLvl1() {
          temp[i].w = 82;
          temp[i].h = 92;
       }
+
+      // Set curr clip
+      enemy->shoot_texture.curr_clip_ = &temp[0];
    }
 
    if (!enemy->poojectile_texture.loadFromFile("images/enemies/poojectile.png")) {
@@ -477,6 +513,9 @@ bool Application::loadMediaLvl1() {
          temp[i].w = 24;
          temp[i].h = 15;
       }
+
+      // Set curr clip
+      enemy->poojectile_texture.curr_clip_ = &temp[0];
    }
 
    if (!enemy->death_texture.loadFromFile("images/enemies/fecreez_death.png")) {
@@ -494,6 +533,9 @@ bool Application::loadMediaLvl1() {
          temp[i].w = 143;
          temp[i].h = 92;
       }
+
+      // Set curr clip
+      enemy->death_texture.curr_clip_ = &temp[0];
    }
    /**************************/
 
@@ -505,7 +547,8 @@ bool Application::loadMediaLvl1() {
 void Application::setup_menu() {
    // Set player location
    player.set_x(50);
-   player.set_y(732);
+   player.set_y(772);
+   player.fps = 1.0f / 20.0f;
 
    // Setup platform
    menu_platform_ = new Platform(960, 925, this);
@@ -712,11 +755,34 @@ void Application::main_screen() {
 
    // Animate menu items
    if (menu_screen_ == FIRST) {
+      // Animate menu items
       animate(menu_items_.fps, &menu_items_, &menu_items_.texture, 
             menu_items_.fps_timer, menu_items_.last_frame);
+
+      // Animate player
+      player.update(true);
+
+      // Update finger
+      finger_.update();
    } else if (menu_screen_ == SECOND) {
+      // Animate world items
       animate(world_items_.fps, &world_items_, &world_items_.texture,
             world_items_.fps_timer, world_items_.last_frame);
+
+      // Animate player
+      player.update(true);
+
+      // Update finger
+      finger_.update();
+   } else if (menu_screen_ == THIRD) {
+      // Update player for real
+      player.update();
+
+      // Check to see if player has reached the edge
+      if (player.get_x() >= 1890) {
+         game_flag_ = PLAYGROUND;
+         delete menu_platform_;
+      }
    }
 
    // Check enter key state
@@ -727,20 +793,14 @@ void Application::main_screen() {
             finger_.finger_state = Finger::SHAKE;
             finger_.set_y(WORLD1);
             finger_.set_x(720);
+            finger_.textures["point"].completed_ = false;
          }
       } else if (finger_.get_y() == WORLD1) {
          if (finger_.textures["point"].completed_) {
-            game_flag_ = PLAYGROUND;
-            delete menu_platform_;
+            menu_screen_ = THIRD;
          }
       }
    }
-
-   // Update finger
-   finger_.update();
-
-   // Update player
-   player.update();
 
    // Update the screen
    SDL_RenderPresent(renderer);
@@ -887,8 +947,8 @@ void Application::playground() {
 // Setup level 1
 void Application::setup_lv1() {
    // Set player's location
-   player.set_x(600);
-   player.set_y(732);
+   player.set_x(5);
+   player.set_y(902);
 
    // Set enemy's location
    enemy = new Enemy(this);

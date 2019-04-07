@@ -153,7 +153,7 @@ class Application {
         Player player;
 
         // Enemy object
-        Enemy enemy;
+        Enemy *enemy;
 
         /***** Box2D Variables *****/
         b2Vec2 gravity_;
@@ -188,7 +188,18 @@ class Application {
         enum MENU {
            START = 665,
            OPTIONS = 780,
-           EGGS = 880
+           EGGS = 880,
+           WORLD1 = 645,
+           WORLD2 = 715,
+           WORLD3 = 800,
+           WORLD4 = 865,
+           WORLD5 = 925
+        };
+
+        // Menu
+        enum MENU_SCREENS {
+           FIRST,
+           SECOND
         };
 
         // ANIMATE FUNCTION
@@ -209,10 +220,13 @@ class Application {
         // Clicked flag
         bool clicked;
 
-        // Background
+        /**** MAIN MENU ********/
         Element menu_background_;
         Element menu_title_;
         Element menu_items_;
+        Element world_items_;
+        Platform *menu_platform_;
+        /***********************/
 
         // Gameove texture
         Texture gameover_screen_;
@@ -233,6 +247,7 @@ class Application {
 
         // GAME FLAG
         APP_STATE game_flag_;
+        MENU_SCREENS menu_screen_;
 
         // TEXTURE VECTORS (Might be able to combine the two, since the objects update themselves)
         std::vector<Element *> sprites_;        

@@ -22,7 +22,12 @@ Element::Element(int x, int y, int height, int width, Application *application) 
 
 // Set and get x
 void Element::set_x(int new_x) {
-    x_pos_ = new_x;
+   if (!body) {
+      x_pos_ = new_x;
+   } else {
+      float nbx = (float) ((new_x + (get_width() / 2.0f)) / 100.0f);
+      body->SetTransform(b2Vec2(nbx, body->GetPosition().y), body->GetAngle());
+   }
 }
 
 int Element::get_x() {
@@ -46,7 +51,12 @@ void Element::sub_x(int sub) {
 
 // Set and get y
 void Element::set_y(int new_y) {
-    y_pos_ = new_y;
+   if (!body) {
+      y_pos_ = new_y;
+   } else {
+      float nby = (float) -((new_y + (get_height() / 2.0f)) / 100.0f);
+      body->SetTransform(b2Vec2(body->GetPosition().x, nby), body->GetAngle());
+   }
 }
 
 int Element::get_y() {

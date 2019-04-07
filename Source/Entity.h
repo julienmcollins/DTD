@@ -17,9 +17,6 @@ class Entity : public Element {
         // Constructor
         Entity(int x_pos, int y_pos, double height, double width, Application* application);
 
-        // Rendering functions (no need for texture getter, in load media simply use directly)
-        void render(Texture *texture, SDL_Rect *clip);
-
         // Flags
         bool has_jumped_;
 

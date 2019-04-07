@@ -43,6 +43,12 @@ void Platform::setup() {
 // doNothing
 //void Platform::doNothing() {}
 
+// Virtual destructor
+Platform::~Platform() {
+   // Destroy body
+   get_application()->world_.DestroyBody(body);
+}
+
 /************** Projectile Implementations  *************************/
 
 // Constructor

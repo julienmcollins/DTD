@@ -19,12 +19,6 @@ Entity::Entity(int x_pos, int y_pos, double height, double width, Application* a
    has_jumped_(false), health(0) {
 }
 
-// Rendering function for all entities
-void Entity::render(Texture *texture, SDL_Rect *clip) {
-   // NEED TO TAKE INTO ACCOUNT THAT BOTTOM OF IMAGE ISN'T ALLIGNED WITH FEET
-   texture->render(get_x(), get_y(), clip, 0.0, &texture->center_, texture->flip_);
-}
-
 // Update function for all entities. For now all it does is call move
 void Entity::update() {
    move();

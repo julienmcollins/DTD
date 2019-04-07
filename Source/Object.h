@@ -46,6 +46,9 @@ class Platform : public Object {
       virtual std::string type() {
          return "Platform";
       }
+
+      // Virtual destructor
+      virtual ~Platform();
 };
 
 // Projectile class is also a subclass of object

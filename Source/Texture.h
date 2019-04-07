@@ -18,7 +18,7 @@ class Element;
 class Texture {
     public:
         // Initialize
-        Texture(Element *element, int max_frame);
+        Texture(Element *element = NULL, int max_frame = 0);
 
         // Copy constructor
         //Texture(const Texture &tex);
@@ -41,6 +41,9 @@ class Texture {
 
         // Max frame
         int max_frame_;
+
+        // Flag for completed animation
+        bool completed_;
 
         // Flip parameter
         SDL_RendererFlip flip_;

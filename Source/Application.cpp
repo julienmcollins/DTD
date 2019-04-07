@@ -25,12 +25,21 @@
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
    SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), 
-   current_key_states_(NULL), player(this), enemy(this), mouseButtonPressed(false), quit(false), 
-   countedFrames(0), lv1_flag(true), game_flag_(MAIN_SCREEN), world_(gravity_), to_meters_(0.01f), 
-   to_pixels_(100.0f), debugDraw(this), test(0),
+   current_key_states_(NULL), player(this), mouseButtonPressed(false), quit(false), 
+   countedFrames(0), menu_flag(true), lv1_flag(true), 
+   game_flag_(MAIN_SCREEN),
+   menu_screen_(FIRST),
+   world_(gravity_), to_meters_(0.01f), to_pixels_(100.0f), debugDraw(this), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2), animation_speed_(20.0f), 
-   animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), finger_(NULL, 0),
-   item_(0), title_screen_(NULL, 0), background_(NULL, 0) {
+   animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), 
+   finger_(this),
+   menu_background_(0, 0, 1080, 1920, this),
+   menu_title_(640, 70, 513, 646, this),
+   menu_items_(800, 650, 299, 321, this),
+   world_items_(850, 650, 332, 193, this),
+   point_(false), item_(0), gameover_screen_(NULL, 0), 
+   background_(NULL, 0),
+   clicked (false) {
     
     //Initialize SDL
     if (init()) {
@@ -98,7 +107,7 @@ bool Application::init() {
 
 // Loads images and other media
 bool Application::loadMedia() {
-    
+   // Start success = true 
    bool success = true;
    
    // Load player idle
@@ -117,6 +126,30 @@ bool Application::loadMedia() {
          temp[i].w = 92;
          temp[i].h = 150;
       }
+
+      // Set curr clip
+      player.idle_texture.curr_clip_ = &temp[0];
+   }
+
+   // Load player jumping idly
+   if (!player.idle_jump_texture.loadFromFile("images/player/idle_jump_na.png")) {
+      printf("Failed to load idle_jump_texture!\n");
+      success = false;
+   } else {
+      // Allocate enough room for the clips
+      player.idle_jump_texture.clips_ = new SDL_Rect[15];
+      SDL_Rect *temp = player.idle_jump_texture.clips_;
+
+      // Calculate sprites
+      for (int i = 0; i < 15; i++) {
+         temp[i].x = i * 92;
+         temp[i].y = 0;
+         temp[i].w = 92;
+         temp[i].h = 156;
+      }
+
+      // Set curr clip
+      player.idle_jump_texture.curr_clip_ = &temp[0];
    }
 
    // Load player running
@@ -135,6 +168,9 @@ bool Application::loadMedia() {
          temp[i].w = 92;
          temp[i].h = 150;
       }
+
+      // Set curr clip
+      player.running_texture.curr_clip_ = &temp[0];
    }
 
    // Load player kicking
@@ -153,6 +189,9 @@ bool Application::loadMedia() {
          temp[i].w = 75;
          temp[i].h = 150;
       }
+
+      // Set curr clip
+      player.kick_texture.curr_clip_ = &temp[0];
    }
 
    // Load jump and run
@@ -171,6 +210,9 @@ bool Application::loadMedia() {
          temp[i].w = 92;
          temp[i].h = 156;
       }
+
+      // Set curr clip
+      player.running_jump_texture.curr_clip_ = &temp[0];
    }
 
    // Turn animation width 52 --> turns from facing right to left
@@ -197,6 +239,9 @@ bool Application::loadMedia() {
         temp[i].w = 63;
         temp[i].h = 49;
      }
+
+     // Set curr_clip
+     player.arm_shoot_texture.curr_clip_ = &temp[0];
    }
 
    // Running arm
@@ -215,6 +260,9 @@ bool Application::loadMedia() {
          temp[i].w = 10;
          temp[i].h = 33;
       }
+
+      // Set curr clip
+      player.arm_running_texture.curr_clip_ = &temp[0];
    }
 
    // Eraser
@@ -226,74 +274,141 @@ bool Application::loadMedia() {
       player.eraser_texture.clips_ = new SDL_Rect[1];
       SDL_Rect *temp = player.eraser_texture.clips_;
       temp[0].x = 0; temp[0].y = 0; temp[0].w = 21; temp[0].h = 12;
+
+      // Set curr clip
+      player.eraser_texture.curr_clip_ = &temp[0];
    }
 
-   /******** ENEMY **********/
-   if (!enemy.idle_texture.loadFromFile("images/enemies/fecreez_idle.png")) {
-      printf("Failed to load feecreez idle texture!\n");
+   /************** MAIN MENU STUFF *********************************/
+   // Load finger point
+   finger_.textures.emplace("point", Texture());
+   if (!finger_.textures["point"].loadFromFile("images/miscealaneous/finger_point.png")) {
+      printf("Failed to load finger_point.png\n");
       success = false;
    } else {
       // Allocate enough room
-      enemy.idle_texture.clips_ = new SDL_Rect[18];
-      SDL_Rect *temp = enemy.idle_texture.clips_;
+      finger_.textures["point"].clips_ = new SDL_Rect[6];
+      SDL_Rect *temp = finger_.textures["point"].clips_;
 
       // Calculate sprite locations
-      for (int i = 0; i < 18; i++) {
-         temp[i].x = i * 82;
+      for (int i = 0; i < 6; i++) {
+         temp[i].x = i * 124;
          temp[i].y = 0;
-         temp[i].w = 82;
-         temp[i].h = 92;
+         temp[i].w = 124;
+         temp[i].h = 67;
       }
+
+      // Set curr clip
+      finger_.textures["point"].curr_clip_ = &temp[0];
    }
 
-   if (!enemy.shoot_texture.loadFromFile("images/enemies/fecreez_shoot.png")) {
-      printf("Failed to load feecreez shoot texture!\n");
+   // Load finger shake
+   finger_.textures.emplace("shake", Texture());
+   if (!finger_.textures["shake"].loadFromFile("images/miscealaneous/finger_shake.png")) {
+      printf("Failed to load finger_shake.png\n");
       success = false;
    } else {
       // Allocate enough room
-      enemy.shoot_texture.clips_ = new SDL_Rect[7];
-      SDL_Rect *temp = enemy.shoot_texture.clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 7; i++) {
-         temp[i].x = i * 82;
-         temp[i].y = 0;
-         temp[i].w = 82;
-         temp[i].h = 92;
-      }
-   }
-
-   if (!enemy.poojectile_texture.loadFromFile("images/enemies/poojectile.png")) {
-      printf("Failed to load poojectile texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      enemy.poojectile_texture.clips_ = new SDL_Rect[8];
-      SDL_Rect *temp = enemy.poojectile_texture.clips_;
+      finger_.textures["shake"].clips_ = new SDL_Rect[8];
+      SDL_Rect *temp = finger_.textures["shake"].clips_;
 
       // Calculate sprite locations
       for (int i = 0; i < 8; i++) {
-         temp[i].x = i * 24;
+         temp[i].x = i * 124;
          temp[i].y = 0;
-         temp[i].w = 24;
-         temp[i].h = 15;
+         temp[i].w = 124;
+         temp[i].h = 67;
       }
-   }
-   /**************************/
 
-   // Load finger
-   if (!finger_.loadFromFile("images/miscealaneous/finger.png")) {
-      printf("Failed to load finger.png\n");
-      success = false;
-   } else {
-      // Display finger
-      finger_.set_x(750);
-      finger_.set_y(680);
+      // Set curr clip
+      finger_.textures["shake"].curr_clip_ = &temp[0];
    }
 
    // Load title screen
-   if (!title_screen_.loadFromFile("images/miscealaneous/titlescreen.png")) {
+   if (!menu_background_.texture.loadFromFile("images/miscealaneous/titlescreen.png")) {
       printf("Failed to load titlescreen.png\n");
+      success = false;
+   } else {
+      // Allocate enough room
+      menu_background_.texture.clips_ = new SDL_Rect[3];
+      SDL_Rect *temp = menu_background_.texture.clips_;
+
+      // Calculate sprite locations
+      for (int i = 0; i < 3; i++) {
+         temp[i].x = i * 1920;
+         temp[i].y = 0;
+         temp[i].w = 1920;
+         temp[i].h = 1080;
+      }
+
+      // Set curr clip
+      menu_background_.texture.curr_clip_ = &temp[0];
+   }
+
+   // Load title
+   if (!menu_title_.texture.loadFromFile("images/miscealaneous/title.png")) {
+      printf("Failed to load title.png\n");
+      success = false;
+   } else {
+      menu_title_.texture.clips_ = new SDL_Rect[3];
+      SDL_Rect *temp = menu_title_.texture.clips_;
+
+      for (int i = 0; i < 3; i++) {
+         temp[i].x = i * 646;
+         temp[i].y = 0;
+         temp[i].w = 646;
+         temp[i].h = 513;
+      }
+
+      // Set curr clip
+      menu_title_.texture.curr_clip_ = &temp[0];
+   }
+
+   // Load menu
+   if (!menu_items_.texture.loadFromFile("images/miscealaneous/menu.png")) {
+      printf("Failed to load menu.png\n");
+      success = false;
+   } else {
+      // Allocate room
+      menu_items_.texture.clips_ = new SDL_Rect[3];
+      SDL_Rect *temp = menu_items_.texture.clips_;
+
+      // Allocate enough room
+      for (int i = 0; i < 3; i++) {
+         temp[i].x = i * 321;
+         temp[i].y = 0;
+         temp[i].w = 321;
+         temp[i].h = 299;
+      }
+
+      // Set curr clip
+      menu_items_.texture.curr_clip_ = &temp[0];
+   }
+
+   // Load world items
+   if (!world_items_.texture.loadFromFile("images/miscealaneous/worlds.png")) {
+      printf("Failed to load worlds.png\n");
+      success = false;
+   } else {
+      // Allocate room
+      world_items_.texture.clips_ = new SDL_Rect[3];
+      SDL_Rect *temp = world_items_.texture.clips_;
+
+      // Allocate enough room
+      for (int i = 0; i < 3; i++) {
+         temp[i].x = i * 193;
+         temp[i].y = 0;
+         temp[i].w = 193;
+         temp[i].h = 332;
+      }
+
+      // Set curr clip
+      world_items_.texture.curr_clip_ = &temp[0];
+   }
+
+   // Gameover screen
+   if (!gameover_screen_.loadFromFile("images/miscealaneous/gameover.png")) {
+      printf("Failed to load gameover.png\n");
       success = false;
    }
       
@@ -342,8 +457,120 @@ bool Application::loadMediaLvl1() {
       }
    }
 
+   /******** ENEMY **********/
+   if (!enemy->idle_texture.loadFromFile("images/enemies/fecreez_idle.png")) {
+      printf("Failed to load feecreez idle texture!\n");
+      success = false;
+   } else {
+      // Allocate enough room
+      enemy->idle_texture.clips_ = new SDL_Rect[18];
+      SDL_Rect *temp = enemy->idle_texture.clips_;
+
+      // Calculate sprite locations
+      for (int i = 0; i < 18; i++) {
+         temp[i].x = i * 82;
+         temp[i].y = 0;
+         temp[i].w = 82;
+         temp[i].h = 92;
+      }
+
+      // Set curr clip
+      enemy->idle_texture.curr_clip_ = &temp[0];
+   }
+
+   if (!enemy->shoot_texture.loadFromFile("images/enemies/fecreez_shoot.png")) {
+      printf("Failed to load feecreez shoot texture!\n");
+      success = false;
+   } else {
+      // Allocate enough room
+      enemy->shoot_texture.clips_ = new SDL_Rect[7];
+      SDL_Rect *temp = enemy->shoot_texture.clips_;
+
+      // Calculate sprite locations
+      for (int i = 0; i < 7; i++) {
+         temp[i].x = i * 82;
+         temp[i].y = 0;
+         temp[i].w = 82;
+         temp[i].h = 92;
+      }
+
+      // Set curr clip
+      enemy->shoot_texture.curr_clip_ = &temp[0];
+   }
+
+   if (!enemy->poojectile_texture.loadFromFile("images/enemies/poojectile.png")) {
+      printf("Failed to load poojectile texture!\n");
+      success = false;
+   } else {
+      // Allocate enough room
+      enemy->poojectile_texture.clips_ = new SDL_Rect[8];
+      SDL_Rect *temp = enemy->poojectile_texture.clips_;
+
+      // Calculate sprite locations
+      for (int i = 0; i < 8; i++) {
+         temp[i].x = i * 24;
+         temp[i].y = 0;
+         temp[i].w = 24;
+         temp[i].h = 15;
+      }
+
+      // Set curr clip
+      enemy->poojectile_texture.curr_clip_ = &temp[0];
+   }
+
+   if (!enemy->death_texture.loadFromFile("images/enemies/fecreez_death.png")) {
+      printf("Failed to load fecreez death texture!\n");
+      success = false;
+   } else {
+      // Allocate enough room
+      enemy->death_texture.clips_ = new SDL_Rect[16];
+      SDL_Rect *temp = enemy->death_texture.clips_;
+
+      // Calculate sprite locations
+      for (int i = 0; i < 16; i++) {
+         temp[i].x = i * 143;
+         temp[i].y = 0;
+         temp[i].w = 143;
+         temp[i].h = 92;
+      }
+
+      // Set curr clip
+      enemy->death_texture.curr_clip_ = &temp[0];
+   }
+   /**************************/
+
    // Return success
    return success;
+}
+
+// Setup main menu
+void Application::setup_menu() {
+   // Set player location
+   player.set_x(50);
+   player.set_y(772);
+   player.fps = 1.0f / 20.0f;
+
+   // Setup platform
+   menu_platform_ = new Platform(960, 925, this);
+   menu_platform_->set_height(10);
+   menu_platform_->set_width(1920);
+   menu_platform_->setup();   
+
+   // Setup menu background
+   menu_background_.fps = 1.0f / 4.0f;
+   menu_background_.texture.max_frame_ = 2;
+
+   // Setup menu title
+   menu_title_.fps = 1.0f / 4.0f;
+   menu_title_.texture.max_frame_ = 2;
+
+   // Setup menu items
+   menu_items_.fps = 1.0f / 4.0f;
+   menu_items_.texture.max_frame_ = 2;
+
+   // World menu items
+   world_items_.fps = 1.0f / 4.0f;
+   world_items_.texture.max_frame_ = 2;
 }
 
 // Load specific textures when needed
@@ -384,12 +611,33 @@ void Application::update() {
          main_screen();
       } else if (game_flag_ == PLAYGROUND) {
          playground();
+      } else if (game_flag_ == GAMEOVER_SCREEN) {
+         gameover_screen();
       }
    }
 }
 
-// MAIN SCREEN FUNCTION
-void Application::main_screen() {
+// ANIMATE FUNCTION
+void Application::animate(const float &fps, Element *element, 
+      Texture *texture, Timer &timer, float &last_frame) {
+   last_frame += (timer.getDeltaTime() / 1000.0f); 
+   if (last_frame > fps) {
+      if (texture->frame_ > texture->max_frame_) {
+         texture->frame_ = 0;
+         texture->completed_ = true;
+      }
+      texture->curr_clip_ = &texture->clips_[texture->frame_];
+      ++texture->frame_;
+      last_frame = 0.0f;
+   }
+
+   // Draw title screen
+   texture->render(element->get_x(), element->get_y(), texture->curr_clip_, 0.0, 
+          &texture->center_, texture->flip_);
+}
+
+// GAMEOVER FUNCTION
+void Application::gameover_screen() {
    // Get current keyboard states
    current_key_states_ = SDL_GetKeyboardState(NULL);
 
@@ -415,30 +663,142 @@ void Application::main_screen() {
    }
 
    // Draw title screen
-   title_screen_.render(0, 0);
+   gameover_screen_.render(0, 0);
 
-   // Animate picking
-   if (finger_.get_y() == OPTIONS && current_key_states_[SDL_SCANCODE_UP]) {
-      finger_.set_y(START);
-      usleep(200000);
-   } else if (finger_.get_y() == EGGS && current_key_states_[SDL_SCANCODE_UP]) {
-      finger_.set_y(OPTIONS);
-      usleep(200000);
-   } else if (finger_.get_y() == START && current_key_states_[SDL_SCANCODE_DOWN]) {
-      finger_.set_y(OPTIONS);
-      usleep(200000);
-   } else if (finger_.get_y() == OPTIONS && current_key_states_[SDL_SCANCODE_DOWN]) {
-      finger_.set_y(EGGS);
-      usleep(200000);
+   // Update the screen
+   SDL_RenderPresent(renderer);
+   ++countedFrames;
+
+   // If frame finished early
+   int frameTicks = capTimer.getTicks();
+   if (frameTicks < SCREEN_TICKS_PER_FRAME) {
+      // Wait remaining time
+      SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
+   }
+}
+
+// MAIN SCREEN FUNCTION
+void Application::main_screen() {
+   // Setup menu
+   if (menu_flag) {
+      setup_menu();
+      menu_flag = false;
    }
 
-   // Render
-   finger_.render(finger_.get_x(), finger_.get_y());
+   // Get current keyboard states
+   current_key_states_ = SDL_GetKeyboardState(NULL);
+
+   // Clear screen
+   SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+   SDL_RenderClear(renderer);
+
+   // Update world timer
+   world_.Step(timeStep_, velocityIterations_, positionIterations_);
+
+   // Start cap timer
+   capTimer.start();
+
+   // Calculate and correct fps
+   float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
+   if( avgFPS > 2000000 ) {
+      avgFPS = 0;
+   }
+
+   // Handle events on queue
+   while (SDL_PollEvent( &e )) {
+      //User requests quit
+      if(e.type == SDL_QUIT) {
+          quit = true;
+      } else if (e.type == SDL_KEYDOWN) {
+         if (finger_.get_y() == OPTIONS && e.key.keysym.sym == SDLK_UP) {
+            finger_.set_y(START);
+            finger_.set_x(700);
+         } else if (finger_.get_y() == EGGS && e.key.keysym.sym == SDLK_UP) {
+            finger_.set_y(OPTIONS);
+            finger_.set_x(650);
+         } else if (finger_.get_y() == START && e.key.keysym.sym == SDLK_DOWN) {
+            finger_.set_y(OPTIONS);
+            finger_.set_x(650);
+         } else if (finger_.get_y() == OPTIONS && e.key.keysym.sym == SDLK_DOWN) {
+            finger_.set_y(EGGS);
+            finger_.set_x(720);
+         } else if (finger_.get_y() == WORLD2 && e.key.keysym.sym == SDLK_UP) {
+            finger_.set_y(WORLD1);
+         } else if (finger_.get_y() == WORLD3 && e.key.keysym.sym == SDLK_UP) {
+            finger_.set_y(WORLD2);
+         } else if (finger_.get_y() == WORLD4 && e.key.keysym.sym == SDLK_UP) {
+            finger_.set_y(WORLD3);
+         } else if (finger_.get_y() == WORLD5 && e.key.keysym.sym == SDLK_UP) {
+            finger_.set_y(WORLD4);
+         } else if (finger_.get_y() == WORLD1 && e.key.keysym.sym == SDLK_DOWN) {
+            finger_.set_y(WORLD2);
+         } else if (finger_.get_y() == WORLD2 && e.key.keysym.sym == SDLK_DOWN) {
+            finger_.set_y(WORLD3);
+         } else if (finger_.get_y() == WORLD3 && e.key.keysym.sym == SDLK_DOWN) {
+            finger_.set_y(WORLD4);
+         } else if (finger_.get_y() == WORLD4 && e.key.keysym.sym == SDLK_DOWN) {
+            finger_.set_y(WORLD5);
+         } else if (e.key.keysym.sym == SDLK_RETURN) {
+            finger_.finger_state = Finger::POINT;
+         }
+      }
+   }
+
+   /* ANIMATION FOR TITLE SCREEN */
+   // Animate background
+   animate(menu_background_.fps, &menu_background_, &menu_background_.texture, 
+         menu_background_.fps_timer, menu_background_.last_frame);
+
+   // Animate title
+   animate(menu_title_.fps, &menu_title_, &menu_title_.texture,
+         menu_title_.fps_timer, menu_title_.last_frame);
+
+   // Animate menu items
+   if (menu_screen_ == FIRST) {
+      // Animate menu items
+      animate(menu_items_.fps, &menu_items_, &menu_items_.texture, 
+            menu_items_.fps_timer, menu_items_.last_frame);
+
+      // Animate player
+      player.update(true);
+
+      // Update finger
+      finger_.update();
+   } else if (menu_screen_ == SECOND) {
+      // Animate world items
+      animate(world_items_.fps, &world_items_, &world_items_.texture,
+            world_items_.fps_timer, world_items_.last_frame);
+
+      // Animate player
+      player.update(true);
+
+      // Update finger
+      finger_.update();
+   } else if (menu_screen_ == THIRD) {
+      // Update player for real
+      player.update();
+
+      // Check to see if player has reached the edge
+      if (player.get_x() >= 1890) {
+         game_flag_ = PLAYGROUND;
+         delete menu_platform_;
+      }
+   }
 
    // Check enter key state
-   if (current_key_states_[SDL_SCANCODE_RETURN]) {
+   if (finger_.finger_state == Finger::POINT) {
       if (finger_.get_y() == START) {
-         game_flag_ = PLAYGROUND;
+         if (finger_.textures["point"].completed_) {
+            menu_screen_ = SECOND;
+            finger_.finger_state = Finger::SHAKE;
+            finger_.set_y(WORLD1);
+            finger_.set_x(720);
+            finger_.textures["point"].completed_ = false;
+         }
+      } else if (finger_.get_y() == WORLD1) {
+         if (finger_.textures["point"].completed_) {
+            menu_screen_ = THIRD;
+         }
       }
    }
 
@@ -465,6 +825,20 @@ void Application::playground() {
    // Clear screen as the first things that's done?
    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
    SDL_RenderClear(renderer);
+
+   // ITERATE THROUGH THE SPRITES AND DRAW THEM
+   for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end(); ++it) {
+      // Check to see if it's allocated
+      if ((*it) && !(*it)->is_alive()) {
+         //delete (*it);
+         //it = sprites_.erase(it);
+         // TODO: play death animation instead of straight killling them
+         if ((*it)->body) {
+            world_.DestroyBody((*it)->body);
+            (*it)->body = NULL;
+         }
+      }
+   }
 
    // Update world timer
    world_.Step(timeStep_, velocityIterations_, positionIterations_);
@@ -501,7 +875,11 @@ void Application::playground() {
       if (*it) {
          // Check if it's alive or not
          if (!(*it)->is_alive()) {
-            it = sprites_.erase(it);
+            //delete (*it);
+            //it = sprites_.erase(it);
+            // TODO: play death animation instead of straight killling them
+            (*it)->update();
+            ++it;
          } else {
             (*it)->update();
             ++it;
@@ -533,7 +911,13 @@ void Application::playground() {
     * certain height length of model, shoot. */
 
    // Update player
-   player.update();
+   if (player.is_alive()) {
+      player.update();
+   } else {
+      game_flag_ = GAMEOVER_SCREEN;
+      player.health = 100;
+      player.alive = true;
+   }
 
    /* 
    for (int i = 0; i < 7; i++) {
@@ -562,6 +946,15 @@ void Application::playground() {
 
 // Setup level 1
 void Application::setup_lv1() {
+   // Set player's location
+   player.set_x(5);
+   player.set_y(902);
+
+   // Set enemy's location
+   enemy = new Enemy(this);
+   enemy->set_x(1000);
+   enemy->set_y(512);
+
    // Set the platforms up
    ground = new Platform(960, 1050, this);
    
@@ -591,7 +984,7 @@ void Application::setup_lv1() {
    sprites_.push_back(platforms[5]);
 
    // Push back enemy
-   sprites_.push_back(&enemy);
+   sprites_.push_back(enemy);
 }
 
 // Set the viewport for minimaps and stuff like that if needed
@@ -621,26 +1014,77 @@ Texture Application::get_ground() {
 
 // Destructs application
 Application::~Application() {
-    //Free loaded image
-    player.idle_texture.free();
-    player.running_texture.free();
-    player.kick_texture.free();
-    player.running_jump_texture.free();
-    background_.free();
+   // Clear the screen
+   SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+   SDL_RenderClear(renderer);
+   
+   // Stop fps timer
+   fpsTimer.stop();
+   capTimer.stop();
 
-    // Delete platforms
-    for (int i = 0; i < NUM_BLOCKS; i++) {
-       platforms[i]->texture.free();
-       delete platforms[i];
-    }
+   // Free textures
+   background_.free();
+   finger_.textures["shake"].free();
+   finger_.textures["point"].free();
+   menu_background_.texture.free();
+   menu_title_.texture.free();
+   menu_items_.texture.free();
+   gameover_screen_.free();
 
-    //Destroy window
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(mainWindow);
-    mainWindow = NULL;
-    renderer = NULL;
-    
-    //Quit SDL subsystems
-    IMG_Quit();
-    SDL_Quit();
+   // Delete platforms
+   if (!lv1_flag) {
+      for (int i = 0; i < NUM_BLOCKS; i++) {
+         platforms[i]->texture.free();
+         delete platforms[i];
+      }
+
+      // Delete enemy
+      delete enemy;
+   }
+
+   //Destroy window
+   SDL_DestroyRenderer(renderer);
+   SDL_DestroyWindow(mainWindow);
+   mainWindow = NULL;
+   renderer = NULL;
+   
+   //Quit SDL subsystems
+   IMG_Quit();
+   SDL_Quit();
+}
+
+/********** FINGER ***************/
+
+// Constructor
+Finger::Finger(Application *application) : Element(700, 665, 67, 124, application), finger_state(SHAKE) {
+   // Setup finger
+   fps = 1.0f / 20.0f;
+   textures["shake"].max_frame_ = 7;
+   textures["point"].max_frame_ = 5;
+}
+
+// Get texture
+Texture *Finger::get_texture() {
+   if (finger_state == SHAKE) {
+      return &textures["shake"];
+   } else if (finger_state == POINT) {
+      return &textures["point"];
+   }
+}
+
+// Update function
+void Finger::update() {
+   // Animate based on state
+   if (finger_state == SHAKE) {
+      animate(&textures["shake"]);
+   } else if (finger_state == POINT) {
+      animate(&textures["point"]);
+   }
+
+   // Get texture and render it
+   Texture *tex = get_texture();
+   SDL_Rect *curr_clip = get_curr_clip();
+   if (curr_clip) {
+      render(tex, curr_clip);
+   }
 }

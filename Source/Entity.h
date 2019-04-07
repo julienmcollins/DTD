@@ -17,20 +17,16 @@ class Entity : public Element {
         // Constructor
         Entity(int x_pos, int y_pos, double height, double width, Application* application);
 
-        // Rendering functions (no need for texture getter, in load media simply use directly)
-        void render(Texture *texture, SDL_Rect *clip);
-
         // Flags
         bool has_jumped_;
 
         // Movement and updating
         virtual void move() = 0;
-        virtual void animate() = 0;
-        virtual void update();
+        virtual void animate(Texture *tex = NULL, int reset = 0) = 0;
+        virtual void update(bool freeze = false);
 
         // Texture and SDL stuff
         virtual Texture *get_texture() = 0;
-        SDL_Rect *get_curr_clip();
 
         /***** Box2D Related Variables *****/
 
@@ -38,6 +34,9 @@ class Entity : public Element {
         b2FixtureDef fixture_def;
 
         /***********************************/
+
+        // Health
+        int health;
 
         // Entity direction
         DIRS entity_direction;
@@ -49,12 +48,6 @@ class Entity : public Element {
         virtual std::string type() {
            return "Entity";
         }
-
-        // Each entity must have their own FPS timer
-        Timer fps_timer;
-
-        // Last frame update
-        float last_frame;
 
         // Create projectile (might need to add an entity pointer just in case)
         Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
@@ -76,8 +69,8 @@ class Player : public Entity {
          RUN,
          JUMP,
          STOP,
-         CROUCH,
-         RUN_AND_JUMP
+         RUN_AND_JUMP,
+         CROUCH
       };
 
       // Shooting flag
@@ -88,6 +81,7 @@ class Player : public Entity {
       Texture running_texture;
       Texture kick_texture;
       Texture running_jump_texture;
+      Texture idle_jump_texture;
       Texture arm_texture;
       Texture arm_shoot_texture;
       Texture arm_running_texture;
@@ -102,17 +96,31 @@ class Player : public Entity {
       int arm_delta_shoot_x;
       int arm_delta_shoot_y;
 
+      // Adjust delta function
+      void adjust_deltas();
+
       // Get player state
       STATE get_player_state();
 
+      // Change player state
+      void change_player_state();
+
       // Update function now done in player
-      virtual void update();
+      virtual void update(bool freeze = false);
 
       // Animate based on state
-      virtual void animate();
+      virtual void animate(Texture *tex = NULL, int reset = 0);
 
       // Move the player using keyboard
       virtual void move();
+
+      // Contact listener
+      virtual void start_contact() {
+         health -= 10;
+         if (health <= 0) {
+            alive = false;
+         }
+      }
 
       // Get type
       virtual std::string type() {
@@ -135,30 +143,43 @@ class Enemy : public Entity {
       // Different enemy states
       enum STATE {
          IDLE,
-         SHOOT
+         SHOOT,
+         DEATH
       };
 
       // Different textures
       Texture idle_texture;
       Texture shoot_texture;
       Texture poojectile_texture;
+      Texture death_texture;
 
       // Enemy's update function
-      virtual void update();
+      virtual void update(bool freeze = false);
 
       // Dummy move function
       virtual void move();
 
       // Animate function
-      virtual void animate();
+      virtual void animate(Texture *tex = NULL, int reset = 0);
 
       // Get texture for enemies
       virtual Texture *get_texture();
 
+      // Contact listener
+      virtual void start_contact() {
+         health -= 10;
+         if (health <= 0) {
+            alive = false;
+         }
+      }
+      
       // Get type
       virtual std::string type() {
          return "Enemy";
       }
+
+      // Destructotr
+      virtual ~Enemy();
    
    protected:
       STATE enemy_state_;

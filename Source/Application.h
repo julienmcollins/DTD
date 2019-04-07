@@ -31,6 +31,28 @@ typedef struct {
    int x, y;
 } Screen;
 
+// Finger class because it's easier
+class Finger : public Element {
+   public:
+      // Constructor
+      Finger(Application *application);
+
+      // Get texture
+      virtual Texture *get_texture();
+
+      // Update function
+      virtual void update();
+
+      // FINGER STATE
+      enum FINGER_STATE {
+         POINT,
+         SHAKE   
+      };  
+
+      // Finger state
+      FINGER_STATE finger_state;
+};
+
 class Application {
     public:
         // Initialize the application
@@ -104,8 +126,8 @@ class Application {
            return &projectiles_;
         }
 
-        Player get_player() {
-           return player;
+        Player* get_player() {
+           return &player;
         }
 
         // Destructrs the application
@@ -131,7 +153,7 @@ class Application {
         Player player;
 
         // Enemy object
-        Enemy enemy;
+        Enemy *enemy;
 
         /***** Box2D Variables *****/
         b2Vec2 gravity_;
@@ -158,28 +180,64 @@ class Application {
         // Two flags for now, update as levels increase
         enum APP_STATE {
            MAIN_SCREEN,
+           GAMEOVER_SCREEN,
            PLAYGROUND
         };
 
         // Menu Items
         enum MENU {
-           START = 680,
+           START = 665,
            OPTIONS = 780,
-           EGGS = 880
+           EGGS = 880,
+           WORLD1 = 645,
+           WORLD2 = 715,
+           WORLD3 = 800,
+           WORLD4 = 865,
+           WORLD5 = 925
         };
+
+        // Menu
+        enum MENU_SCREENS {
+           FIRST,
+           SECOND,
+           THIRD
+        };
+
+        // ANIMATE FUNCTION
+        void animate(const float &fps, Element* element, 
+              Texture *texture, Timer &timer, float &last_frame);
 
         // MAIN SCREEN FUNCTION
         void main_screen();
 
+        // GAMEOVER FUNCTION
+        void gameover_screen();
+
         // Finger
-        Texture finger_;
+        Finger finger_;
+        bool point_;
         int item_;
 
-        // Background
-        Texture title_screen_;
+        // Clicked flag
+        bool clicked;
+
+        /**** MAIN MENU ********/
+        Element menu_background_;
+        Element menu_title_;
+        Element menu_items_;
+        Element world_items_;
+        Platform *menu_platform_;
+        /***********************/
+
+        // Gameove texture
+        Texture gameover_screen_;
 
         // Background texture
         Texture background_;
+
+        // Setup main menu
+        void setup_menu();
+        bool menu_flag;
 
         // PLAYGROUND FUNCTION
         void playground();
@@ -190,6 +248,7 @@ class Application {
 
         // GAME FLAG
         APP_STATE game_flag_;
+        MENU_SCREENS menu_screen_;
 
         // TEXTURE VECTORS (Might be able to combine the two, since the objects update themselves)
         std::vector<Element *> sprites_;        

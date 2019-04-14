@@ -32,7 +32,6 @@ void Element::set_x(int new_x) {
 
 int Element::get_x() {
    if (body) {
-      //printf("x = %f\n", body->GetPosition().x);
       x_pos_ = (int) ((100.0f * body->GetPosition().x) - (get_width() / 2.0f));
       return x_pos_;
    } else {

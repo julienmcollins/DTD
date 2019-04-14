@@ -95,7 +95,7 @@ Player::Player(Application* application) :
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
    fixture_def.density = 1.0f;
-   fixture_def.friction = 1.8f;
+   fixture_def.friction = 0.0f;
    body->CreateFixture(&fixture_def);
 
    // Set user data
@@ -103,6 +103,9 @@ Player::Player(Application* application) :
 
    // Set health. TODO: set health in a better way
    health = 100;
+
+   // TEMPORARY SOLUTION
+   arm_shoot_texture.completed_ = true;
 }
 
 // Get texture based on state
@@ -252,6 +255,7 @@ void Player::animate(Texture *tex, int reset) {
       if (arm_shoot_texture.frame_ > 6) {
          arm_shoot_texture.frame_ = 0;
          shooting = false;
+         arm_shoot_texture.completed_ = true;
       }
       arm_shoot_texture.curr_clip_ = &arm_shoot_texture.clips_[arm_shoot_texture.frame_];
       ++arm_shoot_texture.frame_;
@@ -320,7 +324,7 @@ void Player::change_player_state() {
    // Special fall state, TODO: add falling animation
    if ((get_application()->current_key_states_[SDL_SCANCODE_RIGHT] ||
             get_application()->current_key_states_[SDL_SCANCODE_LEFT]) &&
-        body->GetLinearVelocity().x == 0) {
+        body->GetLinearVelocity().x == 0 && body->GetLinearVelocity().y != 0) {
       
       // Set state
       player_state_ = JUMP;
@@ -348,12 +352,11 @@ void Player::change_player_state() {
 void Player::move() {
 
    // If not running or running and jumping, then set linear velocity to 0
-   /*
    if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP) {
       b2Vec2 vel = {0, 0};
       body->SetLinearVelocity(vel);
+      player_state_ = STOP;
    }
-   */
 
    // Update player state
    change_player_state();
@@ -364,8 +367,10 @@ void Player::move() {
       shooting = true;
 
       // Create eraser
-      if (arm_shoot_texture.frame_ == 1)
+      if (arm_shoot_texture.completed_) {
          create_projectile(53, -7, 75, 12, 21, 1, 10, eraser_texture);
+         arm_shoot_texture.completed_ = false;
+      }
    }
 
    // Player running left
@@ -402,6 +407,7 @@ void Player::move() {
 
       // Check for midair
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
+         player_state_ = RUN;
          b2Vec2 vel = {-3.4f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
@@ -447,10 +453,13 @@ void Player::move() {
       // Set state
       // Set to jump and run if not on the ground
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
+         //std::cout << player_state_ << std::endl;
+         //std::cout << body->GetLinearVelocity().y << std::endl;
          player_state_ = RUN;
          b2Vec2 vel = {3.4f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
+         //std::cout << "Hello?" << std::endl;
          has_jumped_ = true;
          if (body->GetLinearVelocity().x < 4.0f) {
             const b2Vec2 force = {5.4f, 0};
@@ -503,8 +512,8 @@ Player::~Player() {
 
 /********************* ENEMY IMPLEMENTATIONS ******************/
 
-Enemy::Enemy(Application *application) :
-   Entity(1000, 412, 92, 82, application), enemy_state_(IDLE),
+Enemy::Enemy(int x, int y, Application *application) :
+   Entity(x, y, 92, 82, application), enemy_state_(IDLE),
    idle_texture(this, 17), shoot_texture(this, 6), poojectile_texture(this, 7),
    death_texture(this, 15), shoot_timer_(0) {
 
@@ -513,9 +522,9 @@ Enemy::Enemy(Application *application) :
    body_def.type = b2_dynamicBody;
 
    // Set initial position and set fixed rotation
-   float x = 1000.0f * application->to_meters_;
-   float y = -412.5f * application->to_meters_;
-   body_def.position.Set(x, y);
+   float x_temp = float(x) * application->to_meters_;
+   float y_temp = -float(y) * application->to_meters_;
+   body_def.position.Set(x_temp, y_temp);
    body_def.fixedRotation = true;
 
    // Attach body to world

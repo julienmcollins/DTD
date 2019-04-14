@@ -138,7 +138,7 @@ class Player : public Entity {
 class Enemy : public Entity {
    public:
       // Construct the enemy
-      Enemy(Application *application);
+      Enemy(int x, int y, Application *application);
       
       // Different enemy states
       enum STATE {

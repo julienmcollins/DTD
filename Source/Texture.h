@@ -81,6 +81,9 @@ class Texture {
     
         // Assignement operator
         Texture &operator= (const Texture &src);
+
+        // Destructor
+        ~Texture();
     
     private:
         // Hardware texture

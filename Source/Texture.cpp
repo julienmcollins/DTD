@@ -123,3 +123,8 @@ Texture &Texture::operator=(const Texture &src) {
    // Return
    return (*this);
 }
+
+// Destructor calls free
+Texture::~Texture() {
+   //free();
+}

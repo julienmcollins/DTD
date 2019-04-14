@@ -29,7 +29,7 @@
 // For returning the screen position
 typedef struct {
    int x, y;
-} Screen;
+} Coords;
 
 // Finger class because it's easier
 class Finger : public Element {
@@ -54,209 +54,236 @@ class Finger : public Element {
 };
 
 class Application {
-    public:
-        // Initialize the application
-        Application();
-    
-        // Initialize SDL
-        bool init();
-    
-        // Load Media
-        bool loadMedia();
+   public:
+      // Initialize the application
+      Application();
+   
+      // Initialize SDL
+      bool init();
+   
+      // Load Media
+      bool loadMedia();
 
-        // Load Level 1
-        bool loadMediaLvl1();
-    
-        // Update the application
-        void update();
+      // Load Level media
+      bool loadMediaLvl1();
+      bool loadMediaLvl3();
+   
+      // Update the application
+      void update();
 
-        // The main window of the application
-        SDL_Window* mainWindow;
-        
-        // Load textures (now redundant)
-        SDL_Texture* loadTexture(std::string path);
-        
-        // Application keyboard state
-        const Uint8* current_key_states_;
+      // The main window of the application
+      SDL_Window* mainWindow;
+      
+      // Load textures (now redundant)
+      SDL_Texture* loadTexture(std::string path);
+      
+      // Application keyboard state
+      const Uint8* current_key_states_;
 
-        // Handles events
-        SDL_Event e;
+      // Handles events
+      SDL_Event e;
 
-        // Set viewport
-        void setViewport();
-        
-        // Flag for mouse button pressed
-        bool mouseButtonPressed;
+      // Set viewport
+      void setViewport();
+      
+      // Flag for mouse button pressed
+      bool mouseButtonPressed;
 
-        // Get screen height and width
-        const int get_height();
-        const int get_width();
+      // Get screen height and width
+      const int get_height();
+      const int get_width();
 
-        // Get ground
-        Texture get_ground();
-        
-        // Public world object so that other entities can access it
-        b2World world_;
+      // Get ground
+      Texture get_ground();
+      
+      // Public world object so that other entities can access it
+      b2World world_;
 
-        // Need a scaling factor since Box2D doesn't work with pixels
-        float to_pixels_;
-        float to_meters_;
+      // Need a scaling factor since Box2D doesn't work with pixels
+      float to_pixels_;
+      float to_meters_;
 
-        // DebugDraw
-        DebugDraw debugDraw;
-        SDL_Rect r[7];
+      // DebugDraw
+      DebugDraw debugDraw;
+      SDL_Rect r[7];
 
-        // Animation speed
-        float animation_speed_;
-        float animation_update_time_;
-        float time_since_last_frame_;
-        int test;
+      // Animation speed
+      float animation_speed_;
+      float animation_update_time_;
+      float time_since_last_frame_;
+      int test;
 
-        // Get FPS timer
-        Timer* getFPSTimer() {
-           return &fpsTimer;
-        }
+      // SET QUIT TO TRUE
+      void set_quit() {
+         quit = true;
+      }
 
-        // Return the vector
-        std::vector<Element *> *getObjectVector() {
-           return &sprites_;
-        }
+      // Get FPS timer
+      Timer* getFPSTimer() {
+         return &fpsTimer;
+      }
 
-        std::vector<Projectile *> *getProjectileVector() {
-           return &projectiles_;
-        }
+      // Return the vector
+      std::vector<Element *> *getObjectVector() {
+         return &sprites_;
+      }
 
-        Player* get_player() {
-           return &player;
-        }
+      std::vector<Projectile *> *getProjectileVector() {
+         return &projectiles_;
+      }
 
-        // Destructrs the application
-        ~Application();
-    
-    private:
-        // Screen Dimensions
-        int SCREEN_WIDTH;
-        int SCREEN_HEIGHT;
+      Player* get_player() {
+         return &player;
+      }
 
-        // Frame rate capping    
-        const int SCREEN_FPS;
-        const int SCREEN_TICKS_PER_FRAME;
+      // Destructrs the application
+      ~Application();
+   
+   private:
+      // Screen Dimensions
+      int SCREEN_WIDTH;
+      int SCREEN_HEIGHT;
 
-        // FPS timers
-        Timer fpsTimer;
-        Timer capTimer;
+      // Frame rate capping    
+      const int SCREEN_FPS;
+      const int SCREEN_TICKS_PER_FRAME;
 
-        // Viewport
-        SDL_Rect viewport;
-    
-        // Player object
-        Player player;
+      // FPS timers
+      Timer fpsTimer;
+      Timer capTimer;
 
-        // Enemy object
-        Enemy *enemy;
+      // Viewport
+      SDL_Rect viewport;
+   
+      // Player object
+      Player player;
 
-        /***** Box2D Variables *****/
-        b2Vec2 gravity_;
+      // Enemy object
+      Enemy *enemy;
 
-        // Timestep for the engine
-        float32 timeStep_;
-        int32 velocityIterations_;
-        int32 positionIterations_;
+      /***** Box2D Variables *****/
+      b2Vec2 gravity_;
 
-        // Contact listener instance
-        ContactListener contact_listener_;
-        /***************************/
+      // Timestep for the engine
+      float32 timeStep_;
+      int32 velocityIterations_;
+      int32 positionIterations_;
 
-        // Ground
-        Platform* ground;
+      // Contact listener instance
+      ContactListener contact_listener_;
+      /***************************/
 
-        // Platforms
-        Platform* platforms[NUM_BLOCKS];
+      // Ground
+      Platform* ground;
 
-        /********* APPLICATION STATE -- CRITICAL *************/
-        // Fps counter
-        int countedFrames;
+      /********* APPLICATION STATE -- CRITICAL *************/
+      // Fps counter
+      int countedFrames;
 
-        // Two flags for now, update as levels increase
-        enum APP_STATE {
-           MAIN_SCREEN,
-           GAMEOVER_SCREEN,
-           PLAYGROUND
-        };
+      // Two flags for now, update as levels increase
+      enum APP_STATE {
+         MAIN_SCREEN,
+         GAMEOVER_SCREEN,
+         PLAYGROUND
+      };
 
-        // Menu Items
-        enum MENU {
-           START = 665,
-           OPTIONS = 780,
-           EGGS = 880,
-           WORLD1 = 645,
-           WORLD2 = 715,
-           WORLD3 = 800,
-           WORLD4 = 865,
-           WORLD5 = 925
-        };
+      // Levels
+      enum LEVELS {
+         LEVEL11,
+         LEVEL12,
+         LEVEL13,
+         LEVEL14,
+         LEVEL15   
+      };
 
-        // Menu
-        enum MENU_SCREENS {
-           FIRST,
-           SECOND,
-           THIRD
-        };
+      // Menu Items
+      enum MENU {
+         START = 665,
+         OPTIONS = 780,
+         EGGS = 880,
+         WORLD1 = 645,
+         WORLD2 = 715,
+         WORLD3 = 800,
+         WORLD4 = 865,
+         WORLD5 = 925
+      };
 
-        // ANIMATE FUNCTION
-        void animate(const float &fps, Element* element, 
-              Texture *texture, Timer &timer, float &last_frame);
+      // Menu
+      enum MENU_SCREENS {
+         FIRST,
+         SECOND,
+         THIRD
+      };
 
-        // MAIN SCREEN FUNCTION
-        void main_screen();
+      // GAME STATE
+      enum GAME_STATE {
+         SETUP,
+         PLAY
+      };
 
-        // GAMEOVER FUNCTION
-        void gameover_screen();
+      // ANIMATE FUNCTION
+      void animate(const float &fps, Element* element, 
+            Texture *texture, Timer &timer, float &last_frame);
 
-        // Finger
-        Finger finger_;
-        bool point_;
-        int item_;
+      // MAIN SCREEN FUNCTION
+      void main_screen();
 
-        // Clicked flag
-        bool clicked;
+      // GAMEOVER FUNCTION
+      void gameover_screen();
 
-        /**** MAIN MENU ********/
-        Element menu_background_;
-        Element menu_title_;
-        Element menu_items_;
-        Element world_items_;
-        Platform *menu_platform_;
-        /***********************/
+      // Finger
+      Finger finger_;
+      bool point_;
+      int item_;
 
-        // Gameove texture
-        Texture gameover_screen_;
+      // Clicked flag
+      bool clicked;
 
-        // Background texture
-        Texture background_;
+      /**** MAIN MENU ********/
+      Element menu_background_;
+      Element menu_title_;
+      Element menu_items_;
+      Element world_items_;
+      Platform *menu_platform_;
+      /***********************/
 
-        // Setup main menu
-        void setup_menu();
-        bool menu_flag;
+      // Gameove texture
+      Texture gameover_screen_;
 
-        // PLAYGROUND FUNCTION
-        void playground();
+      // Setup main menu
+      void setup_menu();
+      bool menu_flag;
 
-        // Setup level 1
-        void setup_lv1();
-        bool lv1_flag;
+      // PLAYGROUND FUNCTION
+      void playground();
 
-        // GAME FLAG
-        APP_STATE game_flag_;
-        MENU_SCREENS menu_screen_;
+      // Setup level 1
+      void setup_lv1();
+      bool lv1_flag;
 
-        // TEXTURE VECTORS (Might be able to combine the two, since the objects update themselves)
-        std::vector<Element *> sprites_;        
-        std::vector<Projectile *> projectiles_;
-        /*****************************************************/
-    
-        // Quit flag for application
-        bool quit;
+      // Setup level 3
+      void setup_lv3();
+      bool lv3_flag;
+
+      // Destroy level
+      void destroy_lvl();
+
+      // GAME FLAG
+      APP_STATE app_flag_;
+      MENU_SCREENS menu_screen_;
+      LEVELS level_flag_;
+      GAME_STATE game_flag_;
+      bool completed_level_;
+
+      // VECTORS (Might be able to combine the two, since the objects update themselves)
+      std::vector<Platform *> platforms;
+      std::vector<Element *> sprites_;        
+      std::vector<Projectile *> projectiles_;
+      std::unordered_map<int, Texture> background;
+      /*****************************************************/
+   
+      // Quit flag for application
+      bool quit;
 };
 
 #endif /* Application_h */

@@ -38,6 +38,9 @@ void Platform::setup() {
 
    // Set user data
    body->SetUserData(this);
+
+   // Test
+   //std::cout << body->GetPosition().x << ", " << body->GetPosition().y << std::endl;
 }
 
 // doNothing

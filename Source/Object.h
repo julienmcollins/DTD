@@ -31,7 +31,7 @@ class Object : public Element {
 class Platform : public Object {
    public:
       // Constructor
-      Platform(int x, int y, Application *application);
+      Platform(int x, int y, int height, int width, Application *application);
 
       // Setup function for the stuff
       void setup();

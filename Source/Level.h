@@ -13,6 +13,9 @@
 #include "Entity.h"
 #include "Object.h"
 
+// Prototype
+class Application;
+
 /***** LEVEL CLASS *******/
 class Level {
    public:
@@ -22,13 +25,16 @@ class Level {
       // Update function for the level, which will render all of its assets
       void update();
 
+      // Destructor will delete the entire level
+      ~Level();
+
    private:
       // Number of enemies and platforms
       int num_of_enemies_;
       int num_of_platforms_;
 
-      // Background texture
-      Texture background_texture_;
+      // Background element place holder
+      Element background_;
 
       // Platform texture
       Texture platform_texture_;
@@ -43,8 +49,10 @@ class Level {
       std::string dir_;
 
       // Load media
-      bool load_media_(string dir);
+      bool load_media_();
 
       // Application holder
       Application *application_;
 };
+
+#endif

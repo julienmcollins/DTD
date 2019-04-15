@@ -19,6 +19,7 @@
 #include "Application.h"
 #include "Entity.h"
 #include "Global.h"
+#include "Level.h"
 
 //#define NUM_BLOCKS 11
 
@@ -417,6 +418,7 @@ bool Application::loadMedia() {
    return success;
 }
 
+/*
 // Load level 3 media
 bool Application::loadMediaLvl3() {
    // Flag for quitting
@@ -459,7 +461,6 @@ bool Application::loadMediaLvl3() {
       }
    }
 
-   /******** ENEMY **********/
    if (!enemy->idle_texture.loadFromFile("images/enemies/fecreez_idle.png")) {
       printf("Failed to load feecreez idle texture!\n");
       success = false;
@@ -539,11 +540,11 @@ bool Application::loadMediaLvl3() {
       // Set curr clip
       enemy->death_texture.curr_clip_ = &temp[0];
    }
-   /**************************/
 
    // Return success
    return success;
 }
+*/
 
 // Setup main menu
 void Application::setup_menu() {
@@ -553,9 +554,9 @@ void Application::setup_menu() {
    player.fps = 1.0f / 20.0f;
 
    // Setup platform
-   menu_platform_ = new Platform(960, 925, this);
-   menu_platform_->set_height(10);
-   menu_platform_->set_width(1920);
+   menu_platform_ = new Platform(960, 925, 10, 1920, this);
+   //menu_platform_->set_height(10);
+   //menu_platform_->set_width(1920);
    menu_platform_->setup();   
 
    // Setup menu background
@@ -783,7 +784,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player.get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL11;
+         level_flag_ = LEVEL12;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;
@@ -825,9 +826,11 @@ void Application::playground() {
    if (game_flag_ == SETUP) {
       // First setup level 1
       if (level_flag_ == LEVEL11) {
-         setup_lv1();
+         //setup_lv1();
+         level = new Level("images/levels/level1/format", this);
       } else if (level_flag_ == LEVEL12) {
-         setup_lv3();
+         //setup_lv3();
+         level = new Level("images/levels/level3/format", this);
       }
       
       // Set game_flag_ to PLAY
@@ -838,6 +841,7 @@ void Application::playground() {
    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
    SDL_RenderClear(renderer);
 
+   /*
    // ITERATE THROUGH THE SPRITES AND DRAW THEM
    for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end(); ++it) {
       // Check to see if it's allocated
@@ -852,6 +856,7 @@ void Application::playground() {
          }
       }
    }
+   */
 
    // Update world timer
    world_.Step(timeStep_, velocityIterations_, positionIterations_);
@@ -879,13 +884,19 @@ void Application::playground() {
    // DEBUG DRAW
    //world_.DrawDebugData();
 
+   /******** UPDATE THE LEVEL *************/
+   level->update();
+
+   /*
    // Render the background
    if (level_flag_ == LEVEL11) {
       background[1].render(0, -55);
    } else if (level_flag_ == LEVEL12) {
       background[3].render(0, -55);
    }
+   */
 
+   /*
    // ITERATE THROUGH THE SPRITES AND DRAW THEM
    for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end();) {
       // Check to see if it's allocated
@@ -905,12 +916,15 @@ void Application::playground() {
          it = sprites_.erase(it);
       }
    }
+   */
 
+   /*
    // ITERATE THROUGH PLATFORMS AND DRAW THEM
    for (std::vector<Platform *>::iterator it = platforms.begin(); it != platforms.end();) {
       (*it)->update();
       ++it;
-   } 
+   }
+   */
 
    // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
    for (std::vector<Projectile *>::iterator it = projectiles_.begin(); it != projectiles_.end();) {
@@ -967,7 +981,8 @@ void Application::playground() {
    // Check for completed level and that player as walked to the edge of the screen
    if (completed_level_ && player.get_x() >= 1890) {
       // Destroy the level
-      destroy_lvl();
+      //destroy_lvl();
+      delete level;
 
       // Change mode to setup
       game_flag_ = SETUP;
@@ -978,19 +993,12 @@ void Application::playground() {
    }
 }
 
-// Load level 1 media
-bool Application::loadMediaLvl1() {
-   // Flag for error
+// Load media enemy
+bool Application::loadMediaEnemy(Enemy *enemy) {
+   // Flag for success
    bool success = true;
 
-   // Load background
-   background.emplace(1, Texture());
-   if (!background[1].loadFromFile("images/levels/level1/platforms.png")) {
-      printf("Failed to load background image\n");
-      success = false;
-   }
-
-   /******** ENEMY **********/
+   // Enemy sprite sheet
    if (!enemy->idle_texture.loadFromFile("images/enemies/fecreez_idle.png")) {
       printf("Failed to load feecreez idle texture!\n");
       success = false;
@@ -1070,7 +1078,29 @@ bool Application::loadMediaLvl1() {
       // Set curr clip
       enemy->death_texture.curr_clip_ = &temp[0];
    }
-   /**************************/
+
+   // Return success
+   return success;
+}
+
+/*
+// Load level 1 media
+bool Application::loadMediaLvl1() {
+   // Flag for error
+   bool success = true;
+
+   // Load background
+   background.emplace(1, Texture());
+   if (!background[1].loadFromFile("images/levels/level1/platforms.png")) {
+      printf("Failed to load background image\n");
+      success = false;
+   }
+
+   // Load media for enemy
+   if (loadMediaEnemy(enemy) == false) {
+      quit = true;
+      return false;
+   }
 
    // Now setup widths and heights of each platform
    // Set height and width
@@ -1093,7 +1123,8 @@ bool Application::loadMediaLvl1() {
    // Return success
    return success;
 }
-
+*/
+/*
 // Setup level 1
 void Application::setup_lv1() {
    // Set player's location
@@ -1120,7 +1151,9 @@ void Application::setup_lv1() {
    // Push back enemy
    sprites_.push_back(enemy);
 }
+*/
 
+/*
 // Setup level 3
 void Application::setup_lv3() {
    // Set player's location
@@ -1131,15 +1164,15 @@ void Application::setup_lv3() {
    enemy = new Enemy(1000, 512, this);
 
    // Set the platforms up
-   ground = new Platform(960, 1050, this);
+   ground = new Platform(960, 1050, 0, 0, this);
    
    // Do level platform 1-6
-   platforms.push_back(new Platform(950, 305 - 55, this));
-   platforms.push_back(new Platform(300, 505 - 55, this));
-   platforms.push_back(new Platform(1630, 505 - 55, this));
-   platforms.push_back(new Platform(1045, 705 - 55, this));
-   platforms.push_back(new Platform(550, 905 - 55, this));
-   platforms.push_back(new Platform(1510, 900 - 55, this));
+   platforms.push_back(new Platform(950, 305 - 55, 0, 0, this));
+   platforms.push_back(new Platform(300, 505 - 55, 0, 0, this));
+   platforms.push_back(new Platform(1630, 505 - 55, 0, 0, this));
+   platforms.push_back(new Platform(1045, 705 - 55, 0, 0, this));
+   platforms.push_back(new Platform(550, 905 - 55, 0, 0, this));
+   platforms.push_back(new Platform(1510, 900 - 55, 0, 0, this));
 
    // Load media for level 3
    if (loadMediaLvl3() == false) {
@@ -1153,6 +1186,7 @@ void Application::setup_lv3() {
    // Push back enemy
    sprites_.push_back(enemy);
 }
+*/
 
 // Destroy level 3
 void Application::destroy_lvl() {

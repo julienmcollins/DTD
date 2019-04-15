@@ -26,6 +26,8 @@
 
 #define NUM_BLOCKS 6
 
+class Level;
+
 // For returning the screen position
 typedef struct {
    int x, y;
@@ -65,8 +67,11 @@ class Application {
       bool loadMedia();
 
       // Load Level media
-      bool loadMediaLvl1();
+      //bool loadMediaLvl1();
       bool loadMediaLvl3();
+
+      // Load media for enemy
+      bool loadMediaEnemy(Enemy *enemy);
    
       // Update the application
       void update();
@@ -118,6 +123,11 @@ class Application {
          quit = true;
       }
 
+      // SET COMPLETED LEVEL
+      void set_completed_level() {
+         completed_level_ = true;
+      }
+
       // Get FPS timer
       Timer* getFPSTimer() {
          return &fpsTimer;
@@ -135,6 +145,9 @@ class Application {
       Player* get_player() {
          return &player;
       }
+
+      /********** LEVEL **************/
+      Level *level;
 
       // Destructrs the application
       ~Application();
@@ -258,7 +271,7 @@ class Application {
       void playground();
 
       // Setup level 1
-      void setup_lv1();
+      //void setup_lv1();
       bool lv1_flag;
 
       // Setup level 3

@@ -9,6 +9,7 @@
 #include <fstream>
 
 #include "Level.h"
+#include "Application.h"
 #include "Texture.h"
 #include "Entity.h"
 #include "Object.h"
@@ -19,7 +20,8 @@ using namespace std;
 
 // Constructor will do all of the setting up essentially
 Level::Level(string file, Application *application) : 
-   num_of_enemies_(0), num_of_platforms_(0), application_(application) {
+   num_of_enemies_(0), num_of_platforms_(0), background_(0, -55, 1080, 1920, application), 
+   application_(application) {
 
    // Read from a file based on a specific format
    ifstream input;
@@ -47,39 +49,139 @@ Level::Level(string file, Application *application) :
    // Get the platforms and their position
    input >> num_of_platforms_;
    for (int i = 0; i < num_of_platforms_; i++) {
-      int x, y;
-      input >> x >> y;
-      platforms_.push_back(new Platform(x, y, application));
+      int x, y, height, width;
+      input >> x >> y >> height >> width;
+      platforms_.push_back(new Platform(x, y, height, width, application));
+      platforms_[i]->setup();
    }
+
+   // Now, load the media and quit if false
+   if (load_media_() == false) {
+      cout << "HEllo?" << endl;
+      application_->set_quit();
+   }
+
+   // Set player's location
+   int x, y;
+   input >> x >> y;
+   application_->get_player()->set_x(x);
+   application_->get_player()->set_y(y);
 }
 
-bool Level::load_media_(string dir) {
+// Load media function, private
+bool Level::load_media_() {
    // Flag for quit
    bool success = true;
 
    // Get background
-   if (!background_texture_.loadFromFile(dir + "background.png")) {
+   if (!background_.texture.loadFromFile(dir_ + "background.png")) {
       cerr << "Failed to load background.png" << endl;
       success = false;
    } else {
-      background_texture_.clips_ = new SDL_Rect[2];
-      SDL_Rect *temp = background_texture_.clips_;
+      // Automatically calculate the number of sprites
+      int num_clips = background_.texture.getWidth() / 1920;
+
+      // Set the clips
+      background_.texture.clips_ = new SDL_Rect[num_clips];
+      SDL_Rect *temp = background_.texture.clips_;
 
       // Calc sprite
-      for (int i = 0; i < 2; i++) {
+      for (int i = 0; i < num_clips; i++) {
          temp[i].x = i * 1920;
          temp[i].y = 0;
          temp[i].w = 1920;
          temp[i].h = 1080;
       }
+
+      // Set background location
+      background_.texture.set_x(0);
+      background_.texture.set_y(-55);
+
+      // Set fps and stuff
+      background_.fps = 1.0f / 3.0f;
+      background_.texture.max_frame_ = num_clips - 1;
+      background_.texture.curr_clip_ = &temp[0];
    }
 
    // Get platforms texture
-   if (!platform_texture_.loadFromFile(dir + "platforms.png")) {
+   if (!platform_texture_.loadFromFile(dir_ + "platforms.png")) {
       cerr << "Failed to load platforms.png" << endl;
       success = false;
+   } else {
+      // Set platforms location
+      platform_texture_.set_x(0);
+      platform_texture_.set_y(-55);
    }
 
    // Get enemy textures
+   for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end(); ++it) {
+      if (application_->loadMediaEnemy((*it)) == false) {
+         success = false;
+      }
+   }
 
+   // Return success
+   return success;
+}
+
+// Update function will render the stuff itself
+void Level::update() {
+   // Need to remove the bodies of dead creatures
+   for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end(); ++it) {
+      if ((*it) && !(*it)->is_alive()) {
+         if ((*it)->body) {
+            application_->world_.DestroyBody((*it)->body);
+            (*it)->body = NULL;
+            application_->set_completed_level();
+         }
+      }
+   }
+
+   // Render the background
+   background_.draw();
+
+   // Render the platforms
+   platform_texture_.render(0, -55);
+
+   // Render platforms
+   for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {
+      (*it)->update();
+   }
+
+   // Render enemies
+   for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end();) {
+      if (*it) {
+         (*it)->update();
+         ++it;
+      } else {
+         it = enemies_.erase(it);
+      }
+   }
+}
+
+// Level destructor will just delete everything related to the level
+Level::~Level() {
+   // Free textures for background
+   background_.texture.free();
+   platform_texture_.free();
+
+   // Delete platforms
+   for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {
+      if (*it) {
+         delete (*it);
+         (*it) = NULL;
+      }
+   }
+
+   // Delete enemies
+   for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end(); ++it) {
+      if (*it) {
+         delete (*it);
+         (*it) = NULL;
+      }
+   }
+
+   // Clear both vectors
+   platforms_.clear();
+   enemies_.clear();
 }

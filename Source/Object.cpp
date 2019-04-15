@@ -13,8 +13,8 @@ Object::Object(int x, int y, int height, int width, Entity* owner, Application *
 /***************** Platform Implementations *************************/
 
 // Constructor
-Platform::Platform(int x, int y, Application *application) :
-   Object(x, y, 0, 0, NULL, application) {
+Platform::Platform(int x, int y, int height, int width, Application *application) :
+   Object(x, y, height, width, NULL, application) {
 
    // Set position
    float x_pos = x * application->to_meters_;

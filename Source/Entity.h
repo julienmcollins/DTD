@@ -127,6 +127,9 @@ class Player : public Entity {
          return "Player";
       }
 
+      // Load media function for the player
+      bool load_media();
+
       // Virtual destructor
       virtual ~Player();
 

@@ -27,7 +27,7 @@
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
    SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), 
    current_key_states_(NULL), player(this), mouseButtonPressed(false), quit(false), 
-   countedFrames(0), menu_flag(true), lv3_flag(false), lv1_flag(true), 
+   countedFrames(0), menu_flag(true),
    app_flag_(MAIN_SCREEN),
    menu_screen_(FIRST),
    completed_level_(false),
@@ -108,177 +108,14 @@ bool Application::init() {
 }
 
 // Loads images and other media
+// TODO: Move loadMedia function to constructor of each object --> like level
 bool Application::loadMedia() {
    // Start success = true 
    bool success = true;
-   
-   // Load player idle
-   if (!player.idle_texture.loadFromFile("images/player/idle_na.png")) {
-       printf("Failed to load Texture image!\n");
-       success = false;
-   } else {
-      // Allocat enough room for the clips
-      player.idle_texture.clips_ = new SDL_Rect[16];
-      SDL_Rect *temp = player.idle_texture.clips_;
 
-      // Calculate locations
-      for (int i = 0; i < 16; i++) {
-         temp[i].x = i * 92;
-         temp[i].y = 0;
-         temp[i].w = 92;
-         temp[i].h = 150;
-      }
-
-      // Set curr clip
-      player.idle_texture.curr_clip_ = &temp[0];
-   }
-
-   // Load player jumping idly
-   if (!player.idle_jump_texture.loadFromFile("images/player/idle_jump_na.png")) {
-      printf("Failed to load idle_jump_texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room for the clips
-      player.idle_jump_texture.clips_ = new SDL_Rect[15];
-      SDL_Rect *temp = player.idle_jump_texture.clips_;
-
-      // Calculate sprites
-      for (int i = 0; i < 15; i++) {
-         temp[i].x = i * 92;
-         temp[i].y = 0;
-         temp[i].w = 92;
-         temp[i].h = 156;
-      }
-
-      // Set curr clip
-      player.idle_jump_texture.curr_clip_ = &temp[0];
-   }
-
-   // Load player running
-   if (!player.running_texture.loadFromFile("images/player/running_na.png")) {
-       printf("Failed to load Texture image!\n");
-       success = false;
-   } else {
-      // Allocat enough room for the clips
-      player.running_texture.clips_ = new SDL_Rect[20];
-      SDL_Rect *temp = player.running_texture.clips_;
-
-      // Calculate locations
-      for (int i = 0; i < 20; i++) {
-         temp[i].x = i * 92;
-         temp[i].y = 0;
-         temp[i].w = 92;
-         temp[i].h = 150;
-      }
-
-      // Set curr clip
-      player.running_texture.curr_clip_ = &temp[0];
-   }
-
-   // Load player kicking
-   if (!player.kick_texture.loadFromFile("images/player/kick.png")) {
-       printf("Failed to load Texture image!\n");
-       success = false;
-   } else {
-      // Allocat enough room for the clips
-      player.kick_texture.clips_ = new SDL_Rect[16];
-      SDL_Rect *temp = player.kick_texture.clips_;
-
-      // Calculate locations
-      for (int i = 0; i < 16; i++) {
-         temp[i].x = i * 75;
-         temp[i].y = 0;
-         temp[i].w = 75;
-         temp[i].h = 150;
-      }
-
-      // Set curr clip
-      player.kick_texture.curr_clip_ = &temp[0];
-   }
-
-   // Load jump and run
-   if (!player.running_jump_texture.loadFromFile("images/player/running_jump_na.png")) {
-      printf("Failed to load Running Jump image!\n");
-      success = false;
-   } else {
-      // Allocate enough room for the clips
-      player.running_jump_texture.clips_ = new SDL_Rect[17];
-      SDL_Rect *temp = player.running_jump_texture.clips_;
-
-      // Calculate the locations
-      for (int i = 0; i < 17; i++) {
-         temp[i].x = i * 92;
-         temp[i].y = 0;
-         temp[i].w = 92;
-         temp[i].h = 156;
-      }
-
-      // Set curr clip
-      player.running_jump_texture.curr_clip_ = &temp[0];
-   }
-
-   // Turn animation width 52 --> turns from facing right to left
-
-   // Load arm
-   if (!player.arm_texture.loadFromFile("images/player/idle_arm_na.png")) {
-      printf("Failed to load Arm image!\n");
-      success = false;
-   }
-
-   // Load shooting arm
-   if (!player.arm_shoot_texture.loadFromFile("images/player/arm.png")) {
-      printf("Failed to load arm shooting texture!\n");
-      success = false;
-   } else {
-     // Allocate enough room for the clips
-     player.arm_shoot_texture.clips_ = new SDL_Rect[9];
-     SDL_Rect *temp = player.arm_shoot_texture.clips_;
-
-     // Calculate the locations
-     for (int i = 0; i < 9; i++) {
-        temp[i].x = i * 63;
-        temp[i].y = 0;
-        temp[i].w = 63;
-        temp[i].h = 49;
-     }
-
-     // Set curr_clip
-     player.arm_shoot_texture.curr_clip_ = &temp[0];
-   }
-
-   // Running arm
-   if (!player.arm_running_texture.loadFromFile("images/player/running_arm.png")) {
-      printf("Failed to load arm shooting texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room for the clips
-      player.arm_running_texture.clips_ = new SDL_Rect[4];
-      SDL_Rect *temp = player.arm_running_texture.clips_;
-
-      // Calculate the locations
-      for (int i = 0; i < 4; i++) {
-         temp[i].x = i * 10;
-         temp[i].y = 0;
-         temp[i].w = 10;
-         temp[i].h = 33;
-      }
-
-      // Set curr clip
-      player.arm_running_texture.curr_clip_ = &temp[0];
-   }
-
-   // Eraser
-   if (!player.eraser_texture.loadFromFile("images/player/eraser.png")) {
-      printf("Failed to load eraser texture!\n");
-      success = false;
-   } else {
-      // Allocate one image for it
-      player.eraser_texture.clips_ = new SDL_Rect[1];
-      SDL_Rect *temp = player.eraser_texture.clips_;
-      temp[0].x = 0; temp[0].y = 0; temp[0].w = 21; temp[0].h = 12;
-
-      // Set curr clip
-      player.eraser_texture.curr_clip_ = &temp[0];
+   /************* PLAYER *******************************************/
+   if (player.load_media() == false) {
+      quit = true;
    }
 
    /************** MAIN MENU STUFF *********************************/
@@ -417,134 +254,6 @@ bool Application::loadMedia() {
    // Return state
    return success;
 }
-
-/*
-// Load level 3 media
-bool Application::loadMediaLvl3() {
-   // Flag for quitting
-   bool success = true;
-
-   // Load background 
-   background.emplace(3, Texture());
-   if (!background[3].loadFromFile("images/levels/level3/lv1bg.png")) {
-       printf("Failed to load Texture image!\n");
-       success = false;
-   }
-   
-   // Load ground
-   if (!ground->texture.loadFromFile("images/miscealaneous/floor.png")) {
-       printf("Failed to load thinstrip.png\n");
-       success = false;
-   } else {
-      // Set the heights and widths of the stuff
-      ground->set_height(ground->texture.getHeight());
-      ground->set_width(ground->texture.getWidth());
-
-      // Setup the platform
-      ground->setup();
-   }
-
-   // Load platform
-   for (int i = 0; i < platforms.size(); i++) {
-      std::string name ("images/levels/level3/lv1pf");
-      name += std::to_string(i + 1) + ".png";
-      if (!platforms[i]->texture.loadFromFile(name)) {
-          printf("Failed to load platforms\n");
-          success = false;
-      } else {
-         // Set height and width
-         platforms[i]->set_height(platforms[i]->texture.getHeight());
-         platforms[i]->set_width(platforms[i]->texture.getWidth());
-
-         // Setup
-         platforms[i]->setup();
-      }
-   }
-
-   if (!enemy->idle_texture.loadFromFile("images/enemies/fecreez_idle.png")) {
-      printf("Failed to load feecreez idle texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      enemy->idle_texture.clips_ = new SDL_Rect[18];
-      SDL_Rect *temp = enemy->idle_texture.clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 18; i++) {
-         temp[i].x = i * 82;
-         temp[i].y = 0;
-         temp[i].w = 82;
-         temp[i].h = 92;
-      }
-
-      // Set curr clip
-      enemy->idle_texture.curr_clip_ = &temp[0];
-   }
-
-   if (!enemy->shoot_texture.loadFromFile("images/enemies/fecreez_shoot.png")) {
-      printf("Failed to load feecreez shoot texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      enemy->shoot_texture.clips_ = new SDL_Rect[7];
-      SDL_Rect *temp = enemy->shoot_texture.clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 7; i++) {
-         temp[i].x = i * 82;
-         temp[i].y = 0;
-         temp[i].w = 82;
-         temp[i].h = 92;
-      }
-
-      // Set curr clip
-      enemy->shoot_texture.curr_clip_ = &temp[0];
-   }
-
-   if (!enemy->poojectile_texture.loadFromFile("images/enemies/poojectile.png")) {
-      printf("Failed to load poojectile texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      enemy->poojectile_texture.clips_ = new SDL_Rect[8];
-      SDL_Rect *temp = enemy->poojectile_texture.clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 8; i++) {
-         temp[i].x = i * 24;
-         temp[i].y = 0;
-         temp[i].w = 24;
-         temp[i].h = 15;
-      }
-
-      // Set curr clip
-      enemy->poojectile_texture.curr_clip_ = &temp[0];
-   }
-
-   if (!enemy->death_texture.loadFromFile("images/enemies/fecreez_death.png")) {
-      printf("Failed to load fecreez death texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      enemy->death_texture.clips_ = new SDL_Rect[16];
-      SDL_Rect *temp = enemy->death_texture.clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 16; i++) {
-         temp[i].x = i * 143;
-         temp[i].y = 0;
-         temp[i].w = 143;
-         temp[i].h = 92;
-      }
-
-      // Set curr clip
-      enemy->death_texture.curr_clip_ = &temp[0];
-   }
-
-   // Return success
-   return success;
-}
-*/
 
 // Setup main menu
 void Application::setup_menu() {
@@ -784,7 +493,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player.get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL12;
+         level_flag_ = LEVEL11;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;
@@ -826,11 +535,11 @@ void Application::playground() {
    if (game_flag_ == SETUP) {
       // First setup level 1
       if (level_flag_ == LEVEL11) {
-         //setup_lv1();
-         level = new Level("images/levels/level1/format", this);
+         level = new Level("images/levels/Forest/board1/format", this);
       } else if (level_flag_ == LEVEL12) {
-         //setup_lv3();
-         level = new Level("images/levels/level3/format", this);
+         level = new Level("images/levels/Forest/board2/format", this);
+      } else if (level_flag_ == LEVEL13) {
+         level = new Level("images/levels/Forest/board3/format", this);
       }
       
       // Set game_flag_ to PLAY
@@ -840,23 +549,6 @@ void Application::playground() {
    // Clear screen as the first things that's done?
    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
    SDL_RenderClear(renderer);
-
-   /*
-   // ITERATE THROUGH THE SPRITES AND DRAW THEM
-   for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end(); ++it) {
-      // Check to see if it's allocated
-      if ((*it) && !(*it)->is_alive()) {
-         //delete (*it);
-         //it = sprites_.erase(it);
-         // TODO: play death animation instead of straight killling them
-         if ((*it)->body) {
-            world_.DestroyBody((*it)->body);
-            (*it)->body = NULL;
-            completed_level_ = true;
-         }
-      }
-   }
-   */
 
    // Update world timer
    world_.Step(timeStep_, velocityIterations_, positionIterations_);
@@ -886,45 +578,6 @@ void Application::playground() {
 
    /******** UPDATE THE LEVEL *************/
    level->update();
-
-   /*
-   // Render the background
-   if (level_flag_ == LEVEL11) {
-      background[1].render(0, -55);
-   } else if (level_flag_ == LEVEL12) {
-      background[3].render(0, -55);
-   }
-   */
-
-   /*
-   // ITERATE THROUGH THE SPRITES AND DRAW THEM
-   for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end();) {
-      // Check to see if it's allocated
-      if (*it) {
-         // Check if it's alive or not
-         if (!(*it)->is_alive()) {
-            //delete (*it);
-            //it = sprites_.erase(it);
-            // TODO: play death animation instead of straight killling them
-            (*it)->update();
-            ++it;
-         } else {
-            (*it)->update();
-            ++it;
-         }
-      } else {
-         it = sprites_.erase(it);
-      }
-   }
-   */
-
-   /*
-   // ITERATE THROUGH PLATFORMS AND DRAW THEM
-   for (std::vector<Platform *>::iterator it = platforms.begin(); it != platforms.end();) {
-      (*it)->update();
-      ++it;
-   }
-   */
 
    // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
    for (std::vector<Projectile *>::iterator it = projectiles_.begin(); it != projectiles_.end();) {
@@ -1083,156 +736,6 @@ bool Application::loadMediaEnemy(Enemy *enemy) {
    return success;
 }
 
-/*
-// Load level 1 media
-bool Application::loadMediaLvl1() {
-   // Flag for error
-   bool success = true;
-
-   // Load background
-   background.emplace(1, Texture());
-   if (!background[1].loadFromFile("images/levels/level1/platforms.png")) {
-      printf("Failed to load background image\n");
-      success = false;
-   }
-
-   // Load media for enemy
-   if (loadMediaEnemy(enemy) == false) {
-      quit = true;
-      return false;
-   }
-
-   // Now setup widths and heights of each platform
-   // Set height and width
-   platforms[0]->set_height(38);
-   platforms[0]->set_width(405);
-   platforms[0]->setup();
-   platforms[1]->set_height(99);
-   platforms[1]->set_width(797);
-   platforms[1]->setup();
-   platforms[2]->set_height(300);
-   platforms[2]->set_width(403);
-   platforms[2]->setup();
-   platforms[3]->set_height(498);
-   platforms[3]->set_width(404);
-   platforms[3]->setup();
-   platforms[4]->set_height(301);
-   platforms[4]->set_width(319);
-   platforms[4]->setup();
-
-   // Return success
-   return success;
-}
-*/
-/*
-// Setup level 1
-void Application::setup_lv1() {
-   // Set player's location
-   player.set_x(5);
-   player.set_y(792); //(700);
-
-   // Create new enemy
-   enemy = new Enemy(500, 512, this);
-
-   // Create new platforms and push them to the platforms vector
-   // TODO: Create a dedicated class for levels and customize them another way
-   platforms.push_back(new Platform(495, 1080 - 432 - 7, this));
-   platforms.push_back(new Platform(398, 1080 - 99 - 7, this));
-   platforms.push_back(new Platform(996, 1080 - 100 - 7, this));
-   platforms.push_back(new Platform(1400, 1080 - 248 - 57, this));
-   platforms.push_back(new Platform(1760, 1080 - 151 - 57, this));
-
-   // Load media for level 3
-   if (loadMediaLvl1() == false) {
-      quit = true;
-      return;
-   }
-
-   // Push back enemy
-   sprites_.push_back(enemy);
-}
-*/
-
-/*
-// Setup level 3
-void Application::setup_lv3() {
-   // Set player's location
-   player.set_x(5);
-   player.set_y(702);
-
-   // Set enemy's location
-   enemy = new Enemy(1000, 512, this);
-
-   // Set the platforms up
-   ground = new Platform(960, 1050, 0, 0, this);
-   
-   // Do level platform 1-6
-   platforms.push_back(new Platform(950, 305 - 55, 0, 0, this));
-   platforms.push_back(new Platform(300, 505 - 55, 0, 0, this));
-   platforms.push_back(new Platform(1630, 505 - 55, 0, 0, this));
-   platforms.push_back(new Platform(1045, 705 - 55, 0, 0, this));
-   platforms.push_back(new Platform(550, 905 - 55, 0, 0, this));
-   platforms.push_back(new Platform(1510, 900 - 55, 0, 0, this));
-
-   // Load media for level 3
-   if (loadMediaLvl3() == false) {
-      quit = true;
-      return;
-   }
-
-   // Push back ground
-   sprites_.push_back(ground);
-
-   // Push back enemy
-   sprites_.push_back(enemy);
-}
-*/
-
-// Destroy level 3
-void Application::destroy_lvl() {
-   // Destroy enemy
-   //enemy->texture.free();
-   delete enemy;
-   enemy = NULL;
-
-   // Destroy ground
-   //ground->texture.free();
-   if (level_flag_ == LEVEL12) {
-      delete ground;
-      ground = NULL;
-   }
-
-   // Delete platforms
-   for (std::vector<Platform *>::iterator it = platforms.begin(); it != platforms.end(); ++it) {
-      if (*it) {
-         delete (*it);
-         (*it) = NULL;
-      }
-      //it = platforms.erase(it);
-   }
-
-   // Free background textures
-   /*
-   if (level_flag_ == LEVEL12) {
-      background[3].free();
-   } else if (level_flag_ == LEVEL11) {
-      background[1].free();
-   }
-   */
-
-   // ITERATE THROUGH THE SPRITES AND DRAW THEM
-   for (std::vector<Element *>::iterator it = sprites_.begin(); it != sprites_.end(); ++it) {
-      if (*it) {
-         delete (*it);
-         (*it) = NULL;
-      }
-      //it = sprites_.erase(it);
-   }
-
-   // Resize both vectors to zero size
-   platforms.clear();
-   sprites_.clear();
-}
 
 // Set the viewport for minimaps and stuff like that if needed
 void Application::setViewport() {

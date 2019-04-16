@@ -270,17 +270,6 @@ class Application {
       // PLAYGROUND FUNCTION
       void playground();
 
-      // Setup level 1
-      //void setup_lv1();
-      bool lv1_flag;
-
-      // Setup level 3
-      void setup_lv3();
-      bool lv3_flag;
-
-      // Destroy level
-      void destroy_lvl();
-
       // GAME FLAG
       APP_STATE app_flag_;
       MENU_SCREENS menu_screen_;

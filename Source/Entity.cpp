@@ -62,7 +62,9 @@ Entity::~Entity() {}
 
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
-   Entity(960, 412, 150, 54, application), player_state_(STAND),
+   // The new sprite is going to be 37 wide (the character itself)
+   // TODO: Load in new smaller sprite sheet
+   Entity(960, 412, 104, 37, application), player_state_(STAND),
    idle_texture(this, 15), running_texture(this, 19), kick_texture(this, 15), 
    idle_jump_texture(this, 15), running_jump_texture(this, 16), arm_texture(this, 0), 
    arm_shoot_texture(this, 8), arm_running_texture(this, 3), eraser_texture(this, 0),
@@ -89,7 +91,8 @@ Player::Player(Application* application) :
    float width = (get_width() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
    float height = (get_height() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
    //printf("width = %d, height = %d\n", get_width(), get_height());
-   const b2Vec2 center = {(92.0f - get_width()) / 2.0f * application->to_meters_, 0.0f};
+   const b2Vec2 center = {(62.0f - get_width()) / 2.0f * application->to_meters_, 
+                          4.0f * application->to_meters_};
    box.SetAsBox(width, height, center, 0.0f);
 
    // Set various fixture definitions and create fixture
@@ -184,52 +187,52 @@ void Player::update(bool freeze) {
 void Player::adjust_deltas() {
    if (player_state_ == STAND) {
       if (entity_direction == RIGHT) {
-         arm_delta_x = 4;
-         arm_delta_y = 64;
-         arm_delta_shoot_x = 4;
-         arm_delta_shoot_y = 51;
+         arm_delta_x = 1;
+         arm_delta_y = 42;
+         arm_delta_shoot_x = 2;
+         arm_delta_shoot_y = 34;
       } else {
-         arm_delta_x = -30;
-         arm_delta_y = 64;
-         arm_delta_shoot_x = -83;
-         arm_delta_shoot_y = 51;
+         arm_delta_x = -19;
+         arm_delta_y = 42;
+         arm_delta_shoot_x = -58;
+         arm_delta_shoot_y = 34;
       }
    } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
       if (entity_direction == RIGHT) {
-         arm_delta_x = 2;
-         arm_delta_y = 63;
-         arm_delta_shoot_x = 4;
-         arm_delta_shoot_y = 51;
+         arm_delta_x = 1;
+         arm_delta_y = 43;
+         arm_delta_shoot_x = 2;
+         arm_delta_shoot_y = 34;
       } else {
-         arm_delta_x = -28;
-         arm_delta_y = 63;
-         arm_delta_shoot_x = -83;
-         arm_delta_shoot_y = 51;
+         arm_delta_x = -20;
+         arm_delta_y = 43;
+         arm_delta_shoot_x = -58;
+         arm_delta_shoot_y = 34;
       }
    } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
       if (entity_direction == RIGHT) {
          arm_delta_x = 2;
-         arm_delta_y = 63;
-         arm_delta_shoot_x = 4;
-         arm_delta_shoot_y = 51;
+         arm_delta_y = 43;
+         arm_delta_shoot_x = 2;
+         arm_delta_shoot_y = 34;
       } else {
-         arm_delta_x = -28;
-         arm_delta_y = 63;
-         arm_delta_shoot_x = -83;
-         arm_delta_shoot_y = 51;
+         arm_delta_x = -20;
+         arm_delta_y = 43;
+         arm_delta_shoot_x = -58;
+         arm_delta_shoot_y = 34;
       }
    } else if (player_state_ == RUN_AND_JUMP || player_state_ == JUMP) {
       // Adjust deltas
       if (entity_direction == RIGHT) {
          arm_delta_x = 2;
-         arm_delta_y = 69;
+         arm_delta_y = 43;
          arm_delta_shoot_x = 2;
-         arm_delta_shoot_y = 57;
+         arm_delta_shoot_y = 34;
       } else {
-         arm_delta_x = -28;
-         arm_delta_y = 69;
-         arm_delta_shoot_x = -83;
-         arm_delta_shoot_y = 57;
+         arm_delta_x = -20;
+         arm_delta_y = 43;
+         arm_delta_shoot_x = -58;
+         arm_delta_shoot_y = 34;
       }
    } /*else if (player_state_ == JUMP) {
       // Adjust deltas
@@ -264,14 +267,18 @@ void Player::animate(Texture *tex, int reset) {
    // Choose animation based on what state player is in
    if (player_state_ == STAND) {
       // Animate
-      if (idle_texture.frame_ > 15) {
+      if (idle_texture.frame_ > 3) {
          idle_texture.frame_ = 0;
       }
       idle_texture.curr_clip_ = &idle_texture.clips_[idle_texture.frame_];
       ++idle_texture.frame_;
+
+      // Set arm_running_texture frame to 0
+      //arm_running_texture.frame_ = 0;
    } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
       // Animation man
-      if (running_texture.frame_ > 14) {
+      // TODO: mess with these animation framtes
+      if (running_texture.frame_ > 15) {
          running_texture.frame_ = 4;
       }
       running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
@@ -285,8 +292,8 @@ void Player::animate(Texture *tex, int reset) {
       ++arm_running_texture.frame_;
    } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
       // Animate stopping
-      if (running_texture.frame_ > 19) {
-         running_texture.frame_ = 19;
+      if (running_texture.frame_ > 20) {
+         running_texture.frame_ = 20;
       }
       running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
       ++running_texture.frame_;
@@ -479,7 +486,7 @@ void Player::move() {
          }
 
          // Apply an impulse
-         const b2Vec2 force = {0, 7.5f};
+         const b2Vec2 force = {0, 3.5f};
          body->ApplyLinearImpulse(force, body->GetPosition(), true);
 
          // Set the flags
@@ -503,8 +510,8 @@ bool Player::load_media() {
    bool success = true;
 
    // Load player idle
-   if (!idle_texture.loadFromFile("images/player/idle_na.png")) {
-       printf("Failed to load Texture image!\n");
+   if (!idle_texture.loadFromFile("images/player/new/idle_no_arm.png")) {
+       printf("Failed to load idle_no_arm.png!\n");
        success = false;
    } else {
       // Allocat enough room for the clips
@@ -513,10 +520,10 @@ bool Player::load_media() {
 
       // Calculate locations
       for (int i = 0; i < 16; i++) {
-         temp[i].x = i * 92;
+         temp[i].x = i * 62;
          temp[i].y = 0;
-         temp[i].w = 92;
-         temp[i].h = 150;
+         temp[i].w = 62;
+         temp[i].h = 104;
       }
 
       // Set curr clip
@@ -524,7 +531,7 @@ bool Player::load_media() {
    }
 
    // Load player jumping idly
-   if (!idle_jump_texture.loadFromFile("images/player/idle_jump_na.png")) {
+   if (!idle_jump_texture.loadFromFile("images/player/new/idle_jump_no_arm.png")) {
       printf("Failed to load idle_jump_texture!\n");
       success = false;
    } else {
@@ -534,10 +541,10 @@ bool Player::load_media() {
 
       // Calculate sprites
       for (int i = 0; i < 15; i++) {
-         temp[i].x = i * 92;
+         temp[i].x = i * 62;
          temp[i].y = 0;
-         temp[i].w = 92;
-         temp[i].h = 156;
+         temp[i].w = 62;
+         temp[i].h = 104;
       }
 
       // Set curr clip
@@ -545,20 +552,20 @@ bool Player::load_media() {
    }
 
    // Load player running
-   if (!running_texture.loadFromFile("images/player/running_na.png")) {
-       printf("Failed to load Texture image!\n");
+   if (!running_texture.loadFromFile("images/player/new/running_no_arm.png")) {
+       printf("Failed to load running_no_arm.png image!\n");
        success = false;
    } else {
       // Allocat enough room for the clips
-      running_texture.clips_ = new SDL_Rect[20];
+      running_texture.clips_ = new SDL_Rect[21];
       SDL_Rect *temp = running_texture.clips_;
 
       // Calculate locations
-      for (int i = 0; i < 20; i++) {
-         temp[i].x = i * 92;
+      for (int i = 0; i < 21; i++) {
+         temp[i].x = i * 62;
          temp[i].y = 0;
-         temp[i].w = 92;
-         temp[i].h = 150;
+         temp[i].w = 62;
+         temp[i].h = 104;
       }
 
       // Set curr clip
@@ -610,13 +617,13 @@ bool Player::load_media() {
    // Turn animation width 52 --> turns from facing right to left
 
    // Load arm
-   if (!arm_texture.loadFromFile("images/player/idle_arm_na.png")) {
+   if (!arm_texture.loadFromFile("images/player/new/arm_new.png")) {
       printf("Failed to load Arm image!\n");
       success = false;
    }
 
    // Load shooting arm
-   if (!arm_shoot_texture.loadFromFile("images/player/arm.png")) {
+   if (!arm_shoot_texture.loadFromFile("images/player/new/arm_throw.png")) {
       printf("Failed to load arm shooting texture!\n");
       success = false;
    } else {
@@ -626,10 +633,10 @@ bool Player::load_media() {
 
      // Calculate the locations
      for (int i = 0; i < 9; i++) {
-        temp[i].x = i * 63;
+        temp[i].x = i * 44;
         temp[i].y = 0;
-        temp[i].w = 63;
-        temp[i].h = 49;
+        temp[i].w = 44;
+        temp[i].h = 33;
      }
 
      // Set curr_clip
@@ -637,8 +644,8 @@ bool Player::load_media() {
    }
 
    // Running arm
-   if (!arm_running_texture.loadFromFile("images/player/running_arm.png")) {
-      printf("Failed to load arm shooting texture!\n");
+   if (!arm_running_texture.loadFromFile("images/player/new/running_arm.png")) {
+      printf("Failed to load running arm texture!\n");
       success = false;
    } else {
       // Allocate enough room for the clips
@@ -647,10 +654,10 @@ bool Player::load_media() {
 
       // Calculate the locations
       for (int i = 0; i < 4; i++) {
-         temp[i].x = i * 10;
+         temp[i].x = i * 7;
          temp[i].y = 0;
-         temp[i].w = 10;
-         temp[i].h = 33;
+         temp[i].w = 7;
+         temp[i].h = 22;
       }
 
       // Set curr clip

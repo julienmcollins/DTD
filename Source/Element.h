@@ -44,7 +44,7 @@ class Element {
 
       // Update function for all elements
       virtual void move();
-      virtual void animate(Texture *tex = NULL, int reset = 0);
+      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0);
       virtual void update(bool freeze = false);
 
       // Draw function if immediate drawing is desired
@@ -64,9 +64,9 @@ class Element {
       Application *get_application();
 
       // Fps timer for animations
-      Timer fps_timer;
-      float last_frame;
-      float fps;
+      //Timer fps_timer;
+      //float last_frame;
+      //float fps;
 
       /***** BOX2D Variables *********/
 

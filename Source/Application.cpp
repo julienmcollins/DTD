@@ -260,7 +260,7 @@ void Application::setup_menu() {
    // Set player location
    player.set_x(50);
    player.set_y(772);
-   player.fps = 1.0f / 20.0f;
+   //player.fps = 1.0f / 20.0f;
 
    // Setup platform
    menu_platform_ = new Platform(960, 925, 10, 1920, this);
@@ -269,19 +269,19 @@ void Application::setup_menu() {
    menu_platform_->setup();   
 
    // Setup menu background
-   menu_background_.fps = 1.0f / 4.0f;
+   menu_background_.texture.fps = 1.0f / 4.0f;
    menu_background_.texture.max_frame_ = 2;
 
    // Setup menu title
-   menu_title_.fps = 1.0f / 4.0f;
+   menu_title_.texture.fps = 1.0f / 4.0f;
    menu_title_.texture.max_frame_ = 2;
 
    // Setup menu items
-   menu_items_.fps = 1.0f / 4.0f;
+   menu_items_.texture.fps = 1.0f / 4.0f;
    menu_items_.texture.max_frame_ = 2;
 
    // World menu items
-   world_items_.fps = 1.0f / 4.0f;
+   world_items_.texture.fps = 1.0f / 4.0f;
    world_items_.texture.max_frame_ = 2;
 }
 
@@ -458,18 +458,18 @@ void Application::main_screen() {
 
    /* ANIMATION FOR TITLE SCREEN */
    // Animate background
-   animate(menu_background_.fps, &menu_background_, &menu_background_.texture, 
-         menu_background_.fps_timer, menu_background_.last_frame);
+   animate(menu_background_.texture.fps, &menu_background_, &menu_background_.texture, 
+         menu_background_.texture.fps_timer, menu_background_.texture.last_frame);
 
    // Animate title
-   animate(menu_title_.fps, &menu_title_, &menu_title_.texture,
-         menu_title_.fps_timer, menu_title_.last_frame);
+   animate(menu_title_.texture.fps, &menu_title_, &menu_title_.texture,
+         menu_title_.texture.fps_timer, menu_title_.texture.last_frame);
 
    // Animate menu items
    if (menu_screen_ == FIRST) {
       // Animate menu items
-      animate(menu_items_.fps, &menu_items_, &menu_items_.texture, 
-            menu_items_.fps_timer, menu_items_.last_frame);
+      animate(menu_items_.texture.fps, &menu_items_, &menu_items_.texture, 
+            menu_items_.texture.fps_timer, menu_items_.texture.last_frame);
 
       // Animate player
       player.update(true);
@@ -478,8 +478,8 @@ void Application::main_screen() {
       finger_.update();
    } else if (menu_screen_ == SECOND) {
       // Animate world items
-      animate(world_items_.fps, &world_items_, &world_items_.texture,
-            world_items_.fps_timer, world_items_.last_frame);
+      animate(world_items_.texture.fps, &world_items_, &world_items_.texture,
+            world_items_.texture.fps_timer, world_items_.texture.last_frame);
 
       // Animate player
       player.update(true);
@@ -803,7 +803,8 @@ Application::~Application() {
 // Constructor
 Finger::Finger(Application *application) : Element(700, 665, 67, 124, application), finger_state(SHAKE) {
    // Setup finger
-   fps = 1.0f / 20.0f;
+   textures["shake"].fps = 1.0f / 20.0f;
+   textures["point"].fps = 1.0f / 20.0f;
    textures["shake"].max_frame_ = 7;
    textures["point"].max_frame_ = 5;
 }

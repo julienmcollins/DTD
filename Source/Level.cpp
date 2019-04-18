@@ -98,7 +98,7 @@ bool Level::load_media_() {
       background_.texture.set_y(-55);
 
       // Set fps and stuff
-      background_.fps = 1.0f / 3.0f;
+      background_.texture.fps = 1.0f / 3.0f;
       background_.texture.max_frame_ = num_clips - 1;
       background_.texture.curr_clip_ = &temp[0];
    }

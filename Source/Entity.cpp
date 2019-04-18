@@ -65,8 +65,8 @@ Player::Player(Application* application) :
    // The new sprite is going to be 37 wide (the character itself)
    // TODO: Load in new smaller sprite sheet
    Entity(960, 412, 104, 37, application), player_state_(STAND),
-   idle_texture(this, 15), running_texture(this, 19), kick_texture(this, 15), 
-   idle_jump_texture(this, 15), running_jump_texture(this, 16), arm_texture(this, 0), 
+   idle_texture(this, 15), running_texture(this, 20), kick_texture(this, 15), 
+   idle_jump_texture(this, 14), running_jump_texture(this, 16), arm_texture(this, 4), 
    arm_shoot_texture(this, 8), arm_running_texture(this, 3), eraser_texture(this, 0),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51) {
@@ -109,6 +109,15 @@ Player::Player(Application* application) :
 
    // TEMPORARY SOLUTION
    arm_shoot_texture.completed_ = true;
+
+   // Set fps
+   idle_texture.fps = 1.0f / 4.0f;
+   running_texture.fps = 1.0f / 20.0f;
+   running_jump_texture.fps = 1.0f / 20.0f;
+   idle_jump_texture.fps = 1.0f / 20.0f;
+   arm_texture.fps = 1.0f / 4.0f;
+   arm_shoot_texture.fps = 1.0f / 20.0f;
+   arm_running_texture.fps = 1.0f / 20.0f;
 }
 
 // Get texture based on state
@@ -141,12 +150,15 @@ Player::STATE Player::get_player_state() {
 void Player::update(bool freeze) {
    //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: CROUCH, 5: RUN_AND_JUMP)" << std::endl;
    // Update frames
+   /*
    last_frame += 
       (fps_timer.getDeltaTime() / 1000.0f);
    if (last_frame > get_application()->animation_update_time_) {
       animate();
       last_frame = 0.0f;
    }
+   */
+   animate();
 
    // Update player if not frozen
    if (!freeze)
@@ -170,8 +182,9 @@ void Player::update(bool freeze) {
                arm_running_texture.curr_clip_, 0.0,
                &arm_running_texture.center_, arm_running_texture.flip_);
          } else {
+            //std::cout << arm_texture.max_frame_ << std::endl;
             arm_texture.render(get_x() + get_width() + 
-               arm_delta_x, get_y() + arm_delta_y, NULL, 0.0, 
+               arm_delta_x, get_y() + arm_delta_y, arm_texture.curr_clip_, 0.0, 
                &arm_texture.center_, arm_texture.flip_);
          }
      } else {
@@ -188,23 +201,23 @@ void Player::adjust_deltas() {
    if (player_state_ == STAND) {
       if (entity_direction == RIGHT) {
          arm_delta_x = 1;
-         arm_delta_y = 42;
-         arm_delta_shoot_x = 2;
-         arm_delta_shoot_y = 34;
-      } else {
-         arm_delta_x = -19;
-         arm_delta_y = 42;
-         arm_delta_shoot_x = -58;
-         arm_delta_shoot_y = 34;
-      }
-   } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
-      if (entity_direction == RIGHT) {
-         arm_delta_x = 1;
          arm_delta_y = 43;
          arm_delta_shoot_x = 2;
          arm_delta_shoot_y = 34;
       } else {
          arm_delta_x = -20;
+         arm_delta_y = 43;
+         arm_delta_shoot_x = -58;
+         arm_delta_shoot_y = 34;
+      }
+   } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
+      if (entity_direction == RIGHT) {
+         arm_delta_x = 0;
+         arm_delta_y = 43;
+         arm_delta_shoot_x = 2;
+         arm_delta_shoot_y = 34;
+      } else {
+         arm_delta_x = -19;
          arm_delta_y = 43;
          arm_delta_shoot_x = -58;
          arm_delta_shoot_y = 34;
@@ -224,13 +237,13 @@ void Player::adjust_deltas() {
    } else if (player_state_ == RUN_AND_JUMP || player_state_ == JUMP) {
       // Adjust deltas
       if (entity_direction == RIGHT) {
-         arm_delta_x = 2;
-         arm_delta_y = 43;
+         arm_delta_x = 1;
+         arm_delta_y = 42;
          arm_delta_shoot_x = 2;
          arm_delta_shoot_y = 34;
       } else {
          arm_delta_x = -20;
-         arm_delta_y = 43;
+         arm_delta_y = 42;
          arm_delta_shoot_x = -58;
          arm_delta_shoot_y = 34;
       }
@@ -251,7 +264,7 @@ void Player::adjust_deltas() {
 }
 
 // Animate based on state
-void Player::animate(Texture *tex, int reset) {
+void Player::animate(Texture *tex, int reset, int max) {
    // Shooting animation
    if (shooting) {
       //std::cout << arm_shoot_texture.frame_ << std::endl;
@@ -262,55 +275,76 @@ void Player::animate(Texture *tex, int reset) {
       }
       arm_shoot_texture.curr_clip_ = &arm_shoot_texture.clips_[arm_shoot_texture.frame_];
       ++arm_shoot_texture.frame_;
+   } else {
+      Element::animate(&arm_texture, 0);
    }
 
    // Choose animation based on what state player is in
    if (player_state_ == STAND) {
       // Animate
+      /*
       if (idle_texture.frame_ > 3) {
          idle_texture.frame_ = 0;
       }
       idle_texture.curr_clip_ = &idle_texture.clips_[idle_texture.frame_];
       ++idle_texture.frame_;
+      */
+      Element::animate(&idle_texture, 0, 4);
+      //Element::animate(&arm_texture, 0);
 
       // Set arm_running_texture frame to 0
       //arm_running_texture.frame_ = 0;
    } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
       // Animation man
       // TODO: mess with these animation framtes
+      /*
       if (running_texture.frame_ > 15) {
          running_texture.frame_ = 4;
       }
       running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
       ++running_texture.frame_;
+      */
+      Element::animate(&running_texture, 4, 15);
 
       // Animate arm
+      /*
       if (arm_running_texture.frame_ > 3) {
          arm_running_texture.frame_ = 3;
       }
       arm_running_texture.curr_clip_ = &arm_running_texture.clips_[arm_running_texture.frame_];
       ++arm_running_texture.frame_;
+      */
+      Element::animate(&arm_running_texture, 3);
    } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
       // Animate stopping
+      /*
       if (running_texture.frame_ > 20) {
          running_texture.frame_ = 20;
       }
       running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
       ++running_texture.frame_;
+      */
+      Element::animate(&running_texture, 20);
    } else if (player_state_ == RUN_AND_JUMP) {
       // Animate
+      /*
       if (running_jump_texture.frame_ > 16) {
          running_jump_texture.frame_ = 0;
       }
       running_jump_texture.curr_clip_ = &running_jump_texture.clips_[running_jump_texture.frame_];
       ++running_jump_texture.frame_;
+      */
+      Element::animate(&running_jump_texture, 0);
    } else if (player_state_ == JUMP) {
       // Animate
+      /*
       if (idle_jump_texture.frame_ > 14) {
          idle_jump_texture.frame_ = 0;
       }
       idle_jump_texture.curr_clip_ = &idle_jump_texture.clips_[idle_jump_texture.frame_];
       ++idle_jump_texture.frame_;
+      */
+      Element::animate(&idle_jump_texture, 0);
    }
 }
 
@@ -594,7 +628,7 @@ bool Player::load_media() {
    }
 
    // Load jump and run
-   if (!running_jump_texture.loadFromFile("images/player/running_jump_na.png")) {
+   if (!running_jump_texture.loadFromFile("images/player/new/running_jump_no_arm.png")) {
       printf("Failed to load Running Jump image!\n");
       success = false;
    } else {
@@ -604,10 +638,10 @@ bool Player::load_media() {
 
       // Calculate the locations
       for (int i = 0; i < 17; i++) {
-         temp[i].x = i * 92;
+         temp[i].x = i * 62;
          temp[i].y = 0;
-         temp[i].w = 92;
-         temp[i].h = 156;
+         temp[i].w = 62;
+         temp[i].h = 104;
       }
 
       // Set curr clip
@@ -617,9 +651,24 @@ bool Player::load_media() {
    // Turn animation width 52 --> turns from facing right to left
 
    // Load arm
-   if (!arm_texture.loadFromFile("images/player/new/arm_new.png")) {
+   if (!arm_texture.loadFromFile("images/player/new/idle_arm.png")) {
       printf("Failed to load Arm image!\n");
       success = false;
+   } else {
+      // Allocate enough room
+      arm_texture.clips_ = new SDL_Rect[5];
+      SDL_Rect *temp = arm_texture.clips_;
+
+      // Calculate the locations
+      for (int i = 0; i < 5; i++) {
+         temp[i].x = i * 7;
+         temp[i].y = 0;
+         temp[i].w = 7;
+         temp[i].h = 24;
+      }
+
+      // Set curr clip
+      arm_texture.curr_clip_ = &temp[0];
    }
 
    // Load shooting arm
@@ -695,143 +744,3 @@ Player::~Player() {
    eraser_texture.free();
 }
 
-/********************* ENEMY IMPLEMENTATIONS ******************/
-
-Enemy::Enemy(int x, int y, Application *application) :
-   Entity(x, y, 92, 82, application), enemy_state_(IDLE),
-   idle_texture(this, 17), shoot_texture(this, 6), poojectile_texture(this, 7),
-   death_texture(this, 15), shoot_timer_(0) {
-
-   // Setup Box2D
-   // Set body type
-   body_def.type = b2_dynamicBody;
-
-   // Set initial position and set fixed rotation
-   float x_temp = float(x) * application->to_meters_;
-   float y_temp = -float(y) * application->to_meters_;
-   body_def.position.Set(x_temp, y_temp);
-   body_def.fixedRotation = true;
-
-   // Attach body to world
-   body = get_application()->world_.CreateBody(&body_def);
-
-   // Set box dimensions
-   float width = (get_width() / 2.0f) * application->to_meters_ - 0.02f;
-   float height = (get_height() / 2.0f) * application->to_meters_ - 0.02f;
-   box.SetAsBox(width, height);
-
-   // Set various fixture definitions and create fixture
-   fixture_def.shape = &box;
-   fixture_def.density = 1.0f;
-   fixture_def.friction = 1.8f;
-   body->CreateFixture(&fixture_def);
-
-   // Set user data so it can react
-   body->SetUserData(this);
-
-   // Set health
-   health = 100;
-}
-
-void Enemy::update(bool freeze) {
-   // Move first
-   move();
-
-   // Render enemy
-   Texture *enemytexture = get_texture();
-   SDL_Rect *curr_clip = get_curr_clip();
-   if (curr_clip) {
-     // Render player
-     render(enemytexture, curr_clip);
-   }
-}
-
-void Enemy::move() {
-   // Check to see what direction the enemy should be facing
-   if (get_application()->get_player()->get_x() <= get_x()) {
-      entity_direction = LEFT;
-   } else if (get_application()->get_player()->get_x() > get_x()) {
-      entity_direction = RIGHT;
-   }
-
-   // Overall check to see if it's alive
-   if (alive) {
-      // Check to see if get_player() within bounds of enemy
-      if (get_application()->get_player()->get_y() >= get_y() - get_height() &&
-            get_application()->get_player()->get_y() <= get_y() + get_height()) {
-         // Set state to shoot
-         enemy_state_ = SHOOT;
-
-         // Update timer
-         ++shoot_timer_;
-
-         // Shoot if timer goes off
-         if (shoot_timer_ >= 50) {
-            Projectile *tmp = create_projectile(15, -10, 70, 15, 24, 0, 10, poojectile_texture);
-            tmp->body->SetGravityScale(0);
-            shoot_timer_ = 0;
-         }
-      } else {
-         enemy_state_ = IDLE;
-      }
-   } else {
-      // For now, use IDLE animation
-      // TODO: set state to death
-      enemy_state_ = DEATH;
-   }
-
-   // Update frames
-   last_frame += 
-      (fps_timer.getDeltaTime() / 1000.0f);
-   if (last_frame > get_application()->animation_update_time_) {
-      animate();
-      last_frame = 0.0f;
-   }
-}
-
-void Enemy::animate(Texture *tex, int reset) {
-   // Animate based on different states
-   if (enemy_state_ == IDLE) {
-      if (idle_texture.frame_ > 17) {
-         idle_texture.frame_ = 0;
-      }
-      idle_texture.curr_clip_ = &idle_texture.clips_[idle_texture.frame_];
-      ++idle_texture.frame_;
-   } else if (enemy_state_ == SHOOT) {
-      if (shoot_texture.frame_ > 6) {
-         shoot_texture.frame_ = 0;
-      }
-      shoot_texture.curr_clip_ = &shoot_texture.clips_[shoot_texture.frame_];
-      ++shoot_texture.frame_;
-   } else if (enemy_state_ == DEATH) {
-      if (death_texture.frame_ > 15) {
-         death_texture.frame_ = 15;
-      }
-      death_texture.curr_clip_ = &death_texture.clips_[death_texture.frame_];
-      ++death_texture.frame_;
-   }
-}
-
-Texture *Enemy::get_texture() {
-   // Get idle texture
-   if (enemy_state_ == IDLE) {
-      return &idle_texture;
-   }
-   
-   // Get shoot texture
-   if (enemy_state_ == SHOOT) {
-      return &shoot_texture;
-   }
-
-   // Get death texture
-   if (enemy_state_ == DEATH) {
-      return &death_texture;
-   }
-}
-
-Enemy::~Enemy() {
-   idle_texture.free();
-   shoot_texture.free();
-   poojectile_texture.free();
-   death_texture.free();
-}

@@ -13,6 +13,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "Timer.h"
+
 class Element;
 
 class Texture {
@@ -36,11 +38,12 @@ class Texture {
         SDL_Rect *clips_;
         SDL_Rect *curr_clip_;
 
-        // Frame number
+        // Frame related variables
         int frame_;
-
-        // Max frame
         int max_frame_;
+        float fps;
+        float last_frame;
+        Timer fps_timer;
 
         // Flag for completed animation
         bool completed_;

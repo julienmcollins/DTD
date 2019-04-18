@@ -3,7 +3,7 @@
 
 // Constructor for element
 Element::Element(int x, int y, int height, int width, Application *application) :
-   alive(true), texture(this, 0), last_frame(0), fps(0), body(NULL) {
+   alive(true), texture(this, 0), body(NULL) {
 
    // Set application
    application_ = application;
@@ -17,7 +17,7 @@ Element::Element(int x, int y, int height, int width, Application *application) 
    width_ = width;
 
    // Start fps timer
-   fps_timer.start();
+   //fps_timer.start();
 }
 
 // Set and get x
@@ -133,24 +133,28 @@ void Element::render(Texture *texture, SDL_Rect *clip) {
 void Element::move() {}
 
 // Animate function
-void Element::animate(Texture *tex, int reset) {
+void Element::animate(Texture *tex, int reset, int max) {
    // Tmp pointer
    Texture *curr;
-   if (tex)
+   if (tex) {
       curr = tex;
-   else
+   } else {
       curr = &texture;
+   }
+
+   // Change max depending on which one is specified
+   int temp_max = (max == 0) ? curr->max_frame_ : max;
 
    // Modulate fps
-   last_frame += (fps_timer.getDeltaTime() / 1000.0f);
-   if (last_frame > fps) {
-      if (curr->frame_ > curr->max_frame_) {
+   curr->last_frame += (curr->fps_timer.getDeltaTime() / 1000.0f);
+   if (curr->last_frame > curr->fps) {
+      if (curr->frame_ > temp_max) {
          curr->frame_ = reset;
          curr->completed_ = true;
       }
       curr->curr_clip_ = &curr->clips_[curr->frame_];
       ++curr->frame_;
-      last_frame = 0.0f;
+      curr->last_frame = 0.0f;
    }
 }
 

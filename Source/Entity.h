@@ -136,4 +136,5 @@ class Player : public Entity {
       // Player state
       STATE player_state_;
 };
+
 #endif

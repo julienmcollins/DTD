@@ -20,6 +20,7 @@
 #include "Entity.h"
 #include "Global.h"
 #include "Level.h"
+#include "Enemy.h"
 
 //#define NUM_BLOCKS 11
 
@@ -461,10 +462,6 @@ void Application::main_screen() {
    animate(menu_background_.texture.fps, &menu_background_, &menu_background_.texture, 
          menu_background_.texture.fps_timer, menu_background_.texture.last_frame);
 
-   // Animate title
-   animate(menu_title_.texture.fps, &menu_title_, &menu_title_.texture,
-         menu_title_.texture.fps_timer, menu_title_.texture.last_frame);
-
    // Animate menu items
    if (menu_screen_ == FIRST) {
       // Animate menu items
@@ -499,6 +496,10 @@ void Application::main_screen() {
          delete menu_platform_;
       }
    }
+
+   // Animate title
+   animate(menu_title_.texture.fps, &menu_title_, &menu_title_.texture,
+         menu_title_.texture.fps_timer, menu_title_.texture.last_frame);
 
    // Check enter key state
    if (finger_.finger_state == Finger::POINT) {

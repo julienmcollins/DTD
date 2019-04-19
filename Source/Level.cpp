@@ -13,6 +13,7 @@
 #include "Texture.h"
 #include "Entity.h"
 #include "Object.h"
+#include "Enemy.h"
 
 using namespace std;
 

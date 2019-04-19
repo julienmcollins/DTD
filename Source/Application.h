@@ -27,6 +27,7 @@
 #define NUM_BLOCKS 6
 
 class Level;
+class Enemy;
 
 // For returning the screen position
 typedef struct {

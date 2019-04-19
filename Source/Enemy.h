@@ -60,3 +60,4 @@ class Enemy : public Entity {
       int shoot_timer_;
 };
 
+#endif

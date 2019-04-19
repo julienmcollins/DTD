@@ -15,6 +15,7 @@
 
 // Prototype
 class Application;
+class Enemy;
 
 /***** LEVEL CLASS *******/
 class Level {

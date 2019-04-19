@@ -65,7 +65,7 @@ Player::Player(Application* application) :
    // The new sprite is going to be 37 wide (the character itself)
    // TODO: Load in new smaller sprite sheet
    Entity(960, 412, 104, 37, application), player_state_(STAND),
-   idle_texture(this, 15), running_texture(this, 20), kick_texture(this, 15), 
+   idle_texture(this, 4), running_texture(this, 20), kick_texture(this, 15), 
    idle_jump_texture(this, 14), running_jump_texture(this, 16), arm_texture(this, 4), 
    arm_shoot_texture(this, 8), arm_running_texture(this, 3), eraser_texture(this, 0),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
@@ -171,9 +171,6 @@ void Player::update(bool freeze) {
    Texture *playertexture = get_texture();
    SDL_Rect *curr_clip = get_curr_clip();
    if (curr_clip) {
-     // Render player
-     render(playertexture, curr_clip);
-
      // Render arm if idle, render shooting if not
      if (!shooting) {
          if (get_player_state() == 1) {
@@ -193,6 +190,9 @@ void Player::update(bool freeze) {
            arm_shoot_texture.curr_clip_, 0.0, 
            &arm_shoot_texture.center_, arm_shoot_texture.flip_);
      }
+
+     // Render player
+     render(playertexture, curr_clip);
    }
 }
 
@@ -549,11 +549,11 @@ bool Player::load_media() {
        success = false;
    } else {
       // Allocat enough room for the clips
-      idle_texture.clips_ = new SDL_Rect[16];
+      idle_texture.clips_ = new SDL_Rect[5];
       SDL_Rect *temp = idle_texture.clips_;
 
       // Calculate locations
-      for (int i = 0; i < 16; i++) {
+      for (int i = 0; i < 5; i++) {
          temp[i].x = i * 62;
          temp[i].y = 0;
          temp[i].w = 62;

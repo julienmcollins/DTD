@@ -44,7 +44,7 @@ Level::Level(string file, Application *application) :
    for (int i = 0; i < num_of_enemies_; i++) {
       int x, y;
       input >> x >> y;
-      enemies_.push_back(new Enemy(x, y, application)); 
+      enemies_.push_back(new Fecreez(x, y, 92, 82, application)); 
    }
 
    // Get the platforms and their position
@@ -58,7 +58,7 @@ Level::Level(string file, Application *application) :
 
    // Now, load the media and quit if false
    if (load_media_() == false) {
-      cout << "HEllo?" << endl;
+      cout << "No please" << endl;
       application_->set_quit();
    }
 
@@ -112,13 +112,6 @@ bool Level::load_media_() {
       // Set platforms location
       platform_texture_.set_x(0);
       platform_texture_.set_y(-55);
-   }
-
-   // Get enemy textures
-   for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end(); ++it) {
-      if (application_->loadMediaEnemy((*it)) == false) {
-         success = false;
-      }
    }
 
    // Return success

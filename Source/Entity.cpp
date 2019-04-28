@@ -169,31 +169,29 @@ void Player::update(bool freeze) {
 
    // Render player
    Texture *playertexture = get_texture();
-   SDL_Rect *curr_clip = get_curr_clip();
-   if (curr_clip) {
-     // Render arm if idle, render shooting if not
-     if (!shooting) {
-         if (get_player_state() == 1) {
-            arm_running_texture.render(get_x() + get_width() +
-               arm_delta_x, get_y() + arm_delta_y,
-               arm_running_texture.curr_clip_, 0.0,
-               &arm_running_texture.center_, arm_running_texture.flip_);
-         } else {
-            //std::cout << arm_texture.max_frame_ << std::endl;
-            arm_texture.render(get_x() + get_width() + 
-               arm_delta_x, get_y() + arm_delta_y, arm_texture.curr_clip_, 0.0, 
-               &arm_texture.center_, arm_texture.flip_);
-         }
-     } else {
-        arm_shoot_texture.render(get_x() + get_width() + 
-           arm_delta_shoot_x, get_y() + arm_delta_shoot_y, 
-           arm_shoot_texture.curr_clip_, 0.0, 
-           &arm_shoot_texture.center_, arm_shoot_texture.flip_);
-     }
 
-     // Render player
-     render(playertexture, curr_clip);
+   // Render arm if idle, render shooting if not
+   if (!shooting) {
+       if (get_player_state() == 1) {
+          arm_running_texture.render(get_x() + get_width() +
+             arm_delta_x, get_y() + arm_delta_y,
+             arm_running_texture.curr_clip_, 0.0,
+             &arm_running_texture.center_, arm_running_texture.flip_);
+       } else {
+          //std::cout << arm_texture.max_frame_ << std::endl;
+          arm_texture.render(get_x() + get_width() + 
+             arm_delta_x, get_y() + arm_delta_y, arm_texture.curr_clip_, 0.0, 
+             &arm_texture.center_, arm_texture.flip_);
+       }
+   } else {
+      arm_shoot_texture.render(get_x() + get_width() + 
+         arm_delta_shoot_x, get_y() + arm_delta_shoot_y, 
+         arm_shoot_texture.curr_clip_, 0.0, 
+         &arm_shoot_texture.center_, arm_shoot_texture.flip_);
    }
+
+   // Render player
+   render(playertexture);
 }
 
 // Adjust delta function
@@ -281,70 +279,16 @@ void Player::animate(Texture *tex, int reset, int max) {
 
    // Choose animation based on what state player is in
    if (player_state_ == STAND) {
-      // Animate
-      /*
-      if (idle_texture.frame_ > 3) {
-         idle_texture.frame_ = 0;
-      }
-      idle_texture.curr_clip_ = &idle_texture.clips_[idle_texture.frame_];
-      ++idle_texture.frame_;
-      */
       Element::animate(&idle_texture, 0, 4);
-      //Element::animate(&arm_texture, 0);
-
-      // Set arm_running_texture frame to 0
-      //arm_running_texture.frame_ = 0;
    } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
-      // Animation man
-      // TODO: mess with these animation framtes
-      /*
-      if (running_texture.frame_ > 15) {
-         running_texture.frame_ = 4;
-      }
-      running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
-      ++running_texture.frame_;
-      */
       Element::animate(&running_texture, 4, 15);
-
-      // Animate arm
-      /*
-      if (arm_running_texture.frame_ > 3) {
-         arm_running_texture.frame_ = 3;
-      }
-      arm_running_texture.curr_clip_ = &arm_running_texture.clips_[arm_running_texture.frame_];
-      ++arm_running_texture.frame_;
-      */
       Element::animate(&arm_running_texture, 3);
    } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
-      // Animate stopping
-      /*
-      if (running_texture.frame_ > 20) {
-         running_texture.frame_ = 20;
-      }
-      running_texture.curr_clip_ = &running_texture.clips_[running_texture.frame_];
-      ++running_texture.frame_;
-      */
       Element::animate(&running_texture, 20);
    } else if (player_state_ == RUN_AND_JUMP) {
-      // Animate
-      /*
-      if (running_jump_texture.frame_ > 16) {
-         running_jump_texture.frame_ = 0;
-      }
-      running_jump_texture.curr_clip_ = &running_jump_texture.clips_[running_jump_texture.frame_];
-      ++running_jump_texture.frame_;
-      */
-      Element::animate(&running_jump_texture, 0);
+      Element::animate(&running_jump_texture);
    } else if (player_state_ == JUMP) {
-      // Animate
-      /*
-      if (idle_jump_texture.frame_ > 14) {
-         idle_jump_texture.frame_ = 0;
-      }
-      idle_jump_texture.curr_clip_ = &idle_jump_texture.clips_[idle_jump_texture.frame_];
-      ++idle_jump_texture.frame_;
-      */
-      Element::animate(&idle_jump_texture, 0);
+      Element::animate(&idle_jump_texture);
    }
 }
 
@@ -394,7 +338,7 @@ void Player::move() {
 
    // If not running or running and jumping, then set linear velocity to 0
    if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP) {
-      b2Vec2 vel = {0, 0};
+      b2Vec2 vel = {0, body->GetLinearVelocity().y};
       body->SetLinearVelocity(vel);
       player_state_ = STOP;
    }
@@ -409,7 +353,7 @@ void Player::move() {
 
       // Create eraser
       if (arm_shoot_texture.completed_) {
-         create_projectile(53, -7, 75, 12, 21, 1, 10, eraser_texture);
+         create_projectile(38, -12, 41, 12, 21, 1, 10, eraser_texture);
          arm_shoot_texture.completed_ = false;
       }
    }

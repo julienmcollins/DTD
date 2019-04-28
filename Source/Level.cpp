@@ -34,7 +34,7 @@ Level::Level(string file, Application *application) :
 
    // Store directory into var
    size_t pos = file.find("format");
-   if (pos != std::string::npos) {
+   if (pos != string::npos) {
       file.erase(pos, 6);
       dir_ = file;
    }
@@ -43,8 +43,13 @@ Level::Level(string file, Application *application) :
    input >> num_of_enemies_;
    for (int i = 0; i < num_of_enemies_; i++) {
       int x, y;
-      input >> x >> y;
-      enemies_.push_back(new Fecreez(x, y, 92, 82, application)); 
+      string name;
+      input >> x >> y >> name;
+      if (name == "Fecreez") {
+         enemies_.push_back(new Fecreez(x, y, application)); 
+      } else if (name == "Rosea") {
+         enemies_.push_back(new Rosea(x, y, application));
+      }
    }
 
    // Get the platforms and their position

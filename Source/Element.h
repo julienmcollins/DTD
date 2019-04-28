@@ -35,12 +35,19 @@ class Element {
       void add_y(int add);
       void sub_y(int add);
 
+      // virtual load media
+      virtual bool load_media();
+
+      // Set hitboxes
+      void set_hitbox(int x, int y, int height = 0, int width = 0, bool dynamic = false);
+
       // Check to see if it's still alive
       virtual bool is_alive();
       bool alive;
 
       // Render function
-      void render(Texture *texture, SDL_Rect *clip);
+      void texture_render(Texture *texture);
+      void render(Texture *texture);
 
       // Update function for all elements
       virtual void move();
@@ -62,11 +69,6 @@ class Element {
 
       // Get application
       Application *get_application();
-
-      // Fps timer for animations
-      //Timer fps_timer;
-      //float last_frame;
-      //float fps;
 
       /***** BOX2D Variables *********/
 

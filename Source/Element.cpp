@@ -1,4 +1,5 @@
 #include "Element.h"
+#include "Application.h"
 #include "Timer.h"
 
 // Constructor for element
@@ -101,6 +102,50 @@ int Element::get_width() const {
       return width_;
 }
 
+// Load media does nothing
+bool Element::load_media() {
+   return true;
+}
+
+// Setup box2d
+void Element::set_hitbox(int x, int y, int height, int width, bool dynamic) {
+   // If dynamic is set, set body to dynamic
+   if (dynamic) {
+      body_def.type = b2_dynamicBody;
+   }
+
+   // Set initial position and set fixed rotation
+   float x_temp = float(x) * get_application()->to_meters_;
+   float y_temp = -float(y) * get_application()->to_meters_;
+   body_def.position.Set(x_temp, y_temp);
+   body_def.fixedRotation = true;
+
+   // Attach body to world
+   body = get_application()->world_.CreateBody(&body_def);
+
+   // Set box dimensions
+   int t_h = (height == 0) ? get_height() : height;
+   int t_w = (width == 0) ? get_width() : width;
+   float width_box = (t_w / 2.0f) * get_application()->to_meters_ - 0.02f;
+   float height_box = (t_h / 2.0f) * get_application()->to_meters_ - 0.02f;
+   box.SetAsBox(width_box, height_box);
+
+   // Set various fixture definitions and create fixture
+   fixture_def.shape = &box;
+   fixture_def.density = 1.0f;
+   fixture_def.friction = 1.8f;
+   body->CreateFixture(&fixture_def);
+
+   // Set user data so it can react
+   body->SetUserData(this);
+
+   // Run the load media function
+   if (load_media() == false) {
+      std::cout << "In here! " << type() << std::endl;
+      get_application()->set_quit();
+   }
+}
+
 // Is alive function
 bool Element::is_alive() {
    // Check to see if alive is false
@@ -123,10 +168,16 @@ bool Element::is_alive() {
    return true;
 }
 
+// Render solely based on texture
+void Element::texture_render(Texture *texture) {
+   texture->render(texture->get_x(), texture->get_y(), texture->curr_clip_, 0.0, 
+         &texture->center_, texture->flip_);
+}
+
 // Render function
-void Element::render(Texture *texture, SDL_Rect *clip) {
+void Element::render(Texture *texture) {
    // Render based on texture
-   texture->render(get_x(), get_y(), clip, 0.0, &texture->center_, texture->flip_);
+   texture->render(get_x(), get_y(), texture->curr_clip_, 0.0, &texture->center_, texture->flip_);
 }
 
 // Move function (does nothing)
@@ -151,6 +202,8 @@ void Element::animate(Texture *tex, int reset, int max) {
       if (curr->frame_ > temp_max) {
          curr->frame_ = reset;
          curr->completed_ = true;
+      } else if (curr->frame_ <= reset + 1) {
+         curr->completed_ = false;
       }
       curr->curr_clip_ = &curr->clips_[curr->frame_];
       ++curr->frame_;

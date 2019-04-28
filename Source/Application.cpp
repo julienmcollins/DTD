@@ -490,7 +490,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player.get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL11;
+         level_flag_ = LEVEL12;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;
@@ -744,8 +744,7 @@ void Finger::update() {
 
    // Get texture and render it
    Texture *tex = get_texture();
-   SDL_Rect *curr_clip = get_curr_clip();
-   if (curr_clip) {
-      render(tex, curr_clip);
-   }
+   
+   // Render finger
+   render(tex);
 }

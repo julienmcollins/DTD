@@ -9,9 +9,8 @@
 #include <iostream>
 #include <stdio.h>
 #include "Application.h"
-#undef main
 
-int main(int argc, const char * argv[]) {
+int main(int argc, char * argv[]) {
     // Create Application
     Application application;
     

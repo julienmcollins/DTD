@@ -221,7 +221,7 @@ Fecreez::~Fecreez() {
 Rosea::Rosea(int x, int y, Application *application) :
    Enemy(x, y, 144, 189, application), 
    arms_still(x - 46, y - 118, 78, 122, application),
-   arms_attack(x + 35, y - 230, 387, 168, application), hurt_counter_(0),
+   arms_attack(x + 30, y - 230, 387, 168, application), hurt_counter_(0),
    arm_heights_({{0, y - 110}, {1, y - 250}, {2, y - 325}, {3, y - 395}, 
          {4, y - 425}, {5, y - 425}, {6, y - 425}, 
          {7, y - 425}, {8, y - 425}, {9, y - 380}, {10, y - 270}, {11, y - 180}, 
@@ -420,6 +420,7 @@ void Rosea::move() {
       if (enemy_state_ != HURT && arms_attack.textures["attack"].completed_) {
          enemy_state_ = IDLE;
          arms_attack.textures["attack"].completed_ = true;
+         arms_attack.set_y(arm_heights_[15]);
       }
    }
 }

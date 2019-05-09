@@ -38,7 +38,7 @@ bool Fecreez::load_media() {
    load_image(textures, this, 82, 92, 18, 1.0f / 20.0f, "idle", "images/enemies/Fecreez/fecreez_idle.png", success);
 
    // Load shoot
-   load_image(textures, this, 82, 92, 7, 1.0f / 20.0f, "shoot", "images/enemies/Fecreez/fereez_shoot.png", success);
+   load_image(textures, this, 82, 92, 7, 1.0f / 20.0f, "shoot", "images/enemies/Fecreez/fecreez_shoot.png", success);
 
    // Load poojectile
    load_image(textures, this, 24, 15, 8, 1.0f / 20.0f, "poojectile", "images/enemies/Fecreez/poojectile.png", success);
@@ -158,10 +158,10 @@ Rosea::Rosea(int x, int y, Application *application) :
    set_hitbox(x, y);
 
    // TODO: get separate elements for the arms (ie new elements and set is as dynamic body)
-   arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y());
+   arms_attack.set_hitbox(arms_attack.get_x() - 30, arms_attack.get_y());
 
    // Set texture location
-   arms_attack.textures["attack"].set_x(arms_attack.get_x());
+   arms_attack.textures["attack"].set_x(arms_attack.get_x() + 30);
    arms_attack.textures["attack"].set_y(arms_attack.get_y());
 
    // Set initial arm postion
@@ -427,51 +427,51 @@ void Mosquibler::move() {
    // Check to see if has collided
    if (!is_alive()) {
       enemy_state_ = DEATH;
-   }
+   } else {
+      // Turn around
+      if (enemy_state_ == TURN) {
+         // Magnitude of impulse
+         float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
+                                 + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
 
-   // Turn around
-   if (enemy_state_ == TURN) {
-      // Magnitude of impulse
-      float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
-                              + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
+         // Get a vector towards the player and apply as impulse
+         const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
+                        (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
+         
+         // Apply impulse
+         body->SetLinearVelocity(impulse);
 
-      // Get a vector towards the player and apply as impulse
-      const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
-                       (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
-      
-      // Apply impulse
-      body->SetLinearVelocity(impulse);
-
-      // Complete texture
-      if (textures["turn"].frame_ > 11) {
-         if (entity_direction == RIGHT) {
-            textures["fly"].flip_ = SDL_FLIP_HORIZONTAL;
-            textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
-         } else if (entity_direction == LEFT) {
-            textures["fly"].flip_ = SDL_FLIP_NONE;
-            textures["turn"].flip_ = SDL_FLIP_NONE;
+         // Complete texture
+         if (textures["turn"].frame_ > 11) {
+            if (entity_direction == RIGHT) {
+               textures["fly"].flip_ = SDL_FLIP_HORIZONTAL;
+               textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
+            } else if (entity_direction == LEFT) {
+               textures["fly"].flip_ = SDL_FLIP_NONE;
+               textures["turn"].flip_ = SDL_FLIP_NONE;
+            }
+            textures["turn"].completed_ = false;
+            textures["turn"].frame_ = 0;
+            enemy_state_ = IDLE;
          }
-         textures["turn"].completed_ = false;
-         textures["turn"].frame_ = 0;
-         enemy_state_ = IDLE;
       }
-   }
 
-   // Fly towards player
-   if (enemy_state_ == IDLE) {
-      // Magnitude of impulse
-      float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
-                              + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
+      // Fly towards player
+      if (enemy_state_ == IDLE) {
+         // Magnitude of impulse
+         float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
+                                 + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
 
-      // Get a vector towards the player and apply as impulse
-      const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
-                       (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
-      
-      // Apply impulse
-      //body->ApplyLinearImpulseToCenter(impulse, true);
-      body->SetLinearVelocity(impulse);
+         // Get a vector towards the player and apply as impulse
+         const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
+                        (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
+         
+         // Apply impulse
+         //body->ApplyLinearImpulseToCenter(impulse, true);
+         body->SetLinearVelocity(impulse);
 
-      //std::cout << "x: " << get_application()->get_player()->body->GetPosition().x - body->GetPosition().x << " y: " << get_application()->get_player()->body->GetPosition().y - body->GetPosition().y << std::endl;
+         //std::cout << "x: " << get_application()->get_player()->body->GetPosition().x - body->GetPosition().x << " y: " << get_application()->get_player()->body->GetPosition().y - body->GetPosition().y << std::endl;
+      }
    }
 }
 

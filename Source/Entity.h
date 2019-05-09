@@ -108,7 +108,7 @@ class Player : public Entity {
       virtual void update(bool freeze = false);
 
       // Animate based on state
-      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0);
+      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
 
       // Move the player using keyboard
       virtual void move();

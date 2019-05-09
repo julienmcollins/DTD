@@ -184,7 +184,7 @@ void Element::render(Texture *texture) {
 void Element::move() {}
 
 // Animate function
-void Element::animate(Texture *tex, int reset, int max) {
+void Element::animate(Texture *tex, int reset, int max, int start) {
    // Tmp pointer
    Texture *curr;
    if (tex) {
@@ -195,13 +195,14 @@ void Element::animate(Texture *tex, int reset, int max) {
 
    // Change max depending on which one is specified
    int temp_max = (max == 0) ? curr->max_frame_ : max;
+   int temp_start = (start == 0) ? 0 : start;
 
    // Modulate fps
    curr->last_frame += (curr->fps_timer.getDeltaTime() / 1000.0f);
    if (curr->last_frame > curr->fps) {
       if (curr->frame_ > temp_max) {
          curr->frame_ = reset;
-         curr->completed_ = true;
+         curr->completed_ = true; // ISSUE: it will mark completed based on reset frame not max frame
       } else if (curr->frame_ <= reset + 1) {
          curr->completed_ = false;
       }

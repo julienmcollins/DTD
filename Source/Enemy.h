@@ -19,6 +19,7 @@ class Enemy : public Entity {
       enum STATE {
          IDLE,
          ATTACK,
+         RETREAT,
          HURT,
          DEATH
       };
@@ -78,7 +79,7 @@ class Rosea : public Enemy {
       // Update, move and animate functions
       virtual void update(bool freeze = false);
       virtual void move();
-      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0);
+      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
 
       // Get texture for rosea
       virtual Texture *get_texture();
@@ -97,6 +98,20 @@ class Rosea : public Enemy {
 
       // Counter for hurt
       int hurt_counter_;
+
+      // Arm state for when player is near
+      int arm_state_;
+
+      // Check to see if player is within bounds
+      bool within_bounds();
+      bool in_bounds_;
+
+      // Checks to see if player is on left or right
+      bool left_bound();
+      bool right_bound();
+
+      // Check to see if player is leaving the bounds
+      bool is_leaving_bounds();
 
       // Dictionary linking box to frames
       std::unordered_map<int, int> arm_heights_;

@@ -221,7 +221,7 @@ Fecreez::~Fecreez() {
 Rosea::Rosea(int x, int y, Application *application) :
    Enemy(x, y, 144, 189, application), 
    arms_still(x - 46, y - 118, 78, 122, application),
-   arms_attack(x + 30, y - 230, 387, 168, application), hurt_counter_(0),
+   arms_attack(x + 30, y - 230, 387, 168, application), hurt_counter_(0), arm_state_(0), in_bounds_(false),
    arm_heights_({{0, y - 110}, {1, y - 250}, {2, y - 325}, {3, y - 395}, 
          {4, y - 425}, {5, y - 425}, {6, y - 425}, 
          {7, y - 425}, {8, y - 425}, {9, y - 380}, {10, y - 270}, {11, y - 180}, 
@@ -382,7 +382,7 @@ void Rosea::update(bool freeze) {
       arms_still.render(&arms_still.textures["arms_idle"]);
    } else if (enemy_state_ == HURT) {
       arms_still.render(&arms_still.textures["arms_hurt"]);
-   } else if (enemy_state_ == ATTACK) {
+   } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       arms_attack.texture_render(&arms_attack.textures["attack"]);
    }
 }
@@ -402,38 +402,77 @@ void Rosea::move() {
       }
    }
 
+   if (enemy_state_ == RETREAT) {
+      arms_attack.set_y(arm_heights_[arms_attack.textures["attack"].frame_]);
+      std::cout << "NOT YET: " << arms_attack.textures["attack"].frame_ << std::endl;
+      if (arms_attack.textures["attack"].frame_ > 14) {
+         std::cout << "IN HERE" << std::endl;
+         enemy_state_ = IDLE;
+         arms_attack.textures["attack"].frame_ = 0;
+         arms_attack.textures["attack"].completed_ = false;
+         arms_attack.set_y(arm_heights_[14]);
+      }
+   }
+
    // Now, check to see if player is within bounds
-   if (get_application()->get_player()->get_x() >= get_x() - 200 &&
-         get_application()->get_player()->get_x() <= get_x() + 200) {
+   if (within_bounds()) {
+      // Set in bounds to true
+      if (!in_bounds_) {
+         arm_state_ = 7;
+         in_bounds_ = true;
+      }
+
       // Set state to attack
       enemy_state_ = ATTACK;
 
       // Deactivate main body
       body->SetActive(false);
 
-      // TODO: Need to find a sinusoidal function that describes the motion of the arm
-      // and change the y position of the hitbox based on that.
-      //std::cout << "frame: " << arms_attack.textures["attack"].frame_ << " " <<
-         //arm_heights_[arms_attack.textures["attack"].frame_] << std::endl;
-      arms_attack.set_y(arm_heights_[arms_attack.textures["attack"].frame_]);
+      std::cout << arms_attack.textures["attack"].frame_ << std::endl;
+
+      // Set arm_state_ to attack mode
+      //if (left_bound() && get_application()->get_player()->get_dir() == LEFT) {
+      //   arm_state_ = 14;
+      //} else if (right_bound() && get_application()->get_player()->get_dir() == RIGHT) {
+      //   arm_state_ = 14;
+      //} else {
+      //}
+
+      // Temp var
+      int temp = (arms_attack.textures["attack"].frame_ < arm_state_) ? 
+                     arms_attack.textures["attack"].frame_ : arm_state_;
+
+      // Sets hitbox to position of arm
+      arms_attack.set_y(arm_heights_[temp]);
    } else {
-      if (enemy_state_ != HURT && arms_attack.textures["attack"].completed_) {
-         enemy_state_ = IDLE;
-         arms_attack.textures["attack"].completed_ = true;
-         arms_attack.set_y(arm_heights_[15]);
+      // Check to make sure enemy is done attacking
+      if (in_bounds_) {
+         enemy_state_ = RETREAT;
+         arm_state_ = 0;
+         in_bounds_ = false;
+      } else {
+         /*
+         if (enemy_state_ != HURT && arms_attack.textures["attack"].completed_) {
+            std::cout << "IN HERE" << std::endl;
+            enemy_state_ = IDLE;
+            arms_attack.textures["attack"].frame_ = 0;
+            arms_attack.textures["attack"].completed_ = false;
+            arms_attack.set_y(arm_heights_[14]);
+         }
+         */
       }
    }
 }
 
 // Rosea animate
-void Rosea::animate(Texture *tex, int reset, int max) {
+void Rosea::animate(Texture *tex, int reset, int max, int start) {
    // Animate based on different states
    if (enemy_state_ == IDLE) {
       Element::animate(&textures["idle"]);
       Element::animate(&arms_still.textures["arms_idle"]);
-   } else if (enemy_state_ == ATTACK) {
+   } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       Element::animate(&textures["idle"]);
-      Element::animate(&arms_attack.textures["attack"]);
+      Element::animate(&arms_attack.textures["attack"], arm_state_, arm_state_);
    } else if (enemy_state_ == HURT) {
       Element::animate(&textures["hurt"]);
       Element::animate(&arms_still.textures["arms_hurt"]);
@@ -443,7 +482,7 @@ void Rosea::animate(Texture *tex, int reset, int max) {
 // Rosea get texture
 Texture* Rosea::get_texture() {
    // Get idle texture
-   if (enemy_state_ == IDLE || enemy_state_ == ATTACK) {
+   if (enemy_state_ == IDLE || enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       return &textures["idle"];
    }
    
@@ -457,6 +496,40 @@ Texture* Rosea::get_texture() {
 void Rosea::start_contact() {
    // Set enemy state to hurt
    enemy_state_ = HURT;
+}
+
+// Check to see if player is within bounds
+bool Rosea::within_bounds() {
+   if (get_application()->get_player()->get_x() >= get_x() - 200 
+      && get_application()->get_player()->get_x() <= get_x() + 200) {
+      return true;
+   }
+   return false;
+}
+
+// Checks to see what side player is on
+bool Rosea::left_bound() {
+   return (get_application()->get_player()->get_x() >= get_x() - 200) && 
+            (get_application()->get_player()->get_x() < get_x());
+}
+bool Rosea::right_bound() {
+   return (get_application()->get_player()->get_x() <= get_x() + 200) &&
+            (get_application()->get_player()->get_x() > get_x());
+}
+
+// Checks to see if player is leaving bounds
+bool Rosea::is_leaving_bounds() {
+   if (within_bounds()) {
+      if (get_application()->get_player()->get_x() + 
+            get_application()->get_player()->body->GetLinearVelocity().x < get_x() - 200) {
+         return true;
+      }
+      if (get_application()->get_player()->get_x() +
+            get_application()->get_player()->body->GetLinearVelocity().x > get_x() + 200) {
+         return true;
+      }
+   }
+   return false;
 }
 
 // Rosea destructor

@@ -51,7 +51,7 @@ class Element {
 
       // Update function for all elements
       virtual void move();
-      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0);
+      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
       virtual void update(bool freeze = false);
 
       // Draw function if immediate drawing is desired

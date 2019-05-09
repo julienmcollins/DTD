@@ -262,7 +262,7 @@ void Player::adjust_deltas() {
 }
 
 // Animate based on state
-void Player::animate(Texture *tex, int reset, int max) {
+void Player::animate(Texture *tex, int reset, int max, int start) {
    // Shooting animation
    if (shooting) {
       //std::cout << arm_shoot_texture.frame_ << std::endl;

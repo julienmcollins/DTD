@@ -7,7 +7,6 @@
 //
 
 #include <stdio.h>
-#include <unistd.h>
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <cmath>
@@ -646,11 +645,6 @@ void Application::playground() {
       level_flag_ = static_cast<LEVELS>(inc + 1);
    }
 }
-
-// Load media enemy
-bool Application::loadMediaEnemy(Enemy *enemy) {
-}
-
 
 // Set the viewport for minimaps and stuff like that if needed
 void Application::setViewport() {

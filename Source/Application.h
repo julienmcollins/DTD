@@ -66,13 +66,6 @@ class Application {
    
       // Load Media
       bool loadMedia();
-
-      // Load Level media
-      //bool loadMediaLvl1();
-      bool loadMediaLvl3();
-
-      // Load media for enemy
-      bool loadMediaEnemy(Enemy *enemy);
    
       // Update the application
       void update();

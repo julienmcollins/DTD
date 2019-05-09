@@ -34,90 +34,17 @@ bool Fecreez::load_media() {
    // Flag for success
    bool success = true;
 
-   // Enemy sprite sheet
-   textures.emplace("idle", Texture(this, 17, 1.0f / 20.0f));
-   if (!textures["idle"].loadFromFile("images/enemies/Fecreez/fecreez_idle.png")) {
-      printf("Failed to load feecreez idle texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      textures["idle"].clips_ = new SDL_Rect[18];
-      SDL_Rect *temp = textures["idle"].clips_;
+   // Load idle
+   load_image(textures, this, 82, 92, 18, 1.0f / 20.0f, "idle", "images/enemies/Fecreez/fecreez_idle.png", success);
 
-      // Calculate sprite locations
-      for (int i = 0; i < 18; i++) {
-         temp[i].x = i * 82;
-         temp[i].y = 0;
-         temp[i].w = 82;
-         temp[i].h = 92;
-      }
+   // Load shoot
+   load_image(textures, this, 82, 92, 7, 1.0f / 20.0f, "shoot", "images/enemies/Fecreez/fereez_shoot.png", success);
 
-      // Set curr clip
-      textures["idle"].curr_clip_ = &temp[0];
-   }
+   // Load poojectile
+   load_image(textures, this, 24, 15, 8, 1.0f / 20.0f, "poojectile", "images/enemies/Fecreez/poojectile.png", success);
 
-   textures.emplace("shoot", Texture(this, 6, 1.0f / 20.0f));
-   if (!textures["shoot"].loadFromFile("images/enemies/Fecreez/fecreez_shoot.png")) {
-      printf("Failed to load feecreez shoot texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      textures["shoot"].clips_ = new SDL_Rect[7];
-      SDL_Rect *temp = textures["shoot"].clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 7; i++) {
-         temp[i].x = i * 82;
-         temp[i].y = 0;
-         temp[i].w = 82;
-         temp[i].h = 92;
-      }
-
-      // Set curr clip
-      textures["shoot"].curr_clip_ = &temp[0];
-   }
-
-   textures.emplace("poojectile", Texture(this, 7, 1.0f / 20.0f));
-   if (!textures["poojectile"].loadFromFile("images/enemies/Fecreez/poojectile.png")) {
-      printf("Failed to load poojectile texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      textures["poojectile"].clips_ = new SDL_Rect[8];
-      SDL_Rect *temp = textures["poojectile"].clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 8; i++) {
-         temp[i].x = i * 24;
-         temp[i].y = 0;
-         temp[i].w = 24;
-         temp[i].h = 15;
-      }
-
-      // Set curr clip
-      textures["poojectile"].curr_clip_ = &temp[0];
-   }
-
-   textures.emplace("death", Texture(this, 15, 1.0f / 20.0f));
-   if (!textures["death"].loadFromFile("images/enemies/Fecreez/fecreez_death.png")) {
-      printf("Failed to load fecreez death texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      textures["death"].clips_ = new SDL_Rect[16];
-      SDL_Rect *temp = textures["death"].clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 16; i++) {
-         temp[i].x = i * 143;
-         temp[i].y = 0;
-         temp[i].w = 143;
-         temp[i].h = 92;
-      }
-
-      // Set curr clip
-      textures["death"].curr_clip_ = &temp[0];
-   }
+   // Load death
+   load_image(textures, this, 143, 92, 16, 1.0f / 20.0f, "death", "images/enemies/Fecreez/fecreez_death.png", success);
 
    // Return success
    return success;
@@ -237,6 +164,9 @@ Rosea::Rosea(int x, int y, Application *application) :
    arms_attack.textures["attack"].set_x(arms_attack.get_x());
    arms_attack.textures["attack"].set_y(arms_attack.get_y());
 
+   // Set initial arm postion
+   arms_attack.set_y(arm_heights_[0]);
+
    // Set health
    health = 100;
 
@@ -250,114 +180,19 @@ bool Rosea::load_media() {
    bool success = true;
 
    // Load idle texture
-   textures.emplace("idle", Texture(this, 14, 1.0f / 20.0f));
-   if (!textures["idle"].loadFromFile("images/enemies/Rosea/rosea_idle.png")) {
-      printf("Failed to load rosea_idle.png\n");
-      success = false;
-   } else {
-      // Allocate room
-      textures["idle"].clips_ = new SDL_Rect[15];
-      SDL_Rect *temp = textures["idle"].clips_;
-
-      // Set sprites
-      for (int i = 0; i < 15; i++) {
-         temp[i].x = i * 189;
-         temp[i].y = 0;
-         temp[i].w = 189;
-         temp[i].h = 144;
-      }
-      
-      // Set first clip
-      textures["idle"].curr_clip_ = &temp[0];
-   }
+   load_image(textures, this, 189, 144, 15, 1.0f / 20.0f, "idle", "images/enemies/Rosea/rosea_idle.png", success);
 
    // Load hurt texture
-   textures.emplace("hurt", Texture(this, 14, 1.0f / 20.0f));
-   if (!textures["hurt"].loadFromFile("images/enemies/Rosea/rosea_hurt.png")) {
-      printf("Failed to load rosea_hurt.png\n");
-      success = false;
-   } else {
-      // Allocate room
-      textures["hurt"].clips_ = new SDL_Rect[15];
-      SDL_Rect *temp = textures["hurt"].clips_;
-
-      // Set sprites
-      for (int i = 0; i < 15; i++) {
-         temp[i].x = i * 189;
-         temp[i].y = 0;
-         temp[i].w = 189;
-         temp[i].h = 144;
-      }
-      
-      // Set first clip
-      textures["hurt"].curr_clip_ = &temp[0];
-   }
+   load_image(textures, this, 189, 144, 15, 1.0f / 20.0f, "hurt", "images/enemies/Rosea/rosea_hurt.png", success);
 
    // Load arms_idle texture
-   arms_still.textures.emplace("arms_idle", Texture(this, 14, 1.0f / 20.0f));
-   if (!arms_still.textures["arms_idle"].loadFromFile("images/enemies/Rosea/arms_idle.png")) {
-      printf("Failed to load arms_idle.png\n");
-      success = false;
-   } else {
-      // Allocate room
-      arms_still.textures["arms_idle"].clips_ = new SDL_Rect[15];
-      SDL_Rect *temp = arms_still.textures["arms_idle"].clips_;
-
-      // Set sprites
-      for (int i = 0; i < 15; i++) {
-         temp[i].x = i * 112;
-         temp[i].y = 0;
-         temp[i].w = 112;
-         temp[i].h = 78;
-      }
-      
-      // Set first clip
-      arms_still.textures["arms_idle"].curr_clip_ = &temp[0];
-   }
+   load_image(arms_still.textures, this, 112, 78, 15, 1.0f/ 20.0f, "arms_idle", "images/enemies/Rosea/arms_idle.png", success);
 
    // Load arms_hurt texture
-   arms_still.textures.emplace("arms_hurt", Texture(this, 14, 1.0f / 20.0f));
-   if (!arms_still.textures["arms_hurt"].loadFromFile("images/enemies/Rosea/arms_hurt.png")) {
-      printf("Failed to load arms_hurt.png\n");
-      success = false;
-   } else {
-      // Allocate room
-      arms_still.textures["arms_hurt"].clips_ = new SDL_Rect[15];
-      SDL_Rect *temp = arms_still.textures["arms_hurt"].clips_;
-
-      // Set sprites
-      for (int i = 0; i < 15; i++) {
-         temp[i].x = i * 112;
-         temp[i].y = 0;
-         temp[i].w = 112;
-         temp[i].h = 78;
-      }
-      
-      // Set first clip
-      arms_still.textures["arms_hurt"].curr_clip_ = &temp[0];
-   }
+   load_image(arms_still.textures, this, 112, 78, 15, 1.0f/ 20.0f, "arms_hurt", "images/enemies/Rosea/arms_hurt.png", success);
 
    // Load arms_hurt texture
-   arms_attack.textures.emplace("attack", Texture(this, 14, 1.0f / 20.0f));
-   if (!arms_attack.textures["attack"].loadFromFile("images/enemies/Rosea/arms_attack.png")) {
-      printf("Failed to load arms_attack.png\n");
-      success = false;
-   } else {
-      // Allocate room
-      arms_attack.textures["attack"].clips_ = new SDL_Rect[15];
-      SDL_Rect *temp = arms_attack.textures["attack"].clips_;
-
-      // Set sprites
-      for (int i = 0; i < 15; i++) {
-         temp[i].x = i * 122;
-         temp[i].y = 0;
-         temp[i].w = 122;
-         temp[i].h = 387;
-      }
-      
-      // Set first clip
-      arms_attack.textures["attack"].curr_clip_ = &temp[0];
-   }
+   load_image(arms_attack.textures, this, 122, 387, 15, 1.0f / 20.0f, "attack", "images/enemies/Rosea/arms_attack.png", success);
 
    // Return success
    return success;
@@ -404,9 +239,7 @@ void Rosea::move() {
 
    if (enemy_state_ == RETREAT) {
       arms_attack.set_y(arm_heights_[arms_attack.textures["attack"].frame_]);
-      std::cout << "NOT YET: " << arms_attack.textures["attack"].frame_ << std::endl;
       if (arms_attack.textures["attack"].frame_ > 14) {
-         std::cout << "IN HERE" << std::endl;
          enemy_state_ = IDLE;
          arms_attack.textures["attack"].frame_ = 0;
          arms_attack.textures["attack"].completed_ = false;
@@ -428,16 +261,6 @@ void Rosea::move() {
       // Deactivate main body
       body->SetActive(false);
 
-      std::cout << arms_attack.textures["attack"].frame_ << std::endl;
-
-      // Set arm_state_ to attack mode
-      //if (left_bound() && get_application()->get_player()->get_dir() == LEFT) {
-      //   arm_state_ = 14;
-      //} else if (right_bound() && get_application()->get_player()->get_dir() == RIGHT) {
-      //   arm_state_ = 14;
-      //} else {
-      //}
-
       // Temp var
       int temp = (arms_attack.textures["attack"].frame_ < arm_state_) ? 
                      arms_attack.textures["attack"].frame_ : arm_state_;
@@ -450,16 +273,6 @@ void Rosea::move() {
          enemy_state_ = RETREAT;
          arm_state_ = 0;
          in_bounds_ = false;
-      } else {
-         /*
-         if (enemy_state_ != HURT && arms_attack.textures["attack"].completed_) {
-            std::cout << "IN HERE" << std::endl;
-            enemy_state_ = IDLE;
-            arms_attack.textures["attack"].frame_ = 0;
-            arms_attack.textures["attack"].completed_ = false;
-            arms_attack.set_y(arm_heights_[14]);
-         }
-         */
       }
    }
 }
@@ -539,4 +352,166 @@ Rosea::~Rosea() {
    arms_still.textures["arms_idle"].free();
    arms_still.textures["arms_hurt"].free();
    arms_attack.textures["arms_attack"].free();
+}
+
+/************** MOSQUIBLER ENEMY *******************/
+Mosquibler::Mosquibler(int x, int y, Application *application) :
+   Enemy(x, y, 97, 109, application) {
+
+   // Set hitbox
+   set_hitbox(x, y, true);
+ 
+   // Set health
+   health = 100;
+
+   // Set initial dir
+   entity_direction = LEFT;
+
+   // Set enemy state
+   enemy_state_ = IDLE;  
+}
+
+// Load media function
+bool Mosquibler::load_media() {
+   // Flag for success
+   bool success = true;
+
+   // Load fly for mosquibler
+   load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "fly", "images/enemies/Mosquibler/mosquibler_fly.png", success);
+
+   // Load death for mosquibler
+   load_image(textures, this, 109, 97, 28, 1.0f / 20.0f, "death", "images/enemies/Mosquibler/mosquibler_death.png", success);
+
+   // Load turn texture
+   load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "turn", "images/enemies/Mosquibler/mosquibler_turn.png", success);
+
+   // Return success
+   return success;
+}
+
+// Update
+void Mosquibler::update(bool freeze) {
+   // Move first
+   move();
+
+   // The animate
+   animate();
+
+   // Render enemy
+   Texture *enemytexture = get_texture();
+
+   // Render enemy
+   render(enemytexture);
+
+   // Render arms
+   if (enemy_state_ == IDLE) {
+      render(&textures["fly"]);
+   } else if (enemy_state_ == TURN) {
+      render(&textures["turn"]);
+   } else if (enemy_state_ == DEATH) {
+      render(&textures["death"]);
+   } 
+}
+
+// Move function
+void Mosquibler::move() {
+   // Check to see what direction the enemy should be facing
+   if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
+      entity_direction = LEFT;
+      enemy_state_ = TURN;
+   } else if (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT) {
+      entity_direction = RIGHT;
+      enemy_state_ = TURN;
+   }
+
+   // Check to see if has collided
+   if (!is_alive()) {
+      enemy_state_ = DEATH;
+   }
+
+   // Turn around
+   if (enemy_state_ == TURN) {
+      // Magnitude of impulse
+      float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
+                              + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
+
+      // Get a vector towards the player and apply as impulse
+      const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
+                       (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
+      
+      // Apply impulse
+      body->SetLinearVelocity(impulse);
+
+      // Complete texture
+      if (textures["turn"].frame_ > 11) {
+         if (entity_direction == RIGHT) {
+            textures["fly"].flip_ = SDL_FLIP_HORIZONTAL;
+            textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
+         } else if (entity_direction == LEFT) {
+            textures["fly"].flip_ = SDL_FLIP_NONE;
+            textures["turn"].flip_ = SDL_FLIP_NONE;
+         }
+         textures["turn"].completed_ = false;
+         textures["turn"].frame_ = 0;
+         enemy_state_ = IDLE;
+      }
+   }
+
+   // Fly towards player
+   if (enemy_state_ == IDLE) {
+      // Magnitude of impulse
+      float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
+                              + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
+
+      // Get a vector towards the player and apply as impulse
+      const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
+                       (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
+      
+      // Apply impulse
+      //body->ApplyLinearImpulseToCenter(impulse, true);
+      body->SetLinearVelocity(impulse);
+
+      //std::cout << "x: " << get_application()->get_player()->body->GetPosition().x - body->GetPosition().x << " y: " << get_application()->get_player()->body->GetPosition().y - body->GetPosition().y << std::endl;
+   }
+}
+
+// Animate function
+void Mosquibler::animate(Texture *tex, int reset, int max, int start) {
+   if (enemy_state_ == IDLE) {
+      Element::animate(&textures["fly"]);
+   } else if (enemy_state_ == TURN) {
+      Element::animate(&textures["turn"]);
+   } else if (enemy_state_ == DEATH) {
+      Element::animate(&textures["death"]);
+   }
+}
+
+// Get texture function
+Texture* Mosquibler::get_texture() {
+   // Get idle texture
+   if (enemy_state_ == IDLE) {
+      return &textures["fly"];
+   }
+
+   // Get turn texture
+   if (enemy_state_ == TURN) {
+      return &textures["turn"];
+   }
+
+   // Get death texture
+   if (enemy_state_ == DEATH) {
+      return &textures["death"];
+   }
+}
+
+// Start contact function
+void Mosquibler::start_contact() {
+   alive = false;
+}
+
+// Destructor
+Mosquibler::~Mosquibler() {
+   textures["fly"].free();
+   textures["death"].free();
+   textures["turn"].free();
 }

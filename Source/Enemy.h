@@ -21,6 +21,7 @@ class Enemy : public Entity {
          ATTACK,
          RETREAT,
          HURT,
+         TURN,
          DEATH
       };
       
@@ -115,6 +116,29 @@ class Rosea : public Enemy {
 
       // Dictionary linking box to frames
       std::unordered_map<int, int> arm_heights_;
+};
+
+class Mosquibler : public Enemy {
+   public:
+      // Constructor for mosquibler
+      Mosquibler(int x, int y, Application *application);
+
+      // Load Rosea media
+      virtual bool load_media();
+
+      // Update, move and animate functions
+      virtual void update(bool freeze = false);
+      virtual void move();
+      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
+
+      // Get texture for rosea
+      virtual Texture *get_texture();
+
+      // Get contact
+      virtual void start_contact();
+
+      // Destructor for rosea
+      virtual ~Mosquibler();
 };
 
 #endif

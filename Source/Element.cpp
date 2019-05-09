@@ -107,8 +107,32 @@ bool Element::load_media() {
    return true;
 }
 
+// Loads an image
+void Element::load_image(std::unordered_map<std::string, Texture> &textures, Element *element, int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success) {
+   textures.emplace(name, Texture(element, frame_num - 1, fps));
+   if (!textures[name].loadFromFile(file)) {
+      printf("Failed to load %s!\n", file);
+      success = false;
+   } else {
+      // Allocate space
+      textures[name].clips_ = new SDL_Rect[frame_num];
+      SDL_Rect *temp = textures[name].clips_;
+
+      // Set sprites
+      for (int i = 0; i < frame_num; i++) {
+         temp[i].x = i * w;
+         temp[i].y = 0;
+         temp[i].w = w;
+         temp[i].h = h;
+      }
+
+      // Set to 0
+      textures[name].curr_clip_ = &temp[0];
+   }
+}
+
 // Setup box2d
-void Element::set_hitbox(int x, int y, int height, int width, bool dynamic) {
+void Element::set_hitbox(int x, int y, bool dynamic, int height, int width) {
    // If dynamic is set, set body to dynamic
    if (dynamic) {
       body_def.type = b2_dynamicBody;

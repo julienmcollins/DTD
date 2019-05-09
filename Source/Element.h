@@ -37,9 +37,10 @@ class Element {
 
       // virtual load media
       virtual bool load_media();
+      void load_image(std::unordered_map<std::string, Texture> &textures, Element *element, int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success);
 
       // Set hitboxes
-      void set_hitbox(int x, int y, int height = 0, int width = 0, bool dynamic = false);
+      void set_hitbox(int x, int y, bool dynamic = false, int height = 0, int width = 0);
 
       // Check to see if it's still alive
       virtual bool is_alive();

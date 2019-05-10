@@ -40,7 +40,7 @@ class Platform : public Object {
       //virtual void doNothing();
 
       // Collision listener
-      virtual void start_contact() {}
+      virtual void start_contact(Element *element) {}
 
       // Get type
       virtual std::string type() {
@@ -62,7 +62,7 @@ class Projectile : public Object {
       //virtual void doNothing();
 
       // Set contact listener
-      virtual void start_contact() {
+      virtual void start_contact(Element *element) {
          alive = false;
       }
 

@@ -17,14 +17,9 @@ class ContactListener : public b2ContactListener {
             Element *element1 = static_cast<Element*>(bodyAUserData);
             Element *element2 = static_cast<Element*>(bodyBUserData);
 
-            // Check to see that they're not both projectiles
-            if ((element1->type() == "Projectile" && element2->type() != "Projectile") || (element1->type() != "Projectile" && element2->type() == "Projectile")) {
-               static_cast<Element*>(bodyAUserData)->start_contact();
-               static_cast<Element*>(bodyBUserData)->start_contact();
-            } else if ((element1->type() == "Player" && element2->type() == "Enemy") || (element1->type() == "Enemy" && element2->type() == "Player")) {
-               static_cast<Element*>(bodyAUserData)->start_contact();
-               static_cast<Element*>(bodyBUserData)->start_contact();
-            }
+            // Start contacts
+            element1->start_contact(element2);
+            element2->start_contact(element1);
          }
       }
 

@@ -28,7 +28,7 @@ Level::Level(string file, Application *application) :
    ifstream input;
    input.open(file);
    if (!input) {
-      cout << "Unable to open format file!" << endl;
+      cerr << "Unable to open format file!" << endl;
       exit(1);
    }
 
@@ -65,7 +65,7 @@ Level::Level(string file, Application *application) :
 
    // Now, load the media and quit if false
    if (load_media_() == false) {
-      cout << "No please" << endl;
+      cerr << "Failed to load level media" << endl;
       application_->set_quit();
    }
 
@@ -127,13 +127,22 @@ bool Level::load_media_() {
 
 // Update function will render the stuff itself
 void Level::update() {
+   // Only complete levels when number of enemies is 0
+   /*
+   if (num_of_enemies_ == 0) {
+      application_->set_completed_level();
+   }
+   */
+
    // Need to remove the bodies of dead creatures
    for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end(); ++it) {
       if ((*it) && !(*it)->is_alive()) {
          if ((*it)->body) {
             application_->world_.DestroyBody((*it)->body);
             (*it)->body = NULL;
-            application_->set_completed_level();
+            if ((*it)->type() != "Rosea") {
+               application_->set_completed_level();
+            }
          }
       }
    }

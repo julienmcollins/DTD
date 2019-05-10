@@ -114,12 +114,7 @@ class Player : public Entity {
       virtual void move();
 
       // Contact listener
-      virtual void start_contact() {
-         health -= 10;
-         if (health <= 0) {
-            alive = false;
-         }
-      }
+      virtual void start_contact(Element *element = NULL);
 
       // Get type
       virtual std::string type() {

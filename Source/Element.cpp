@@ -61,7 +61,6 @@ void Element::set_y(int new_y) {
 
 int Element::get_y() {
    if (body) {
-      //printf("y = %f\n", (100.0f * body->GetPosition().y) - (get_height() / 2.0f));
       y_pos_ = (int) ((100.0f * -body->GetPosition().y) - (get_height() / 2.0f));
       return y_pos_;
    } else {
@@ -111,7 +110,7 @@ bool Element::load_media() {
 void Element::load_image(std::unordered_map<std::string, Texture> &textures, Element *element, int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success) {
    textures.emplace(name, Texture(element, frame_num - 1, fps));
    if (!textures[name].loadFromFile(file)) {
-      printf("Failed to load %s!\n", file);
+      std::cerr << "Failed to load " << file << std::endl;
       success = false;
    } else {
       // Allocate space

@@ -482,6 +482,16 @@ void Player::move() {
    }
 }
 
+// Start contact function
+void Player::start_contact(Element *element) {
+   if (element && (element->type() == "Projectile" || element->is_enemy())) {
+      health -= 10;
+      if (health <= 0) {
+         alive = false;
+      }
+   }
+}
+
 // Load media function
 bool Player::load_media() {
    // Temp flag

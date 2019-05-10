@@ -92,8 +92,13 @@ class Element {
          return "Element";
       }
 
+      // Check if enemy
+      virtual bool is_enemy() {
+         return false;
+      }
+
       // Start and end contact
-      virtual void start_contact() {}
+      virtual void start_contact(Element *element = NULL) {}
       virtual void end_contact() {}
 
    private:

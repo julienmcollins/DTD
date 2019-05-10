@@ -30,6 +30,11 @@ class Enemy : public Entity {
          return "Enemy";
       }
 
+      // Is enemy is true
+      virtual bool is_enemy() {
+         return true;
+      }
+
       // Destructotr
       virtual ~Enemy() = 0;
    
@@ -55,11 +60,11 @@ class Fecreez : public Enemy {
       virtual Texture *get_texture();
 
       // Contact listener
-      virtual void start_contact() {
-         health -= 10;
-         if (health <= 0) {
-            alive = false;
-         }
+      virtual void start_contact(Element *element = NULL);
+
+      // Get type
+      virtual std::string type() {
+         return "Fecreez";
       }
 
       // Destructor
@@ -86,7 +91,12 @@ class Rosea : public Enemy {
       virtual Texture *get_texture();
 
       // Get contact
-      virtual void start_contact();
+      virtual void start_contact(Element *element = NULL);
+
+      // Get type
+      virtual std::string type() {
+         return "Rosea";
+      }
 
       // Destructor for rosea
       virtual ~Rosea();
@@ -135,10 +145,19 @@ class Mosquibler : public Enemy {
       virtual Texture *get_texture();
 
       // Get contact
-      virtual void start_contact();
+      virtual void start_contact(Element *element = NULL);
+
+      // Get type
+      virtual std::string type() {
+         return "Mosquibler";
+      }
 
       // Destructor for rosea
       virtual ~Mosquibler();
+   private:
+      // Flag for death
+      int start_death_;
+      int end_death_;
 };
 
 #endif

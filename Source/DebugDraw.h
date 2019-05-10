@@ -34,4 +34,4 @@ public:
     Application* application_;
 };
 
-#endif DEBUG_DRAW_H
+#endif

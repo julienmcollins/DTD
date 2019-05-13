@@ -11,6 +11,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <string>
 #include <Box2D/Box2D.h>
 #include <vector>
@@ -251,8 +252,13 @@ class Application {
       Element menu_title_;
       Element menu_items_;
       Element world_items_;
+      Element ruler_;
       Platform *menu_platform_;
+      Platform *invisible_wall_;
       /***********************/
+
+      /****** MUSIC **********/
+      Mix_Music *music; 
 
       // Gameove texture
       Texture gameover_screen_;

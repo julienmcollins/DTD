@@ -69,6 +69,7 @@ class Player : public Entity {
          JUMP,
          STOP,
          RUN_AND_JUMP,
+         PUSH,
          CROUCH
       };
 
@@ -130,6 +131,9 @@ class Player : public Entity {
    private:
       // Player state
       STATE player_state_;
+
+      // Previous position of player
+      float prev_pos_;
 };
 
 #endif

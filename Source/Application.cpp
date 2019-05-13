@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <cmath>
 #include <Box2D/Box2D.h>
 #include <vector>
@@ -40,6 +41,7 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    menu_title_(640, 70, 513, 646, this),
    menu_items_(800, 650, 299, 321, this),
    world_items_(850, 650, 332, 193, this),
+   ruler_(200, 722, 200, 50, this),
    point_(false), item_(0), gameover_screen_(NULL, 0), 
    clicked (false) {
     
@@ -81,6 +83,9 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 
         // Set contact listener
         world_.SetContactListener(&contact_listener_);
+
+        // Load music
+        music = Mix_LoadMUS("sounds/moonlight.mp3");
     }
 
    // Start counting frames per second
@@ -89,22 +94,29 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 
 // Checks initialization of SDL functions
 bool Application::init() {
+   // Success flag 
+   bool success = true;
     
-    bool success = true;
-    
-    //Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-        success = false;
-    } else {
-        //Initialize PNG loading
+   // Open audio first
+   Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 640);
+
+   //Initialize SDL
+   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+      printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+      success = false;
+   } else {
+      //Initialize PNG loading
       int imgFlags = IMG_INIT_PNG;
-        if (!(IMG_Init(imgFlags) & imgFlags)) {
-            printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-            success = false;
-        }
-    }
-    return success;
+      if (!(IMG_Init(imgFlags) & imgFlags)) {
+         printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+         success = false;
+      }
+      if (Mix_Init(MIX_INIT_MP3) != MIX_INIT_MP3) {
+         printf("Could not initialize mixer: %s\n", Mix_GetError());
+         success = false;
+      }
+   }
+   return success;
 }
 
 // Loads images and other media
@@ -250,6 +262,12 @@ bool Application::loadMedia() {
       printf("Failed to load gameover.png\n");
       success = false;
    }
+
+   // load ruler
+   if (!ruler_.texture.loadFromFile("images/miscealaneous/ruler_200.png")) {
+      printf("Failed to load ruler.png\n");
+      success = false;
+   }
       
    // Return state
    return success;
@@ -266,7 +284,11 @@ void Application::setup_menu() {
    menu_platform_ = new Platform(960, 925, 10, 1920, this);
    //menu_platform_->set_height(10);
    //menu_platform_->set_width(1920);
-   menu_platform_->setup();   
+   menu_platform_->setup();
+
+   // Setup invisible wall
+   invisible_wall_ = new Platform(0, 1055, 1000, 10, this);
+   invisible_wall_->setup();
 
    // Setup menu background
    menu_background_.texture.fps = 1.0f / 4.0f;
@@ -283,6 +305,9 @@ void Application::setup_menu() {
    // World menu items
    world_items_.texture.fps = 1.0f / 4.0f;
    world_items_.texture.max_frame_ = 2;
+
+   // Play music
+   Mix_PlayMusic(music, 1);
 }
 
 // Load specific textures when needed
@@ -489,10 +514,12 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player.get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL11;
+         level_flag_ = LEVEL12;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;
+         delete invisible_wall_;
+         Mix_FreeMusic(music);
       }
    }
 
@@ -516,6 +543,9 @@ void Application::main_screen() {
          }
       }
    }
+
+   // Render ruler
+   //ruler_.render(&ruler_.texture);
 
    // Update the screen
    SDL_RenderPresent(renderer);

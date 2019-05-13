@@ -69,7 +69,7 @@ Player::Player(Application* application) :
    idle_jump_texture(this, 14), running_jump_texture(this, 16), arm_texture(this, 4), 
    arm_shoot_texture(this, 8), arm_running_texture(this, 3), eraser_texture(this, 0),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
-   arm_delta_shoot_x(12), arm_delta_shoot_y(51) {
+   arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_(0.0f) {
 
    // Set entity direction
    entity_direction = RIGHT;
@@ -135,6 +135,11 @@ Texture *Player::get_texture() {
    // Return jump texture
    if (player_state_ == JUMP) {
       return &idle_jump_texture;
+   }
+
+   // Return push texture
+   if (player_state_ == PUSH) {
+      return &textures["push"];
    }
 
    // Return idle texture for now
@@ -265,14 +270,18 @@ void Player::adjust_deltas() {
 void Player::animate(Texture *tex, int reset, int max, int start) {
    // Shooting animation
    if (shooting) {
-      //std::cout << arm_shoot_texture.frame_ << std::endl;
-      if (arm_shoot_texture.frame_ > 6) {
-         arm_shoot_texture.frame_ = 0;
-         shooting = false;
-         arm_shoot_texture.completed_ = true;
+      arm_shoot_texture.last_frame += 
+      (arm_shoot_texture.fps_timer.getDeltaTime() / 1000.0f);
+      if (arm_shoot_texture.last_frame > get_application()->animation_update_time_) {
+         if (arm_shoot_texture.frame_ > 6) {
+            arm_shoot_texture.frame_ = 0;
+            shooting = false;
+            arm_shoot_texture.completed_ = true;
+         }
+         arm_shoot_texture.curr_clip_ = &arm_shoot_texture.clips_[arm_shoot_texture.frame_];
+         ++arm_shoot_texture.frame_;
+         arm_shoot_texture.last_frame = 0.0f;
       }
-      arm_shoot_texture.curr_clip_ = &arm_shoot_texture.clips_[arm_shoot_texture.frame_];
-      ++arm_shoot_texture.frame_;
    } else {
       Element::animate(&arm_texture, 0);
    }
@@ -289,6 +298,8 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&running_jump_texture);
    } else if (player_state_ == JUMP) {
       Element::animate(&idle_jump_texture);
+   } else if (player_state_ = PUSH) {
+      Element::animate(&textures["push"]);
    }
 }
 
@@ -301,6 +312,18 @@ void Player::change_player_state() {
 
       // Set state
       player_state_ = STOP;
+
+      // Return
+      return;
+   }
+
+   // Special push state
+   if ((get_application()->current_key_states_[SDL_SCANCODE_RIGHT] ||
+         get_application()->current_key_states_[SDL_SCANCODE_LEFT]) &&
+         (prev_pos_ - body->GetPosition().x == 0.0f)) {
+      
+      // Set state to push
+      player_state_ = PUSH;
 
       // Return
       return;
@@ -334,17 +357,13 @@ void Player::change_player_state() {
 }
 
 // Movement logic of the player. Done through keyboard.
-void Player::move() {
-
+void Player::move() {   
    // If not running or running and jumping, then set linear velocity to 0
    if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP) {
       b2Vec2 vel = {0, body->GetLinearVelocity().y};
       body->SetLinearVelocity(vel);
       player_state_ = STOP;
    }
-
-   // Update player state
-   change_player_state();
 
    // Shooting
    if (get_application()->current_key_states_[SDL_SCANCODE_SPACE]) {
@@ -385,6 +404,10 @@ void Player::move() {
          arm_shoot_texture.flip_ = SDL_FLIP_HORIZONTAL;
          arm_running_texture.has_flipped_ = true;
          arm_running_texture.flip_ = SDL_FLIP_HORIZONTAL;
+
+         // Pushing texture
+         textures["push"].has_flipped_ = true;
+         textures["push"].flip_ = SDL_FLIP_HORIZONTAL;
       }
       
       // Set direction
@@ -430,21 +453,21 @@ void Player::move() {
          arm_shoot_texture.flip_ = SDL_FLIP_NONE;
          arm_running_texture.has_flipped_ = false;
          arm_running_texture.flip_ = SDL_FLIP_NONE;
+
+         // Pushing texture
+         textures["push"].has_flipped_ = false;
+         textures["push"].flip_ = SDL_FLIP_NONE;
       }
       
       // Set direction
-      entity_direction = RIGHT;
+      entity_direction = RIGHT;     
 
-      // Set state
       // Set to jump and run if not on the ground
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
-         //std::cout << player_state_ << std::endl;
-         //std::cout << body->GetLinearVelocity().y << std::endl;
          player_state_ = RUN;
          b2Vec2 vel = {3.4f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
-         //std::cout << "Hello?" << std::endl;
          has_jumped_ = true;
          if (body->GetLinearVelocity().x < 4.0f) {
             const b2Vec2 force = {5.4f, 0};
@@ -464,7 +487,7 @@ void Player::move() {
          }
 
          // Apply an impulse
-         const b2Vec2 force = {0, 3.5f};
+         const b2Vec2 force = {0, 2.2f};
          body->ApplyLinearImpulse(force, body->GetPosition(), true);
 
          // Set the flags
@@ -480,6 +503,12 @@ void Player::move() {
      // Need to revisit this
      //add_y(5);
    }
+
+   // Update player state
+   change_player_state();
+
+   // Set previous position
+   prev_pos_ = body->GetPosition().x; 
 }
 
 // Start contact function
@@ -681,6 +710,9 @@ bool Player::load_media() {
       eraser_texture.curr_clip_ = &temp[0];
    }
 
+   // Load pushing animation
+   load_image(textures, this, 62, 104, 16, 1.0f / 20.0f, "push", "images/player/new/push.png", success);
+
    // Return success
    return success;
 }
@@ -697,4 +729,3 @@ Player::~Player() {
    arm_running_texture.free();
    eraser_texture.free();
 }
-

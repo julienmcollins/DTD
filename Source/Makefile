@@ -13,7 +13,7 @@ CCW32 = i686-w64-mingw32-gcc
 COMPILER_FLAGS = -g
 
 #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lSDL2 -lSDL2_image libBox2D.a
+LINKER_FLAGS = -lSDL2 -lSDL2_mixer -lSDL2_image libBox2D.a
 
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = dtd

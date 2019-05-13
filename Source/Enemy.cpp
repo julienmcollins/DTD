@@ -154,11 +154,23 @@ Fecreez::~Fecreez() {
    textures["death"].free();
 }
 
+/********************* ARM **************************/
+Arm::Arm(int x, int y, int height, int width, Application *application, Rosea *rosea) :
+   Enemy(x, y, height, width, application), rosea_(rosea) {}
+
+// Callback function for arm will set rosea's state to hurt
+void Arm::start_contact(Element *element) {
+   if (element->type() == "Player" || element->type() == "Projectile") {
+      rosea_->set_state(HURT);
+   }
+}
+
 /********************* ROSEA ENEMY ******************/
 Rosea::Rosea(int x, int y, Application *application) :
    Enemy(x, y, 144, 189, application), 
-   arms_still(x - 46, y - 118, 78, 122, application),
-   arms_attack(x + 30, y - 230, 387, 168, application), hurt_counter_(0), arm_state_(0), in_bounds_(false),
+   arms_still(x - 46, y - 118, 78, 122, application, this),
+   arms_attack(x + 30, y - 230, 387, 168, application), 
+   hurt_counter_(0), arm_state_(0), in_bounds_(false),
    arm_heights_({{0, y - 110}, {1, y - 250}, {2, y - 325}, {3, y - 395}, 
          {4, y - 425}, {5, y - 425}, {6, y - 425}, 
          {7, y - 425}, {8, y - 425}, {9, y - 380}, {10, y - 270}, {11, y - 180}, 
@@ -168,10 +180,13 @@ Rosea::Rosea(int x, int y, Application *application) :
    set_hitbox(x, y);
 
    // TODO: get separate elements for the arms (ie new elements and set is as dynamic body)
-   arms_attack.set_hitbox(arms_attack.get_x() - 30, arms_attack.get_y());
+   //std::cout << "Before: x = " << arms_attack.get_x() << " y = " << arms_attack.get_y() << std::endl;
+   arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y());
+   arms_still.set_hitbox(arms_still.get_x() + 61, arms_still.get_y() + 39);
+   //std::cout << "After: x = " << arms_attack.get_x() << " y = " << arms_attack.get_y() << std::endl;
 
    // Set texture location
-   arms_attack.textures["attack"].set_x(arms_attack.get_x() + 30);
+   arms_attack.textures["attack"].set_x(arms_attack.get_x());
    arms_attack.textures["attack"].set_y(arms_attack.get_y());
 
    // Set initial arm postion
@@ -219,9 +234,6 @@ void Rosea::update(bool freeze) {
    // Render enemy
    Texture *enemytexture = get_texture();
 
-   // Render enemy
-   render(enemytexture);
-
    // Render arms
    if (enemy_state_ == IDLE) {
       arms_still.render(&arms_still.textures["arms_idle"]);
@@ -230,12 +242,18 @@ void Rosea::update(bool freeze) {
    } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       arms_attack.texture_render(&arms_attack.textures["attack"]);
    }
+
+   // Render enemy
+   render(enemytexture);
 }
 
 // Rosea move
 void Rosea::move() {
    // Check for enemy_state_ hurt
    if (enemy_state_ == HURT) {
+      // Set arm height to 0
+      arms_attack.set_y(arm_heights_[0]);
+
       // Increment hurt counter
       ++hurt_counter_;
 
@@ -245,9 +263,7 @@ void Rosea::move() {
          hurt_counter_ = 0;
          arms_still.textures["arms_hurt"].completed_ = false;
       }
-   }
-
-   if (enemy_state_ == RETREAT) {
+   } else if (enemy_state_ == RETREAT) {
       arms_attack.set_y(arm_heights_[arms_attack.textures["attack"].frame_]);
       if (arms_attack.textures["attack"].frame_ > 14) {
          enemy_state_ = IDLE;
@@ -258,31 +274,33 @@ void Rosea::move() {
    }
 
    // Now, check to see if player is within bounds
-   if (within_bounds()) {
-      // Set in bounds to true
-      if (!in_bounds_) {
-         arm_state_ = 7;
-         in_bounds_ = true;
-      }
+   if (enemy_state_ != HURT) {
+      if (within_bounds()) {
+         // Set in bounds to true
+         if (!in_bounds_) {
+            arm_state_ = 7;
+            in_bounds_ = true;
+         }
 
-      // Set state to attack
-      enemy_state_ = ATTACK;
+         // Set state to attack
+         enemy_state_ = ATTACK;
 
-      // Deactivate main body
-      body->SetActive(false);
+         // Deactivate main body
+         body->SetActive(false);
 
-      // Temp var
-      int temp = (arms_attack.textures["attack"].frame_ < arm_state_) ? 
-                     arms_attack.textures["attack"].frame_ : arm_state_;
+         // Temp var
+         int temp = (arms_attack.textures["attack"].frame_ < arm_state_) ? 
+                        arms_attack.textures["attack"].frame_ : arm_state_;
 
-      // Sets hitbox to position of arm
-      arms_attack.set_y(arm_heights_[temp]);
-   } else {
-      // Check to make sure enemy is done attacking
-      if (in_bounds_) {
-         enemy_state_ = RETREAT;
-         arm_state_ = 0;
-         in_bounds_ = false;
+         // Sets hitbox to position of arm
+         arms_attack.set_y(arm_heights_[temp]);
+      } else {
+         // Check to make sure enemy is done attacking
+         if (in_bounds_) {
+            enemy_state_ = RETREAT;
+            arm_state_ = 0;
+            in_bounds_ = false;
+         }
       }
    }
 }
@@ -291,14 +309,14 @@ void Rosea::move() {
 void Rosea::animate(Texture *tex, int reset, int max, int start) {
    // Animate based on different states
    if (enemy_state_ == IDLE) {
-      Element::animate(&textures["idle"]);
       Element::animate(&arms_still.textures["arms_idle"]);
-   } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       Element::animate(&textures["idle"]);
+   } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       Element::animate(&arms_attack.textures["attack"], arm_state_, arm_state_);
+      Element::animate(&textures["idle"]);
    } else if (enemy_state_ == HURT) {
-      Element::animate(&textures["hurt"]);
       Element::animate(&arms_still.textures["arms_hurt"]);
+      Element::animate(&textures["hurt"]);
    }
 }
 
@@ -362,6 +380,7 @@ Rosea::~Rosea() {
    // Destroy the bodies 
    get_application()->world_.DestroyBody(body);
    get_application()->world_.DestroyBody(arms_attack.body);
+   get_application()->world_.DestroyBody(arms_still.body);
 
    // Destroy textures
    textures["idle"].free();
@@ -373,7 +392,7 @@ Rosea::~Rosea() {
 
 /************** MOSQUIBLER ENEMY *******************/
 Mosquibler::Mosquibler(int x, int y, Application *application) :
-   Enemy(x, y, 97, 109, application), start_death_(0), end_death_(0) {
+   Enemy(x, y, 89, 109, application), start_death_(0), end_death_(0) {
 
    // Set hitbox
    set_hitbox(x, y, true);
@@ -397,7 +416,7 @@ bool Mosquibler::load_media() {
    load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "fly", "images/enemies/Mosquibler/mosquibler_fly.png", success);
 
    // Load death for mosquibler
-   load_image(textures, this, 109, 97, 28, 1.0f / 20.0f, "death", "images/enemies/Mosquibler/mosquibler_death.png", success);
+   load_image(textures, this, 109, 89, 27, 1.0f / 20.0f, "death", "images/enemies/Mosquibler/mosquibler_death.png", success);
 
    // Load turn texture
    load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "turn", "images/enemies/Mosquibler/mosquibler_turn.png", success);
@@ -493,9 +512,9 @@ void Mosquibler::move() {
          end_death_ = 10;
       } 
       
-      if (textures["death"].frame_ > 27) {
-         start_death_ = 27;
-         end_death_ = 27;
+      if (textures["death"].frame_ > 26) {
+         start_death_ = 26;
+         end_death_ = 26;
       }
    }
 }
@@ -540,7 +559,7 @@ void Mosquibler::start_contact(Element *element) {
       // TODO: play the death part instead
       alive = false;
       start_death_ = 12;
-      end_death_ = 27;
+      end_death_ = 26;
    }
 }
 

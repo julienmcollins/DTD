@@ -74,6 +74,26 @@ class Fecreez : public Enemy {
       bool shift_;
 };
 
+// ROsea prototype
+class Rosea;
+
+// ARM for rosea
+class Arm : public Enemy {
+   public:
+      // Constructor for arm
+      Arm(int x, int y, int height, int width, Application *application, Rosea *rosea);
+
+      // Callback function will set enemy's state to HURT
+      virtual void start_contact(Element *element = NULL);
+
+      // Define abstract functions
+      virtual void move() {}
+      virtual Texture *get_texture() {}
+   private:
+      // Rosea parent class
+      Rosea *rosea_;
+};
+
 class Rosea : public Enemy {
    public:
       // COnstructor for rosea
@@ -98,11 +118,16 @@ class Rosea : public Enemy {
          return "Rosea";
       }
 
+      // Set enemy_state_
+      void set_state(STATE state) {
+         enemy_state_ = state;
+      }
+
       // Destructor for rosea
       virtual ~Rosea();
    private:
       // Element for the arms idle/hurt
-      Element arms_still;
+      Arm arms_still;
 
       // Element for the arms attacking
       Element arms_attack;

@@ -157,6 +157,7 @@ void Element::set_hitbox(int x, int y, bool dynamic, int height, int width) {
    fixture_def.shape = &box;
    fixture_def.density = 1.0f;
    fixture_def.friction = 1.8f;
+   fixture_def.userData = this;
    body->CreateFixture(&fixture_def);
 
    // Set user data so it can react

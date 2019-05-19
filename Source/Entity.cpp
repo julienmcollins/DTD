@@ -65,11 +65,8 @@ Player::Player(Application* application) :
    // The new sprite is going to be 37 wide (the character itself)
    // TODO: Load in new smaller sprite sheet
    Entity(960, 412, 104, 37, application), player_state_(STAND),
-   idle_texture(this, 4), running_texture(this, 20), kick_texture(this, 15), 
-   idle_jump_texture(this, 14), running_jump_texture(this, 16), arm_texture(this, 4), 
-   arm_shoot_texture(this, 8), arm_running_texture(this, 3), eraser_texture(this, 0),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
-   arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_(0.0f) {
+   arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f) {
 
    // Set entity direction
    entity_direction = RIGHT;
@@ -95,10 +92,14 @@ Player::Player(Application* application) :
                           4.0f * application->to_meters_};
    box.SetAsBox(width, height, center, 0.0f);
 
+   // TODO: ADD FIXTURES TO THIS AS SENSORS
+   left_sensor_ = new Sensor(0.8f, 0.2f, this, -0.05f);
+
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
    fixture_def.density = 1.0f;
    fixture_def.friction = 0.0f;
+   fixture_def.userData = this;
    body->CreateFixture(&fixture_def);
 
    // Set user data
@@ -108,33 +109,27 @@ Player::Player(Application* application) :
    health = 100;
 
    // TEMPORARY SOLUTION
-   arm_shoot_texture.completed_ = true;
+   textures["arm_throw"].completed_ = true;
 
-   // Set fps
-   idle_texture.fps = 1.0f / 4.0f;
-   running_texture.fps = 1.0f / 20.0f;
-   running_jump_texture.fps = 1.0f / 20.0f;
-   idle_jump_texture.fps = 1.0f / 20.0f;
-   arm_texture.fps = 1.0f / 4.0f;
-   arm_shoot_texture.fps = 1.0f / 20.0f;
-   arm_running_texture.fps = 1.0f / 20.0f;
+   // Set in contact = false
+   in_contact = false;
 }
 
 // Get texture based on state
 Texture *Player::get_texture() {
    // Return run or stop texture (aka running texture)
    if (player_state_ == RUN || player_state_ == STOP) {
-      return &running_texture;
+      return &textures["running"];
    }
 
    // Return run and jump texture
    if (player_state_ == RUN_AND_JUMP) {
-      return &running_jump_texture;
+      return &textures["running_jump"];
    }
 
    // Return jump texture
    if (player_state_ == JUMP) {
-      return &idle_jump_texture;
+      return &textures["jump"];
    }
 
    // Return push texture
@@ -142,8 +137,13 @@ Texture *Player::get_texture() {
       return &textures["push"];
    }
 
+   // Return jump and push texture
+   if (player_state_ == JUMP_AND_PUSH) {
+      return &textures["jump_push"];
+   }
+
    // Return idle texture for now
-   return &idle_texture;
+   return &textures["idle"];
 }
 
 // Get player state
@@ -153,16 +153,7 @@ Player::STATE Player::get_player_state() {
 
 // Update function
 void Player::update(bool freeze) {
-   //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: CROUCH, 5: RUN_AND_JUMP)" << std::endl;
-   // Update frames
-   /*
-   last_frame += 
-      (fps_timer.getDeltaTime() / 1000.0f);
-   if (last_frame > get_application()->animation_update_time_) {
-      animate();
-      last_frame = 0.0f;
-   }
-   */
+   //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: RUN_AND_JUMP, 5: PUSH)" << std::endl;
    animate();
 
    // Update player if not frozen
@@ -176,23 +167,25 @@ void Player::update(bool freeze) {
    Texture *playertexture = get_texture();
 
    // Render arm if idle, render shooting if not
-   if (!shooting) {
-       if (get_player_state() == 1) {
-          arm_running_texture.render(get_x() + get_width() +
-             arm_delta_x, get_y() + arm_delta_y,
-             arm_running_texture.curr_clip_, 0.0,
-             &arm_running_texture.center_, arm_running_texture.flip_);
-       } else {
-          //std::cout << arm_texture.max_frame_ << std::endl;
-          arm_texture.render(get_x() + get_width() + 
-             arm_delta_x, get_y() + arm_delta_y, arm_texture.curr_clip_, 0.0, 
-             &arm_texture.center_, arm_texture.flip_);
-       }
-   } else {
-      arm_shoot_texture.render(get_x() + get_width() + 
-         arm_delta_shoot_x, get_y() + arm_delta_shoot_y, 
-         arm_shoot_texture.curr_clip_, 0.0, 
-         &arm_shoot_texture.center_, arm_shoot_texture.flip_);
+   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH) {
+      if (!shooting) {
+         if (get_player_state() == 1) {
+            textures["running_arm"].render(get_x() + get_width() +
+               arm_delta_x, get_y() + arm_delta_y,
+               textures["running_arm"].curr_clip_, 0.0,
+               &textures["running_arm"].center_, textures["running_arm"].flip_);
+         } else {
+            //std::cout << textures["idle_arm"].max_frame_ << std::endl;
+            textures["idle_arm"].render(get_x() + get_width() + 
+               arm_delta_x, get_y() + arm_delta_y, textures["idle_arm"].curr_clip_, 0.0, 
+               &textures["idle_arm"].center_, textures["idle_arm"].flip_);
+         }
+      } else {
+         textures["arm_throw"].render(get_x() + get_width() + 
+            arm_delta_shoot_x, get_y() + arm_delta_shoot_y, 
+            textures["arm_throw"].curr_clip_, 0.0, 
+            &textures["arm_throw"].center_, textures["arm_throw"].flip_);
+      }
    }
 
    // Render player
@@ -270,45 +263,81 @@ void Player::adjust_deltas() {
 void Player::animate(Texture *tex, int reset, int max, int start) {
    // Shooting animation
    if (shooting) {
-      arm_shoot_texture.last_frame += 
-      (arm_shoot_texture.fps_timer.getDeltaTime() / 1000.0f);
-      if (arm_shoot_texture.last_frame > get_application()->animation_update_time_) {
-         if (arm_shoot_texture.frame_ > 6) {
-            arm_shoot_texture.frame_ = 0;
+      textures["arm_throw"].last_frame += 
+      (textures["arm_throw"].fps_timer.getDeltaTime() / 1000.0f);
+      if (textures["arm_throw"].last_frame > get_application()->animation_update_time_) {
+         if (textures["arm_throw"].frame_ > 6) {
+            textures["arm_throw"].frame_ = 0;
             shooting = false;
-            arm_shoot_texture.completed_ = true;
+            textures["arm_throw"].completed_ = true;
          }
-         arm_shoot_texture.curr_clip_ = &arm_shoot_texture.clips_[arm_shoot_texture.frame_];
-         ++arm_shoot_texture.frame_;
-         arm_shoot_texture.last_frame = 0.0f;
+         textures["arm_throw"].curr_clip_ = &textures["arm_throw"].clips_[textures["arm_throw"].frame_];
+         ++textures["arm_throw"].frame_;
+         textures["arm_throw"].last_frame = 0.0f;
       }
    } else {
-      Element::animate(&arm_texture, 0);
+      Element::animate(&textures["idle_arm"], 0);
    }
 
    // Choose animation based on what state player is in
    if (player_state_ == STAND) {
-      Element::animate(&idle_texture, 0, 4);
+      Element::animate(&textures["idle"], 0, 4);
    } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
-      Element::animate(&running_texture, 4, 15);
-      Element::animate(&arm_running_texture, 3);
+      Element::animate(&textures["running"], 4, 15);
+      Element::animate(&textures["running_arm"], 3);
    } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
-      Element::animate(&running_texture, 20);
+      Element::animate(&textures["running"], 20);
    } else if (player_state_ == RUN_AND_JUMP) {
-      Element::animate(&running_jump_texture);
+      Element::animate(&textures["running_jump"]);
    } else if (player_state_ == JUMP) {
-      Element::animate(&idle_jump_texture);
-   } else if (player_state_ = PUSH) {
+      Element::animate(&textures["jump"]);
+   } else if (player_state_ == PUSH) {
       Element::animate(&textures["push"]);
+   } else if (player_state_ == JUMP_AND_PUSH) {
+      Element::animate(&textures["jump_push"]);
    }
 }
 
 // Change player state
 void Player::change_player_state() {
+   // Key touches
+   bool right = get_application()->current_key_states_[SDL_SCANCODE_RIGHT];
+   bool left = get_application()->current_key_states_[SDL_SCANCODE_LEFT];
+   bool up = get_application()->current_key_states_[SDL_SCANCODE_UP];
+
+   // Special push state
+   if (in_contact) {
+      if ((left || right) && (up || body->GetLinearVelocity().y != 0)) {
+         player_state_ = JUMP_AND_PUSH;
+      } else if (!left && !right && (up || body->GetLinearVelocity().y != 0)) {
+         player_state_ = JUMP;
+      } else if (entity_direction == LEFT && left) {
+         player_state_ = PUSH;
+      } else if (entity_direction == RIGHT && right) {
+         player_state_ = PUSH;
+      } else {
+         player_state_ = STAND;
+      }
+      return;
+   }
+
+   // Special stand state
+   if ((!right && !left) && 
+      body->GetLinearVelocity().x == 0 && 
+      body->GetLinearVelocity().y == 0) {
+
+      // Set state to stand
+      player_state_ = STAND;
+
+      // Return
+      return;
+   }
+
    // Special stop state
-   if ((!get_application()->current_key_states_[SDL_SCANCODE_RIGHT] 
-            && !get_application()->current_key_states_[SDL_SCANCODE_LEFT]) && 
-         body->GetLinearVelocity().x != 0 && body->GetLinearVelocity().y == 0) {
+   if ((!right && !left) && 
+      body->GetLinearVelocity().x != 0 && 
+      body->GetLinearVelocity().y == 0 && 
+      player_state_ != PUSH) {
 
       // Set state
       player_state_ = STOP;
@@ -317,22 +346,10 @@ void Player::change_player_state() {
       return;
    }
 
-   // Special push state
-   if ((get_application()->current_key_states_[SDL_SCANCODE_RIGHT] ||
-         get_application()->current_key_states_[SDL_SCANCODE_LEFT]) &&
-         (prev_pos_ - body->GetPosition().x == 0.0f)) {
-      
-      // Set state to push
-      player_state_ = PUSH;
-
-      // Return
-      return;
-   }
-
    // Special fall state, TODO: add falling animation
-   if ((get_application()->current_key_states_[SDL_SCANCODE_RIGHT] ||
-            get_application()->current_key_states_[SDL_SCANCODE_LEFT]) &&
-        body->GetLinearVelocity().x == 0 && body->GetLinearVelocity().y != 0) {
+   if ((right || left) && 
+      body->GetLinearVelocity().x == 0 && 
+      body->GetLinearVelocity().y != 0) {
       
       // Set state
       player_state_ = JUMP;
@@ -359,7 +376,7 @@ void Player::change_player_state() {
 // Movement logic of the player. Done through keyboard.
 void Player::move() {   
    // If not running or running and jumping, then set linear velocity to 0
-   if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP) {
+   if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH) {
       b2Vec2 vel = {0, body->GetLinearVelocity().y};
       body->SetLinearVelocity(vel);
       player_state_ = STOP;
@@ -371,9 +388,9 @@ void Player::move() {
       shooting = true;
 
       // Create eraser
-      if (arm_shoot_texture.completed_) {
-         create_projectile(38, -12, 41, 12, 21, 1, 10, eraser_texture);
-         arm_shoot_texture.completed_ = false;
+      if (textures["arm_throw"].completed_) {
+         create_projectile(38, -12, 41, 12, 21, 1, 10, textures["eraser"]);
+         textures["arm_throw"].completed_ = false;
       }
    }
 
@@ -382,36 +399,35 @@ void Player::move() {
       // Check for flag
       if (entity_direction == RIGHT) {
          // Running texture flip
-         running_texture.has_flipped_ = true;
-         running_texture.flip_ = SDL_FLIP_HORIZONTAL;
+         textures["running"].has_flipped_ = true;
+         textures["running"].flip_ = SDL_FLIP_HORIZONTAL;
 
          // Idle texture flip
-         idle_texture.has_flipped_ = true;
-         idle_texture.flip_ = SDL_FLIP_HORIZONTAL;
+         textures["idle"].has_flipped_ = true;
+         textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
 
          // Running and jumping texture flip
-         running_jump_texture.has_flipped_ = true;
-         running_jump_texture.flip_ = SDL_FLIP_HORIZONTAL;
+         textures["running_jump"].has_flipped_ = true;
+         textures["running_jump"].flip_ = SDL_FLIP_HORIZONTAL;
 
          // Jump texture flip
-         idle_jump_texture.has_flipped_ = true;
-         idle_jump_texture.flip_ = SDL_FLIP_HORIZONTAL;
+         textures["jump"].has_flipped_ = true;
+         textures["jump"].flip_ = SDL_FLIP_HORIZONTAL;
 
          // Shooting arm and idle arm flip
-         arm_texture.has_flipped_ = true;
-         arm_texture.flip_ = SDL_FLIP_HORIZONTAL;
-         arm_shoot_texture.has_flipped_ = true;
-         arm_shoot_texture.flip_ = SDL_FLIP_HORIZONTAL;
-         arm_running_texture.has_flipped_ = true;
-         arm_running_texture.flip_ = SDL_FLIP_HORIZONTAL;
+         textures["idle_arm"].has_flipped_ = true;
+         textures["idle_arm"].flip_ = SDL_FLIP_HORIZONTAL;
+         textures["arm_throw"].has_flipped_ = true;
+         textures["arm_throw"].flip_ = SDL_FLIP_HORIZONTAL;
+         textures["running_arm"].has_flipped_ = true;
+         textures["running_arm"].flip_ = SDL_FLIP_HORIZONTAL;
 
          // Pushing texture
          textures["push"].has_flipped_ = true;
          textures["push"].flip_ = SDL_FLIP_HORIZONTAL;
+         textures["jump_push"].has_flipped_ = true;
+         textures["jump_push"].flip_ = SDL_FLIP_HORIZONTAL;
       }
-      
-      // Set direction
-      entity_direction = LEFT;
 
       // Check for midair
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
@@ -424,43 +440,48 @@ void Player::move() {
             const b2Vec2 force = {-5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
+      } else if (player_state_ == PUSH && entity_direction == RIGHT) {
+         player_state_ = RUN;
+         in_contact = false;
       }
+            
+      // Set direction
+      entity_direction = LEFT;
    } 
 
    // Deal with basic movement for now
    if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) {
       // Check for flag
       if (entity_direction == LEFT) {
-         running_texture.has_flipped_ = false;
-         running_texture.flip_ = SDL_FLIP_NONE;
+         textures["running"].has_flipped_ = false;
+         textures["running"].flip_ = SDL_FLIP_NONE;
 
          // Idle texture flip
-         idle_texture.has_flipped_ = false;
-         idle_texture.flip_ = SDL_FLIP_NONE;
+         textures["idle"].has_flipped_ = false;
+         textures["idle"].flip_ = SDL_FLIP_NONE;
 
          // Running and jumping texture flip
-         running_jump_texture.has_flipped_ = false;
-         running_jump_texture.flip_ = SDL_FLIP_NONE;
+         textures["running_jump"].has_flipped_ = false;
+         textures["running_jump"].flip_ = SDL_FLIP_NONE;
 
          // Jump texture flip
-         idle_jump_texture.has_flipped_ = false;
-         idle_jump_texture.flip_ = SDL_FLIP_NONE;
+         textures["jump"].has_flipped_ = false;
+         textures["jump"].flip_ = SDL_FLIP_NONE;
 
          // Shooting arm and idle arm flip
-         arm_texture.has_flipped_ = false;
-         arm_texture.flip_ = SDL_FLIP_NONE;
-         arm_shoot_texture.has_flipped_ = false;
-         arm_shoot_texture.flip_ = SDL_FLIP_NONE;
-         arm_running_texture.has_flipped_ = false;
-         arm_running_texture.flip_ = SDL_FLIP_NONE;
+         textures["idle_arm"].has_flipped_ = false;
+         textures["idle_arm"].flip_ = SDL_FLIP_NONE;
+         textures["arm_throw"].has_flipped_ = false;
+         textures["arm_throw"].flip_ = SDL_FLIP_NONE;
+         textures["running_arm"].has_flipped_ = false;
+         textures["running_arm"].flip_ = SDL_FLIP_NONE;
 
          // Pushing texture
          textures["push"].has_flipped_ = false;
          textures["push"].flip_ = SDL_FLIP_NONE;
-      }
-      
-      // Set direction
-      entity_direction = RIGHT;     
+         textures["jump_push"].has_flipped_ = false;
+         textures["jump_push"].flip_ = SDL_FLIP_NONE;
+      }   
 
       // Set to jump and run if not on the ground
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
@@ -473,7 +494,13 @@ void Player::move() {
             const b2Vec2 force = {5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
+      } else if (player_state_ == PUSH && entity_direction == LEFT) {
+         player_state_ = RUN;
+         in_contact = false;
       }
+            
+      // Set direction
+      entity_direction = RIGHT;
    }
    
    // Player jumping
@@ -508,7 +535,8 @@ void Player::move() {
    change_player_state();
 
    // Set previous position
-   prev_pos_ = body->GetPosition().x; 
+   prev_pos_x_ = body->GetPosition().x; 
+   prev_pos_y_ = body->GetPosition().y;
 }
 
 // Start contact function
@@ -527,191 +555,34 @@ bool Player::load_media() {
    bool success = true;
 
    // Load player idle
-   if (!idle_texture.loadFromFile("images/player/new/idle_no_arm.png")) {
-       printf("Failed to load idle_no_arm.png!\n");
-       success = false;
-   } else {
-      // Allocat enough room for the clips
-      idle_texture.clips_ = new SDL_Rect[5];
-      SDL_Rect *temp = idle_texture.clips_;
-
-      // Calculate locations
-      for (int i = 0; i < 5; i++) {
-         temp[i].x = i * 62;
-         temp[i].y = 0;
-         temp[i].w = 62;
-         temp[i].h = 104;
-      }
-
-      // Set curr clip
-      idle_texture.curr_clip_ = &temp[0];
-   }
+   load_image(textures, this, 62, 104, 5, 1.0f / 4.0f, "idle", "images/player/idle_no_arm.png", success);
 
    // Load player jumping idly
-   if (!idle_jump_texture.loadFromFile("images/player/new/idle_jump_no_arm.png")) {
-      printf("Failed to load idle_jump_texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room for the clips
-      idle_jump_texture.clips_ = new SDL_Rect[15];
-      SDL_Rect *temp = idle_jump_texture.clips_;
-
-      // Calculate sprites
-      for (int i = 0; i < 15; i++) {
-         temp[i].x = i * 62;
-         temp[i].y = 0;
-         temp[i].w = 62;
-         temp[i].h = 104;
-      }
-
-      // Set curr clip
-      idle_jump_texture.curr_clip_ = &temp[0];
-   }
+   load_image(textures, this, 62, 104, 15, 1.0f / 20.0f, "jump", "images/player/idle_jump_no_arm.png", success);
 
    // Load player running
-   if (!running_texture.loadFromFile("images/player/new/running_no_arm.png")) {
-       printf("Failed to load running_no_arm.png image!\n");
-       success = false;
-   } else {
-      // Allocat enough room for the clips
-      running_texture.clips_ = new SDL_Rect[21];
-      SDL_Rect *temp = running_texture.clips_;
-
-      // Calculate locations
-      for (int i = 0; i < 21; i++) {
-         temp[i].x = i * 62;
-         temp[i].y = 0;
-         temp[i].w = 62;
-         temp[i].h = 104;
-      }
-
-      // Set curr clip
-      running_texture.curr_clip_ = &temp[0];
-   }
-
-   // Load player kicking
-   if (!kick_texture.loadFromFile("images/player/kick.png")) {
-       printf("Failed to load Texture image!\n");
-       success = false;
-   } else {
-      // Allocat enough room for the clips
-      kick_texture.clips_ = new SDL_Rect[16];
-      SDL_Rect *temp = kick_texture.clips_;
-
-      // Calculate locations
-      for (int i = 0; i < 16; i++) {
-         temp[i].x = i * 75;
-         temp[i].y = 0;
-         temp[i].w = 75;
-         temp[i].h = 150;
-      }
-
-      // Set curr clip
-      kick_texture.curr_clip_ = &temp[0];
-   }
+   load_image(textures, this, 62, 104, 21, 1.0f / 20.0f, "running", "images/player/running_no_arm.png", success);
 
    // Load jump and run
-   if (!running_jump_texture.loadFromFile("images/player/new/running_jump_no_arm.png")) {
-      printf("Failed to load Running Jump image!\n");
-      success = false;
-   } else {
-      // Allocate enough room for the clips
-      running_jump_texture.clips_ = new SDL_Rect[17];
-      SDL_Rect *temp = running_jump_texture.clips_;
-
-      // Calculate the locations
-      for (int i = 0; i < 17; i++) {
-         temp[i].x = i * 62;
-         temp[i].y = 0;
-         temp[i].w = 62;
-         temp[i].h = 104;
-      }
-
-      // Set curr clip
-      running_jump_texture.curr_clip_ = &temp[0];
-   }
-
-   // Turn animation width 52 --> turns from facing right to left
+   load_image(textures, this, 62, 104, 17, 1.0f / 20.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
 
    // Load arm
-   if (!arm_texture.loadFromFile("images/player/new/idle_arm.png")) {
-      printf("Failed to load Arm image!\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      arm_texture.clips_ = new SDL_Rect[5];
-      SDL_Rect *temp = arm_texture.clips_;
-
-      // Calculate the locations
-      for (int i = 0; i < 5; i++) {
-         temp[i].x = i * 7;
-         temp[i].y = 0;
-         temp[i].w = 7;
-         temp[i].h = 24;
-      }
-
-      // Set curr clip
-      arm_texture.curr_clip_ = &temp[0];
-   }
+   load_image(textures, this, 7, 24, 5, 1.0f / 20.0f, "idle_arm", "images/player/idle_arm.png", success);
 
    // Load shooting arm
-   if (!arm_shoot_texture.loadFromFile("images/player/new/arm_throw.png")) {
-      printf("Failed to load arm shooting texture!\n");
-      success = false;
-   } else {
-     // Allocate enough room for the clips
-     arm_shoot_texture.clips_ = new SDL_Rect[9];
-     SDL_Rect *temp = arm_shoot_texture.clips_;
+   load_image(textures, this, 44, 33, 9, 1.0f / 20.0f, "arm_throw", "images/player/arm_throw.png", success);
 
-     // Calculate the locations
-     for (int i = 0; i < 9; i++) {
-        temp[i].x = i * 44;
-        temp[i].y = 0;
-        temp[i].w = 44;
-        temp[i].h = 33;
-     }
+   // Load Running arm
+   load_image(textures, this, 7, 22, 4, 1.0f / 20.0f, "running_arm", "images/player/running_arm.png", success);
 
-     // Set curr_clip
-     arm_shoot_texture.curr_clip_ = &temp[0];
-   }
-
-   // Running arm
-   if (!arm_running_texture.loadFromFile("images/player/new/running_arm.png")) {
-      printf("Failed to load running arm texture!\n");
-      success = false;
-   } else {
-      // Allocate enough room for the clips
-      arm_running_texture.clips_ = new SDL_Rect[4];
-      SDL_Rect *temp = arm_running_texture.clips_;
-
-      // Calculate the locations
-      for (int i = 0; i < 4; i++) {
-         temp[i].x = i * 7;
-         temp[i].y = 0;
-         temp[i].w = 7;
-         temp[i].h = 22;
-      }
-
-      // Set curr clip
-      arm_running_texture.curr_clip_ = &temp[0];
-   }
-
-   // Eraser
-   if (!eraser_texture.loadFromFile("images/player/eraser.png")) {
-      printf("Failed to load eraser texture!\n");
-      success = false;
-   } else {
-      // Allocate one image for it
-      eraser_texture.clips_ = new SDL_Rect[1];
-      SDL_Rect *temp = eraser_texture.clips_;
-      temp[0].x = 0; temp[0].y = 0; temp[0].w = 21; temp[0].h = 12;
-
-      // Set curr clip
-      eraser_texture.curr_clip_ = &temp[0];
-   }
+   // load Eraser
+   load_image(textures, this, 21, 12, 1, 1.0f / 20.0f, "eraser", "images/player/eraser.png", success);
 
    // Load pushing animation
-   load_image(textures, this, 62, 104, 16, 1.0f / 20.0f, "push", "images/player/new/push.png", success);
+   load_image(textures, this, 62, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);
+
+   // Load jump and push
+   load_image(textures, this, 62, 104, 8, 1.0f / 20.0f, "jump_push", "images/player/jump_push.png", success);
 
    // Return success
    return success;
@@ -719,13 +590,45 @@ bool Player::load_media() {
 
 // Virtual destructor
 Player::~Player() {
-   idle_texture.free();
-   running_texture.free();
-   kick_texture.free();
-   running_jump_texture.free();
-   idle_jump_texture.free();
-   arm_texture.free();
-   arm_shoot_texture.free();
-   arm_running_texture.free();
-   eraser_texture.free();
+   textures["idle"].free();
+   textures["running"].free();
+   textures["running_jump"].free();
+   textures["jump"].free();
+   textures["idle_arm"].free();
+   textures["arm_throw"].free();
+   textures["running_arm"].free();
+   textures["eraser"].free();
+}
+
+/*************** SENSOR CLASS *************************/
+Sensor::Sensor(int height, int width, Player *entity, float center_x) :
+   Element(0, 0, height, width, NULL), entity_(entity) {
+
+   // Create box shape
+   box.SetAsBox(width, height, {center_x, 0}, 0.0f);
+
+   // Create fixture
+   fixture_def.shape = &box;
+   fixture_def.density = 0.0f;
+   //fixture_def.isSensor = true;
+   fixture_def.userData = this;
+
+   // Attach fixture
+   entity->body->CreateFixture(&fixture_def);
+}
+
+// Start contact function
+void Sensor::start_contact(Element *element) {
+   if (element->type() == "Platform") {
+      entity_->in_contact = true;
+      //std::cout << "SUCCESSFULLY HIT SENSOR" << std::endl;
+      //entity_->set_player_state(entity_->PUSH);
+   }
+}
+
+// End contact function
+void Sensor::end_contact() {
+   entity_->in_contact = false;
+   //entity_->set_player_state(entity_->RUN);
+   //std::cout << "ENDED CONTACT" << std::endl;
 }

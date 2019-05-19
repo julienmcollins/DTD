@@ -10,8 +10,8 @@ class ContactListener : public b2ContactListener {
       // Contact listener for beginning of contact
       void BeginContact(b2Contact* contact) {
          //check if fixture A and B are touching
-         void* bodyAUserData = contact->GetFixtureA()->GetBody()->GetUserData();
-         void* bodyBUserData = contact->GetFixtureB()->GetBody()->GetUserData();
+         void* bodyAUserData = contact->GetFixtureA()->GetUserData();
+         void* bodyBUserData = contact->GetFixtureB()->GetUserData();
          if (bodyAUserData && bodyBUserData) {
             // Create dummy pointers
             Element *element1 = static_cast<Element*>(bodyAUserData);
@@ -23,15 +23,18 @@ class ContactListener : public b2ContactListener {
          }
       }
 
-      /*
       // Contact listener for end of contact
       void EndContact(b2Contact* contact) {
          //check if fixture A was a ball
-         void* bodyAUserData = contact->GetFixtureA()->GetBody()->GetUserData();
-         void* bodyBUserData = contact->GetFixtureB()->GetBody()->GetUserData();
+         void* bodyAUserData = contact->GetFixtureA()->GetUserData();
+         void* bodyBUserData = contact->GetFixtureB()->GetUserData();
          if ( bodyAUserData ) {
-            static_cast<Element*>( bodyAUserData )->end_contact();
+            Element *element1 = static_cast<Element*>( bodyAUserData );
+            Element *element2 = static_cast<Element*>( bodyBUserData );
+
+            // End contacts
+            element1->end_contact();
+            element2->end_contact();
          }
       }
-      */
 };

@@ -34,7 +34,10 @@ void Platform::setup() {
    box.SetAsBox(box_x, box_y);
 
    // Create fixture
-   body->CreateFixture(&box, 0.0f);
+   fixture_def.shape = &box;
+   fixture_def.density = 0.0f;
+   fixture_def.userData = this;
+   body->CreateFixture(&fixture_def);
 
    // Set user data
    body->SetUserData(this);
@@ -82,6 +85,7 @@ Projectile::Projectile(int x, int y, int height, int width,
    fixture_def.shape = &box;
    fixture_def.density = 1.0f;
    fixture_def.friction = 1.0f;
+   fixture_def.userData = this;
    body->CreateFixture(&fixture_def);
 
    // Set gravity scale to 0

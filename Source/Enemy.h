@@ -88,7 +88,9 @@ class Arm : public Enemy {
 
       // Define abstract functions
       virtual void move() {}
-      virtual Texture *get_texture() {}
+      virtual Texture *get_texture() {
+         return NULL;
+      }
    private:
       // Rosea parent class
       Rosea *rosea_;

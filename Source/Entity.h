@@ -11,6 +11,7 @@
 class Application;
 class Platform;
 class Projectile;
+class Player;
 
 class Entity : public Element {
     public:
@@ -56,6 +57,25 @@ class Entity : public Element {
         virtual ~Entity();
 };
 
+// Sensor class
+class Sensor : public Element {
+   public:
+      // Construct the sensor object
+      Sensor(int height, int width, Player *entity, float center_x);
+
+      // Start contact function
+      virtual void start_contact(Element *element = NULL);
+      virtual void end_contact();
+
+      // Change type
+      virtual std::string type() {
+         return "Sensor";
+      }
+   private:
+      Player *entity_;
+      b2CircleShape circle_;
+};
+
 // Player class
 class Player : public Entity {
    public:
@@ -70,22 +90,12 @@ class Player : public Entity {
          STOP,
          RUN_AND_JUMP,
          PUSH,
+         JUMP_AND_PUSH,
          CROUCH
       };
 
       // Shooting flag
       bool shooting;
-
-      // Different textures
-      Texture idle_texture;
-      Texture running_texture;
-      Texture kick_texture;
-      Texture running_jump_texture;
-      Texture idle_jump_texture;
-      Texture arm_texture;
-      Texture arm_shoot_texture;
-      Texture arm_running_texture;
-      Texture eraser_texture;
 
       // Function to get the proper texture based on the state
       virtual Texture *get_texture();
@@ -99,8 +109,11 @@ class Player : public Entity {
       // Adjust delta function
       void adjust_deltas();
 
-      // Get player state
+      // Get and set player state
       STATE get_player_state();
+      void set_player_state(STATE new_state) {
+         player_state_ = new_state;
+      }
 
       // Change player state
       void change_player_state();
@@ -133,7 +146,11 @@ class Player : public Entity {
       STATE player_state_;
 
       // Previous position of player
-      float prev_pos_;
+      float prev_pos_x_;
+      float prev_pos_y_;
+
+      // Sensor
+      Sensor *left_sensor_;
 };
 
 #endif

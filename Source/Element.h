@@ -101,6 +101,8 @@ class Element {
       virtual void start_contact(Element *element = NULL) {}
       virtual void end_contact() {}
 
+      // Contact flag
+      bool in_contact;
    private:
       // X and Y locations
       int x_pos_;

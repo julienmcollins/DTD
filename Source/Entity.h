@@ -50,7 +50,7 @@ class Entity : public Element {
         }
 
         // Create projectile (might need to add an entity pointer just in case)
-        Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+        virtual Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
               int height, int width, bool owner, bool damage, Texture texture);
 
         // Destructor
@@ -137,6 +137,10 @@ class Player : public Entity {
 
       // Load media function for the player
       virtual bool load_media();
+
+      // Create projectile
+      virtual Projectile *create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+              int height, int width, bool owner, bool damage, Texture texture);
 
       // Virtual destructor
       virtual ~Player();

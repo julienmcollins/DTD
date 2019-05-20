@@ -309,7 +309,7 @@ void Application::setup_menu() {
    world_items_.texture.max_frame_ = 2;
 
    // Play music
-   Mix_PlayMusic(music, 1);
+   //Mix_PlayMusic(music, 1);
 }
 
 // Load specific textures when needed
@@ -521,7 +521,7 @@ void Application::main_screen() {
          completed_level_ = false;
          delete menu_platform_;
          delete invisible_wall_;
-         Mix_FreeMusic(music);
+         //Mix_FreeMusic(music);
       }
    }
 

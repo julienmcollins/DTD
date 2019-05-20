@@ -139,3 +139,57 @@ Projectile::~Projectile() {
    // Delete object
    body->GetWorld()->DestroyBody(body);
 }
+
+/************* ERASER SUBCLASS *******************/
+Eraser::Eraser(int x, int y, int height, int width, Entity *entity, Application *application) :
+   Projectile(x, y, height, width, 1, 10, entity, application) {
+   // Set object state
+   object_state_ = ALIVE;
+
+   // Load media
+   load_media();
+}
+
+// Adjust start contact function
+void Eraser::start_contact(Element *element) {
+   if (element->is_enemy() || element->type() == "Platform") {
+      object_state_ = DEAD;
+      b2Vec2 stop = {0.0f, 0.0f};
+      body->SetLinearVelocity(stop);
+   }
+}
+
+// Update function
+void Eraser::update() {
+   // Check the status
+   if (object_state_ == ALIVE) {
+      Element::animate(&textures["normal"]);
+      if (shot_dir == LEFT) {
+         textures["normal"].render(get_x(), get_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+      } else {
+         textures["normal"].render(get_x(), get_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
+      }
+   } else if (object_state_ == DEAD) {
+      if (textures["explode"].frame_ > 3) {
+         alive = false;
+         return;
+      }
+      Element::animate(&textures["explode"]);
+      textures["explode"].render(get_x(), get_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
+   }
+}
+
+// Load eraser media
+bool Eraser::load_media() {
+   // Success flag
+   bool success = true;
+
+   // Normal eraser
+   load_image(textures, this, 21, 12, 3, 1.0f / 20.0f, "normal", "images/player/eraser.png", success);
+
+   // Exploading eraser
+   load_image(textures, this, 21, 12, 4, 1.0f / 20.0f, "explode", "images/player/eraser_break.png", success);
+
+   // Return success
+   return success;
+}

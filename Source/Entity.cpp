@@ -275,6 +275,7 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
          ++textures["arm_throw"].frame_;
          textures["arm_throw"].last_frame = 0.0f;
       }
+      Element::animate(&textures["eraser"]);
    } else {
       Element::animate(&textures["idle_arm"], 0);
    }
@@ -576,7 +577,7 @@ bool Player::load_media() {
    load_image(textures, this, 7, 22, 4, 1.0f / 20.0f, "running_arm", "images/player/running_arm.png", success);
 
    // load Eraser
-   load_image(textures, this, 21, 12, 1, 1.0f / 20.0f, "eraser", "images/player/eraser.png", success);
+   load_image(textures, this, 21, 12, 3, 1.0f / 20.0f, "eraser", "images/player/eraser.png", success);
 
    // Load pushing animation
    load_image(textures, this, 62, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);
@@ -586,6 +587,28 @@ bool Player::load_media() {
 
    // Return success
    return success;
+}
+
+// Create projectile
+Projectile* Player::create_projectile(int delta_x_r, int delta_x_l, int delta_y, int height, int width,
+     bool owner, bool damage, Texture texture) {
+   // First, create a new projectile
+   Application *tmp = get_application();
+   Projectile *proj;
+
+   // Create based on direction
+   if (entity_direction == RIGHT) {
+      proj = new Eraser(get_x() + get_width() + delta_x_r, get_y() + delta_y, 
+            height, width, this, tmp);
+   } else {
+      proj = new Eraser(get_x() + delta_x_l, get_y() + delta_y, height, width, this, tmp);
+   }
+
+   // Set shot direction
+   proj->shot_dir = entity_direction;
+
+   // Return projectile reference
+   return proj;
 }
 
 // Virtual destructor

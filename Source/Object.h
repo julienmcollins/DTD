@@ -21,10 +21,18 @@ class Object : public Element {
       // Need to have a handle on entity that owns this object
       Entity *owning_entity;
 
+      // States for the shot
+      enum STATE {
+         ALIVE,
+         DEAD
+      };
+
       // Get type
       virtual std::string type() {
          return "Object";
       }
+   protected:
+      STATE object_state_;
 };
 
 // Platform class will be a subclass of Object (through inheritance)
@@ -97,6 +105,21 @@ class Projectile : public Object {
 
       // Damage amount
       int damage_;
+};
+
+class Eraser : public Projectile {
+   public:
+      // Constructor
+      Eraser(int x, int y, int height, int width, Entity *entity, Application *application);
+      
+      // Start contact function
+      virtual void start_contact(Element *element);
+
+      // Update function
+      virtual void update();
+
+      // Load images
+      virtual bool load_media();
 };
 
 #endif

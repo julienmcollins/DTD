@@ -27,7 +27,7 @@
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
    SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), 
-   current_key_states_(NULL), player(this), mouseButtonPressed(false), quit(false), 
+   current_key_states_(NULL), mouseButtonPressed(false), quit(false), 
    countedFrames(0), menu_flag(true),
    app_flag_(MAIN_SCREEN),
    menu_screen_(FIRST),
@@ -36,14 +36,12 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    world_(gravity_), to_meters_(0.01f), to_pixels_(100.0f), debugDraw(this), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2), animation_speed_(20.0f), 
    animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), 
-   finger_(this),
    menu_background_(0, 0, 1080, 1920, this),
    menu_title_(640, 70, 513, 646, this),
    menu_items_(800, 650, 299, 321, this),
    world_items_(850, 650, 332, 193, this),
    ruler_(200, 722, 200, 50, this),
-   point_(false), item_(0), gameover_screen_(NULL, 0), 
-   clicked (false) {
+   gameover_screen_(0, 0, 1080, 1920, this) {
     
     //Initialize SDL
     if (init()) {
@@ -127,56 +125,7 @@ bool Application::loadMedia() {
    // Start success = true 
    bool success = true;
 
-   /************* PLAYER *******************************************/
-   if (player.load_media() == false) {
-      quit = true;
-   }
-
    /************** MAIN MENU STUFF *********************************/
-   // Load finger point
-   finger_.textures.emplace("point", Texture());
-   if (!finger_.textures["point"].loadFromFile("images/miscealaneous/finger_point.png")) {
-      printf("Failed to load finger_point.png\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      finger_.textures["point"].clips_ = new SDL_Rect[6];
-      SDL_Rect *temp = finger_.textures["point"].clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 6; i++) {
-         temp[i].x = i * 124;
-         temp[i].y = 0;
-         temp[i].w = 124;
-         temp[i].h = 67;
-      }
-
-      // Set curr clip
-      finger_.textures["point"].curr_clip_ = &temp[0];
-   }
-
-   // Load finger shake
-   finger_.textures.emplace("shake", Texture());
-   if (!finger_.textures["shake"].loadFromFile("images/miscealaneous/finger_shake.png")) {
-      printf("Failed to load finger_shake.png\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      finger_.textures["shake"].clips_ = new SDL_Rect[8];
-      SDL_Rect *temp = finger_.textures["shake"].clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 8; i++) {
-         temp[i].x = i * 124;
-         temp[i].y = 0;
-         temp[i].w = 124;
-         temp[i].h = 67;
-      }
-
-      // Set curr clip
-      finger_.textures["shake"].curr_clip_ = &temp[0];
-   }
-
    // Load title screen
    if (!menu_background_.texture.loadFromFile("images/miscealaneous/titlescreen.png")) {
       printf("Failed to load titlescreen.png\n");
@@ -260,9 +209,28 @@ bool Application::loadMedia() {
    }
 
    // Gameover screen
-   if (!gameover_screen_.loadFromFile("images/miscealaneous/gameover.png")) {
+   if (!gameover_screen_.texture.loadFromFile("images/miscealaneous/gameover.png")) {
       printf("Failed to load gameover.png\n");
       success = false;
+   } else {
+      // Allocate room
+      gameover_screen_.texture.clips_ = new SDL_Rect[3];
+      SDL_Rect *temp = gameover_screen_.texture.clips_;
+
+      // Allocate enough room
+      for (int i = 0; i < 3; i++) {
+         temp[i].x = i * 1920;
+         temp[i].y = 0;
+         temp[i].w = 1920;
+         temp[i].h = 1080;
+      }
+
+      // Set curr clip
+      gameover_screen_.texture.curr_clip_ = &temp[0];
+
+      // Set fps
+      gameover_screen_.texture.fps = 1.0f / 3.0f;
+      gameover_screen_.texture.max_frame_ = 2;
    }
 
    // load ruler
@@ -277,15 +245,27 @@ bool Application::loadMedia() {
 
 // Setup main menu
 void Application::setup_menu() {
+   // Create player
+   player = new Player(this);
+   if (player->load_media() == false) {
+      quit = true;
+   }
+
+   // Create finger
+   finger_ = new Finger(this);
+   if (finger_->load_media() == false) {
+      quit = true;
+   }
+   point_ = false;
+   item_ = false;
+   clicked = false;
+
    // Set player location
-   player.set_x(50);
-   player.set_y(782);
-   //player.fps = 1.0f / 20.0f;
+   player->set_x(50);
+   player->set_y(782);
 
    // Setup platform
    menu_platform_ = new Platform(960, 925, 10, 1920, this);
-   //menu_platform_->set_height(10);
-   //menu_platform_->set_width(1920);
    menu_platform_->setup();
 
    // Setup invisible wall
@@ -310,6 +290,9 @@ void Application::setup_menu() {
 
    // Play music
    //Mix_PlayMusic(music, 1);
+
+   // Set menu screen to first screen
+   menu_screen_ = FIRST;
 }
 
 // Load specific textures when needed
@@ -383,8 +366,10 @@ void Application::gameover_screen() {
    // Handle events on queue
    while (SDL_PollEvent( &e )) {
       //User requests quit
-      if(e.type == SDL_QUIT) {
+      if (e.type == SDL_QUIT) {
           quit = true;
+      } else if (e.type == SDL_KEYDOWN) {
+         app_flag_ = MAIN_SCREEN;
       }
    }
 
@@ -402,7 +387,8 @@ void Application::gameover_screen() {
    }
 
    // Draw title screen
-   gameover_screen_.render(0, 0);
+   animate(gameover_screen_.texture.fps, &gameover_screen_, &gameover_screen_.texture, 
+      gameover_screen_.texture.fps_timer, gameover_screen_.texture.last_frame);
 
    // Update the screen
    SDL_RenderPresent(renderer);
@@ -449,36 +435,36 @@ void Application::main_screen() {
       if(e.type == SDL_QUIT) {
           quit = true;
       } else if (e.type == SDL_KEYDOWN) {
-         if (finger_.get_y() == OPTIONS && e.key.keysym.sym == SDLK_UP) {
-            finger_.set_y(START);
-            finger_.set_x(700);
-         } else if (finger_.get_y() == EGGS && e.key.keysym.sym == SDLK_UP) {
-            finger_.set_y(OPTIONS);
-            finger_.set_x(650);
-         } else if (finger_.get_y() == START && e.key.keysym.sym == SDLK_DOWN) {
-            finger_.set_y(OPTIONS);
-            finger_.set_x(650);
-         } else if (finger_.get_y() == OPTIONS && e.key.keysym.sym == SDLK_DOWN) {
-            finger_.set_y(EGGS);
-            finger_.set_x(720);
-         } else if (finger_.get_y() == WORLD2 && e.key.keysym.sym == SDLK_UP) {
-            finger_.set_y(WORLD1);
-         } else if (finger_.get_y() == WORLD3 && e.key.keysym.sym == SDLK_UP) {
-            finger_.set_y(WORLD2);
-         } else if (finger_.get_y() == WORLD4 && e.key.keysym.sym == SDLK_UP) {
-            finger_.set_y(WORLD3);
-         } else if (finger_.get_y() == WORLD5 && e.key.keysym.sym == SDLK_UP) {
-            finger_.set_y(WORLD4);
-         } else if (finger_.get_y() == WORLD1 && e.key.keysym.sym == SDLK_DOWN) {
-            finger_.set_y(WORLD2);
-         } else if (finger_.get_y() == WORLD2 && e.key.keysym.sym == SDLK_DOWN) {
-            finger_.set_y(WORLD3);
-         } else if (finger_.get_y() == WORLD3 && e.key.keysym.sym == SDLK_DOWN) {
-            finger_.set_y(WORLD4);
-         } else if (finger_.get_y() == WORLD4 && e.key.keysym.sym == SDLK_DOWN) {
-            finger_.set_y(WORLD5);
+         if (finger_->get_y() == OPTIONS && e.key.keysym.sym == SDLK_UP) {
+            finger_->set_y(START);
+            finger_->set_x(700);
+         } else if (finger_->get_y() == EGGS && e.key.keysym.sym == SDLK_UP) {
+            finger_->set_y(OPTIONS);
+            finger_->set_x(650);
+         } else if (finger_->get_y() == START && e.key.keysym.sym == SDLK_DOWN) {
+            finger_->set_y(OPTIONS);
+            finger_->set_x(650);
+         } else if (finger_->get_y() == OPTIONS && e.key.keysym.sym == SDLK_DOWN) {
+            finger_->set_y(EGGS);
+            finger_->set_x(720);
+         } else if (finger_->get_y() == WORLD2 && e.key.keysym.sym == SDLK_UP) {
+            finger_->set_y(WORLD1);
+         } else if (finger_->get_y() == WORLD3 && e.key.keysym.sym == SDLK_UP) {
+            finger_->set_y(WORLD2);
+         } else if (finger_->get_y() == WORLD4 && e.key.keysym.sym == SDLK_UP) {
+            finger_->set_y(WORLD3);
+         } else if (finger_->get_y() == WORLD5 && e.key.keysym.sym == SDLK_UP) {
+            finger_->set_y(WORLD4);
+         } else if (finger_->get_y() == WORLD1 && e.key.keysym.sym == SDLK_DOWN) {
+            finger_->set_y(WORLD2);
+         } else if (finger_->get_y() == WORLD2 && e.key.keysym.sym == SDLK_DOWN) {
+            finger_->set_y(WORLD3);
+         } else if (finger_->get_y() == WORLD3 && e.key.keysym.sym == SDLK_DOWN) {
+            finger_->set_y(WORLD4);
+         } else if (finger_->get_y() == WORLD4 && e.key.keysym.sym == SDLK_DOWN) {
+            finger_->set_y(WORLD5);
          } else if (e.key.keysym.sym == SDLK_RETURN) {
-            finger_.finger_state = Finger::POINT;
+            finger_->finger_state = Finger::POINT;
          }
       }
    }
@@ -495,26 +481,26 @@ void Application::main_screen() {
             menu_items_.texture.fps_timer, menu_items_.texture.last_frame);
 
       // Animate player
-      player.update(true);
+      player->update(true);
 
       // Update finger
-      finger_.update();
+      finger_->update();
    } else if (menu_screen_ == SECOND) {
       // Animate world items
       animate(world_items_.texture.fps, &world_items_, &world_items_.texture,
             world_items_.texture.fps_timer, world_items_.texture.last_frame);
 
       // Animate player
-      player.update(true);
+      player->update(true);
 
       // Update finger
-      finger_.update();
+      finger_->update();
    } else if (menu_screen_ == THIRD) {
       // Update player for real
-      player.update();
+      player->update();
 
       // Check to see if player has reached the edge
-      if (player.get_x() >= 1890) {
+      if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
          level_flag_ = LEVEL13;
          game_flag_ = SETUP;
@@ -530,17 +516,17 @@ void Application::main_screen() {
          menu_title_.texture.fps_timer, menu_title_.texture.last_frame);
 
    // Check enter key state
-   if (finger_.finger_state == Finger::POINT) {
-      if (finger_.get_y() == START) {
-         if (finger_.textures["point"].completed_) {
+   if (finger_->finger_state == Finger::POINT) {
+      if (finger_->get_y() == START) {
+         if (finger_->textures["point"].completed_) {
             menu_screen_ = SECOND;
-            finger_.finger_state = Finger::SHAKE;
-            finger_.set_y(WORLD1);
-            finger_.set_x(720);
-            finger_.textures["point"].completed_ = false;
+            finger_->finger_state = Finger::SHAKE;
+            finger_->set_y(WORLD1);
+            finger_->set_x(720);
+            finger_->textures["point"].completed_ = false;
          }
-      } else if (finger_.get_y() == WORLD1) {
-         if (finger_.textures["point"].completed_) {
+      } else if (finger_->get_y() == WORLD1) {
+         if (finger_->textures["point"].completed_) {
             menu_screen_ = THIRD;
          }
       }
@@ -643,12 +629,13 @@ void Application::playground() {
    }
 
    // Update player
-   if (player.is_alive()) {
-      player.update();
+   if (player->is_alive()) {
+      player->update();
    } else {
       app_flag_ = GAMEOVER_SCREEN;
-      player.health = 100;
-      player.alive = true;
+      delete player;
+      delete level;
+      menu_flag = true;
    }
 
    // DEBUG DRAW
@@ -679,7 +666,7 @@ void Application::playground() {
    }
 
    // Check for completed level and that player as walked to the edge of the screen
-   if (completed_level_ && player.get_x() >= 1890) {
+   if (completed_level_ && player->get_x() >= 1890) {
       // Destroy the level
       //destroy_lvl();
       delete level;
@@ -729,12 +716,12 @@ Application::~Application() {
    capTimer.stop();
 
    // Free menu textures
-   finger_.textures["shake"].free();
-   finger_.textures["point"].free();
+   finger_->textures["shake"].free();
+   finger_->textures["point"].free();
    menu_background_.texture.free();
    menu_title_.texture.free();
    menu_items_.texture.free();
-   gameover_screen_.free();
+   gameover_screen_.texture.free();
 
    // Delete platforms
    /*
@@ -788,4 +775,57 @@ void Finger::update() {
    
    // Render finger
    render(tex);
+}
+
+// Load media function
+bool Finger::load_media() {
+   // Success flag
+   bool success = true; 
+
+   // Load finger point
+   textures.emplace("point", Texture());
+   if (!textures["point"].loadFromFile("images/miscealaneous/finger_point.png")) {
+      printf("Failed to load finger_point.png\n");
+      success = false;
+   } else {
+      // Allocate enough room
+      textures["point"].clips_ = new SDL_Rect[6];
+      SDL_Rect *temp = textures["point"].clips_;
+
+      // Calculate sprite locations
+      for (int i = 0; i < 6; i++) {
+         temp[i].x = i * 124;
+         temp[i].y = 0;
+         temp[i].w = 124;
+         temp[i].h = 67;
+      }
+
+      // Set curr clip
+      textures["point"].curr_clip_ = &temp[0];
+   }
+
+   // Load finger shake
+   textures.emplace("shake", Texture());
+   if (!textures["shake"].loadFromFile("images/miscealaneous/finger_shake.png")) {
+      printf("Failed to load finger_shake.png\n");
+      success = false;
+   } else {
+      // Allocate enough room
+      textures["shake"].clips_ = new SDL_Rect[8];
+      SDL_Rect *temp = textures["shake"].clips_;
+
+      // Calculate sprite locations
+      for (int i = 0; i < 8; i++) {
+         temp[i].x = i * 124;
+         temp[i].y = 0;
+         temp[i].w = 124;
+         temp[i].h = 67;
+      }
+
+      // Set curr clip
+      textures["shake"].curr_clip_ = &temp[0];
+   }
+
+   // Return success flag
+   return success;
 }

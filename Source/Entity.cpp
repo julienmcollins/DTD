@@ -110,6 +110,7 @@ Player::Player(Application* application) :
 
    // TEMPORARY SOLUTION
    textures["arm_throw"].completed_ = true;
+   /************* PLAYER *******************************************/
 
    // Set in contact = false
    in_contact = false;
@@ -153,7 +154,7 @@ Player::STATE Player::get_player_state() {
 
 // Update function
 void Player::update(bool freeze) {
-   //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: RUN_AND_JUMP, 5: PUSH)" << std::endl;
+   std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: RUN_AND_JUMP, 5: PUSH)" << std::endl;
    animate();
 
    // Update player if not frozen
@@ -529,7 +530,8 @@ void Player::move() {
    
    if (get_application()->current_key_states_[SDL_SCANCODE_DOWN]) {
      // Need to revisit this
-     //add_y(5);
+     b2Vec2 down = {0.0f, -0.2f};
+     body->ApplyLinearImpulse(down, body->GetPosition(), true);
    }
 
    // Update player state
@@ -584,6 +586,9 @@ bool Player::load_media() {
 
    // Load jump and push
    load_image(textures, this, 62, 104, 8, 1.0f / 20.0f, "jump_push", "images/player/jump_push.png", success);
+
+   // Load death animation
+   load_image(textures, this, 105, 104, 20, 1.0f / 20.0f, "death", "images/player/death.png", success);
 
    // Return success
    return success;

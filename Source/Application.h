@@ -53,6 +53,9 @@ class Finger : public Element {
          SHAKE   
       };  
 
+      // Load media
+      virtual bool load_media();
+
       // Finger state
       FINGER_STATE finger_state;
 };
@@ -138,7 +141,7 @@ class Application {
       }
 
       Player* get_player() {
-         return &player;
+         return player;
       }
 
       /********** LEVEL **************/
@@ -164,7 +167,7 @@ class Application {
       SDL_Rect viewport;
    
       // Player object
-      Player player;
+      Player *player;
 
       // Enemy object
       Enemy *enemy;
@@ -240,7 +243,7 @@ class Application {
       void gameover_screen();
 
       // Finger
-      Finger finger_;
+      Finger *finger_;
       bool point_;
       int item_;
 
@@ -257,11 +260,12 @@ class Application {
       Platform *invisible_wall_;
       /***********************/
 
+      /***** GAMEOVER *********/
+      Element gameover_screen_;
+      /************************/
+
       /****** MUSIC **********/
       Mix_Music *music; 
-
-      // Gameove texture
-      Texture gameover_screen_;
 
       // Setup main menu
       void setup_menu();

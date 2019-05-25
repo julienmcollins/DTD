@@ -84,7 +84,7 @@ void Fecreez::move() {
          ++shoot_timer_;
 
          // Shoot if timer goes off
-         if (shoot_timer_ >= 50) {
+         if (textures["shoot"].frame_ > 6 && shoot_timer_ >= 100) {
             Projectile *tmp = create_projectile(15, -10, 70, 15, 24, 0, 10, textures["poojectile"]);
             tmp->body->SetGravityScale(0);
             shoot_timer_ = 0;
@@ -148,6 +148,12 @@ Texture *Fecreez::get_texture() {
 }
 
 Fecreez::~Fecreez() {
+   // Destroy the bodies 
+   if (body) {
+      get_application()->world_.DestroyBody(body);      
+   }
+
+   // Destroy textures
    textures["idle"].free();
    textures["shoot"].free();
    textures["poojectile"].free();
@@ -513,6 +519,7 @@ void Mosquibler::move() {
       } 
       
       if (textures["death"].frame_ > 26) {
+         alive = false;
          start_death_ = 26;
          end_death_ = 26;
       }
@@ -557,7 +564,6 @@ void Mosquibler::start_contact(Element *element) {
       end_death_ = 10;
    } if (element && enemy_state_ == DEATH && element->type() == "Platform") {
       // TODO: play the death part instead
-      alive = false;
       start_death_ = 12;
       end_death_ = 26;
    }

@@ -14,7 +14,7 @@
 /********************* ENEMY IMPLEMENTATIONS ******************/
 
 Enemy::Enemy(int x, int y, int height, int width, Application *application) :
-   Entity(x, y, height, width, application), enemy_state_(IDLE), shoot_timer_(0) {}
+   Entity(x, y, height, width, application), enemy_state_(IDLE), shoot_timer_(101) {}
 
 Enemy::~Enemy() {}
 

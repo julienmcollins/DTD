@@ -439,10 +439,14 @@ void Player::move() {
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
          has_jumped_ = true;
+         b2Vec2 vel = {-4.5f, body->GetLinearVelocity().y};
+         body->SetLinearVelocity(vel);
+         /*
          if (body->GetLinearVelocity().x > -4.0f) {
             const b2Vec2 force = {-5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
+         */
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == RIGHT) {
          // Add a very small impulse
          //body->ApplyLinearImpulseToCenter({-0.5f, 0.0f}, true);
@@ -495,10 +499,14 @@ void Player::move() {
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
          has_jumped_ = true;
+         b2Vec2 vel = {4.5f, body->GetLinearVelocity().y};
+         body->SetLinearVelocity(vel);
+         /*
          if (body->GetLinearVelocity().x < 4.0f) {
             const b2Vec2 force = {5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
+         */
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == LEFT) {
          // Add a very small impulse
          //body->ApplyLinearImpulseToCenter({0.5f, 0.0f}, true);

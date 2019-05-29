@@ -94,6 +94,7 @@ Player::Player(Application* application) :
 
    // TODO: ADD FIXTURES TO THIS AS SENSORS
    left_sensor_ = new Sensor(0.8f, 0.2f, this, -0.05f);
+   right_sensor_ = new Sensor(0.8f, 0.2f, this, 0.30f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -106,7 +107,7 @@ Player::Player(Application* application) :
    body->SetUserData(this);
 
    // Set health. TODO: set health in a better way
-   health = 100;
+   health = 30;
 
    // TEMPORARY SOLUTION
    textures["arm_throw"].completed_ = true;
@@ -154,7 +155,7 @@ Player::STATE Player::get_player_state() {
 
 // Update function
 void Player::update(bool freeze) {
-   std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: RUN_AND_JUMP, 5: PUSH)" << std::endl;
+   //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: RUN_AND_JUMP, 5: PUSH)" << std::endl;
    animate();
 
    // Update player if not frozen
@@ -290,9 +291,9 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
    } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
       Element::animate(&textures["running"], 20);
    } else if (player_state_ == RUN_AND_JUMP) {
-      Element::animate(&textures["running_jump"]);
+      Element::animate(&textures["running_jump"], textures["running_jump"].reset_frame, textures["running_jump"].stop_frame);
    } else if (player_state_ == JUMP) {
-      Element::animate(&textures["jump"]);
+      Element::animate(&textures["jump"], textures["jump"].reset_frame, textures["jump"].stop_frame);
    } else if (player_state_ == PUSH) {
       Element::animate(&textures["push"]);
    } else if (player_state_ == JUMP_AND_PUSH) {
@@ -378,7 +379,7 @@ void Player::change_player_state() {
 // Movement logic of the player. Done through keyboard.
 void Player::move() {   
    // If not running or running and jumping, then set linear velocity to 0
-   if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH) {
+   if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH) {
       b2Vec2 vel = {0, body->GetLinearVelocity().y};
       body->SetLinearVelocity(vel);
       player_state_ = STOP;
@@ -434,7 +435,7 @@ void Player::move() {
       // Check for midair
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
          player_state_ = RUN;
-         b2Vec2 vel = {-3.4f, body->GetLinearVelocity().y};
+         b2Vec2 vel = {-4.0f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
          has_jumped_ = true;
@@ -442,7 +443,9 @@ void Player::move() {
             const b2Vec2 force = {-5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
-      } else if (player_state_ == PUSH && entity_direction == RIGHT) {
+      } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == RIGHT) {
+         // Add a very small impulse
+         //body->ApplyLinearImpulseToCenter({-0.5f, 0.0f}, true);
          player_state_ = RUN;
          in_contact = false;
       }
@@ -488,7 +491,7 @@ void Player::move() {
       // Set to jump and run if not on the ground
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
          player_state_ = RUN;
-         b2Vec2 vel = {3.4f, body->GetLinearVelocity().y};
+         b2Vec2 vel = {4.0f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
          has_jumped_ = true;
@@ -496,7 +499,9 @@ void Player::move() {
             const b2Vec2 force = {5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
-      } else if (player_state_ == PUSH && entity_direction == LEFT) {
+      } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == LEFT) {
+         // Add a very small impulse
+         //body->ApplyLinearImpulseToCenter({0.5f, 0.0f}, true);
          player_state_ = RUN;
          in_contact = false;
       }
@@ -511,12 +516,16 @@ void Player::move() {
          // Set state
          if (player_state_ == RUN) {
             player_state_ = RUN_AND_JUMP;
+            textures["running_jump"].reset_frame = 14;
+            textures["running_jump"].stop_frame = 14;
          } else {
             player_state_ = JUMP;
+            textures["jump"].reset_frame = 14;
+            textures["jump"].stop_frame = 14;
          }
 
          // Apply an impulse
-         const b2Vec2 force = {0, 2.2f};
+         const b2Vec2 force = {0, 2.6f};
          body->ApplyLinearImpulse(force, body->GetPosition(), true);
 
          // Set the flags
@@ -524,14 +533,19 @@ void Player::move() {
       } else {
          if (body->GetLinearVelocity().y == 0) {
             has_jumped_ = false;
+            textures["running_jump"].reset_frame = 0;
+            textures["running_jump"].frame_ = 0;
+            textures["jump"].reset_frame = 0;
+            textures["jump"].frame_ = 0;
          }
       }
    } 
    
    if (get_application()->current_key_states_[SDL_SCANCODE_DOWN]) {
      // Need to revisit this
-     b2Vec2 down = {0.0f, -0.2f};
-     body->ApplyLinearImpulse(down, body->GetPosition(), true);
+     //b2Vec2 down = {0.0f, -0.2f};
+     //body->ApplyLinearImpulse(down, body->GetPosition(), true);
+     // TODO: FIX SLIDING
    }
 
    // Update player state
@@ -550,6 +564,11 @@ void Player::start_contact(Element *element) {
          alive = false;
       }
    }
+}
+
+// End contact function (does nothing for now)
+void Player::end_contact() {
+   return;
 }
 
 // Load media function
@@ -618,6 +637,14 @@ Projectile* Player::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
 
 // Virtual destructor
 Player::~Player() {
+   // Delete the body
+   /*
+   if (body) {
+      get_application()->world_.DestroyBody(body);
+   }
+   */
+
+   // Free textures
    textures["idle"].free();
    textures["running"].free();
    textures["running_jump"].free();

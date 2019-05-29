@@ -49,7 +49,7 @@ void Platform::setup() {
 // Virtual destructor
 Platform::~Platform() {
    // Destroy body
-   get_application()->world_.DestroyBody(body);
+   //get_application()->world_.DestroyBody(body);
 }
 
 /************** Projectile Implementations  *************************/
@@ -137,7 +137,7 @@ int Projectile::get_damage() const {
 // Destructor
 Projectile::~Projectile() {
    // Delete object
-   body->GetWorld()->DestroyBody(body);
+   //body->GetWorld()->DestroyBody(body);
 }
 
 /************* ERASER SUBCLASS *******************/

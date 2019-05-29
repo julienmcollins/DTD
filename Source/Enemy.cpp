@@ -26,7 +26,7 @@ Fecreez::Fecreez(int x, int y, Application *application) :
    set_hitbox(x, y);
 
    // Set health
-   health = 100;
+   health = 30;
 }
 
 // Load media function for fecreez
@@ -78,7 +78,12 @@ void Fecreez::move() {
       if (get_application()->get_player()->get_y() >= get_y() - get_height() &&
             get_application()->get_player()->get_y() <= get_y() + get_height()) {
          // Set state to shoot
-         enemy_state_ = ATTACK;
+         if (shoot_timer_ >= 100) {
+            enemy_state_ = ATTACK;
+         } else if (shoot_timer_ < 100 && textures["shoot"].frame_ > 6) {
+            enemy_state_ = IDLE;
+            textures["shoot"].frame_ = 0;
+         }
 
          // Update timer
          ++shoot_timer_;
@@ -91,6 +96,8 @@ void Fecreez::move() {
          }
       } else {
          enemy_state_ = IDLE;
+         //textures["shoot"].reset_frame = 6;
+         //textures["shoot"].stop_frame = 6;
       }
    } else {
       // Set state to death
@@ -123,7 +130,7 @@ void Fecreez::animate(Texture *tex, int reset, int max) {
    if (enemy_state_ == IDLE) {
       Element::animate(&textures["idle"]);
    } else if (enemy_state_ == ATTACK) {
-      Element::animate(&textures["shoot"]);
+      Element::animate(&textures["shoot"], textures["shoot"].reset_frame, textures["shoot"].stop_frame);
    } else if (enemy_state_ == DEATH) {
       Element::animate(&textures["death"], 15);
    }
@@ -149,9 +156,9 @@ Texture *Fecreez::get_texture() {
 
 Fecreez::~Fecreez() {
    // Destroy the bodies 
-   if (body) {
-      get_application()->world_.DestroyBody(body);      
-   }
+   //if (body) {
+   //   get_application()->world_.DestroyBody(body);      
+   //}
 
    // Destroy textures
    textures["idle"].free();
@@ -384,9 +391,13 @@ bool Rosea::is_leaving_bounds() {
 // Rosea destructor
 Rosea::~Rosea() {
    // Destroy the bodies 
-   get_application()->world_.DestroyBody(body);
-   get_application()->world_.DestroyBody(arms_attack.body);
-   get_application()->world_.DestroyBody(arms_still.body);
+   /*
+   if (body) {
+      get_application()->world_.DestroyBody(body);
+      get_application()->world_.DestroyBody(arms_attack.body);
+      get_application()->world_.DestroyBody(arms_still.body);
+   }
+   */
 
    // Destroy textures
    textures["idle"].free();
@@ -404,7 +415,7 @@ Mosquibler::Mosquibler(int x, int y, Application *application) :
    set_hitbox(x, y, true);
  
    // Set health
-   health = 100;
+   health = 10;
 
    // Set initial dir
    entity_direction = LEFT;
@@ -513,12 +524,12 @@ void Mosquibler::move() {
 
    // In state death
    if (enemy_state_ == DEATH) {
-      if (textures["death"].frame_ > 10 && is_alive()) {
+      if (textures["death"].frame_ > 10 && is_alive() && start_death_ < 7) {
          start_death_ = 6;
          end_death_ = 10;
       } 
       
-      if (textures["death"].frame_ > 26) {
+      if (textures["death"].frame_ > 26 && start_death_ >= 12) {
          alive = false;
          start_death_ = 26;
          end_death_ = 26;
@@ -571,6 +582,14 @@ void Mosquibler::start_contact(Element *element) {
 
 // Destructor
 Mosquibler::~Mosquibler() {
+   // Free body if necessary
+   /*
+   if (body) {
+      get_application()->world_.DestroyBody(body);
+   }
+   */
+
+   // Free textures
    textures["fly"].free();
    textures["death"].free();
    textures["turn"].free();

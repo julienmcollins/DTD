@@ -103,6 +103,9 @@ class Element {
 
       // Contact flag
       bool in_contact;
+
+      // Element destructor
+      virtual ~Element();
    private:
       // X and Y locations
       int x_pos_;

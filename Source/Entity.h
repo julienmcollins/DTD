@@ -129,6 +129,7 @@ class Player : public Entity {
 
       // Contact listener
       virtual void start_contact(Element *element = NULL);
+      virtual void end_contact();
 
       // Get type
       virtual std::string type() {
@@ -155,6 +156,7 @@ class Player : public Entity {
 
       // Sensor
       Sensor *left_sensor_;
+      Sensor *right_sensor_;
 };
 
 #endif

@@ -70,7 +70,7 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         }
 
         // Set gravity up
-        gravity_ = {0.0f, -9.81f};
+        gravity_ = {0.0f, -11.81f};
         world_.SetGravity(gravity_);
         
         // Set up debug drawer
@@ -83,9 +83,6 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 
         // Set contact listener
         world_.SetContactListener(&contact_listener_);
-
-        // Load music
-        music = Mix_LoadMUS("sounds/laputa.mp3");
     }
 
    // Start counting frames per second
@@ -288,8 +285,9 @@ void Application::setup_menu() {
    world_items_.texture.fps = 1.0f / 4.0f;
    world_items_.texture.max_frame_ = 2;
 
-   // Play music
-   //Mix_PlayMusic(music, 1);
+   // Load and play music
+   music = Mix_LoadMUS("sounds/laputa.mp3");
+   Mix_PlayMusic(music, 1);
 
    // Set menu screen to first screen
    menu_screen_ = FIRST;
@@ -502,12 +500,12 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL13;
+         level_flag_ = LEVEL11;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;
          delete invisible_wall_;
-         //Mix_FreeMusic(music);
+         Mix_FreeMusic(music);
       }
    }
 
@@ -627,6 +625,8 @@ void Application::playground() {
          it = projectiles_.erase(it);
       }
    }
+      
+   //std::cout << player << std::endl;
 
    // Update player
    if (player->is_alive()) {

@@ -45,6 +45,10 @@ class Texture {
         float last_frame;
         Timer fps_timer;
 
+        // Start and stop frames
+        int reset_frame;
+        int stop_frame;
+
         // Flag for completed animation
         bool completed_;
 

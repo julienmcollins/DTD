@@ -271,3 +271,10 @@ void Element::update(bool freeze) {
 Application *Element::get_application() {
    return application_;
 }
+
+// Destructor
+Element::~Element() {
+   if (body) {
+      application_->world_.DestroyBody(body);
+   }
+}

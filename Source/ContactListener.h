@@ -28,7 +28,7 @@ class ContactListener : public b2ContactListener {
          //check if fixture A was a ball
          void* bodyAUserData = contact->GetFixtureA()->GetUserData();
          void* bodyBUserData = contact->GetFixtureB()->GetUserData();
-         if ( bodyAUserData ) {
+         if (bodyAUserData && bodyBUserData) {
             Element *element1 = static_cast<Element*>( bodyAUserData );
             Element *element2 = static_cast<Element*>( bodyBUserData );
 

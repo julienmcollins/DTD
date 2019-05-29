@@ -195,6 +195,7 @@ class Application {
       enum APP_STATE {
          MAIN_SCREEN,
          GAMEOVER_SCREEN,
+         THANKS,
          PLAYGROUND
       };
 
@@ -262,6 +263,10 @@ class Application {
 
       /***** GAMEOVER *********/
       Element gameover_screen_;
+      /************************/
+
+      /***** THANKS ***********/
+      Element thanks_screen_;
       /************************/
 
       /****** MUSIC **********/

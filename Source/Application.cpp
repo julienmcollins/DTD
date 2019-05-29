@@ -41,7 +41,8 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    menu_items_(800, 650, 299, 321, this),
    world_items_(850, 650, 332, 193, this),
    ruler_(200, 722, 200, 50, this),
-   gameover_screen_(0, 0, 1080, 1920, this) {
+   gameover_screen_(0, 0, 1080, 1920, this),
+   thanks_screen_(0, 0, 1080, 1920, this) {
     
     //Initialize SDL
     if (init()) {
@@ -235,6 +236,12 @@ bool Application::loadMedia() {
       printf("Failed to load ruler.png\n");
       success = false;
    }
+
+   // Load thanks
+   if (!thanks_screen_.texture.loadFromFile("images/miscealaneous/thanks.png")) {
+      printf("Failed to load thanks.png\n");
+      success = false;
+   }
       
    // Return state
    return success;
@@ -286,7 +293,7 @@ void Application::setup_menu() {
    world_items_.texture.max_frame_ = 2;
 
    // Load and play music
-   music = Mix_LoadMUS("sounds/laputa.mp3");
+   music = Mix_LoadMUS("sounds/moonlight.mp3");
    Mix_PlayMusic(music, 1);
 
    // Set menu screen to first screen
@@ -333,6 +340,47 @@ void Application::update() {
          playground();
       } else if (app_flag_ == GAMEOVER_SCREEN) {
          gameover_screen();
+      } else if (app_flag_ == THANKS) {
+         // Get current keyboard states
+         current_key_states_ = SDL_GetKeyboardState(NULL);
+
+         // Handle events on queue
+         while (SDL_PollEvent( &e )) {
+            //User requests quit
+            if (e.type == SDL_QUIT) {
+               quit = true;
+            } else if (e.type == SDL_KEYDOWN) {
+               app_flag_ = MAIN_SCREEN;
+               menu_flag = true;
+            }
+         }
+
+         // Start cap timer
+         capTimer.start();
+
+         // Clear screen
+         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+         SDL_RenderClear(renderer);
+
+         // Calculate and correct fps
+         float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
+         if( avgFPS > 2000000 ) {
+            avgFPS = 0;
+         }
+
+         // Draw title screen
+         thanks_screen_.render(&thanks_screen_.texture);
+
+         // Update the screen
+         SDL_RenderPresent(renderer);
+         ++countedFrames;
+
+         // If frame finished early
+         int frameTicks = capTimer.getTicks();
+         if (frameTicks < SCREEN_TICKS_PER_FRAME) {
+            // Wait remaining time
+            SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
+         }
       }
    }
 }
@@ -505,7 +553,7 @@ void Application::main_screen() {
          completed_level_ = false;
          delete menu_platform_;
          delete invisible_wall_;
-         Mix_FreeMusic(music);
+         //Mix_FreeMusic(music);
       }
    }
 
@@ -567,14 +615,17 @@ void Application::playground() {
       // First setup level 1
       if (level_flag_ == LEVEL11) {
          level = new Level("images/levels/Forest/board1/format", this);
+         game_flag_ = PLAY;
       } else if (level_flag_ == LEVEL12) {
          level = new Level("images/levels/Forest/board2/format", this);
+         game_flag_ = PLAY;
       } else if (level_flag_ == LEVEL13) {
          level = new Level("images/levels/Forest/board3/format", this);
-      }
-      
-      // Set game_flag_ to PLAY
-      game_flag_ = PLAY;
+         game_flag_ = PLAY;
+      } else if (level_flag_ == LEVEL14) {
+         app_flag_ = THANKS;
+         return;
+      }      
    }
 
    // Clear screen as the first things that's done?
@@ -593,8 +644,11 @@ void Application::playground() {
    // Handle events on queue
    while (SDL_PollEvent( &e )) {
       //User requests quit
-      if(e.type == SDL_QUIT) {
+      if (e.type == SDL_QUIT) {
           quit = true;
+      }
+      if (level_flag_ == LEVEL14 & e.type == SDL_KEYDOWN) {
+         app_flag_ = MAIN_SCREEN;
       }
    }
       
@@ -667,6 +721,7 @@ void Application::playground() {
 
    // Check for completed level and that player as walked to the edge of the screen
    if (completed_level_ && player->get_x() >= 1890) {
+      std::cout << "completed level" << std::endl;
       // Destroy the level
       //destroy_lvl();
       delete level;

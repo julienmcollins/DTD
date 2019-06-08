@@ -293,7 +293,7 @@ void Application::setup_menu() {
    world_items_.texture.max_frame_ = 2;
 
    // Load and play music
-   music = Mix_LoadMUS("sounds/moonlight.mp3");
+   music = Mix_LoadMUS("sounds/hobbits.mp3");
    Mix_PlayMusic(music, 1);
 
    // Set menu screen to first screen
@@ -349,7 +349,7 @@ void Application::update() {
             //User requests quit
             if (e.type == SDL_QUIT) {
                quit = true;
-            } else if (e.type == SDL_KEYDOWN) {
+            } else if (current_key_states_[SDL_SCANCODE_RETURN]) {
                app_flag_ = MAIN_SCREEN;
                menu_flag = true;
             }
@@ -414,7 +414,7 @@ void Application::gameover_screen() {
       //User requests quit
       if (e.type == SDL_QUIT) {
           quit = true;
-      } else if (e.type == SDL_KEYDOWN) {
+      } else if (current_key_states_[SDL_SCANCODE_RETURN]) {
          app_flag_ = MAIN_SCREEN;
       }
    }
@@ -548,7 +548,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL11;
+         level_flag_ = LEVEL14;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;
@@ -623,6 +623,12 @@ void Application::playground() {
          level = new Level("images/levels/Forest/board3/format", this);
          game_flag_ = PLAY;
       } else if (level_flag_ == LEVEL14) {
+         level = new Level("images/levels/Forest/board4/format", this);
+         game_flag_ = PLAY;
+      } else if (level_flag_ == LEVEL15) {
+         level = new Level("images/levels/Forest/board5/format", this);
+         game_flag_ = PLAY;
+      } else if (level_flag_ == LEVEL16) {
          app_flag_ = THANKS;
          return;
       }      
@@ -647,7 +653,7 @@ void Application::playground() {
       if (e.type == SDL_QUIT) {
           quit = true;
       }
-      if (level_flag_ == LEVEL14 & e.type == SDL_KEYDOWN) {
+      if (level_flag_ == LEVEL16 & e.type == SDL_KEYDOWN) {
          app_flag_ = MAIN_SCREEN;
       }
    }
@@ -684,7 +690,13 @@ void Application::playground() {
 
    // Update player
    if (player->is_alive()) {
+      // Update player
       player->update();
+
+      // Render the hit markers
+      for (int i = 0; i < player->hit_markers.size(); i++) {
+         player->hit_markers[i]->update();
+      }
    } else {
       app_flag_ = GAMEOVER_SCREEN;
       delete player;
@@ -721,9 +733,7 @@ void Application::playground() {
 
    // Check for completed level and that player as walked to the edge of the screen
    if (completed_level_ && player->get_x() >= 1890) {
-      std::cout << "completed level" << std::endl;
       // Destroy the level
-      //destroy_lvl();
       delete level;
 
       // Change mode to setup

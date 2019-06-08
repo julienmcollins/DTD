@@ -16,7 +16,7 @@
 // Entity constructor which will provide basic establishment for all entities
 Entity::Entity(int x_pos, int y_pos, double height, double width, Application* application) : 
    Element(x_pos, y_pos, height, width, application),
-   has_jumped_(false), health(0) {
+   has_jumped_(false), health(0), shift_(false) {
 }
 
 // Update function for all entities. For now all it does is call move
@@ -30,8 +30,10 @@ int Entity::get_dir() const {
 }
 
 // Create projectile
-Projectile* Entity::create_projectile(int delta_x_r, int delta_x_l, int delta_y, int height, int width,
-     bool owner, bool damage, Texture texture) {
+Projectile* Entity::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
+     bool owner, bool damage, 
+     float force_x, float force_y,
+     const TextureData &normal, const TextureData &hit) {
    // First, create a new projectile
    Application *tmp = get_application();
    Projectile *proj;
@@ -39,14 +41,11 @@ Projectile* Entity::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
    // Create based on direction
    if (entity_direction == RIGHT) {
       proj = new Projectile(get_x() + get_width() + delta_x_r, get_y() + delta_y, 
-            height, width, owner, damage, this, tmp);
+            owner, damage, force_x, force_y, normal, hit, this, tmp);
    } else {
-      proj = new Projectile(get_x() + delta_x_l, get_y() + delta_y, height, width, owner,
-            damage, this, tmp);
+      proj = new Projectile(get_x() + delta_x_l, get_y() + delta_y, owner,
+            damage, force_x, force_y, normal, hit, this, tmp);
    }
-
-   // Set texture
-   proj->texture = texture;
 
    // Set shot direction
    proj->shot_dir = entity_direction;
@@ -111,6 +110,11 @@ Player::Player(Application* application) :
 
    // TEMPORARY SOLUTION
    textures["arm_throw"].completed_ = true;
+
+   // Create hitmarkers
+   for (int i = 0; i < 3; i++) {
+      hit_markers.push_back(new Hitmarker(76 * i, 0));
+   }
    /************* PLAYER *******************************************/
 
    // Set in contact = false
@@ -144,6 +148,11 @@ Texture *Player::get_texture() {
       return &textures["jump_push"];
    }
 
+   // Death
+   if (player_state_ == DEATH) {
+      return &textures["death"];
+   }
+
    // Return idle texture for now
    return &textures["idle"];
 }
@@ -159,8 +168,9 @@ void Player::update(bool freeze) {
    animate();
 
    // Update player if not frozen
-   if (!freeze)
+   if (!freeze) {
       move();
+   }
 
    // Adjust deltas first
    adjust_deltas();
@@ -169,7 +179,7 @@ void Player::update(bool freeze) {
    Texture *playertexture = get_texture();
 
    // Render arm if idle, render shooting if not
-   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH) {
+   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DEATH) {
       if (!shooting) {
          if (get_player_state() == 1) {
             textures["running_arm"].render(get_x() + get_width() +
@@ -298,6 +308,8 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&textures["push"]);
    } else if (player_state_ == JUMP_AND_PUSH) {
       Element::animate(&textures["jump_push"]);
+   } else if (player_state_ == DEATH) {
+      Element::animate(&textures["death"]);
    }
 }
 
@@ -377,7 +389,20 @@ void Player::change_player_state() {
 }
 
 // Movement logic of the player. Done through keyboard.
-void Player::move() {   
+void Player::move() {
+   // Death 
+   if (player_state_ == DEATH) {
+      if (!shift_) {
+         sub_x(10);
+         body->SetLinearVelocity({0.0f, body->GetLinearVelocity().y});
+         shift_ = true;
+      }
+      if (textures["death"].frame_ >= 20) {
+         alive = false;
+      }
+      return;
+   }
+
    // If not running or running and jumping, then set linear velocity to 0
    if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH) {
       b2Vec2 vel = {0, body->GetLinearVelocity().y};
@@ -392,7 +417,9 @@ void Player::move() {
 
       // Create eraser
       if (textures["arm_throw"].completed_) {
-         create_projectile(38, -12, 41, 12, 21, 1, 10, textures["eraser"]);
+         TextureData normal = {12, 21, 3};
+         TextureData hit = {12, 21, 4};
+         create_projectile(38, -12, 41, 1, 10, 0.0f, 0.0f, normal, hit);
          textures["arm_throw"].completed_ = false;
       }
    }
@@ -401,35 +428,10 @@ void Player::move() {
    if (get_application()->current_key_states_[SDL_SCANCODE_LEFT]) {
       // Check for flag
       if (entity_direction == RIGHT) {
-         // Running texture flip
-         textures["running"].has_flipped_ = true;
-         textures["running"].flip_ = SDL_FLIP_HORIZONTAL;
-
-         // Idle texture flip
-         textures["idle"].has_flipped_ = true;
-         textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
-
-         // Running and jumping texture flip
-         textures["running_jump"].has_flipped_ = true;
-         textures["running_jump"].flip_ = SDL_FLIP_HORIZONTAL;
-
-         // Jump texture flip
-         textures["jump"].has_flipped_ = true;
-         textures["jump"].flip_ = SDL_FLIP_HORIZONTAL;
-
-         // Shooting arm and idle arm flip
-         textures["idle_arm"].has_flipped_ = true;
-         textures["idle_arm"].flip_ = SDL_FLIP_HORIZONTAL;
-         textures["arm_throw"].has_flipped_ = true;
-         textures["arm_throw"].flip_ = SDL_FLIP_HORIZONTAL;
-         textures["running_arm"].has_flipped_ = true;
-         textures["running_arm"].flip_ = SDL_FLIP_HORIZONTAL;
-
-         // Pushing texture
-         textures["push"].has_flipped_ = true;
-         textures["push"].flip_ = SDL_FLIP_HORIZONTAL;
-         textures["jump_push"].has_flipped_ = true;
-         textures["jump_push"].flip_ = SDL_FLIP_HORIZONTAL;
+         for (auto i = textures.begin(); i != textures.end(); i++) {
+            i->second.has_flipped_ = true;
+            i->second.flip_ = SDL_FLIP_HORIZONTAL;
+         }
       }
 
       // Check for midair
@@ -439,14 +441,12 @@ void Player::move() {
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
          has_jumped_ = true;
-         b2Vec2 vel = {-4.5f, body->GetLinearVelocity().y};
+         b2Vec2 vel = {body->GetLinearVelocity().x, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
-         /*
          if (body->GetLinearVelocity().x > -4.0f) {
             const b2Vec2 force = {-5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
-         */
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == RIGHT) {
          // Add a very small impulse
          //body->ApplyLinearImpulseToCenter({-0.5f, 0.0f}, true);
@@ -462,34 +462,10 @@ void Player::move() {
    if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) {
       // Check for flag
       if (entity_direction == LEFT) {
-         textures["running"].has_flipped_ = false;
-         textures["running"].flip_ = SDL_FLIP_NONE;
-
-         // Idle texture flip
-         textures["idle"].has_flipped_ = false;
-         textures["idle"].flip_ = SDL_FLIP_NONE;
-
-         // Running and jumping texture flip
-         textures["running_jump"].has_flipped_ = false;
-         textures["running_jump"].flip_ = SDL_FLIP_NONE;
-
-         // Jump texture flip
-         textures["jump"].has_flipped_ = false;
-         textures["jump"].flip_ = SDL_FLIP_NONE;
-
-         // Shooting arm and idle arm flip
-         textures["idle_arm"].has_flipped_ = false;
-         textures["idle_arm"].flip_ = SDL_FLIP_NONE;
-         textures["arm_throw"].has_flipped_ = false;
-         textures["arm_throw"].flip_ = SDL_FLIP_NONE;
-         textures["running_arm"].has_flipped_ = false;
-         textures["running_arm"].flip_ = SDL_FLIP_NONE;
-
-         // Pushing texture
-         textures["push"].has_flipped_ = false;
-         textures["push"].flip_ = SDL_FLIP_NONE;
-         textures["jump_push"].has_flipped_ = false;
-         textures["jump_push"].flip_ = SDL_FLIP_NONE;
+         for (auto i = textures.begin(); i != textures.end(); i++) {
+            i->second.has_flipped_ = false;
+            i->second.flip_ = SDL_FLIP_NONE;
+         }
       }   
 
       // Set to jump and run if not on the ground
@@ -499,14 +475,12 @@ void Player::move() {
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
          has_jumped_ = true;
-         b2Vec2 vel = {4.5f, body->GetLinearVelocity().y};
+         b2Vec2 vel = {body->GetLinearVelocity().x, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
-         /*
          if (body->GetLinearVelocity().x < 4.0f) {
             const b2Vec2 force = {5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
-         */
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == LEFT) {
          // Add a very small impulse
          //body->ApplyLinearImpulseToCenter({0.5f, 0.0f}, true);
@@ -528,8 +502,8 @@ void Player::move() {
             textures["running_jump"].stop_frame = 14;
          } else {
             player_state_ = JUMP;
-            textures["jump"].reset_frame = 14;
-            textures["jump"].stop_frame = 14;
+            textures["jump"].reset_frame = textures["jump"].max_frame_;
+            textures["jump"].stop_frame = textures["jump"].max_frame_;
          }
 
          // Apply an impulse
@@ -567,9 +541,16 @@ void Player::move() {
 // Start contact function
 void Player::start_contact(Element *element) {
    if (element && (element->type() == "Projectile" || element->is_enemy())) {
+      if (health == 30) {
+         hit_markers[0]->state = Hitmarker::DEAD;
+      } else if (health == 20) {
+         hit_markers[1]->state = Hitmarker::DEAD;
+      } else if (health == 10) {
+         hit_markers[2]->state = Hitmarker::DEAD;
+      }
       health -= 10;
-      if (health <= 0) {
-         alive = false;
+      if (health == 0) {
+         player_state_ = DEATH;
       }
    }
 }
@@ -588,7 +569,7 @@ bool Player::load_media() {
    load_image(textures, this, 62, 104, 5, 1.0f / 4.0f, "idle", "images/player/idle_no_arm.png", success);
 
    // Load player jumping idly
-   load_image(textures, this, 62, 104, 15, 1.0f / 20.0f, "jump", "images/player/idle_jump_no_arm.png", success);
+   load_image(textures, this, 62, 104, 12, 1.0f / 20.0f, "jump", "images/player/idle_jump_no_arm.png", success);
 
    // Load player running
    load_image(textures, this, 62, 104, 21, 1.0f / 20.0f, "running", "images/player/running_no_arm.png", success);
@@ -605,9 +586,6 @@ bool Player::load_media() {
    // Load Running arm
    load_image(textures, this, 7, 22, 4, 1.0f / 20.0f, "running_arm", "images/player/running_arm.png", success);
 
-   // load Eraser
-   load_image(textures, this, 21, 12, 3, 1.0f / 20.0f, "eraser", "images/player/eraser.png", success);
-
    // Load pushing animation
    load_image(textures, this, 62, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);
 
@@ -622,8 +600,10 @@ bool Player::load_media() {
 }
 
 // Create projectile
-Projectile* Player::create_projectile(int delta_x_r, int delta_x_l, int delta_y, int height, int width,
-     bool owner, bool damage, Texture texture) {
+Projectile* Player::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
+     bool owner, bool damage, 
+     float force_x, float force_y,
+     const TextureData &normal, const TextureData &hit) {
    // First, create a new projectile
    Application *tmp = get_application();
    Projectile *proj;
@@ -631,9 +611,9 @@ Projectile* Player::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
    // Create based on direction
    if (entity_direction == RIGHT) {
       proj = new Eraser(get_x() + get_width() + delta_x_r, get_y() + delta_y, 
-            height, width, this, tmp);
+            normal, hit, this, tmp);
    } else {
-      proj = new Eraser(get_x() + delta_x_l, get_y() + delta_y, height, width, this, tmp);
+      proj = new Eraser(get_x() + delta_x_l, get_y() + delta_y, normal, hit, this, tmp);
    }
 
    // Set shot direction
@@ -645,22 +625,10 @@ Projectile* Player::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
 
 // Virtual destructor
 Player::~Player() {
-   // Delete the body
-   /*
-   if (body) {
-      get_application()->world_.DestroyBody(body);
+   // Delete hit markers
+   for (int i = 0; i < hit_markers.size(); i++) {
+      delete hit_markers[i];
    }
-   */
-
-   // Free textures
-   textures["idle"].free();
-   textures["running"].free();
-   textures["running_jump"].free();
-   textures["jump"].free();
-   textures["idle_arm"].free();
-   textures["arm_throw"].free();
-   textures["running_arm"].free();
-   textures["eraser"].free();
 }
 
 /*************** SENSOR CLASS *************************/
@@ -684,14 +652,61 @@ Sensor::Sensor(int height, int width, Player *entity, float center_x) :
 void Sensor::start_contact(Element *element) {
    if (element->type() == "Platform") {
       entity_->in_contact = true;
-      //std::cout << "SUCCESSFULLY HIT SENSOR" << std::endl;
-      //entity_->set_player_state(entity_->PUSH);
    }
 }
 
 // End contact function
 void Sensor::end_contact() {
    entity_->in_contact = false;
-   //entity_->set_player_state(entity_->RUN);
-   //std::cout << "ENDED CONTACT" << std::endl;
+}
+
+///////////////////////////////////////////////////////
+/////////////// HITMARKER CLASS ///////////////////////
+///////////////////////////////////////////////////////
+Hitmarker::Hitmarker(int x, int y) :
+   Element(x, y, 103, 76, NULL), state(ALIVE) {
+   
+   // Load media
+   load_media();
+}
+
+// Load media function
+bool Hitmarker::load_media() {
+   bool success = true;
+
+   // Load alive texture
+   load_image(textures, this, 76, 103, 21, 1.0 / 20.0f, "alive", "images/player/hp_idle.png", success);
+
+   // Load dead texture
+   load_image(textures, this, 76, 103, 19, 1.0 / 20.0f, "dead", "images/player/hp_hit.png", success);
+
+   // Return success
+   return success;
+}
+
+// Animate
+void Hitmarker::animate() {
+   if (state == ALIVE) {
+      Element::animate(&textures["alive"]);
+   } else if (state == DEAD) {
+      Element::animate(&textures["dead"], 18);
+   }
+}
+
+// Get texture
+Texture *Hitmarker::get_texture() {
+   if (state == ALIVE) {
+      return &textures["alive"];
+   }
+   if (state == DEAD) {
+      return &textures["dead"];
+   }
+}
+
+// Update function
+void Hitmarker::update(bool freeze) {
+   // Animate and render
+   animate();
+   Texture *tex = get_texture();
+   render(tex);
 }

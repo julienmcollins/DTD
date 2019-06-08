@@ -17,6 +17,12 @@
 
 class Element;
 
+typedef struct {
+   int height;
+   int width;
+   int frames;
+} TextureData;
+
 class Texture {
     public:
         // Initialize

@@ -14,43 +14,44 @@
 /********************* ENEMY IMPLEMENTATIONS ******************/
 
 Enemy::Enemy(int x, int y, int height, int width, Application *application) :
-   Entity(x, y, height, width, application), enemy_state_(IDLE), shoot_timer_(101) {}
+   Entity(x, y, height, width, application), enemy_state_(IDLE), shoot_timer_(101) {
 
-Enemy::~Enemy() {}
+   // Set
+   start_death_ = 0;
+   end_death_ = 0;
 
-/************** FECREEZ IMPLEMENTATIONS ********************/
-Fecreez::Fecreez(int x, int y, Application *application) :
-   Enemy(x, y, 92, 82, application), shift_(false) {
-
-   // Set the hitboxes
-   set_hitbox(x, y);
-
-   // Set health
-   health = 30;
+   // Projectile
+   proj_ = nullptr;
 }
 
-// Load media function for fecreez
-bool Fecreez::load_media() {
-   // Flag for success
-   bool success = true;
+// Create projectile
+// TODO: Create a struct that holds all of the ending parameters and pass it through
+//       such as to properly load each texture properly (one enemy has different sizes for textures)
+Projectile* Enemy::create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+      bool owner, bool damage, float force_x, float force_y, 
+      const TextureData &normal, const TextureData &hit) {
+   // First, create a new projectile
+   Application *tmp = get_application();
+   Projectile *proj;
 
-   // Load idle
-   load_image(textures, this, 82, 92, 18, 1.0f / 20.0f, "idle", "images/enemies/Fecreez/fecreez_idle.png", success);
+   // Create based on direction
+   if (entity_direction == RIGHT) {
+      proj = new EnemyProjectile(get_x() + get_width() + delta_x_r, get_y() + delta_y, 
+            damage, force_x, force_y, normal, hit, this, tmp);
+   } else {
+      proj = new EnemyProjectile(get_x() + delta_x_l, get_y() + delta_y,
+            damage, force_x, force_y, normal, hit, this, tmp);
+   }
 
-   // Load shoot
-   load_image(textures, this, 82, 92, 7, 1.0f / 20.0f, "shoot", "images/enemies/Fecreez/fecreez_shoot.png", success);
+   // Set shot direction
+   proj->shot_dir = entity_direction;
 
-   // Load poojectile
-   load_image(textures, this, 24, 15, 8, 1.0f / 20.0f, "poojectile", "images/enemies/Fecreez/poojectile.png", success);
-
-   // Load death
-   load_image(textures, this, 143, 92, 16, 1.0f / 20.0f, "death", "images/enemies/Fecreez/fecreez_death.png", success);
-
-   // Return success
-   return success;
+   // Return projectile reference
+   return proj;
 }
 
-void Fecreez::update(bool freeze) {
+// Update function
+void Enemy::update(bool freeze) {
    // Move first
    move();
 
@@ -64,40 +65,135 @@ void Fecreez::update(bool freeze) {
    render(enemytexture);
 }
 
-void Fecreez::move() {
-   // Check to see what direction the enemy should be facing
-   if (get_application()->get_player()->get_x() <= get_x()) {
-      entity_direction = LEFT;
-   } else if (get_application()->get_player()->get_x() > get_x()) {
-      entity_direction = RIGHT;
+Texture *Enemy::get_texture() {
+   // Get idle texture
+   if (enemy_state_ == IDLE) {
+      return &textures["idle"];
+   }
+   
+   // Get attack texture
+   if (enemy_state_ == ATTACK) {
+      return &textures["attack"];
    }
 
+   // Get death texture
+   if (enemy_state_ == DEATH) {
+      return &textures["death"];
+   }
+
+   // Get turn texture
+   if (enemy_state_ == TURN) {
+      return &textures["turn"];
+   }
+}
+
+Enemy::~Enemy() {}
+
+/************** FECREEZ IMPLEMENTATIONS ********************/
+Fecreez::Fecreez(int x, int y, Application *application) :
+   Enemy(x, y, 92, 82, application) {
+
+   // Set the hitboxes
+   set_hitbox(x, y);
+
+   // Set health
+   health = 30;
+
+   // Set entity direction to right
+   entity_direction = LEFT;
+}
+
+// Load media function for fecreez
+bool Fecreez::load_media() {
+   // Flag for success
+   bool success = true;
+
+   // Load idle
+   load_image(textures, this, 82, 92, 18, 1.0f / 20.0f, "idle", "images/enemies/Fecreez/fecreez_idle.png", success);
+
+   // Load attack
+   load_image(textures, this, 82, 92, 7, 1.0f / 20.0f, "attack", "images/enemies/Fecreez/fecreez_shoot.png", success);
+
+   // Load death
+   load_image(textures, this, 143, 92, 16, 1.0f / 20.0f, "death", "images/enemies/Fecreez/fecreez_death.png", success);
+
+   // Load turn
+   load_image(textures, this, 82, 92, 7, 1.0f / 20.0f, "turn", "images/enemies/Fecreez/fecreez_turn.png", success);
+
+   // Start flipped
+   textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
+   textures["attack"].flip_ = SDL_FLIP_HORIZONTAL;
+   textures["poojectile"].flip_ = SDL_FLIP_HORIZONTAL;
+   textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
+
+   // Return success
+   return success;
+}
+
+void Fecreez::move() {
    // Overall check to see if it's alive
    if (alive) {
+      // Check to see what direction the enemy should be facing
+      if (enemy_state_ != DEATH && within_bounds()) {
+         // Turn if direction changed
+         if (get_application()->get_player()->get_x() <= get_x() 
+            && entity_direction == RIGHT) {
+            enemy_state_ = TURN;
+            entity_direction = LEFT;
+         } else if (get_application()->get_player()->get_x() > get_x() 
+            && entity_direction == LEFT) {
+            enemy_state_ = TURN;
+            entity_direction = RIGHT;
+         }
+      }
+
+      // Turn
+      if (enemy_state_ == TURN) {
+         // Complete texture
+         if (textures["turn"].frame_ > 6) {
+            if (entity_direction == RIGHT) {
+               textures["turn"].flip_ = SDL_FLIP_NONE;
+               textures["idle"].flip_ = SDL_FLIP_NONE;
+               textures["attack"].flip_ = SDL_FLIP_NONE;
+            } else if (entity_direction == LEFT) {
+               textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
+               textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
+               textures["attack"].flip_ = SDL_FLIP_HORIZONTAL;
+            }
+            textures["turn"].completed_ = false;
+            textures["turn"].frame_ = 0;
+            enemy_state_ = IDLE;
+         }
+      }
+
       // Check to see if get_player() within bounds of enemy
       if (get_application()->get_player()->get_y() >= get_y() - get_height() &&
-            get_application()->get_player()->get_y() <= get_y() + get_height()) {
-         // Set state to shoot
+            get_application()->get_player()->get_y() <= get_y() + get_height()
+            && enemy_state_ != TURN) {
+         // Set state to attack
          if (shoot_timer_ >= 100) {
             enemy_state_ = ATTACK;
-         } else if (shoot_timer_ < 100 && textures["shoot"].frame_ > 6) {
+         } else if (shoot_timer_ < 100 && textures["attack"].frame_ > 6) {
             enemy_state_ = IDLE;
-            textures["shoot"].frame_ = 0;
+            textures["attack"].frame_ = 0;
          }
 
          // Update timer
          ++shoot_timer_;
+      } else if (enemy_state_ != TURN) {
+         enemy_state_ = IDLE;
+         textures["attack"].frame_ = 0;
+      }
 
-         // Shoot if timer goes off
-         if (textures["shoot"].frame_ > 6 && shoot_timer_ >= 100) {
-            Projectile *tmp = create_projectile(15, -10, 70, 15, 24, 0, 10, textures["poojectile"]);
+      // attack
+      if (enemy_state_ == ATTACK) {
+         if (textures["attack"].frame_ > 6 && shoot_timer_ >= 100) {
+            TextureData normal = {15, 24, 8};
+            TextureData hit = {15, 24, 8};
+            Projectile *tmp = create_projectile(15, -10, 70, 0, 10, 10.4f, 0.0f, normal, hit);
             tmp->body->SetGravityScale(0);
             shoot_timer_ = 0;
          }
-      } else {
-         enemy_state_ = IDLE;
-         //textures["shoot"].reset_frame = 6;
-         //textures["shoot"].stop_frame = 6;
       }
    } else {
       // Set state to death
@@ -130,59 +226,46 @@ void Fecreez::animate(Texture *tex, int reset, int max) {
    if (enemy_state_ == IDLE) {
       Element::animate(&textures["idle"]);
    } else if (enemy_state_ == ATTACK) {
-      Element::animate(&textures["shoot"], textures["shoot"].reset_frame, textures["shoot"].stop_frame);
+      Element::animate(&textures["attack"], textures["attack"].reset_frame, textures["attack"].stop_frame);
    } else if (enemy_state_ == DEATH) {
       Element::animate(&textures["death"], 15);
+   } else if (enemy_state_ == TURN) {
+      Element::animate(&textures["turn"]);
    }
 }
 
-// Get texture function
-Texture *Fecreez::get_texture() {
-   // Get idle texture
-   if (enemy_state_ == IDLE) {
-      return &textures["idle"];
-   }
-   
-   // Get shoot texture
-   if (enemy_state_ == ATTACK) {
-      return &textures["shoot"];
-   }
-
-   // Get death texture
-   if (enemy_state_ == DEATH) {
-      return &textures["death"];
-   }
+bool Fecreez::within_bounds() {
+   return get_application()->get_player()->get_y() >= get_y() - get_height() &&
+            get_application()->get_player()->get_y() <= get_y() + get_height();
 }
 
 Fecreez::~Fecreez() {
-   // Destroy the bodies 
-   //if (body) {
-   //   get_application()->world_.DestroyBody(body);      
-   //}
-
-   // Destroy textures
-   textures["idle"].free();
-   textures["shoot"].free();
-   textures["poojectile"].free();
-   textures["death"].free();
 }
 
+//////////////////////////////////////////////////////
 /********************* ARM **************************/
+//////////////////////////////////////////////////////
+
 Arm::Arm(int x, int y, int height, int width, Application *application, Rosea *rosea) :
    Enemy(x, y, height, width, application), rosea_(rosea) {}
 
 // Callback function for arm will set rosea's state to hurt
 void Arm::start_contact(Element *element) {
-   if (element->type() == "Player" || element->type() == "Projectile") {
+   if (element->type() == "Player") {
+      rosea_->get_application()->get_player()->take_damage(10);
+   } else if (element->type() == "Projectile") {
       rosea_->set_state(HURT);
    }
 }
 
-/********************* ROSEA ENEMY ******************/
+//////////////////////////////////////////////////////
+/****************** ROSEA ENEMY *********************/
+//////////////////////////////////////////////////////
+
 Rosea::Rosea(int x, int y, Application *application) :
    Enemy(x, y, 144, 189, application), 
    arms_still(x - 46, y - 118, 78, 122, application, this),
-   arms_attack(x + 30, y - 230, 387, 168, application), 
+   arms_attack(x + 30, y - 230, 387, 168, application, this), 
    hurt_counter_(0), arm_state_(0), in_bounds_(false),
    arm_heights_({{0, y - 110}, {1, y - 250}, {2, y - 325}, {3, y - 395}, 
          {4, y - 425}, {5, y - 425}, {6, y - 425}, 
@@ -389,27 +472,14 @@ bool Rosea::is_leaving_bounds() {
 }
 
 // Rosea destructor
-Rosea::~Rosea() {
-   // Destroy the bodies 
-   /*
-   if (body) {
-      get_application()->world_.DestroyBody(body);
-      get_application()->world_.DestroyBody(arms_attack.body);
-      get_application()->world_.DestroyBody(arms_still.body);
-   }
-   */
+Rosea::~Rosea() {}
 
-   // Destroy textures
-   textures["idle"].free();
-   textures["hurt"].free();
-   arms_still.textures["arms_idle"].free();
-   arms_still.textures["arms_hurt"].free();
-   arms_attack.textures["arms_attack"].free();
-}
-
+/////////////////////////////////////////////////////
 /************** MOSQUIBLER ENEMY *******************/
+/////////////////////////////////////////////////////
+
 Mosquibler::Mosquibler(int x, int y, Application *application) :
-   Enemy(x, y, 89, 109, application), start_death_(0), end_death_(0) {
+   Enemy(x, y, 89, 109, application) {
 
    // Set hitbox
    set_hitbox(x, y, true);
@@ -440,30 +510,6 @@ bool Mosquibler::load_media() {
 
    // Return success
    return success;
-}
-
-// Update
-void Mosquibler::update(bool freeze) {
-   // Move first
-   move();
-
-   // The animate
-   animate();
-
-   // Render enemy
-   Texture *enemytexture = get_texture();
-
-   // Render enemy
-   render(enemytexture);
-
-   // Render arms
-   if (enemy_state_ == IDLE) {
-      render(&textures["fly"]);
-   } else if (enemy_state_ == TURN) {
-      render(&textures["turn"]);
-   } else if (enemy_state_ == DEATH) {
-      render(&textures["death"]);
-   } 
 }
 
 // Move function
@@ -581,16 +627,91 @@ void Mosquibler::start_contact(Element *element) {
 }
 
 // Destructor
-Mosquibler::~Mosquibler() {
-   // Free body if necessary
-   /*
-   if (body) {
-      get_application()->world_.DestroyBody(body);
-   }
-   */
+Mosquibler::~Mosquibler() {}
 
-   // Free textures
-   textures["fly"].free();
-   textures["death"].free();
-   textures["turn"].free();
+///////////////////////////////////////////////////
+/************* FRUIG ENEMY ***********************/
+///////////////////////////////////////////////////
+
+// Constructor
+Fruig::Fruig(int x, int y, Application *application) :
+   Enemy(x, y, 140, 79, application) {
+
+   // Set hitbox
+   set_hitbox(x, y);
+
+   // Set health
+   health = 10;
+
+   // Set initial dir
+   entity_direction = RIGHT;
+
+   // Set enemy state
+   enemy_state_ = IDLE;
+}
+
+// Load media function
+bool Fruig::load_media() {
+   bool success = true;
+
+   // Load idle
+   load_image(textures, this, 79, 140, 20, 1.0f / 20.0f, "idle", "images/enemies/Fruig/idle.png", success);
+
+   // Load death
+   load_image(textures, this, 85, 136, 20, 1.0f / 20.0f, "death", "images/enemies/Fruig/death.png", success);
+
+   // Return success
+   return success;
+}
+
+// Mpve function
+void Fruig::move() {
+   // Check death state first
+   if (enemy_state_ == DEATH) {
+      if (textures["death"].frame_ >= 14) {
+         start_death_ = 14;
+         end_death_ = 19;
+      }
+   }
+
+   // Check if state is idle?
+   if (enemy_state_ == IDLE) {
+      // Let goop fall if it reaches the correct point in the animation.
+      if (textures["idle"].frame_ == 8 && shoot_timer_ > 20) {
+         TextureData normal = {9, 10, 5};
+         TextureData hit = {9, 65, 9};
+         proj_ = create_projectile(-30, 0, 170, 10, 10, 0.0f, 0.0f, normal, hit);
+         shoot_timer_ = 0;
+      }
+
+      // Update shoot timer
+      shoot_timer_++;
+
+      // Check for death of proj
+      if (proj_ && !proj_->shift && proj_->get_state() == Object::DEAD) {
+         proj_->sub_x(24);
+         proj_->shift = true;
+      }
+   }
+}
+
+// Animate function
+void Fruig::animate(Texture *tex, int reset, int max, int start) {
+   if (enemy_state_ == IDLE) {
+      Element::animate(&textures["idle"]);
+   } else if (enemy_state_ == DEATH) {
+      Element::animate(&textures["death"], start_death_, end_death_);
+   }
+}
+
+// Get contact function
+void Fruig::start_contact(Element *element) {
+   if ((element->type() == "Player" || element->type() == "Projectile")) {
+      health -= 10;
+      if (health <= 0) {
+         enemy_state_ = DEATH;
+         start_death_ = 14;
+         end_death_ = 19;
+      }
+   }
 }

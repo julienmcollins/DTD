@@ -8,7 +8,7 @@
 
 // Constructor
 Object::Object(int x, int y, int height, int width, Entity* owner, Application *application) :
-   Element(x, y, height, width, application), owning_entity(owner) {}
+   Element(x, y, height, width, application), owning_entity(owner), shift(false) {}
 
 /***************** Platform Implementations *************************/
 
@@ -43,22 +43,19 @@ void Platform::setup() {
    body->SetUserData(this);
 }
 
-// doNothing
-//void Platform::doNothing() {}
-
 // Virtual destructor
 Platform::~Platform() {
-   // Destroy body
-   //get_application()->world_.DestroyBody(body);
 }
 
 /************** Projectile Implementations  *************************/
 
 // Constructor
-Projectile::Projectile(int x, int y, int height, int width,
-      bool owner, bool damage, Entity *entity, Application *application) :
-   Object(x, y, height, width, entity, application), 
-   owner_(owner), damage_(damage) {
+Projectile::Projectile(int x, int y, bool owner, int damage, 
+      float force_x, float force_y,
+      const TextureData &normal, const TextureData &hit,
+      Entity *entity, Application *application) :
+   Object(x, y, normal.height, normal.width, entity, application), 
+   owner_(owner), damage_(damage), normal_(normal), hit_(hit) {
 
    // Temp pointer to App
    Application *tmp = get_application();
@@ -88,20 +85,20 @@ Projectile::Projectile(int x, int y, int height, int width,
    fixture_def.userData = this;
    body->CreateFixture(&fixture_def);
 
-   // Set gravity scale to 0
-   //body->SetGravityScale(0);
-
    // Give it an x direction impulse
    b2Vec2 force;
    if (owning_entity->entity_direction == RIGHT) {
-      force = {10.4f, 0};
+      force = {force_x, force_y};
    } else {
-      force = {-10.4f, 0};
+      force = {-force_x, force_y};
    }
    body->ApplyForce(force, body->GetPosition(), true);
    
    // Now add it to the things the world needs to render
    tmp->getProjectileVector()->push_back(this);
+   
+   // Set object state
+   object_state_ = ALIVE;
 
    // Finally, set the user data
    body->SetUserData(this);
@@ -109,18 +106,25 @@ Projectile::Projectile(int x, int y, int height, int width,
 
 // Update function
 void Projectile::update() {
-   // Update projectile
-   if (texture.frame_ > texture.max_frame_) {
-      texture.frame_ = 0;
-   }
-   texture.curr_clip_ = &texture.clips_[texture.frame_];
-   ++texture.frame_;
-
-   // If enemy is shooting to the left, flip the texture
-   if (shot_dir == LEFT) {
-      texture.render(get_x(), get_y(), texture.curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
-   } else {
-      texture.render(get_x(), get_y(), texture.curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
+   // Check the status
+   if (object_state_ == ALIVE) {
+      Element::animate(&textures["normal"]);
+      if (shot_dir == LEFT) {
+         textures["normal"].render(get_x(), get_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+      } else {
+         textures["normal"].render(get_x(), get_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
+      }
+   } else if (object_state_ == DEAD) {
+      if (textures["explode"].frame_ >= hit_.frames) {
+         alive = false;
+         return;
+      }
+      Element::animate(&textures["explode"]);
+      if (shot_dir == LEFT) {
+         textures["explode"].render(get_x(), get_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+      } else {
+         textures["explode"].render(get_x(), get_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE); 
+      }
    }
 }
 
@@ -135,18 +139,15 @@ int Projectile::get_damage() const {
 }
 
 // Destructor
-Projectile::~Projectile() {
-   // Delete object
-   //body->GetWorld()->DestroyBody(body);
-}
+Projectile::~Projectile() {}
 
 /************* ERASER SUBCLASS *******************/
-Eraser::Eraser(int x, int y, int height, int width, Entity *entity, Application *application) :
-   Projectile(x, y, height, width, 1, 10, entity, application) {
-   // Set object state
-   object_state_ = ALIVE;
+Eraser::Eraser(int x, int y, 
+   const TextureData &normal, const TextureData &hit,
+   Entity *entity, Application *application) :
+   Projectile(x, y, 1, 10, 10.4f, 0.0f, normal, hit, entity, application) {
 
-   // Load media
+   // Load media for some reason
    load_media();
 }
 
@@ -156,26 +157,6 @@ void Eraser::start_contact(Element *element) {
       object_state_ = DEAD;
       b2Vec2 stop = {0.0f, 0.0f};
       body->SetLinearVelocity(stop);
-   }
-}
-
-// Update function
-void Eraser::update() {
-   // Check the status
-   if (object_state_ == ALIVE) {
-      Element::animate(&textures["normal"]);
-      if (shot_dir == LEFT) {
-         textures["normal"].render(get_x(), get_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
-      } else {
-         textures["normal"].render(get_x(), get_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
-      }
-   } else if (object_state_ == DEAD) {
-      if (textures["explode"].frame_ > 3) {
-         alive = false;
-         return;
-      }
-      Element::animate(&textures["explode"]);
-      textures["explode"].render(get_x(), get_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
    }
 }
 
@@ -192,4 +173,42 @@ bool Eraser::load_media() {
 
    // Return success
    return success;
+}
+
+/*************** ENEMY PROJECTILE SUBCLASS ***************/
+EnemyProjectile::EnemyProjectile(int x, int y, int damage, 
+   float force_x, float force_y,
+   const TextureData &normal, const TextureData &hit,
+   Entity *entity, Application *application) :
+   Projectile(x, y, 0, 10, force_x, force_y, normal, hit, entity, application) {
+
+   // Load media for some reason
+   load_media();
+}
+
+// Adjust start contact function
+void EnemyProjectile::start_contact(Element *element) {
+   if (element->type() == "Player" || element->type() == "Platform" || 
+       element->type() == "Projectile" || element->is_enemy()) {
+      object_state_ = DEAD;
+      b2Vec2 stop = {0.0f, 0.0f};
+      body->SetLinearVelocity(stop);
+   }
+}
+
+// Load eraser media
+bool EnemyProjectile::load_media() {
+   // SUccess flag
+   bool success = true;
+
+   // Normal projectile
+   std::string normal = "images/enemies/" + owning_entity->type() + "/projectile.png";
+   load_image(textures, this, normal_.width, normal_.height, normal_.frames, 1.0f / 20.0f, "normal", normal, success);
+
+   // Hit projectile
+   std::string hit = "images/enemies/" + owning_entity->type() + "/hit.png";
+   load_image(textures, this, hit_.width, hit_.height, hit_.frames, 1.0f / 20.0f, "explode", hit, success);
+
+   // Return success
+   return success;   
 }

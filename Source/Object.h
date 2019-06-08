@@ -27,10 +27,18 @@ class Object : public Element {
          DEAD
       };
 
+      // Get curr state
+      STATE get_state() {
+         return object_state_;
+      }
+
       // Get type
       virtual std::string type() {
          return "Object";
       }
+
+      // TEMPORARY FIX
+      bool shift;
    protected:
       STATE object_state_;
 };
@@ -63,8 +71,10 @@ class Platform : public Object {
 class Projectile : public Object {
    public:
       // Constructor
-      Projectile(int x, int y, int height, int width,
-            bool owner, bool damage, Entity *entity, Application *application);
+      Projectile(int x, int y, bool owner, int damage, 
+            float force_x, float force_y,
+            const TextureData &normal, const TextureData &hit,
+            Entity *entity, Application *application);
 
       // doNothing function
       //virtual void doNothing();
@@ -99,24 +109,41 @@ class Projectile : public Object {
       // Destructor
       virtual ~Projectile();
 
-   private:
+   protected:
       // Owner flag: 1 if belongs to player, 0 if enemy
       bool owner_;
 
       // Damage amount
       int damage_;
+
+      // Frame counts
+      TextureData normal_;
+      TextureData hit_;
 };
 
 class Eraser : public Projectile {
    public:
       // Constructor
-      Eraser(int x, int y, int height, int width, Entity *entity, Application *application);
+      Eraser(int x, int y, const TextureData &normal, const TextureData &hit,
+         Entity *entity, Application *application);
       
       // Start contact function
       virtual void start_contact(Element *element);
 
-      // Update function
-      virtual void update();
+      // Load images
+      virtual bool load_media();
+};
+
+class EnemyProjectile : public Projectile {
+   public:
+      // Constructor
+      EnemyProjectile(int x, int y, int damage,
+         float force_x, float force_y,
+         const TextureData &normal, const TextureData &hit,
+         Entity *entity, Application *application);
+
+      // Start contact function
+      virtual void start_contact(Element *element);
 
       // Load images
       virtual bool load_media();

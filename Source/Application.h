@@ -205,7 +205,8 @@ class Application {
          LEVEL12,
          LEVEL13,
          LEVEL14,
-         LEVEL15   
+         LEVEL15,
+         LEVEL16
       };
 
       // Menu Items

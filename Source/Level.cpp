@@ -51,6 +51,8 @@ Level::Level(string file, Application *application) :
          enemies_.push_back(new Rosea(x, y, application));
       } else if (name == "Mosquibler") {
          enemies_.push_back(new Mosquibler(x, y, application));
+      } else if (name == "Fruig") {
+         enemies_.push_back(new Fruig(x, y, application));
       }
    }
 

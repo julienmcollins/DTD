@@ -42,11 +42,16 @@ int Element::get_x() {
 
 // Add and sub x
 void Element::add_x(int add) {
-    x_pos_ += add;
+   x_pos_ += add;
 }
 
 void Element::sub_x(int sub) {
-    x_pos_ -= sub;
+   if (!body) {
+      x_pos_ -= sub;
+   } else {
+      float subx = (float) ((sub + (get_width() / 2.0f)) / 100.0f);
+      body->SetTransform(b2Vec2(body->GetPosition().x - subx, body->GetPosition().y), body->GetAngle());
+   }
 }
 
 // Set and get y
@@ -276,5 +281,10 @@ Application *Element::get_application() {
 Element::~Element() {
    if (body) {
       application_->world_.DestroyBody(body);
+   }
+
+   // Free textures
+   for (auto i = textures.begin(); i != textures.end(); i++) {
+      i->second.free();
    }
 }

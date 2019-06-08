@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <Box2D/Box2D.h>
 #include <string>
+#include <vector>
 #include "Texture.h"
 #include "Timer.h"
 #include "Element.h"
@@ -51,7 +52,12 @@ class Entity : public Element {
 
         // Create projectile (might need to add an entity pointer just in case)
         virtual Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
-              int height, int width, bool owner, bool damage, Texture texture);
+               bool owner, bool damage, float force_x, float force_y,
+               const TextureData &normal, const TextureData &hit);
+
+
+         // Dumb flag for now, find a better way later
+         bool shift_;
 
         // Destructor
         virtual ~Entity();
@@ -76,6 +82,30 @@ class Sensor : public Element {
       b2CircleShape circle_;
 };
 
+// Hit marker
+class Hitmarker : public Element {
+   public:
+      // Construct the hit marker object
+      Hitmarker(int x, int y);
+
+      // State of hit
+      enum STATE {
+         ALIVE,
+         DEAD
+      };
+
+      // Load media function
+      virtual bool load_media();
+
+      // Update function
+      virtual void update(bool freeze = false);
+      virtual void animate();
+      virtual Texture *get_texture();
+
+      // State
+      STATE state;
+};
+
 // Player class
 class Player : public Entity {
    public:
@@ -91,7 +121,8 @@ class Player : public Entity {
          RUN_AND_JUMP,
          PUSH,
          JUMP_AND_PUSH,
-         CROUCH
+         CROUCH,
+         DEATH
       };
 
       // Shooting flag
@@ -120,16 +151,17 @@ class Player : public Entity {
 
       // Update function now done in player
       virtual void update(bool freeze = false);
-
-      // Animate based on state
       virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
-
-      // Move the player using keyboard
       virtual void move();
 
       // Contact listener
       virtual void start_contact(Element *element = NULL);
       virtual void end_contact();
+
+      // Damage function
+      void take_damage(int damage) {
+         health -= damage;
+      }
 
       // Get type
       virtual std::string type() {
@@ -140,12 +172,15 @@ class Player : public Entity {
       virtual bool load_media();
 
       // Create projectile
-      virtual Projectile *create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
-              int height, int width, bool owner, bool damage, Texture texture);
+      virtual Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+            bool owner, bool damage, float force_x, float force_y,
+            const TextureData &normal, const TextureData &hit);
+
+      // Hitmarkers
+      std::vector<Hitmarker *> hit_markers;
 
       // Virtual destructor
       virtual ~Player();
-
    private:
       // Player state
       STATE player_state_;

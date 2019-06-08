@@ -24,7 +24,11 @@ class Enemy : public Entity {
          TURN,
          DEATH
       };
-      
+
+      // Update function and get texture
+      virtual void update(bool freeze = false);      
+      virtual Texture *get_texture();
+
       // Get type
       virtual std::string type() {
          return "Enemy";
@@ -35,12 +39,25 @@ class Enemy : public Entity {
          return true;
       }
 
+      // Create projectile function
+      virtual Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+            bool owner, bool damage, float force_x, float force_y,
+            const TextureData &nornal, const TextureData &hit);
+
       // Destructotr
       virtual ~Enemy() = 0;
    
    protected:
+      // States and timers
       STATE enemy_state_;
       int shoot_timer_;
+
+      // Flag for death
+      int start_death_;
+      int end_death_;
+
+      // Projectile they own
+      Projectile *proj_;
 };
 
 class Fecreez : public Enemy {
@@ -52,12 +69,8 @@ class Fecreez : public Enemy {
       virtual bool load_media();
 
       // Update, move and animate functions
-      virtual void update(bool freeze = false);
       virtual void move();
       virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0);
-
-      // Get texture
-      virtual Texture *get_texture();
 
       // Contact listener
       virtual void start_contact(Element *element = NULL);
@@ -70,8 +83,8 @@ class Fecreez : public Enemy {
       // Destructor
       virtual ~Fecreez();
    private:
-      // Dumb flag for now, find a better way later
-      bool shift_;
+      // within bounds
+      bool within_bounds();
 };
 
 // ROsea prototype
@@ -132,7 +145,7 @@ class Rosea : public Enemy {
       Arm arms_still;
 
       // Element for the arms attacking
-      Element arms_attack;
+      Arm arms_attack;
 
       // Counter for hurt
       int hurt_counter_;
@@ -164,7 +177,6 @@ class Mosquibler : public Enemy {
       virtual bool load_media();
 
       // Update, move and animate functions
-      virtual void update(bool freeze = false);
       virtual void move();
       virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
 
@@ -181,10 +193,27 @@ class Mosquibler : public Enemy {
 
       // Destructor for rosea
       virtual ~Mosquibler();
-   private:
-      // Flag for death
-      int start_death_;
-      int end_death_;
+};
+
+class Fruig : public Enemy {
+   public:
+      // Constructor
+      Fruig(int x, int y, Application *application);
+
+      // Load fruig media
+      virtual bool load_media();
+
+      // Update, move and animate functions
+      virtual void move();
+      virtual void animate(Texture *tex, int reset, int max, int start);
+
+      // Get contact
+      virtual void start_contact(Element *element = NULL);
+
+      // Get type
+      virtual std::string type() {
+         return "Fruig";
+      }
 };
 
 #endif

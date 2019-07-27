@@ -9,6 +9,10 @@
 #include "Timer.h"
 #include "Element.h"
 
+#define PC_OFF_X 62.0f
+#define PC_OFF_Y 0.0f
+#define SIM_GRAV -3.0f
+
 class Application;
 class Platform;
 class Projectile;
@@ -159,9 +163,7 @@ class Player : public Entity {
       virtual void end_contact();
 
       // Damage function
-      void take_damage(int damage) {
-         health -= damage;
-      }
+      void take_damage(int damage);
 
       // Get type
       virtual std::string type() {
@@ -192,6 +194,10 @@ class Player : public Entity {
       // Sensor
       Sensor *left_sensor_;
       Sensor *right_sensor_;
+
+      // Immunity timer
+      Timer immunity_timer_;
+      float immunity_duration_;
 };
 
 #endif

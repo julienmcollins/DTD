@@ -4,7 +4,7 @@
 
 // Constructor for element
 Element::Element(int x, int y, int height, int width, Application *application) :
-   alive(true), texture(this, 0), body(NULL) {
+   alive(true), texture(this, 0), body(NULL), flag_(false) {
 
    // Set application
    application_ = application;

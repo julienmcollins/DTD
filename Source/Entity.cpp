@@ -11,6 +11,8 @@
 #include "Application.h"
 #include "Timer.h"
 
+#define BOUNDED(var) (var > -0.001f && var < 0.001f)
+
 /*************************** ENTITY IMPLEMENTATIONS ******************************/
 
 // Entity constructor which will provide basic establishment for all entities
@@ -65,7 +67,8 @@ Player::Player(Application* application) :
    // TODO: Load in new smaller sprite sheet
    Entity(960, 412, 104, 37, application), player_state_(STAND),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
-   arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f) {
+   arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
+   immunity_duration_(0.5f) {
 
    // Set entity direction
    entity_direction = RIGHT;
@@ -87,13 +90,13 @@ Player::Player(Application* application) :
    float width = (get_width() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
    float height = (get_height() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
    //printf("width = %d, height = %d\n", get_width(), get_height());
-   const b2Vec2 center = {(62.0f - get_width()) / 2.0f * application->to_meters_, 
-                          4.0f * application->to_meters_};
+   const b2Vec2 center = {(PC_OFF_X - get_width()) / 2.0f * application->to_meters_, 
+                          PC_OFF_Y * application->to_meters_};
    box.SetAsBox(width, height, center, 0.0f);
 
    // TODO: ADD FIXTURES TO THIS AS SENSORS
-   left_sensor_ = new Sensor(0.8f, 0.2f, this, -0.05f);
-   right_sensor_ = new Sensor(0.8f, 0.2f, this, 0.30f);
+   left_sensor_ = new Sensor(0.95f, 0.2f, this, -0.05f);
+   right_sensor_ = new Sensor(0.95f, 0.2f, this, 0.30f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -119,6 +122,9 @@ Player::Player(Application* application) :
 
    // Set in contact = false
    in_contact = false;
+
+   // Start the immunity timer
+   immunity_timer_.start();
 }
 
 // Get texture based on state
@@ -128,13 +134,8 @@ Texture *Player::get_texture() {
       return &textures["running"];
    }
 
-   // Return run and jump texture
-   if (player_state_ == RUN_AND_JUMP) {
-      return &textures["running_jump"];
-   }
-
    // Return jump texture
-   if (player_state_ == JUMP) {
+   if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
       return &textures["jump"];
    }
 
@@ -165,6 +166,12 @@ Player::STATE Player::get_player_state() {
 // Update function
 void Player::update(bool freeze) {
    //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: RUN_AND_JUMP, 5: PUSH)" << std::endl;
+   //std::cout << "X = " << body->GetLinearVelocity().x << " Y = " << body->GetLinearVelocity().y << std::endl;
+   // Apply artificial force of gravity
+   const b2Vec2 sim_grav = {0.0f, SIM_GRAV};
+   body->ApplyForceToCenter(sim_grav, true);
+
+   // Animate the function
    animate();
 
    // Update player if not frozen
@@ -208,17 +215,17 @@ void Player::update(bool freeze) {
 void Player::adjust_deltas() {
    if (player_state_ == STAND) {
       if (entity_direction == RIGHT) {
-         arm_delta_x = 1;
-         arm_delta_y = 43;
-         arm_delta_shoot_x = 2;
-         arm_delta_shoot_y = 34;
+         arm_delta_x = -3;
+         arm_delta_y = 47;
+         arm_delta_shoot_x = -3;
+         arm_delta_shoot_y = 39;
       } else {
          arm_delta_x = -20;
-         arm_delta_y = 43;
-         arm_delta_shoot_x = -58;
-         arm_delta_shoot_y = 34;
+         arm_delta_y = 47;
+         arm_delta_shoot_x = -57;
+         arm_delta_shoot_y = 39;
       }
-   } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
+   } else if (player_state_ == RUN && BOUNDED(body->GetLinearVelocity().y)) {
       if (entity_direction == RIGHT) {
          arm_delta_x = 0;
          arm_delta_y = 43;
@@ -230,7 +237,7 @@ void Player::adjust_deltas() {
          arm_delta_shoot_x = -58;
          arm_delta_shoot_y = 34;
       }
-   } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
+   } else if (player_state_ == STOP && BOUNDED(body->GetLinearVelocity().y)) {
       if (entity_direction == RIGHT) {
          arm_delta_x = 2;
          arm_delta_y = 43;
@@ -245,30 +252,17 @@ void Player::adjust_deltas() {
    } else if (player_state_ == RUN_AND_JUMP || player_state_ == JUMP) {
       // Adjust deltas
       if (entity_direction == RIGHT) {
-         arm_delta_x = 1;
-         arm_delta_y = 42;
-         arm_delta_shoot_x = 2;
+         arm_delta_x = -3;
+         arm_delta_y = 43;
+         arm_delta_shoot_x = -2;
          arm_delta_shoot_y = 34;
       } else {
          arm_delta_x = -20;
-         arm_delta_y = 42;
-         arm_delta_shoot_x = -58;
+         arm_delta_y = 43;
+         arm_delta_shoot_x = -57;
          arm_delta_shoot_y = 34;
       }
-   } /*else if (player_state_ == JUMP) {
-      // Adjust deltas
-      if (entity_direction == RIGHT) {
-         arm_delta_x = 12;
-         arm_delta_y = 64;
-         arm_delta_shoot_x = 10;
-         arm_delta_shoot_y = 57;
-      } else {
-         arm_delta_x = -22;
-         arm_delta_y = 64;
-         arm_delta_shoot_x = -75;
-         arm_delta_shoot_y = 57;
-      }
-   }*/
+   }
 }
 
 // Animate based on state
@@ -294,27 +288,29 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
 
    // Choose animation based on what state player is in
    if (player_state_ == STAND) {
-      Element::animate(&textures["idle"], 0, 4);
-   } else if (player_state_ == RUN && body->GetLinearVelocity().y == 0) {
-      Element::animate(&textures["running"], 4, 15);
-      Element::animate(&textures["running_arm"], 3);
-   } else if (player_state_ == STOP && body->GetLinearVelocity().y == 0) {
+      Element::animate(&textures["idle"]);
+   } else if (player_state_ == RUN && BOUNDED(body->GetLinearVelocity().y)) {
+      Element::animate(&textures["running"]);
+      Element::animate(&textures["running_arm"]);
+   } else if (player_state_ == STOP && BOUNDED(body->GetLinearVelocity().y)) {
       Element::animate(&textures["running"], 20);
-   } else if (player_state_ == RUN_AND_JUMP) {
-      Element::animate(&textures["running_jump"], textures["running_jump"].reset_frame, textures["running_jump"].stop_frame);
-   } else if (player_state_ == JUMP) {
+   } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
       Element::animate(&textures["jump"], textures["jump"].reset_frame, textures["jump"].stop_frame);
    } else if (player_state_ == PUSH) {
       Element::animate(&textures["push"]);
    } else if (player_state_ == JUMP_AND_PUSH) {
       Element::animate(&textures["jump_push"]);
    } else if (player_state_ == DEATH) {
-      Element::animate(&textures["death"]);
+      Element::animate(&textures["death"], textures["death"].reset_frame, textures["death"].stop_frame);
    }
 }
 
 // Change player state
 void Player::change_player_state() {
+   // Velocities
+   float vel_x = body->GetLinearVelocity().x;
+   float vel_y = body->GetLinearVelocity().y;
+   
    // Key touches
    bool right = get_application()->current_key_states_[SDL_SCANCODE_RIGHT];
    bool left = get_application()->current_key_states_[SDL_SCANCODE_LEFT];
@@ -322,9 +318,9 @@ void Player::change_player_state() {
 
    // Special push state
    if (in_contact) {
-      if ((left || right) && (up || body->GetLinearVelocity().y != 0)) {
+      if ((left || right) && (up || !BOUNDED(vel_y))) {
          player_state_ = JUMP_AND_PUSH;
-      } else if (!left && !right && (up || body->GetLinearVelocity().y != 0)) {
+      } else if (!left && !right && (up || !BOUNDED(vel_y))) {
          player_state_ = JUMP;
       } else if (entity_direction == LEFT && left) {
          player_state_ = PUSH;
@@ -337,10 +333,7 @@ void Player::change_player_state() {
    }
 
    // Special stand state
-   if ((!right && !left) && 
-      body->GetLinearVelocity().x == 0 && 
-      body->GetLinearVelocity().y == 0) {
-
+   if ((!right && !left) && BOUNDED(vel_x) && BOUNDED(vel_y)) {
       // Set state to stand
       player_state_ = STAND;
 
@@ -349,11 +342,7 @@ void Player::change_player_state() {
    }
 
    // Special stop state
-   if ((!right && !left) && 
-      body->GetLinearVelocity().x != 0 && 
-      body->GetLinearVelocity().y == 0 && 
-      player_state_ != PUSH) {
-
+   if ((!right && !left) && !BOUNDED(vel_x) && BOUNDED(vel_y) && player_state_ != PUSH) {
       // Set state
       player_state_ = STOP;
 
@@ -362,10 +351,7 @@ void Player::change_player_state() {
    }
 
    // Special fall state, TODO: add falling animation
-   if ((right || left) && 
-      body->GetLinearVelocity().x == 0 && 
-      body->GetLinearVelocity().y != 0) {
-      
+   if ((right || left) && BOUNDED(vel_x) && !BOUNDED(vel_y)) {
       // Set state
       player_state_ = JUMP;
 
@@ -374,14 +360,14 @@ void Player::change_player_state() {
    }
 
    // Check for non-zero y-vel
-   if (body->GetLinearVelocity().y != 0) {
+   if (!BOUNDED(vel_y)) {
       // Run and jump or just jump
-      if (body->GetLinearVelocity().x != 0) {
+      if (!BOUNDED(vel_x)) {
          player_state_ = RUN_AND_JUMP;
       } else {
          player_state_ = JUMP;
       }
-   } else if (body->GetLinearVelocity().x != 0) {
+   } else if (!BOUNDED(vel_x)) {
       player_state_ = RUN;
    } else {
       player_state_ = STAND;
@@ -392,13 +378,19 @@ void Player::change_player_state() {
 void Player::move() {
    // Death 
    if (player_state_ == DEATH) {
+      // Add delay
       if (!shift_) {
          sub_x(10);
          body->SetLinearVelocity({0.0f, body->GetLinearVelocity().y});
          shift_ = true;
       }
       if (textures["death"].frame_ >= 20) {
-         alive = false;
+         if (((float) get_application()->death_timer_.getTicks() / 1000.0f) >= 3.0f) {
+            alive = false;
+            get_application()->death_timer_.stop();
+         }
+         textures["death"].reset_frame = 19;
+         textures["death"].stop_frame = 19;
       }
       return;
    }
@@ -407,7 +399,7 @@ void Player::move() {
    if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH) {
       b2Vec2 vel = {0, body->GetLinearVelocity().y};
       body->SetLinearVelocity(vel);
-      player_state_ = STOP;
+      //player_state_ = STOP;
    }
 
    // Shooting
@@ -436,7 +428,7 @@ void Player::move() {
 
       // Check for midair
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
-         player_state_ = RUN;
+         //player_state_ = RUN;
          b2Vec2 vel = {-4.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
@@ -450,7 +442,7 @@ void Player::move() {
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == RIGHT) {
          // Add a very small impulse
          //body->ApplyLinearImpulseToCenter({-0.5f, 0.0f}, true);
-         player_state_ = RUN;
+         //player_state_ = RUN;
          in_contact = false;
       }
             
@@ -466,12 +458,12 @@ void Player::move() {
             i->second.has_flipped_ = false;
             i->second.flip_ = SDL_FLIP_NONE;
          }
-      }   
+      }
 
       // Set to jump and run if not on the ground
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
-         player_state_ = RUN;
-         b2Vec2 vel = {4.5f, body->GetLinearVelocity().y};
+         //player_state_ = RUN;
+         b2Vec2 vel = {5.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
          has_jumped_ = true;
@@ -484,7 +476,7 @@ void Player::move() {
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == LEFT) {
          // Add a very small impulse
          //body->ApplyLinearImpulseToCenter({0.5f, 0.0f}, true);
-         player_state_ = RUN;
+         //player_state_ = RUN;
          in_contact = false;
       }
             
@@ -497,26 +489,24 @@ void Player::move() {
       if (!has_jumped_) {
          // Set state
          if (player_state_ == RUN) {
-            player_state_ = RUN_AND_JUMP;
+            //player_state_ = RUN_AND_JUMP;
             textures["running_jump"].reset_frame = 14;
             textures["running_jump"].stop_frame = 14;
          } else {
-            player_state_ = JUMP;
+            //player_state_ = JUMP;
             textures["jump"].reset_frame = textures["jump"].max_frame_;
             textures["jump"].stop_frame = textures["jump"].max_frame_;
          }
 
          // Apply an impulse
-         const b2Vec2 force = {0, 2.6f};
+         const b2Vec2 force = {0, 3.2f};
          body->ApplyLinearImpulse(force, body->GetPosition(), true);
 
          // Set the flags
          has_jumped_ = true;
       } else {
-         if (body->GetLinearVelocity().y == 0) {
+         if (BOUNDED(body->GetLinearVelocity().y)) {
             has_jumped_ = false;
-            textures["running_jump"].reset_frame = 0;
-            textures["running_jump"].frame_ = 0;
             textures["jump"].reset_frame = 0;
             textures["jump"].frame_ = 0;
          }
@@ -541,17 +531,7 @@ void Player::move() {
 // Start contact function
 void Player::start_contact(Element *element) {
    if (element && (element->type() == "Projectile" || element->is_enemy())) {
-      if (health == 30) {
-         hit_markers[0]->state = Hitmarker::DEAD;
-      } else if (health == 20) {
-         hit_markers[1]->state = Hitmarker::DEAD;
-      } else if (health == 10) {
-         hit_markers[2]->state = Hitmarker::DEAD;
-      }
-      health -= 10;
-      if (health == 0) {
-         player_state_ = DEATH;
-      }
+      take_damage(10);
    }
 }
 
@@ -566,13 +546,13 @@ bool Player::load_media() {
    bool success = true;
 
    // Load player idle
-   load_image(textures, this, 62, 104, 5, 1.0f / 4.0f, "idle", "images/player/idle_no_arm.png", success);
+   load_image(textures, this, 59, 104, 12, 1.0f / 20.0f, "idle", "images/player/idle_tap_no_arm.png", success);
 
    // Load player jumping idly
-   load_image(textures, this, 62, 104, 12, 1.0f / 20.0f, "jump", "images/player/idle_jump_no_arm.png", success);
+   load_image(textures, this, 59, 104, 15, 1.0f / 20.0f, "jump", "images/player/idle_jump_no_arm.png", success);
 
    // Load player running
-   load_image(textures, this, 62, 104, 21, 1.0f / 20.0f, "running", "images/player/running_no_arm.png", success);
+   load_image(textures, this, 59, 104, 15, 1.0f / 20.0f, "running", "images/player/running_no_arm.png", success);
 
    // Load jump and run
    load_image(textures, this, 62, 104, 17, 1.0f / 20.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
@@ -587,10 +567,10 @@ bool Player::load_media() {
    load_image(textures, this, 7, 22, 4, 1.0f / 20.0f, "running_arm", "images/player/running_arm.png", success);
 
    // Load pushing animation
-   load_image(textures, this, 62, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);
+   load_image(textures, this, 59, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);
 
    // Load jump and push
-   load_image(textures, this, 62, 104, 8, 1.0f / 20.0f, "jump_push", "images/player/jump_push.png", success);
+   load_image(textures, this, 59, 104, 8, 1.0f / 20.0f, "jump_push", "images/player/jump_push.png", success);
 
    // Load death animation
    load_image(textures, this, 105, 104, 20, 1.0f / 20.0f, "death", "images/player/death.png", success);
@@ -621,6 +601,27 @@ Projectile* Player::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
 
    // Return projectile reference
    return proj;
+}
+
+// Take damage function
+void Player::take_damage(int damage) {
+   // Now check that a certain threshold has been reached
+   float delta = (float) immunity_timer_.getDeltaTime() / 1000.0f;
+   if (delta > immunity_duration_) {
+      // Take damage
+      if (health == 30) {
+         hit_markers[0]->state = Hitmarker::DEAD;
+      } else if (health == 20) {
+         hit_markers[1]->state = Hitmarker::DEAD;
+      } else if (health == 10) {
+         hit_markers[2]->state = Hitmarker::DEAD;
+      }
+      health -= damage;
+      if (health == 0) {
+         player_state_ = DEATH;
+         get_application()->death_timer_.start();
+      }
+   }
 }
 
 // Virtual destructor

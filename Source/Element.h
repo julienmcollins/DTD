@@ -97,6 +97,11 @@ class Element {
          return false;
       }
 
+      // Apply force
+      void apply_force(const b2Vec2 force) {
+         body->ApplyForceToCenter(force, true);
+      }
+
       // Start and end contact
       virtual void start_contact(Element *element = NULL) {}
       virtual void end_contact() {}
@@ -106,6 +111,9 @@ class Element {
 
       // Element destructor
       virtual ~Element();
+   protected:
+      // Flag for various things
+      bool flag_;
    private:
       // X and Y locations
       int x_pos_;

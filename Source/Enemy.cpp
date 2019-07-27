@@ -570,6 +570,12 @@ void Mosquibler::move() {
 
    // In state death
    if (enemy_state_ == DEATH) {
+      if (flag_ && body) {
+         get_application()->world_.DestroyBody(body);
+         body = nullptr;
+         flag_ = false;
+      }
+
       if (textures["death"].frame_ > 10 && is_alive() && start_death_ < 7) {
          start_death_ = 6;
          end_death_ = 10;
@@ -621,6 +627,7 @@ void Mosquibler::start_contact(Element *element) {
       end_death_ = 10;
    } if (element && enemy_state_ == DEATH && element->type() == "Platform") {
       // TODO: play the death part instead
+      flag_ = true;
       start_death_ = 12;
       end_death_ = 26;
    }
@@ -668,6 +675,13 @@ bool Fruig::load_media() {
 void Fruig::move() {
    // Check death state first
    if (enemy_state_ == DEATH) {
+      // Destroy body
+      if (body) {
+         get_application()->world_.DestroyBody(body);
+         body = nullptr;
+      }
+
+      // Set animation
       if (textures["death"].frame_ >= 14) {
          start_death_ = 14;
          end_death_ = 19;

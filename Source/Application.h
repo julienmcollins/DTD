@@ -147,6 +147,9 @@ class Application {
       /********** LEVEL **************/
       Level *level;
 
+      /******* DEATH TIMER ***********/
+      Timer death_timer_;
+
       // Destructrs the application
       ~Application();
    
@@ -158,6 +161,9 @@ class Application {
       // Frame rate capping    
       const int SCREEN_FPS;
       const int SCREEN_TICKS_PER_FRAME;
+
+      // Testing flag
+      int pause;
 
       // FPS timers
       Timer fpsTimer;

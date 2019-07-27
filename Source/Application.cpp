@@ -26,7 +26,7 @@
 
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
-   SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), mainWindow(NULL), 
+   SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), pause(-1), mainWindow(NULL), 
    current_key_states_(NULL), mouseButtonPressed(false), quit(false), 
    countedFrames(0), menu_flag(true),
    app_flag_(MAIN_SCREEN),
@@ -335,7 +335,8 @@ void Application::update() {
    // Game loop
    while(!quit) {
       if (app_flag_ == MAIN_SCREEN) {
-         main_screen();
+         if (pause == -1)
+            main_screen();
       } else if (app_flag_ == PLAYGROUND) {
          playground();
       } else if (app_flag_ == GAMEOVER_SCREEN) {
@@ -481,6 +482,9 @@ void Application::main_screen() {
       if(e.type == SDL_QUIT) {
           quit = true;
       } else if (e.type == SDL_KEYDOWN) {
+         if (e.key.keysym.sym == SDLK_p) {
+            pause *= -1;
+         }
          if (finger_->get_y() == OPTIONS && e.key.keysym.sym == SDLK_UP) {
             finger_->set_y(START);
             finger_->set_x(700);
@@ -548,7 +552,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL14;
+         level_flag_ = LEVEL13;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;

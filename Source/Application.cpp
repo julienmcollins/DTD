@@ -519,6 +519,9 @@ void Application::main_screen() {
       }
    }
 
+   // Process player inputs
+   player->process_input(current_key_states_);
+
    /* ANIMATION FOR TITLE SCREEN */
    // Animate background
    animate(menu_background_.texture.fps, &menu_background_, &menu_background_.texture, 
@@ -647,6 +650,12 @@ void Application::playground() {
 
    // Start cap timer
    capTimer.start();
+      
+   // Calculate and correct fps
+   float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
+   if( avgFPS > 2000000 ) {
+      avgFPS = 0;
+   }
 
    // Get current keyboard states
    current_key_states_ = SDL_GetKeyboardState(NULL);
@@ -660,12 +669,6 @@ void Application::playground() {
       if (level_flag_ == LEVEL16 & e.type == SDL_KEYDOWN) {
          app_flag_ = MAIN_SCREEN;
       }
-   }
-      
-   // Calculate and correct fps
-   float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
-   if( avgFPS > 2000000 ) {
-      avgFPS = 0;
    }
 
    /******** UPDATE THE LEVEL *************/
@@ -694,12 +697,28 @@ void Application::playground() {
 
    // Update player
    if (player->is_alive()) {
+      // Process player inputs
+      player->process_input(current_key_states_);
+
       // Update player
       player->update();
 
       // Render the hit markers
       for (int i = 0; i < player->hit_markers.size(); i++) {
          player->hit_markers[i]->update();
+      }
+
+      // Check for completed level and that player as walked to the edge of the screen
+      if (completed_level_ && player->get_x() >= 1890) {
+         // Destroy the level
+         delete level;
+
+         // Change mode to setup
+         game_flag_ = SETUP;
+
+         // Increment level_flag_
+         int inc = static_cast<int>(level_flag_);
+         level_flag_ = static_cast<LEVELS>(inc + 1);
       }
    } else {
       app_flag_ = GAMEOVER_SCREEN;
@@ -733,19 +752,6 @@ void Application::playground() {
    if (frameTicks < SCREEN_TICKS_PER_FRAME) {
       // Wait remaining time
       SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
-   }
-
-   // Check for completed level and that player as walked to the edge of the screen
-   if (completed_level_ && player->get_x() >= 1890) {
-      // Destroy the level
-      delete level;
-
-      // Change mode to setup
-      game_flag_ = SETUP;
-
-      // Increment level_flag_
-      int inc = static_cast<int>(level_flag_);
-      level_flag_ = static_cast<LEVELS>(inc + 1);
    }
 }
 

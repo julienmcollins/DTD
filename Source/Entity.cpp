@@ -11,14 +11,14 @@
 #include "Application.h"
 #include "Timer.h"
 
-#define BOUNDED(var) (var > -0.001f && var < 0.001f)
+#define BOUNDED(var) (var > -0.0000001f && var < 0.0000001f)
 
 /*************************** ENTITY IMPLEMENTATIONS ******************************/
 
 // Entity constructor which will provide basic establishment for all entities
 Entity::Entity(int x_pos, int y_pos, double height, double width, Application* application) : 
    Element(x_pos, y_pos, height, width, application),
-   has_jumped_(false), health(0), shift_(false) {
+   has_jumped_(0), health(0), shift_(false) {
 }
 
 // Update function for all entities. For now all it does is call move
@@ -68,7 +68,8 @@ Player::Player(Application* application) :
    Entity(960, 412, 104, 37, application), player_state_(STAND),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
-   immunity_duration_(0.5f) {
+   immunity_duration_(0.5f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
+   lock_dir_right(false), lock_dir_up(false) {
 
    // Set entity direction
    entity_direction = RIGHT;
@@ -163,13 +164,73 @@ Player::STATE Player::get_player_state() {
    return player_state_;
 }
 
+// Process keyboard input
+void Player::process_input(const Uint8 *key_state) {   
+   // Set last key pressed
+   if (key != NONE) {
+      last_key_pressed = key;
+   }
+
+   // Set key to none by default
+   key = NONE;
+
+   // Process left key
+   if (key_state[SDL_SCANCODE_LEFT]) {
+      if (!key_state[SDL_SCANCODE_RIGHT]) {
+         key = KEY_LEFT;
+         entity_direction = LEFT;
+         lock_dir_left = true;
+      }
+   } else {
+      lock_dir_left = false;
+   }
+
+   // Process right key
+   if (key_state[SDL_SCANCODE_RIGHT]) {
+      if (!key_state[SDL_SCANCODE_LEFT]) {
+         key = KEY_RIGHT;
+         entity_direction = RIGHT;
+         lock_dir_right = true;
+      }
+   } else {
+      lock_dir_right = false;
+   }
+
+   // Process up key
+   if (key_state[SDL_SCANCODE_UP]) {
+      if (!lock_dir_up) {
+         key = KEY_UP;
+         lock_dir_up = true;
+         //std::cout << "LOCK JUMP\n";
+      }
+   } else {
+      //std::cout << "UNLOCK JUMP\n";
+      lock_dir_up = false;
+   }
+
+   // Process down key
+   if (key_state[SDL_SCANCODE_DOWN]) {
+      key = KEY_DOWN;
+   }
+
+   // Process space key
+   if (key_state[SDL_SCANCODE_SPACE]) {
+      key = KEY_SPACE;
+   }
+}
+
 // Update function
 void Player::update(bool freeze) {
    //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: RUN_AND_JUMP, 5: PUSH)" << std::endl;
    //std::cout << "X = " << body->GetLinearVelocity().x << " Y = " << body->GetLinearVelocity().y << std::endl;
+   //std::cout << "KEY = " << key << " LAST KEY PRESSED = " << last_key_pressed << std::endl;
+
    // Apply artificial force of gravity
    const b2Vec2 sim_grav = {0.0f, SIM_GRAV};
    body->ApplyForceToCenter(sim_grav, true);
+
+   // Process key inputs
+   //process_input(get_application()->e);
 
    // Animate the function
    animate();
@@ -402,8 +463,13 @@ void Player::move() {
       //player_state_ = STOP;
    }
 
+   // Check to see if player on the ground
+   if (BOUNDED(body->GetLinearVelocity().y)) {
+      has_jumped_ = 0;
+   }
+
    // Shooting
-   if (get_application()->current_key_states_[SDL_SCANCODE_SPACE]) {
+   if (key == KEY_SPACE) {
       // Set shooting to true
       shooting = true;
 
@@ -417,9 +483,9 @@ void Player::move() {
    }
 
    // Player running left
-   if (get_application()->current_key_states_[SDL_SCANCODE_LEFT]) {
+   if (key == KEY_LEFT && entity_direction != RIGHT) {
       // Check for flag
-      if (entity_direction == RIGHT) {
+      if (entity_direction == LEFT) {
          for (auto i = textures.begin(); i != textures.end(); i++) {
             i->second.has_flipped_ = true;
             i->second.flip_ = SDL_FLIP_HORIZONTAL;
@@ -432,7 +498,6 @@ void Player::move() {
          b2Vec2 vel = {-4.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
-         has_jumped_ = true;
          b2Vec2 vel = {body->GetLinearVelocity().x, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
          if (body->GetLinearVelocity().x > -4.0f) {
@@ -445,15 +510,12 @@ void Player::move() {
          //player_state_ = RUN;
          in_contact = false;
       }
-            
-      // Set direction
-      entity_direction = LEFT;
    } 
 
    // Deal with basic movement for now
-   if (get_application()->current_key_states_[SDL_SCANCODE_RIGHT]) {
+   if (key == KEY_RIGHT && entity_direction != LEFT) {
       // Check for flag
-      if (entity_direction == LEFT) {
+      if (entity_direction == RIGHT) {
          for (auto i = textures.begin(); i != textures.end(); i++) {
             i->second.has_flipped_ = false;
             i->second.flip_ = SDL_FLIP_NONE;
@@ -466,7 +528,6 @@ void Player::move() {
          b2Vec2 vel = {5.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
-         has_jumped_ = true;
          b2Vec2 vel = {body->GetLinearVelocity().x, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
          if (body->GetLinearVelocity().x < 4.0f) {
@@ -479,14 +540,13 @@ void Player::move() {
          //player_state_ = RUN;
          in_contact = false;
       }
-            
-      // Set direction
-      entity_direction = RIGHT;
    }
    
    // Player jumping
-   if (get_application()->current_key_states_[SDL_SCANCODE_UP]) {
-      if (!has_jumped_) {
+   //std::cout << "KEY = " << key << std::endl;
+   if (key == KEY_UP) {
+      std::cout << "IN JUMP, has_jumped = " << has_jumped_ << std::endl;
+      if (has_jumped_ < 2) {
          // Set state
          if (player_state_ == RUN) {
             //player_state_ = RUN_AND_JUMP;
@@ -503,17 +563,20 @@ void Player::move() {
          body->ApplyLinearImpulse(force, body->GetPosition(), true);
 
          // Set the flags
-         has_jumped_ = true;
+         has_jumped_++;
       } else {
          if (BOUNDED(body->GetLinearVelocity().y)) {
-            has_jumped_ = false;
+            has_jumped_ = 0;
             textures["jump"].reset_frame = 0;
             textures["jump"].frame_ = 0;
          }
       }
+
+      // Reset key...
+      key = NONE;
    } 
    
-   if (get_application()->current_key_states_[SDL_SCANCODE_DOWN]) {
+   if (key == KEY_DOWN) {
      // Need to revisit this
      //b2Vec2 down = {0.0f, -0.2f};
      //body->ApplyLinearImpulse(down, body->GetPosition(), true);
@@ -546,16 +609,16 @@ bool Player::load_media() {
    bool success = true;
 
    // Load player idle
-   load_image(textures, this, 59, 104, 12, 1.0f / 20.0f, "idle", "images/player/idle_tap_no_arm.png", success);
+   load_image(textures, this, 59, 104, 12, 1.0f / 24.0f, "idle", "images/player/idle_tap_no_arm.png", success);
 
    // Load player jumping idly
-   load_image(textures, this, 59, 104, 15, 1.0f / 20.0f, "jump", "images/player/idle_jump_no_arm.png", success);
+   load_image(textures, this, 59, 104, 15, 1.0f / 24.0f, "jump", "images/player/idle_jump_no_arm.png", success);
 
    // Load player running
-   load_image(textures, this, 59, 104, 15, 1.0f / 20.0f, "running", "images/player/running_no_arm.png", success);
+   load_image(textures, this, 59, 104, 15, 1.0f / 30.0f, "running", "images/player/running_no_arm.png", success);
 
    // Load jump and run
-   load_image(textures, this, 62, 104, 17, 1.0f / 20.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
+   load_image(textures, this, 62, 104, 17, 1.0f / 24.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
 
    // Load arm
    load_image(textures, this, 7, 24, 5, 1.0f / 20.0f, "idle_arm", "images/player/idle_arm.png", success);

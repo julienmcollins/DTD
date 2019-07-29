@@ -24,7 +24,7 @@ class Entity : public Element {
         Entity(int x_pos, int y_pos, double height, double width, Application* application);
 
         // Flags
-        bool has_jumped_;
+        int has_jumped_;
 
         // Movement and updating
         virtual void move() = 0;
@@ -129,6 +129,23 @@ class Player : public Entity {
          DEATH
       };
 
+      // Enum for current key
+      enum KEYS {
+         NONE,
+         KEY_LEFT,
+         KEY_RIGHT,
+         KEY_UP,
+         KEY_DOWN,
+         KEY_SPACE
+      };
+      KEYS key;
+      KEYS last_key_pressed;
+
+      // Flag for locking direction
+      bool lock_dir_left;
+      bool lock_dir_right;
+      bool lock_dir_up;
+
       // Shooting flag
       bool shooting;
 
@@ -154,6 +171,7 @@ class Player : public Entity {
       void change_player_state();
 
       // Update function now done in player
+      void process_input(const Uint8 *key_state);
       virtual void update(bool freeze = false);
       virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
       virtual void move();

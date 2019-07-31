@@ -1,0 +1,48 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    ;comment  @@;
+
+
+1.2
+date     2019.07.17.15.08.41;  author p4;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@@
+
+
+1.2
+log
+@@
+text
+@//
+//  main.cpp
+//  Janitor: The Story
+//
+//  Created by Julien Collins on 9/13/17.
+//  Copyright © 2017 The Boys. All rights reserved.
+//
+
+#include <iostream>
+#include <stdio.h>
+#include "Application.h"
+
+int main(int argc, char * argv[]) {
+    // Create Application
+    Application application;
+    
+    // Start up SDL and create window
+    //Load media
+    if (!application.loadMedia()) {
+        printf("Failed to load media!\n");
+    } else {
+        //Apply the image
+        application.update();
+    }
+    
+    return 0;
+}
+@

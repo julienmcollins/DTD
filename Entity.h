@@ -149,6 +149,10 @@ class Player : public Entity {
       // Shooting flag
       bool shooting;
 
+      // Number for random idle anim
+      int rand_idle;
+      Texture *curr_idle_texture;
+
       // Function to get the proper texture based on the state
       virtual Texture *get_texture();
 

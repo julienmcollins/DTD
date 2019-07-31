@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <cmath>
+#include <stdlib.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include <iostream>
@@ -69,7 +70,7 @@ Player::Player(Application* application) :
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
    immunity_duration_(0.5f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
-   lock_dir_right(false), lock_dir_up(false) {
+   lock_dir_right(false), lock_dir_up(false), rand_idle(0) {
 
    // Set entity direction
    entity_direction = RIGHT;
@@ -120,7 +121,6 @@ Player::Player(Application* application) :
       hit_markers.push_back(new Hitmarker(76 * i, 0));
    }
    /************* PLAYER *******************************************/
-
    // Set in contact = false
    in_contact = false;
 
@@ -155,8 +155,16 @@ Texture *Player::get_texture() {
       return &textures["death"];
    }
 
-   // Return idle texture for now
-   return &textures["idle"];
+   // Check which idle is being used and return it
+   if (rand_idle <= 98) {
+      return &textures["tap"];
+   }
+   if (rand_idle == 99) {
+      return &textures["look"];
+   }
+   if (rand_idle == 100) {
+      return &textures["kick"];
+   }
 }
 
 // Get player state
@@ -349,7 +357,32 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
 
    // Choose animation based on what state player is in
    if (player_state_ == STAND) {
-      Element::animate(&textures["idle"]);
+      // Choose a random number if at least one of the animations is complete
+      if (curr_idle_texture->frame_ > curr_idle_texture->max_frame_) {
+         rand_idle = rand() % 100 + 1;
+
+         // Set curr_idle_texture
+         if (rand_idle <= 98) {
+            curr_idle_texture = &textures["tap"];
+         }
+         if (rand_idle == 99) {
+            curr_idle_texture = &textures["look"];
+         }
+         if (rand_idle == 100) {
+            curr_idle_texture = &textures["kick"];
+         }
+      }
+
+      // Choose based on random number
+      if (rand_idle <= 98) {
+         Element::animate(&textures["tap"]);
+      }
+      if (rand_idle == 99) {
+         Element::animate(&textures["look"]);
+      }
+      if (rand_idle == 100) {
+         Element::animate(&textures["kick"]);
+      }
    } else if (player_state_ == RUN && BOUNDED(body->GetLinearVelocity().y)) {
       Element::animate(&textures["running"]);
       Element::animate(&textures["running_arm"]);
@@ -439,7 +472,7 @@ void Player::change_player_state() {
 void Player::move() {
    // Death 
    if (player_state_ == DEATH) {
-      // Add delay
+      // TODO: FIX DEATH CLIPPING THROUGH PLATFORM
       if (!shift_) {
          sub_x(10);
          body->SetLinearVelocity({0.0f, body->GetLinearVelocity().y});
@@ -545,7 +578,6 @@ void Player::move() {
    // Player jumping
    //std::cout << "KEY = " << key << std::endl;
    if (key == KEY_UP) {
-      std::cout << "IN JUMP, has_jumped = " << has_jumped_ << std::endl;
       if (has_jumped_ < 2) {
          // Set state
          if (player_state_ == RUN) {
@@ -608,8 +640,17 @@ bool Player::load_media() {
    // Temp flag
    bool success = true;
 
-   // Load player idle
-   load_image(textures, this, 59, 104, 12, 1.0f / 24.0f, "idle", "images/player/idle_tap_no_arm.png", success);
+   // Load player kick
+   load_image(textures, this, 59, 104, 17, 1.0f / 24.0f, "kick", "images/player/idle_kick_no_arm.png", success);
+
+   // Load player tap
+   load_image(textures, this, 59, 104, 12, 1.0f / 24.0f, "tap", "images/player/idle_tap_no_arm.png", success);
+   
+   // Set current idle texture to tap
+   curr_idle_texture = &textures["tap"];
+
+   // Load look
+   load_image(textures, this, 59, 104, 20, 1.0f / 24.0f, "look", "images/player/idle_look_no_arm.png", success);
 
    // Load player jumping idly
    load_image(textures, this, 59, 104, 15, 1.0f / 24.0f, "jump", "images/player/idle_jump_no_arm.png", success);

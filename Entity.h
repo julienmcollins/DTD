@@ -1,7 +1,7 @@
 #ifndef ENTITY_H_
 #define ENTITY_H_
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <Box2D/Box2D.h>
 #include <string>
 #include <vector>

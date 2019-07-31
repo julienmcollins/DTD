@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <cmath>
 #include <stdlib.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL.h>
+#include <SDL_image.h>
+#include <SDL.h>
 #include <iostream>
 #include <Box2D/Box2D.h>
 

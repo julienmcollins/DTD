@@ -579,23 +579,47 @@ void Player::move() {
    //std::cout << "KEY = " << key << std::endl;
    if (key == KEY_UP) {
       if (has_jumped_ < 2) {
-         // Set state
-         if (player_state_ == RUN) {
-            //player_state_ = RUN_AND_JUMP;
-            textures["running_jump"].reset_frame = 14;
-            textures["running_jump"].stop_frame = 14;
+         if (has_jumped_ == 0) {
+            // Set state
+            if (player_state_ == RUN) {
+               //player_state_ = RUN_AND_JUMP;
+               textures["running_jump"].reset_frame = 14;
+               textures["running_jump"].stop_frame = 14;
+            } else {
+               //player_state_ = JUMP;
+               textures["jump"].reset_frame = textures["jump"].max_frame_;
+               textures["jump"].stop_frame = textures["jump"].max_frame_;
+            }
+
+            // Apply an impulse
+            const b2Vec2 force = {0, 2.8f};
+            body->ApplyLinearImpulse(force, body->GetPosition(), true);
+
+            // Set the flags
+            ++has_jumped_;
          } else {
-            //player_state_ = JUMP;
-            textures["jump"].reset_frame = textures["jump"].max_frame_;
-            textures["jump"].stop_frame = textures["jump"].max_frame_;
+            // Set state
+            if (player_state_ == RUN) {
+               //player_state_ = RUN_AND_JUMP;
+               textures["running_jump"].reset_frame = 14;
+               textures["running_jump"].stop_frame = 14;
+            } else {
+               //player_state_ = JUMP;
+               textures["jump"].reset_frame = textures["jump"].max_frame_;
+               textures["jump"].stop_frame = textures["jump"].max_frame_;
+            }
+
+            // Set y velocity to 0
+            b2Vec2 vel = {body->GetLinearVelocity().x, 0.0f};
+            body->SetLinearVelocity(vel);
+
+            // Apply an impulse
+            const b2Vec2 force = {0, 2.4f};
+            body->ApplyLinearImpulse(force, body->GetPosition(), true);
+
+            // Set the flags
+            ++has_jumped_;
          }
-
-         // Apply an impulse
-         const b2Vec2 force = {0, 3.2f};
-         body->ApplyLinearImpulse(force, body->GetPosition(), true);
-
-         // Set the flags
-         has_jumped_++;
       } else {
          if (BOUNDED(body->GetLinearVelocity().y)) {
             has_jumped_ = 0;

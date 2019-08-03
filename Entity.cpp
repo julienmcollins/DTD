@@ -1,8 +1,7 @@
-#include <stdio.h>
 #include <cmath>
 #include <stdlib.h>
-#include <SDL_image.h>
-#include <SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL.h>
 #include <iostream>
 #include <Box2D/Box2D.h>
 
@@ -100,7 +99,7 @@ Player::Player(Application* application) :
    // TODO: ADD FIXTURES TO THIS AS SENSORS
    left_sensor_ = new Sensor(0.95f, 0.2f, this, CONTACT_LEFT, -0.05f);
    right_sensor_ = new Sensor(0.95f, 0.2f, this, CONTACT_RIGHT, 0.30f);
-   bottom_sensor = new Sensor(0.2f, 0.5f, this, CONTACT_DOWN, 0.0f, 0.5f);
+   bottom_sensor = new Sensor(0.2f, 0.6f, this, CONTACT_DOWN, 0.1f, -0.5f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -299,7 +298,7 @@ void Player::adjust_deltas() {
          arm_delta_shoot_x = -57;
          arm_delta_shoot_y = 39;
       }
-   } else if (player_state_ == RUN && BOUNDED(body->GetLinearVelocity().y)) {
+   } else if (player_state_ == RUN && in_contact_down) {
       if (entity_direction == RIGHT) {
          arm_delta_x = 0;
          arm_delta_y = 43;
@@ -311,7 +310,7 @@ void Player::adjust_deltas() {
          arm_delta_shoot_x = -58;
          arm_delta_shoot_y = 34;
       }
-   } else if (player_state_ == STOP && BOUNDED(body->GetLinearVelocity().y)) {
+   } else if (player_state_ == STOP && in_contact_down) {
       if (entity_direction == RIGHT) {
          arm_delta_x = 2;
          arm_delta_y = 43;
@@ -388,10 +387,10 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
       if (rand_idle == 100) {
          Element::animate(&textures["kick"]);
       }
-   } else if (player_state_ == RUN && BOUNDED(body->GetLinearVelocity().y)) {
+   } else if (player_state_ == RUN && in_contact_down) {
       Element::animate(&textures["running"]);
       Element::animate(&textures["running_arm"]);
-   } else if (player_state_ == STOP && BOUNDED(body->GetLinearVelocity().y)) {
+   } else if (player_state_ == STOP && in_contact_down) {
       Element::animate(&textures["running"], 20);
    } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
       Element::animate(&textures["jump"], textures["jump"].reset_frame, textures["jump"].stop_frame);
@@ -417,9 +416,9 @@ void Player::change_player_state() {
 
    // Special push state
    if (in_contact) {
-      if ((left || right) && (up || !BOUNDED(vel_y))) {
+      if ((left || right) && (up || !in_contact_down)) {
          player_state_ = JUMP_AND_PUSH;
-      } else if (!left && !right && (up || !BOUNDED(vel_y))) {
+      } else if (!left && !right && (up || !in_contact_down)) {
          player_state_ = JUMP;
       } else if (entity_direction == LEFT && left) {
          player_state_ = PUSH;
@@ -450,7 +449,7 @@ void Player::change_player_state() {
    }
 
    // Special fall state, TODO: add falling animation
-   if ((right || left) && BOUNDED(vel_x) && !BOUNDED(vel_y)) {
+   if ((right || left) && BOUNDED(vel_x) && !in_contact_down) {
       // Set state
       player_state_ = JUMP;
 
@@ -459,7 +458,7 @@ void Player::change_player_state() {
    }
 
    // Check for non-zero y-vel
-   if (!BOUNDED(vel_y)) {
+   if (!in_contact_down) {
       // Run and jump or just jump
       if (!BOUNDED(vel_x)) {
          player_state_ = RUN_AND_JUMP;
@@ -494,16 +493,25 @@ void Player::move() {
       return;
    }
 
+   // Check for changing directions on second jump
+   if (key == KEY_RIGHT && prev_entity_dir == LEFT) {    
+      if (has_jumped_ > 0) {
+         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+         body->SetLinearVelocity(vel);
+      }
+   }
+   if (key == KEY_LEFT && prev_entity_dir == RIGHT) {
+      if (has_jumped_ > 0) {
+         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+         body->SetLinearVelocity(vel);
+      }
+   }
+
    // If not running or running and jumping, then set linear velocity to 0
    if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH) {
       b2Vec2 vel = {0, body->GetLinearVelocity().y};
       body->SetLinearVelocity(vel);
       //player_state_ = STOP;
-   }
-
-   // Check to see if player on the ground
-   if (in_contact_down) {
-      has_jumped_ = 0;
    }
 
    // Shooting
@@ -543,9 +551,6 @@ void Player::move() {
             body->ApplyForce(force, body->GetPosition(), true);
          }
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == RIGHT) {
-         // Add a very small impulse
-         //body->ApplyLinearImpulseToCenter({-0.5f, 0.0f}, true);
-         //player_state_ = RUN;
          in_contact = false;
       }
    } 
@@ -573,24 +578,7 @@ void Player::move() {
             body->ApplyForce(force, body->GetPosition(), true);
          }
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == LEFT) {
-         // Add a very small impulse
-         //body->ApplyLinearImpulseToCenter({0.5f, 0.0f}, true);
-         //player_state_ = RUN;
          in_contact = false;
-      }
-   }
-   
-   // Check for changing directions on second jump
-   if (key == KEY_RIGHT && prev_entity_dir == LEFT) {
-      if (has_jumped_ == 1) {
-         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
-         body->SetLinearVelocity(vel);
-      }
-   }
-   if (key == KEY_LEFT && prev_entity_dir == RIGHT) {
-      if (has_jumped_ == 1) {
-         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
-         body->SetLinearVelocity(vel);
       }
    }
 
@@ -631,6 +619,8 @@ void Player::move() {
             b2Vec2 vel = {body->GetLinearVelocity().x, 0.0f};
             body->SetLinearVelocity(vel);
 
+            //std::cout << body->GetLinearVelocity().y << std::endl;
+
             // Apply an impulse
             const b2Vec2 force = {0, 2.4f};
             body->ApplyLinearImpulse(force, body->GetPosition(), true);
@@ -638,16 +628,7 @@ void Player::move() {
             // Set the flags
             ++has_jumped_;
          }
-      } else {
-         if (in_contact_down) {
-            has_jumped_ = 0;
-            textures["jump"].reset_frame = 0;
-            textures["jump"].frame_ = 0;
-         }
       }
-
-      // Reset key...
-      key = NONE;
    } 
    
    if (key == KEY_DOWN) {
@@ -803,6 +784,9 @@ void Sensor::start_contact(Element *element) {
    if (element->type() == "Platform") {
       if (sensor_contact == CONTACT_DOWN) {
          entity_->in_contact_down = true;
+         entity_->has_jumped_ = 0;
+         entity_->textures["jump"].reset_frame = 0;
+         entity_->textures["jump"].frame_ = 0;
       } else {
          entity_->in_contact = true;
       }

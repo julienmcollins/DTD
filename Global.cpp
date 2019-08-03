@@ -8,6 +8,6 @@
 
 #include <stdio.h>
 #include "Global.h"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 SDL_Renderer* renderer;

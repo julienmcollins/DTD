@@ -8,8 +8,8 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <SDL.h>
-#include <SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <cmath>
 #include <Box2D/Box2D.h>
 #include <vector>

@@ -227,7 +227,16 @@ void Player::process_input(const Uint8 *key_state) {
 
    // Process space key
    if (key_state[SDL_SCANCODE_SPACE]) {
-      key = KEY_SPACE;
+      // Set shooting to true
+      shooting = true;
+
+      // Create eraser
+      if (textures["arm_throw"].completed_) {
+         TextureData normal = {12, 21, 3};
+         TextureData hit = {12, 21, 4};
+         create_projectile(38, -12, 41, 1, 10, 0.0f, 0.0f, normal, hit);
+         textures["arm_throw"].completed_ = false;
+      }
    }
 }
 
@@ -512,20 +521,6 @@ void Player::move() {
       b2Vec2 vel = {0, body->GetLinearVelocity().y};
       body->SetLinearVelocity(vel);
       //player_state_ = STOP;
-   }
-
-   // Shooting
-   if (key == KEY_SPACE) {
-      // Set shooting to true
-      shooting = true;
-
-      // Create eraser
-      if (textures["arm_throw"].completed_) {
-         TextureData normal = {12, 21, 3};
-         TextureData hit = {12, 21, 4};
-         create_projectile(38, -12, 41, 1, 10, 0.0f, 0.0f, normal, hit);
-         textures["arm_throw"].completed_ = false;
-      }
    }
 
    // Player running left

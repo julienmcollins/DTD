@@ -98,8 +98,9 @@ Player::Player(Application* application) :
    box.SetAsBox(width, height, center, 0.0f);
 
    // TODO: ADD FIXTURES TO THIS AS SENSORS
-   left_sensor_ = new Sensor(0.95f, 0.2f, this, -0.05f);
-   right_sensor_ = new Sensor(0.95f, 0.2f, this, 0.30f);
+   left_sensor_ = new Sensor(0.95f, 0.2f, this, CONTACT_LEFT, -0.05f);
+   right_sensor_ = new Sensor(0.95f, 0.2f, this, CONTACT_RIGHT, 0.30f);
+   bottom_sensor = new Sensor(0.2f, 0.5f, this, CONTACT_DOWN, 0.0f, 0.5f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -431,7 +432,7 @@ void Player::change_player_state() {
    }
 
    // Special stand state
-   if ((!right && !left) && BOUNDED(vel_x) && BOUNDED(vel_y)) {
+   if ((!right && !left) && BOUNDED(vel_x) && in_contact_down) {
       // Set state to stand
       player_state_ = STAND;
 
@@ -440,7 +441,7 @@ void Player::change_player_state() {
    }
 
    // Special stop state
-   if ((!right && !left) && !BOUNDED(vel_x) && BOUNDED(vel_y) && player_state_ != PUSH) {
+   if ((!right && !left) && !BOUNDED(vel_x) && in_contact_down && player_state_ != PUSH) {
       // Set state
       player_state_ = STOP;
 
@@ -501,7 +502,7 @@ void Player::move() {
    }
 
    // Check to see if player on the ground
-   if (BOUNDED(body->GetLinearVelocity().y)) {
+   if (in_contact_down) {
       has_jumped_ = 0;
    }
 
@@ -638,7 +639,7 @@ void Player::move() {
             ++has_jumped_;
          }
       } else {
-         if (BOUNDED(body->GetLinearVelocity().y)) {
+         if (in_contact_down) {
             has_jumped_ = 0;
             textures["jump"].reset_frame = 0;
             textures["jump"].frame_ = 0;
@@ -698,6 +699,9 @@ bool Player::load_media() {
 
    // Load player running
    load_image(textures, this, 59, 104, 15, 1.0f / 30.0f, "running", "images/player/running_no_arm.png", success);
+
+   // Load double jump
+   load_image(textures, this, 59, 104, 11, 1.0f / 24.0f, "double_jump", "images/player/double_jump.png", success);
 
    // Load jump and run
    load_image(textures, this, 62, 104, 17, 1.0f / 24.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
@@ -778,11 +782,11 @@ Player::~Player() {
 }
 
 /*************** SENSOR CLASS *************************/
-Sensor::Sensor(int height, int width, Player *entity, float center_x) :
-   Element(0, 0, height, width, NULL), entity_(entity) {
+Sensor::Sensor(int height, int width, Player *entity, CONTACT contact_type, float center_x, float center_y) :
+   Element(0, 0, height, width, NULL), sensor_contact(contact_type), entity_(entity) {
 
    // Create box shape
-   box.SetAsBox(width, height, {center_x, 0}, 0.0f);
+   box.SetAsBox(width, height, {center_x, center_y}, 0.0f);
 
    // Create fixture
    fixture_def.shape = &box;
@@ -797,13 +801,21 @@ Sensor::Sensor(int height, int width, Player *entity, float center_x) :
 // Start contact function
 void Sensor::start_contact(Element *element) {
    if (element->type() == "Platform") {
-      entity_->in_contact = true;
+      if (sensor_contact == CONTACT_DOWN) {
+         entity_->in_contact_down = true;
+      } else {
+         entity_->in_contact = true;
+      }
    }
 }
 
 // End contact function
 void Sensor::end_contact() {
-   entity_->in_contact = false;
+   if (sensor_contact == CONTACT_DOWN) {
+      entity_->in_contact_down = false;
+   } else {
+      entity_->in_contact = false;
+   }
 }
 
 ///////////////////////////////////////////////////////

@@ -72,7 +72,7 @@ class Entity : public Element {
 class Sensor : public Element {
    public:
       // Construct the sensor object
-      Sensor(int height, int width, Player *entity, float center_x);
+      Sensor(int height, int width, Player *entity, CONTACT contact_type, float center_x = 0.0f, float center_y = 0.0f);
 
       // Start contact function
       virtual void start_contact(Element *element = NULL);
@@ -82,6 +82,9 @@ class Sensor : public Element {
       virtual std::string type() {
          return "Sensor";
       }
+
+      // Only one contact at a time
+      CONTACT sensor_contact;
    private:
       Player *entity_;
       b2CircleShape circle_;
@@ -217,6 +220,7 @@ class Player : public Entity {
       // Sensor
       Sensor *left_sensor_;
       Sensor *right_sensor_;
+      Sensor *bottom_sensor;
 
       // Immunity timer
       Timer immunity_timer_;

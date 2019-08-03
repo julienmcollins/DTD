@@ -87,6 +87,14 @@ class Element {
          NEUTRAL
       };
 
+      // ENUM for contact type
+      enum CONTACT {
+         CONTACT_LEFT,
+         CONTACT_RIGHT,
+         CONTACT_UP,
+         CONTACT_DOWN
+      };
+
       // Get type of object
       virtual std::string type() {
          return "Element";
@@ -107,7 +115,9 @@ class Element {
       virtual void end_contact() {}
 
       // Contact flag
+      // TODO: change in contact to in contact left and right
       bool in_contact;
+      bool in_contact_down;
 
       // Element destructor
       virtual ~Element();

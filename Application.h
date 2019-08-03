@@ -73,6 +73,7 @@ class Application {
    
       // Update the application
       void update();
+      void update_projectiles();
 
       // The main window of the application
       SDL_Window* mainWindow;

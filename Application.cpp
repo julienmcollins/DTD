@@ -520,7 +520,7 @@ void Application::main_screen() {
    }
 
    // Process player inputs
-   player->process_input(current_key_states_);
+   //player->process_input(current_key_states_);
 
    /* ANIMATION FOR TITLE SCREEN */
    // Animate background
@@ -549,8 +549,9 @@ void Application::main_screen() {
       // Update finger
       finger_->update();
    } else if (menu_screen_ == THIRD) {
-      // Update player for real
+      // Update player for real (and projectiles)
       player->update();
+      update_projectiles();
 
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
@@ -615,6 +616,28 @@ void Application::main_screen() {
    }
 }
 
+// UPDATE PROJECTILES
+void Application::update_projectiles() {
+   // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
+   for (std::vector<Projectile *>::iterator it = projectiles_.begin(); it != projectiles_.end();) {
+      // Check to see if it's still allocated
+      if (*it) {
+         // Check if it's alive or not
+         if (!(*it)->is_alive()) {
+            //std::cout << "IN here" << std::endl;
+            delete (*it);
+            it = projectiles_.erase(it);
+         } else {
+            //std::cout << "NO, in here" << std::endl;
+            (*it)->update();
+            ++it;
+         }
+      } else {
+         it = projectiles_.erase(it);
+      }
+   }
+}
+
 // PLAYGROUND FUNCTION
 void Application::playground() {
    // Setup level
@@ -675,30 +698,14 @@ void Application::playground() {
    level->update();
 
    // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
-   for (std::vector<Projectile *>::iterator it = projectiles_.begin(); it != projectiles_.end();) {
-      // Check to see if it's still allocated
-      if (*it) {
-         // Check if it's alive or not
-         if (!(*it)->is_alive()) {
-            //std::cout << "IN here" << std::endl;
-            delete (*it);
-            it = projectiles_.erase(it);
-         } else {
-            //std::cout << "NO, in here" << std::endl;
-            (*it)->update();
-            ++it;
-         }
-      } else {
-         it = projectiles_.erase(it);
-      }
-   }
+   update_projectiles();
       
    //std::cout << player << std::endl;
 
    // Update player
    if (player->is_alive()) {
       // Process player inputs
-      player->process_input(current_key_states_);
+      //player->process_input(current_key_states_);
 
       // Update player
       player->update();

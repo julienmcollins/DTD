@@ -242,7 +242,7 @@ void Player::update(bool freeze) {
    body->ApplyForceToCenter(sim_grav, true);
 
    // Process key inputs
-   //process_input(get_application()->e);
+   process_input(get_application()->current_key_states_);
 
    // Animate the function
    animate();

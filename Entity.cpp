@@ -19,7 +19,8 @@
 // Entity constructor which will provide basic establishment for all entities
 Entity::Entity(int x_pos, int y_pos, double height, double width, Application* application) : 
    Element(x_pos, y_pos, height, width, application),
-   has_jumped_(0), health(0), shift_(false) {
+   has_jumped_(0), health(0), shift_(false), entity_direction(NEUTRAL),
+   prev_entity_dir(NEUTRAL) {
 }
 
 // Update function for all entities. For now all it does is call move
@@ -173,7 +174,10 @@ Player::STATE Player::get_player_state() {
 }
 
 // Process keyboard input
-void Player::process_input(const Uint8 *key_state) {   
+void Player::process_input(const Uint8 *key_state) {  
+   // Set previous direction
+   prev_entity_dir = entity_direction;
+
    // Set last key pressed
    if (key != NONE) {
       last_key_pressed = key;
@@ -516,7 +520,7 @@ void Player::move() {
    }
 
    // Player running left
-   if (key == KEY_LEFT && entity_direction != RIGHT) {
+   if (key == KEY_LEFT) {
       // Check for flag
       if (entity_direction == LEFT) {
          for (auto i = textures.begin(); i != textures.end(); i++) {
@@ -546,7 +550,7 @@ void Player::move() {
    } 
 
    // Deal with basic movement for now
-   if (key == KEY_RIGHT && entity_direction != LEFT) {
+   if (key == KEY_RIGHT) {
       // Check for flag
       if (entity_direction == RIGHT) {
          for (auto i = textures.begin(); i != textures.end(); i++) {
@@ -575,8 +579,21 @@ void Player::move() {
       }
    }
    
+   // Check for changing directions on second jump
+   if (key == KEY_RIGHT && prev_entity_dir == LEFT) {
+      if (has_jumped_ == 1) {
+         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+         body->SetLinearVelocity(vel);
+      }
+   }
+   if (key == KEY_LEFT && prev_entity_dir == RIGHT) {
+      if (has_jumped_ == 1) {
+         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+         body->SetLinearVelocity(vel);
+      }
+   }
+
    // Player jumping
-   //std::cout << "KEY = " << key << std::endl;
    if (key == KEY_UP) {
       if (has_jumped_ < 2) {
          if (has_jumped_ == 0) {

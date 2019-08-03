@@ -45,6 +45,7 @@ class Entity : public Element {
 
         // Entity direction
         DIRS entity_direction;
+        DIRS prev_entity_dir;
 
         // Get the direction
         int get_dir() const;

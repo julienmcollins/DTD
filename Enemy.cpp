@@ -87,6 +87,11 @@ Texture *Enemy::get_texture() {
    }
 }
 
+bool Enemy::within_bounds() {
+   return get_application()->get_player()->get_y() >= get_y() - get_height() &&
+            get_application()->get_player()->get_y() <= get_y() + get_height();
+}
+
 Enemy::~Enemy() {}
 
 /************** FECREEZ IMPLEMENTATIONS ********************/
@@ -232,11 +237,6 @@ void Fecreez::animate(Texture *tex, int reset, int max) {
    } else if (enemy_state_ == TURN) {
       Element::animate(&textures["turn"]);
    }
-}
-
-bool Fecreez::within_bounds() {
-   return get_application()->get_player()->get_y() >= get_y() - get_height() &&
-            get_application()->get_player()->get_y() <= get_y() + get_height();
 }
 
 Fecreez::~Fecreez() {
@@ -568,7 +568,6 @@ void Mosquibler::move() {
                      (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
       
       // Apply impulse
-      //body->ApplyLinearImpulseToCenter(impulse, true);
       body->SetLinearVelocity(impulse);
    }
 
@@ -730,6 +729,107 @@ void Fruig::start_contact(Element *element) {
          enemy_state_ = DEATH;
          start_death_ = 14;
          end_death_ = 19;
+      }
+   }
+}
+
+///////////////////////////////////////////////////
+/************* FLEET ENEMY ***********************/
+///////////////////////////////////////////////////
+
+// Constructor
+Fleet::Fleet(int x, int y, Application *application) :
+   Enemy(x, y, 46, 53, application) {
+   
+   // Set the hitbox
+   set_hitbox(x, y, true);
+
+   // Set health
+   health = 30;
+
+   // Set initial dir
+   entity_direction = RIGHT;
+
+   // Set enemy state
+   enemy_state_ = IDLE;
+}
+
+// Load media function
+bool Fleet::load_media() {
+   bool success = true;
+
+   // Load idle
+   load_image(textures, this, 63, 87, 16, 1.0f / 20.0f, "idle", "images/enemies/Fleet/idle.png", success);
+
+   // Load death
+   load_image(textures, this, 63, 87, 11, 1.0f / 20.0f, "turn", "images/enemies/Fleet/turn.png", success);
+
+   // Return success
+   return success;
+}
+
+// Move function
+void Fleet::move() {
+   if (alive) {
+      // Check for physical turn
+      if ((get_application()->get_player()->get_x() < get_x() && entity_direction == RIGHT) 
+         || (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT)) {
+         
+         // Set state to turn
+         enemy_state_ = TURN;
+      }
+
+      // Check for turn state
+      if (enemy_state_ == TURN) {
+         // Complete texture
+         if (textures["turn"].frame_ > 10) {
+            if (entity_direction == RIGHT) {
+               textures["turn"].flip_ = SDL_FLIP_NONE;
+               textures["idle"].flip_ = SDL_FLIP_NONE;
+            } else if (entity_direction == LEFT) {
+               textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
+               textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
+            }
+            textures["turn"].completed_ = false;
+            textures["turn"].frame_ = 0;
+            enemy_state_ = IDLE;
+         }
+      }
+
+      // Idle is him just hopping around towards the player
+      if (enemy_state_ == IDLE) {
+         // Check to see if in bounds
+         if (within_bounds()) {
+            // Magnitude of impulse
+            float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
+                                    + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
+
+            // Get a vector towards the player and apply as impulse
+            const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
+                           (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
+            
+            // Apply impulse
+            body->SetLinearVelocity(impulse);
+         }
+      }
+   }
+}
+
+// Animate function
+void Fleet::animate(Texture *tex, int reset, int max, int start) {
+   if (enemy_state_ == IDLE) {
+      Element::animate(&textures["idle"]);
+   } else if (enemy_state_ == TURN) {
+      Element::animate(&textures["turn"]);
+   }
+}
+
+// Start contact function
+void Fleet::start_contact(Element *element) {
+   if (element && (element->type() == "Player" || element->type() == "Projectile")) {
+      health -= 10;
+      if (health <= 0) {
+         alive = false;
       }
    }
 }

@@ -39,6 +39,9 @@ class Enemy : public Entity {
          return true;
       }
 
+      // Within bounds function
+      virtual bool within_bounds();
+
       // Create projectile function
       virtual Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
             bool owner, bool damage, float force_x, float force_y,
@@ -82,9 +85,6 @@ class Fecreez : public Enemy {
 
       // Destructor
       virtual ~Fecreez();
-   private:
-      // within bounds
-      bool within_bounds();
 };
 
 // ROsea prototype
@@ -143,6 +143,9 @@ class Rosea : public Enemy {
          return enemy_state_;
       }
 
+      // Within bounds function
+      virtual bool within_bounds();
+
       // Destructor for rosea
       virtual ~Rosea();
    private:
@@ -159,7 +162,6 @@ class Rosea : public Enemy {
       int arm_state_;
 
       // Check to see if player is within bounds
-      bool within_bounds();
       bool in_bounds_;
 
       // Checks to see if player is on left or right
@@ -218,6 +220,27 @@ class Fruig : public Enemy {
       // Get type
       virtual std::string type() {
          return "Fruig";
+      }
+};
+
+class Fleet : public Enemy {
+   public:
+      // Constructor
+      Fleet(int x, int y, Application *application);
+
+      // Load fleet media
+      virtual bool load_media();
+
+      // Move and animate functions
+      virtual void move();
+      virtual void animate(Texture *tex, int reset, int max, int start);
+
+      // Get contact function
+      virtual void start_contact(Element *element = NULL);
+
+      // Get type
+      virtual std::string type() {
+         return "Fleet";
       }
 };
 

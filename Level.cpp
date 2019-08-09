@@ -53,6 +53,8 @@ Level::Level(string file, Application *application) :
          enemies_.push_back(new Mosquibler(x, y, application));
       } else if (name == "Fruig") {
          enemies_.push_back(new Fruig(x, y, application));
+      } else if (name == "Fleet") {
+         enemies_.push_back(new Fleet(x, y, application));
       }
    }
 

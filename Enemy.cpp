@@ -433,7 +433,9 @@ Texture* Rosea::get_texture() {
 void Rosea::start_contact(Element *element) {
    // Set enemy state to hurt
    if (element && element->type() == "Projectile") {
-      enemy_state_ = HURT;
+      if (enemy_state_ != ATTACK) {
+         enemy_state_ = HURT;
+      }
    }
 }
 

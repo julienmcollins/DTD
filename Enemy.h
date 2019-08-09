@@ -138,6 +138,11 @@ class Rosea : public Enemy {
          enemy_state_ = state;
       }
 
+      // get enemy state
+      STATE get_state() const {
+         return enemy_state_;
+      }
+
       // Destructor for rosea
       virtual ~Rosea();
    private:

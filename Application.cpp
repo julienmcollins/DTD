@@ -556,7 +556,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL12;
+         level_flag_ = LEVEL11;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;

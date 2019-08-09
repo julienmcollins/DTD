@@ -254,7 +254,9 @@ void Arm::start_contact(Element *element) {
    if (element->type() == "Player") {
       rosea_->get_application()->get_player()->take_damage(10);
    } else if (element->type() == "Projectile") {
-      rosea_->set_state(HURT);
+      if (rosea_->get_state() != ATTACK) {
+         rosea_->set_state(HURT);
+      }
    }
 }
 
@@ -441,8 +443,8 @@ void Rosea::start_contact(Element *element) {
 
 // Check to see if player is within bounds
 bool Rosea::within_bounds() {
-   if (get_application()->get_player()->get_x() >= get_x() - 200 
-      && get_application()->get_player()->get_x() <= get_x() + 200) {
+   if (get_application()->get_player()->get_x() >= get_x() - 175 
+      && get_application()->get_player()->get_x() <= get_x() + 300) {
       return true;
    }
    return false;

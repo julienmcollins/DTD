@@ -125,6 +125,7 @@ class Player : public Entity {
          STAND,
          RUN,
          JUMP,
+         DOUBLE_JUMP,
          STOP,
          RUN_AND_JUMP,
          PUSH,
@@ -134,13 +135,14 @@ class Player : public Entity {
       };
 
       // Enum for current key
+      // TODO: MAKE THESE EXCLUSIVE BITS AND OR THEM TOGETHER
       enum KEYS {
-         NONE,
-         KEY_LEFT,
-         KEY_RIGHT,
-         KEY_UP,
-         KEY_DOWN,
-         KEY_SPACE
+         NONE, // = 0x0
+         KEY_LEFT, // = 0x00001
+         KEY_RIGHT, // = 0x00010
+         KEY_UP, // = 0x00100
+         KEY_DOWN, // = 0x01000
+         KEY_SPACE // = 0x10000
       };
       KEYS key;
       KEYS last_key_pressed;
@@ -216,6 +218,9 @@ class Player : public Entity {
       // Previous position of player
       float prev_pos_x_;
       float prev_pos_y_;
+
+      // TODO: USE PRIVATE VEL VARIABLES AND SET BODY VELOCITY ONLY ONCE WITH VALS ADDED ONTO IT
+      b2Vec2 final_force_;
 
       // Sensor
       Sensor *left_sensor_;

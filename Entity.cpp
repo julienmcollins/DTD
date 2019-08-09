@@ -141,6 +141,11 @@ Texture *Player::get_texture() {
       return &textures["jump"];
    }
 
+   // Return double jump
+   if (player_state_ == DOUBLE_JUMP) {
+      return &textures["double_jump"];
+   }
+
    // Return push texture
    if (player_state_ == PUSH) {
       return &textures["push"];
@@ -242,7 +247,7 @@ void Player::process_input(const Uint8 *key_state) {
 
 // Update function
 void Player::update(bool freeze) {
-   //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: STOP, 4: RUN_AND_JUMP, 5: PUSH)" << std::endl;
+   //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: DOUBLE_JUMP, 4: STOP, 5: RUN_AND_JUMP, 6: PUSH)" << std::endl;
    //std::cout << "X = " << body->GetLinearVelocity().x << " Y = " << body->GetLinearVelocity().y << std::endl;
    //std::cout << "KEY = " << key << " LAST KEY PRESSED = " << last_key_pressed << std::endl;
 
@@ -268,7 +273,7 @@ void Player::update(bool freeze) {
    Texture *playertexture = get_texture();
 
    // Render arm if idle, render shooting if not
-   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DEATH) {
+   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DEATH && player_state_ != DOUBLE_JUMP) {
       if (!shooting) {
          if (get_player_state() == 1) {
             textures["running_arm"].render(get_x() + get_width() +
@@ -403,6 +408,8 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&textures["running"], 20);
    } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
       Element::animate(&textures["jump"], textures["jump"].reset_frame, textures["jump"].stop_frame);
+   } else if (player_state_ == DOUBLE_JUMP) {
+      Element::animate(&textures["double_jump"]);
    } else if (player_state_ == PUSH) {
       Element::animate(&textures["push"]);
    } else if (player_state_ == JUMP_AND_PUSH) {
@@ -422,6 +429,12 @@ void Player::change_player_state() {
    bool right = get_application()->current_key_states_[SDL_SCANCODE_RIGHT];
    bool left = get_application()->current_key_states_[SDL_SCANCODE_LEFT];
    bool up = get_application()->current_key_states_[SDL_SCANCODE_UP];
+
+   // Might be a hack, but essentially only let it switch if double jump is completed
+   if (has_jumped_ == 2) {
+      player_state_ = DOUBLE_JUMP;
+      return;
+   }
 
    // Special push state
    if (in_contact) {
@@ -517,7 +530,7 @@ void Player::move() {
    }
 
    // If not running or running and jumping, then set linear velocity to 0
-   if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH) {
+   if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DOUBLE_JUMP) {
       b2Vec2 vel = {0, body->GetLinearVelocity().y};
       body->SetLinearVelocity(vel);
       //player_state_ = STOP;
@@ -538,7 +551,7 @@ void Player::move() {
          //player_state_ = RUN;
          b2Vec2 vel = {-4.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
-      } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
+      } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP || player_state_ == DOUBLE_JUMP) {
          b2Vec2 vel = {body->GetLinearVelocity().x, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
          if (body->GetLinearVelocity().x > -4.0f) {
@@ -565,7 +578,7 @@ void Player::move() {
          //player_state_ = RUN;
          b2Vec2 vel = {5.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
-      } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
+      } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP || player_state_ == DOUBLE_JUMP) {
          b2Vec2 vel = {body->GetLinearVelocity().x, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
          if (body->GetLinearVelocity().x < 4.0f) {

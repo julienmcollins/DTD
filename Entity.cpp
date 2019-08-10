@@ -137,8 +137,13 @@ Texture *Player::get_texture() {
    }
 
    // Return jump texture
-   if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
+   if (player_state_ == JUMP) {
       return &textures["jump"];
+   }
+
+   // Return run and jump texture
+   if (player_state_ == RUN_AND_JUMP) {
+      return &textures["running_jump"];
    }
 
    // Return double jump
@@ -406,10 +411,12 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&textures["running_arm"]);
    } else if (player_state_ == STOP && in_contact_down) {
       Element::animate(&textures["running"], 20);
-   } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP) {
+   } else if (player_state_ == JUMP) {
       Element::animate(&textures["jump"], textures["jump"].reset_frame, textures["jump"].stop_frame);
+   } else if (player_state_ == RUN_AND_JUMP) {
+      Element::animate(&textures["running_jump"], textures["running_jump"].reset_frame, textures["running_jump"].stop_frame);
    } else if (player_state_ == DOUBLE_JUMP) {
-      Element::animate(&textures["double_jump"]);
+      Element::animate(&textures["double_jump"], textures["double_jump"].reset_frame, textures["double_jump"].stop_frame);
    } else if (player_state_ == PUSH) {
       Element::animate(&textures["push"]);
    } else if (player_state_ == JUMP_AND_PUSH) {
@@ -619,8 +626,8 @@ void Player::move() {
                textures["running_jump"].stop_frame = 14;
             } else {
                //player_state_ = JUMP;
-               textures["jump"].reset_frame = textures["jump"].max_frame_;
-               textures["jump"].stop_frame = textures["jump"].max_frame_;
+               textures["double_jump"].reset_frame = textures["double_jump"].max_frame_;
+               textures["double_jump"].stop_frame = textures["double_jump"].max_frame_;
             }
 
             // Set y velocity to 0
@@ -693,7 +700,7 @@ bool Player::load_media() {
    load_image(textures, this, 59, 104, 11, 1.0f / 24.0f, "double_jump", "images/player/double_jump.png", success);
 
    // Load jump and run
-   load_image(textures, this, 62, 104, 17, 1.0f / 24.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
+   load_image(textures, this, 59, 104, 15, 1.0f / 24.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
 
    // Load arm
    load_image(textures, this, 7, 24, 5, 1.0f / 20.0f, "idle_arm", "images/player/idle_arm.png", success);
@@ -795,6 +802,10 @@ void Sensor::start_contact(Element *element) {
          entity_->has_jumped_ = 0;
          entity_->textures["jump"].reset_frame = 0;
          entity_->textures["jump"].frame_ = 0;
+         entity_->textures["double_jump"].reset_frame = 0;
+         entity_->textures["double_jump"].frame_ = 0;
+         entity_->textures["running_jump"].reset_frame = 0;
+         entity_->textures["running_jump"].frame_ = 0;
       } else {
          entity_->in_contact = true;
       }

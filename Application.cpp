@@ -75,12 +75,10 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         world_.SetGravity(gravity_);
         
         // Set up debug drawer
-        /*
         world_.SetDebugDraw(&debugDraw);
         debugDraw.AppendFlags( b2Draw::e_shapeBit );
         debugDraw.AppendFlags( b2Draw::e_aabbBit );
         debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
-        */
 
         // Set contact listener
         world_.SetContactListener(&contact_listener_);
@@ -735,7 +733,6 @@ void Application::playground() {
    }
 
    // DEBUG DRAW
-   /*
    world_.DrawDebugData();
 
    for (int i = 0; i < 7; i++) {
@@ -748,7 +745,6 @@ void Application::playground() {
       SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
       SDL_RenderDrawRect(renderer, &m);
    }
-   */
 
    // Update the screen
    SDL_RenderPresent(renderer);

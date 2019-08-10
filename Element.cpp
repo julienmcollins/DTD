@@ -136,7 +136,7 @@ void Element::load_image(std::unordered_map<std::string, Texture> &textures, Ele
 }
 
 // Setup box2d
-void Element::set_hitbox(int x, int y, bool dynamic, int height, int width) {
+void Element::set_hitbox(int x, int y, bool dynamic, int height, int width, b2Vec2 center) {
    // If dynamic is set, set body to dynamic
    if (dynamic) {
       body_def.type = b2_dynamicBody;
@@ -156,7 +156,7 @@ void Element::set_hitbox(int x, int y, bool dynamic, int height, int width) {
    int t_w = (width == 0) ? get_width() : width;
    float width_box = (t_w / 2.0f) * get_application()->to_meters_ - 0.02f;
    float height_box = (t_h / 2.0f) * get_application()->to_meters_ - 0.02f;
-   box.SetAsBox(width_box, height_box);
+   box.SetAsBox(width_box, height_box, center, 0.0f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -170,7 +170,7 @@ void Element::set_hitbox(int x, int y, bool dynamic, int height, int width) {
 
    // Run the load media function
    if (load_media() == false) {
-      std::cout << "In here! " << type() << std::endl;
+      std::cout << "Quit in here! " << type() << std::endl;
       get_application()->set_quit();
    }
 }

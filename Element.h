@@ -40,7 +40,7 @@ class Element {
       void load_image(std::unordered_map<std::string, Texture> &textures, Element *element, int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success);
 
       // Set hitboxes
-      void set_hitbox(int x, int y, bool dynamic = false, int height = 0, int width = 0);
+      void set_hitbox(int x, int y, bool dynamic = false, int height = 0, int width = 0, b2Vec2 center = {0.0f, 0.0f});
 
       // Check to see if it's still alive
       virtual bool is_alive();

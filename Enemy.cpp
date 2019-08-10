@@ -742,10 +742,10 @@ Fleet::Fleet(int x, int y, Application *application) :
    Enemy(x, y, 46, 53, application) {
    
    // Set the hitbox
-   set_hitbox(x, y, true);
+   set_hitbox(x, y, true, 0, 0, b2Vec2(0.0f, -0.4f));
 
    // Set health
-   health = 30;
+   health = 300;
 
    // Set initial dir
    entity_direction = RIGHT;
@@ -771,11 +771,11 @@ bool Fleet::load_media() {
 // Move function
 void Fleet::move() {
    if (alive) {
-      // Check for physical turn
-      if ((get_application()->get_player()->get_x() < get_x() && entity_direction == RIGHT) 
-         || (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT)) {
-         
-         // Set state to turn
+      if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
+         entity_direction = LEFT;
+         enemy_state_ = TURN;
+      } else if (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT) {
+         entity_direction = RIGHT;
          enemy_state_ = TURN;
       }
 
@@ -784,11 +784,11 @@ void Fleet::move() {
          // Complete texture
          if (textures["turn"].frame_ > 10) {
             if (entity_direction == RIGHT) {
-               textures["turn"].flip_ = SDL_FLIP_NONE;
-               textures["idle"].flip_ = SDL_FLIP_NONE;
-            } else if (entity_direction == LEFT) {
                textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
                textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
+            } else if (entity_direction == LEFT) {
+               textures["turn"].flip_ = SDL_FLIP_NONE;
+               textures["idle"].flip_ = SDL_FLIP_NONE;
             }
             textures["turn"].completed_ = false;
             textures["turn"].frame_ = 0;
@@ -805,11 +805,15 @@ void Fleet::move() {
                                     + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
 
             // Get a vector towards the player and apply as impulse
-            const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
-                           (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
+            const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.70f, 0.0f};
             
             // Apply impulse
             body->SetLinearVelocity(impulse);
+
+            // Stop him when at certain frames
+            if (textures["idle"].frame_ <= 2 || textures["idle"].frame_ >= 11) {
+               body->SetLinearVelocity(b2Vec2_zero);
+            }
          }
       }
    }

@@ -752,6 +752,10 @@ Fleet::Fleet(int x, int y, Application *application) :
 
    // Set enemy state
    enemy_state_ = IDLE;
+
+   // Start with textures flipped
+   textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
+   textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
 }
 
 // Load media function
@@ -804,16 +808,20 @@ void Fleet::move() {
 
          // Get a vector towards the player and apply as impulse
          if (has_collided_) {
-            const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.70f, 5.0f};
+            if (textures["idle"].frame_ > 14) {
+               const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.70f, 10.0f};
 
-            // Apply impulse
-            body->SetLinearVelocity(impulse);
+               // Apply impulse
+               body->SetLinearVelocity(impulse);
+            }
+
+            // Reset textures
+            textures["idle"].reset_frame = 0;
+            textures["idle"].stop_frame = 15;
+         } else {
+            textures["idle"].reset_frame = 8;
+            textures["idle"].stop_frame = 8;
          }
-
-         // Stop him when at certain frames
-         //if (textures["idle"].frame_ <= 1 || textures["idle"].frame_ >= 14) {
-            //body->SetLinearVelocity(b2Vec2(0.0f, body->GetLinearVelocity().y));
-         //}
       }
    }
 }
@@ -821,7 +829,7 @@ void Fleet::move() {
 // Animate function
 void Fleet::animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
-      Element::animate(&textures["idle"]);
+      Element::animate(&textures["idle"], textures["idle"].reset_frame, textures["idle"].stop_frame);
    } else if (enemy_state_ == TURN) {
       Element::animate(&textures["turn"]);
    }

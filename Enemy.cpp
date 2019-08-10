@@ -775,12 +775,14 @@ bool Fleet::load_media() {
 // Move function
 void Fleet::move() {
    if (alive) {
-      if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
-         entity_direction = LEFT;
-         enemy_state_ = TURN;
-      } else if (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT) {
-         entity_direction = RIGHT;
-         enemy_state_ = TURN;
+      if (has_collided_) {
+         if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
+            entity_direction = LEFT;
+            enemy_state_ = TURN;
+         } else if (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT) {
+            entity_direction = RIGHT;
+            enemy_state_ = TURN;
+         }
       }
 
       // Check for turn state
@@ -809,7 +811,7 @@ void Fleet::move() {
          // Get a vector towards the player and apply as impulse
          if (has_collided_) {
             if (textures["idle"].frame_ > 14) {
-               const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 1.10f, 7.0f};
+               const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 1.50f, 7.0f};
 
                // Apply impulse
                body->SetLinearVelocity(impulse);

@@ -669,7 +669,7 @@ void Player::start_contact(Element *element) {
 }
 
 // End contact function (does nothing for now)
-void Player::end_contact() {
+void Player::end_contact(Element *element) {
    return;
 }
 
@@ -813,7 +813,7 @@ void Sensor::start_contact(Element *element) {
 }
 
 // End contact function
-void Sensor::end_contact() {
+void Sensor::end_contact(Element *element) {
    if (sensor_contact == CONTACT_DOWN) {
       entity_->in_contact_down = false;
    } else {

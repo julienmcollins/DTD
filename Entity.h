@@ -76,7 +76,7 @@ class Sensor : public Element {
 
       // Start contact function
       virtual void start_contact(Element *element = NULL);
-      virtual void end_contact();
+      virtual void end_contact(Element *element = NULL);
 
       // Change type
       virtual std::string type() {
@@ -188,7 +188,7 @@ class Player : public Entity {
 
       // Contact listener
       virtual void start_contact(Element *element = NULL);
-      virtual void end_contact();
+      virtual void end_contact(Element *element = NULL);
 
       // Damage function
       void take_damage(int damage);

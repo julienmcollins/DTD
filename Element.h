@@ -112,7 +112,7 @@ class Element {
 
       // Start and end contact
       virtual void start_contact(Element *element = NULL) {}
-      virtual void end_contact() {}
+      virtual void end_contact(Element *element = NULL) {}
 
       // Contact flag
       // TODO: change in contact to in contact left and right

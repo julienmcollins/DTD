@@ -798,23 +798,22 @@ void Fleet::move() {
 
       // Idle is him just hopping around towards the player
       if (enemy_state_ == IDLE) {
-         // Check to see if in bounds
-         if (within_bounds()) {
-            // Magnitude of impulse
-            float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
-                                    + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
+         // Magnitude of impulse
+         float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
+                                 + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
 
-            // Get a vector towards the player and apply as impulse
-            const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.70f, 0.0f};
-            
+         // Get a vector towards the player and apply as impulse
+         if (has_collided_) {
+            const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.70f, 5.0f};
+
             // Apply impulse
             body->SetLinearVelocity(impulse);
-
-            // Stop him when at certain frames
-            if (textures["idle"].frame_ <= 2 || textures["idle"].frame_ >= 11) {
-               body->SetLinearVelocity(b2Vec2_zero);
-            }
          }
+
+         // Stop him when at certain frames
+         //if (textures["idle"].frame_ <= 1 || textures["idle"].frame_ >= 14) {
+            //body->SetLinearVelocity(b2Vec2(0.0f, body->GetLinearVelocity().y));
+         //}
       }
    }
 }
@@ -835,5 +834,14 @@ void Fleet::start_contact(Element *element) {
       if (health <= 0) {
          alive = false;
       }
+   } else if (element && element->type() == "Platform") {
+      has_collided_ = true;
+   }
+}
+
+// End contact function
+void Fleet::end_contact(Element *element) {
+   if (element && element->type() == "Platform") {
+      has_collided_ = false;
    }
 }

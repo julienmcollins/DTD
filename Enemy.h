@@ -237,11 +237,14 @@ class Fleet : public Enemy {
 
       // Get contact function
       virtual void start_contact(Element *element = NULL);
+      virtual void end_contact(Element *element = NULL);
 
       // Get type
       virtual std::string type() {
          return "Fleet";
       }
+   private:
+      bool has_collided_;
 };
 
 #endif

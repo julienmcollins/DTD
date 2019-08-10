@@ -733,6 +733,7 @@ void Application::playground() {
    }
 
    // DEBUG DRAW
+   /*
    world_.DrawDebugData();
 
    for (int i = 0; i < 7; i++) {
@@ -745,6 +746,7 @@ void Application::playground() {
       SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
       SDL_RenderDrawRect(renderer, &m);
    }
+   */
 
    // Update the screen
    SDL_RenderPresent(renderer);

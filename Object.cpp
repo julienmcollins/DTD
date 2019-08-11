@@ -115,6 +115,10 @@ void Projectile::update() {
          textures["normal"].render(get_x(), get_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
       }
    } else if (object_state_ == DEAD) {
+      if (body) {
+         get_application()->world_.DestroyBody(body);
+         body = nullptr;
+      }
       if (textures["explode"].frame_ >= hit_.frames) {
          alive = false;
          return;

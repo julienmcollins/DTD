@@ -292,7 +292,7 @@ void Application::setup_menu() {
 
    // Load and play music
    music = Mix_LoadMUS("sounds/hobbits.mp3");
-   //Mix_PlayMusic(music, 1);
+   Mix_PlayMusic(music, 1);
 
    // Set menu screen to first screen
    menu_screen_ = FIRST;
@@ -554,7 +554,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL16;
+         level_flag_ = LEVEL11;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;

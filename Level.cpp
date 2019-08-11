@@ -80,7 +80,6 @@ Level::Level(string file, Application *application) :
    input >> x >> y;
    application_->get_player()->set_x(x);
    application_->get_player()->set_y(y);
-   std::cout << x << " " << y << std::endl;
 }
 
 // Load media function, private

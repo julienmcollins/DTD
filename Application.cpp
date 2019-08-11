@@ -554,7 +554,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL16;
+         level_flag_ = LEVEL17;
          game_flag_ = SETUP;
          completed_level_ = false;
          delete menu_platform_;
@@ -660,6 +660,9 @@ void Application::playground() {
          level = new Level("images/levels/Forest/board6/format", this);
          game_flag_ = PLAY;
       } else if (level_flag_ == LEVEL17) {
+         level = new Level("images/levels/Forest/board7/format", this);
+         game_flag_ = PLAY;
+      } else if (level_flag_ == LEVEL18) {
          app_flag_ = THANKS;
          return;
       }      
@@ -690,7 +693,7 @@ void Application::playground() {
       if (e.type == SDL_QUIT) {
           quit = true;
       }
-      if (level_flag_ == LEVEL17 & e.type == SDL_KEYDOWN) {
+      if (level_flag_ == LEVEL18 & e.type == SDL_KEYDOWN) {
          app_flag_ = MAIN_SCREEN;
       }
    }

@@ -214,7 +214,10 @@ class Application {
          LEVEL14,
          LEVEL15,
          LEVEL16,
-         LEVEL17
+         LEVEL17,
+         LEVEL18,
+         LEVEL19,
+         LEVEL1BOSS
       };
 
       // Menu Items

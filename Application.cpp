@@ -73,13 +73,13 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         // Set gravity up
         gravity_ = {0.0f, -11.81f};
         world_.SetGravity(gravity_);
-        
+        /*
         // Set up debug drawer
         world_.SetDebugDraw(&debugDraw);
         debugDraw.AppendFlags( b2Draw::e_shapeBit );
         debugDraw.AppendFlags( b2Draw::e_aabbBit );
         debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
-
+        */
         // Set contact listener
         world_.SetContactListener(&contact_listener_);
     }
@@ -292,7 +292,7 @@ void Application::setup_menu() {
 
    // Load and play music
    music = Mix_LoadMUS("sounds/hobbits.mp3");
-   Mix_PlayMusic(music, 1);
+   //Mix_PlayMusic(music, 1);
 
    // Set menu screen to first screen
    menu_screen_ = FIRST;

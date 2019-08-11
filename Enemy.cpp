@@ -810,7 +810,7 @@ void Fleet::move() {
 
          // Get a vector towards the player and apply as impulse
          if (has_collided_) {
-            if (textures["idle"].frame_ > 14) {
+            if (textures["idle"].frame_ > 9) {
                const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 1.50f, 7.0f};
 
                // Apply impulse

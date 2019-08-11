@@ -62,7 +62,9 @@ Level::Level(string file, Application *application) :
    input >> num_of_platforms_;
    for (int i = 0; i < num_of_platforms_; i++) {
       int x, y, height, width;
-      input >> x >> y >> height >> width;
+      input >> width >> height >> x >> y;
+      x += width / 2;
+      y += (height / 2) - 55;
       platforms_.push_back(new Platform(x, y, height, width, application));
       platforms_[i]->setup();
    }

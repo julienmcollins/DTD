@@ -819,10 +819,10 @@ void Fleet::move() {
 
             // Reset textures
             textures["idle"].reset_frame = 0;
-            textures["idle"].stop_frame = 15;
+            textures["idle"].stop_frame = 9;
          } else {
-            textures["idle"].reset_frame = 8;
-            textures["idle"].stop_frame = 8;
+            textures["idle"].reset_frame = 9;
+            textures["idle"].stop_frame = 9;
          }
       }
    }

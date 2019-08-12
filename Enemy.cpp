@@ -763,7 +763,7 @@ bool Fleet::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(textures, this, 63, 87, 16, 1.0f / 20.0f, "idle", "images/enemies/Fleet/idle.png", success);
+   load_image(textures, this, 63, 87, 11, 1.0f / 20.0f, "idle", "images/enemies/Fleet/idle.png", success);
 
    // Load death
    load_image(textures, this, 63, 87, 11, 1.0f / 20.0f, "turn", "images/enemies/Fleet/turn.png", success);
@@ -810,7 +810,7 @@ void Fleet::move() {
 
          // Get a vector towards the player and apply as impulse
          if (has_collided_) {
-            if (textures["idle"].frame_ > 9) {
+            if (textures["idle"].frame_ == 1) {
                const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 1.50f, 7.0f};
 
                // Apply impulse
@@ -819,10 +819,8 @@ void Fleet::move() {
 
             // Reset textures
             textures["idle"].reset_frame = 0;
-            textures["idle"].stop_frame = 9;
          } else {
-            textures["idle"].reset_frame = 9;
-            textures["idle"].stop_frame = 9;
+            textures["idle"].reset_frame = 10;
          }
       }
    }

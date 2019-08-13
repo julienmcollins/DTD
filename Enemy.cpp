@@ -842,7 +842,7 @@ void Fleet::start_contact(Element *element) {
       if (health <= 0) {
          alive = false;
       }
-   } else if (element && element->type() == "Platform") {
+   } else if (element && (element->type() == "Platform" || element->type() == "Fleet")) {
       has_collided_ = true;
    }
 }

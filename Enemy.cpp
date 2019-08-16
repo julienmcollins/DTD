@@ -734,18 +734,41 @@ void Fruig::start_contact(Element *element) {
 }
 
 ///////////////////////////////////////////////////
+/************* FLEET SENSOR **********************/
+///////////////////////////////////////////////////
+
+// Constructor
+FleetSensor::FleetSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y) :
+   Sensor(height, width, entity, contact_type, center_x, center_y, 1.0f) {}
+
+// Contact functions
+void FleetSensor::start_contact(Element *element) {
+   if (element && element->type() == "Platform") {
+      entity_->in_contact = true;
+   }
+}
+void FleetSensor::end_contact(Element *element) {
+   if (element && element->type() == "Platform") {
+      entity_->in_contact = false;
+   }
+}
+
+///////////////////////////////////////////////////
 /************* FLEET ENEMY ***********************/
 ///////////////////////////////////////////////////
 
 // Constructor
 Fleet::Fleet(int x, int y, Application *application) :
-   Enemy(x, y, 46, 53, application) {
+   Enemy(x, y, 25, 49, application) {
    
-   // Set the hitbox
-   set_hitbox(x, y, true, 0, 0, b2Vec2(0.0f, -0.4f));
+   // Set the hitbox (28 x 12)
+   set_hitbox(x, y, true, 0, 0, b2Vec2(0.0f, -0.08f));
+
+   // Create new sensor
+   fleet_sensor_ = new FleetSensor(0.07f, 0.07f, this, CONTACT_DOWN, 0.0f, -0.65f);
 
    // Set health
-   health = 300;
+   health = 20;
 
    // Set initial dir
    entity_direction = RIGHT;
@@ -765,8 +788,11 @@ bool Fleet::load_media() {
    // Load idle
    load_image(textures, this, 63, 87, 11, 1.0f / 20.0f, "idle", "images/enemies/Fleet/idle.png", success);
 
-   // Load death
+   // Load turn
    load_image(textures, this, 63, 87, 11, 1.0f / 20.0f, "turn", "images/enemies/Fleet/turn.png", success);
+
+   // Load death
+   load_image(textures, this, 63, 87, 18, 1.0f / 20.0f, "death", "images/enemies/Fleet/death.png", success);
 
    // Return success
    return success;
@@ -775,7 +801,7 @@ bool Fleet::load_media() {
 // Move function
 void Fleet::move() {
    if (alive) {
-      if (has_collided_) {
+      if (in_contact) {
          if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
             entity_direction = LEFT;
             enemy_state_ = TURN;
@@ -809,7 +835,7 @@ void Fleet::move() {
                                  + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
 
          // Get a vector towards the player and apply as impulse
-         if (has_collided_) {
+         if (in_contact) {
             if (textures["idle"].frame_ == 1) {
                const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 1.50f, 7.0f};
 
@@ -823,6 +849,9 @@ void Fleet::move() {
             textures["idle"].reset_frame = 10;
          }
       }
+   } else {
+      // Set enemy state to death
+      enemy_state_ = DEATH;
    }
 }
 
@@ -832,6 +861,8 @@ void Fleet::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&textures["idle"], textures["idle"].reset_frame, textures["idle"].stop_frame);
    } else if (enemy_state_ == TURN) {
       Element::animate(&textures["turn"]);
+   } else if (enemy_state_ == DEATH) {
+      Element::animate(&textures["death"], textures["death"].max_frame_);
    }
 }
 
@@ -842,14 +873,5 @@ void Fleet::start_contact(Element *element) {
       if (health <= 0) {
          alive = false;
       }
-   } else if (element && (element->type() == "Platform" || element->type() == "Fleet")) {
-      has_collided_ = true;
-   }
-}
-
-// End contact function
-void Fleet::end_contact(Element *element) {
-   if (element && element->type() == "Platform") {
-      has_collided_ = false;
    }
 }

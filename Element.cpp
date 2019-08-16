@@ -1,4 +1,5 @@
 #include "Element.h"
+#include "Entity.h"
 #include "Application.h"
 #include "Timer.h"
 
@@ -136,7 +137,7 @@ void Element::load_image(std::unordered_map<std::string, Texture> &textures, Ele
 }
 
 // Setup box2d
-void Element::set_hitbox(int x, int y, bool dynamic, int height, int width, b2Vec2 center) {
+void Element::set_hitbox(int x, int y, bool dynamic, int height, int width, b2Vec2 center, b2Shape **shapes, int num_of_shapes) {
    // If dynamic is set, set body to dynamic
    if (dynamic) {
       body_def.type = b2_dynamicBody;
@@ -164,6 +165,14 @@ void Element::set_hitbox(int x, int y, bool dynamic, int height, int width, b2Ve
    fixture_def.friction = 1.8f;
    fixture_def.userData = this;
    body->CreateFixture(&fixture_def);
+
+   // If there are more shapes to add, do it
+   if (shapes) {
+      for (int i = 0; i < num_of_shapes; i++) {
+         fixture_def.shape = shapes[i];
+         body->CreateFixture(&fixture_def);
+      }
+   }
 
    // Set user data so it can react
    body->SetUserData(this);
@@ -287,4 +296,21 @@ Element::~Element() {
    for (auto i = textures.begin(); i != textures.end(); i++) {
       i->second.free();
    }
+}
+
+/*************** SENSOR CLASS *************************/
+Sensor::Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y, float density) :
+   Element(0, 0, height, width, NULL), sensor_contact(contact_type), entity_(entity) {
+
+   // Create box shape
+   box.SetAsBox(width, height, {center_x, center_y}, 0.0f);
+
+   // Create fixture
+   fixture_def.shape = &box;
+   fixture_def.density = density;
+   //fixture_def.isSensor = true;
+   fixture_def.userData = this;
+
+   // Attach fixture
+   entity->body->CreateFixture(&fixture_def);
 }

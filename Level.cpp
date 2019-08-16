@@ -151,6 +151,8 @@ void Level::update() {
       }
    }
 
+   // TODO: Keep track of projectiles
+
    // Render the background
    background_.draw();
 

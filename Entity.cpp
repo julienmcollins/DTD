@@ -60,8 +60,40 @@ Projectile* Entity::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
 // Destructor
 Entity::~Entity() {}
 
-/******************** PLAYER IMPLEMENTATIONS ***************************/
+/////////////////////////////////////////////////////////////////////////
+////////////////////// PLAYER SENSOR ////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+PlayerSensor::PlayerSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y) :
+   Sensor(height, width, entity, contact_type, center_x, center_y) {}
 
+// Start contact function
+void PlayerSensor::start_contact(Element *element) {
+   if (element->type() == "Platform") {
+      if (sensor_contact == CONTACT_DOWN) {
+         entity_->in_contact_down = true;
+         entity_->has_jumped_ = 0;
+         entity_->textures["jump"].reset_frame = 0;
+         entity_->textures["jump"].frame_ = 0;
+         entity_->textures["double_jump"].reset_frame = 0;
+         entity_->textures["double_jump"].frame_ = 0;
+         entity_->textures["running_jump"].reset_frame = 0;
+         entity_->textures["running_jump"].frame_ = 0;
+      } else {
+         entity_->in_contact = true;
+      }
+   }
+}
+
+// End contact function
+void PlayerSensor::end_contact(Element *element) {
+   if (sensor_contact == CONTACT_DOWN) {
+      entity_->in_contact_down = false;
+   } else {
+      entity_->in_contact = false;
+   }
+}
+
+/******************** PLAYER IMPLEMENTATIONS ***************************/
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
    // The new sprite is going to be 37 wide (the character itself)
@@ -97,9 +129,9 @@ Player::Player(Application* application) :
    box.SetAsBox(width, height, center, 0.0f);
 
    // TODO: ADD FIXTURES TO THIS AS SENSORS
-   left_sensor_ = new Sensor(0.95f, 0.2f, this, CONTACT_LEFT, -0.05f);
-   right_sensor_ = new Sensor(0.95f, 0.2f, this, CONTACT_RIGHT, 0.30f);
-   bottom_sensor = new Sensor(0.2f, 0.6f, this, CONTACT_DOWN, 0.1f, -0.5f);
+   left_sensor_ = new PlayerSensor(0.0f, 0.0f, this, CONTACT_LEFT, -0.05f);
+   right_sensor_ = new PlayerSensor(0.0f, 0.0f, this, CONTACT_RIGHT, 0.30f);
+   bottom_sensor = new PlayerSensor(0.0f, 0.0f, this, CONTACT_DOWN, 0.1f, -0.5f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -112,7 +144,7 @@ Player::Player(Application* application) :
    body->SetUserData(this);
 
    // Set health. TODO: set health in a better way
-   health = 300;
+   health = 30;
 
    // TEMPORARY SOLUTION
    textures["arm_throw"].completed_ = true;
@@ -437,12 +469,6 @@ void Player::change_player_state() {
    bool left = get_application()->current_key_states_[SDL_SCANCODE_LEFT];
    bool up = get_application()->current_key_states_[SDL_SCANCODE_UP];
 
-   // Might be a hack, but essentially only let it switch if double jump is completed
-   if (has_jumped_ == 2) {
-      player_state_ = DOUBLE_JUMP;
-      return;
-   }
-
    // Special push state
    if (in_contact) {
       if ((left || right) && (up || !in_contact_down)) {
@@ -456,6 +482,12 @@ void Player::change_player_state() {
       } else {
          player_state_ = STAND;
       }
+      return;
+   }
+
+   // Might be a hack, but essentially only let it switch if double jump is completed
+   if (has_jumped_ == 2) {
+      player_state_ = DOUBLE_JUMP;
       return;
    }
 
@@ -774,50 +806,6 @@ Player::~Player() {
    // Delete hit markers
    for (int i = 0; i < hit_markers.size(); i++) {
       delete hit_markers[i];
-   }
-}
-
-/*************** SENSOR CLASS *************************/
-Sensor::Sensor(int height, int width, Player *entity, CONTACT contact_type, float center_x, float center_y) :
-   Element(0, 0, height, width, NULL), sensor_contact(contact_type), entity_(entity) {
-
-   // Create box shape
-   box.SetAsBox(width, height, {center_x, center_y}, 0.0f);
-
-   // Create fixture
-   fixture_def.shape = &box;
-   fixture_def.density = 0.0f;
-   //fixture_def.isSensor = true;
-   fixture_def.userData = this;
-
-   // Attach fixture
-   entity->body->CreateFixture(&fixture_def);
-}
-
-// Start contact function
-void Sensor::start_contact(Element *element) {
-   if (element->type() == "Platform") {
-      if (sensor_contact == CONTACT_DOWN) {
-         entity_->in_contact_down = true;
-         entity_->has_jumped_ = 0;
-         entity_->textures["jump"].reset_frame = 0;
-         entity_->textures["jump"].frame_ = 0;
-         entity_->textures["double_jump"].reset_frame = 0;
-         entity_->textures["double_jump"].frame_ = 0;
-         entity_->textures["running_jump"].reset_frame = 0;
-         entity_->textures["running_jump"].frame_ = 0;
-      } else {
-         entity_->in_contact = true;
-      }
-   }
-}
-
-// End contact function
-void Sensor::end_contact(Element *element) {
-   if (sensor_contact == CONTACT_DOWN) {
-      entity_->in_contact_down = false;
-   } else {
-      entity_->in_contact = false;
    }
 }
 

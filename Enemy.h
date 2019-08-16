@@ -223,6 +223,17 @@ class Fruig : public Enemy {
       }
 };
 
+// Fleet Sensor
+class FleetSensor : public Sensor {
+   public:
+      // Constructor
+      FleetSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y);
+
+      // Contact functions
+      virtual void start_contact(Element *element);
+      virtual void end_contact(Element *element);
+};
+
 class Fleet : public Enemy {
    public:
       // Constructor
@@ -237,14 +248,13 @@ class Fleet : public Enemy {
 
       // Get contact function
       virtual void start_contact(Element *element = NULL);
-      virtual void end_contact(Element *element = NULL);
 
       // Get type
       virtual std::string type() {
          return "Fleet";
       }
    private:
-      bool has_collided_;
+      FleetSensor *fleet_sensor_;
 };
 
 #endif

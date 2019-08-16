@@ -16,7 +16,6 @@
 class Application;
 class Platform;
 class Projectile;
-class Player;
 
 class Entity : public Element {
     public:
@@ -32,13 +31,6 @@ class Entity : public Element {
 
         // Texture and SDL stuff
         virtual Texture *get_texture() = 0;
-
-        /***** Box2D Related Variables *****/
-
-        // Make body public so that it can be accessed
-        b2FixtureDef fixture_def;
-
-        /***********************************/
 
         // Health
         int health;
@@ -68,28 +60,6 @@ class Entity : public Element {
         virtual ~Entity();
 };
 
-// Sensor class
-class Sensor : public Element {
-   public:
-      // Construct the sensor object
-      Sensor(int height, int width, Player *entity, CONTACT contact_type, float center_x = 0.0f, float center_y = 0.0f);
-
-      // Start contact function
-      virtual void start_contact(Element *element = NULL);
-      virtual void end_contact(Element *element = NULL);
-
-      // Change type
-      virtual std::string type() {
-         return "Sensor";
-      }
-
-      // Only one contact at a time
-      CONTACT sensor_contact;
-   private:
-      Player *entity_;
-      b2CircleShape circle_;
-};
-
 // Hit marker
 class Hitmarker : public Element {
    public:
@@ -112,6 +82,17 @@ class Hitmarker : public Element {
 
       // State
       STATE state;
+};
+
+// Player sensor class
+class PlayerSensor : public Sensor {
+   public:
+      // Construct sensor
+      PlayerSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x = 0.0f, float center_y = 0.0f);
+
+      // Start contact function
+      virtual void start_contact(Element *element = NULL);
+      virtual void end_contact(Element *element = NULL);
 };
 
 // Player class

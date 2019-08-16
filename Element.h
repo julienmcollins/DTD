@@ -10,6 +10,7 @@
 
 // Dependencies
 class Application;
+class Entity;
 
 // This will be the base class for all elements in the game, including players and objects
 class Element {
@@ -40,7 +41,7 @@ class Element {
       void load_image(std::unordered_map<std::string, Texture> &textures, Element *element, int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success);
 
       // Set hitboxes
-      void set_hitbox(int x, int y, bool dynamic = false, int height = 0, int width = 0, b2Vec2 center = {0.0f, 0.0f});
+      void set_hitbox(int x, int y, bool dynamic = false, int height = 0, int width = 0, b2Vec2 center = {0.0f, 0.0f}, b2Shape **shapes = nullptr, int num_of_shapes = 0);
 
       // Check to see if it's still alive
       virtual bool is_alive();
@@ -135,6 +136,29 @@ class Element {
 
       // Application pointer
       Application *application_;
+};
+
+
+// Sensor class
+class Sensor : public Element {
+   public:
+      // Construct the sensor object
+      Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x = 0.0f, float center_y = 0.0f, float density = 0.0f);
+
+      // Start contact function
+      virtual void start_contact(Element *element = NULL) {};
+      virtual void end_contact(Element *element = NULL) {};
+
+      // Change type
+      virtual std::string type() {
+         return "Sensor";
+      }
+
+      // Only one contact at a time
+      CONTACT sensor_contact;
+   protected:
+      Entity *entity_;
+      b2CircleShape circle_;
 };
 
 #endif

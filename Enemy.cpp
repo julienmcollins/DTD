@@ -264,31 +264,81 @@ void Arm::start_contact(Element *element) {
 /****************** ROSEA ENEMY *********************/
 //////////////////////////////////////////////////////
 
-Rosea::Rosea(int x, int y, Application *application) :
+Rosea::Rosea(int x, int y, float angle, Application *application) :
    Enemy(x, y, 144, 189, application), 
    arms_still(x - 46, y - 118, 78, 122, application, this),
-   arms_attack(x + 30, y - 230, 387, 168, application, this), 
-   hurt_counter_(0), arm_state_(0), in_bounds_(false),
+   arms_attack(x + 5, y - 230, 387, 122, application, this), 
+   hurt_counter_(0), arm_state_(0), in_bounds_(false), angle_(angle),
    arm_heights_({{0, y - 110}, {1, y - 250}, {2, y - 325}, {3, y - 395}, 
          {4, y - 425}, {5, y - 425}, {6, y - 425}, 
          {7, y - 425}, {8, y - 425}, {9, y - 380}, {10, y - 270}, {11, y - 180}, 
-         {12, y - 135}, {13, y - 110}, {14, y - 110}, {15, y - 110}}) {
+         {12, y - 135}, {13, y - 110}, {14, y - 110}, {15, y - 110}}),
+   arm_widths_({{0, x - 425}, {1, x - 395}, {2, x - 325}, {3, x - 250}, 
+         {4, x - 150}, {5, x - 150}, {6, x - 150}, 
+         {7, x - 150}, {8, x - 150}, {9, x - 180}, {10, x - 270}, {11, x - 380}, 
+         {12, x - 400}, {13, x - 425}, {14, x - 425}, {15, x - 425}}) {
 
-   // Set hitbox for rosea body
-   set_hitbox(x, y);
+   // Special state for 0 angle
+   if (angle == 0.0f) {
+      // Set hitbox for rosea body
+      set_hitbox(x, y);
 
-   // TODO: get separate elements for the arms (ie new elements and set is as dynamic body)
-   //std::cout << "Before: x = " << arms_attack.get_x() << " y = " << arms_attack.get_y() << std::endl;
-   arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y());
-   arms_still.set_hitbox(arms_still.get_x() + 61, arms_still.get_y() + 39);
-   //std::cout << "After: x = " << arms_attack.get_x() << " y = " << arms_attack.get_y() << std::endl;
+      arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y(), angle);
+      arms_still.set_hitbox(arms_still.get_x() + 61, arms_still.get_y() + 39, angle);
 
-   // Set texture location
-   arms_attack.textures["attack"].set_x(arms_attack.get_x());
-   arms_attack.textures["attack"].set_y(arms_attack.get_y());
+      // TODO: get separate elements for the arms (ie new elements and set is as dynamic body)
+      // Set texture location
+      arms_attack.textures["attack"].set_x(arms_attack.get_x());
+      arms_attack.textures["attack"].set_y(arms_attack.get_y());
 
-   // Set initial arm postion
-   arms_attack.set_y(arm_heights_[0]);
+      // Set initial arm postion
+      arms_attack.set_y(arm_heights_[0]);
+   }
+   
+   // Need to change arm position if rotated
+   if (angle == 90.0f) {
+      // Set width and height of main body
+      set_width(144);
+      set_height(189);
+
+      // Set hitbox
+      set_hitbox(x, y);
+
+      // Set arms still height, width, x and y
+      arms_still.set_width(78);
+      arms_still.set_height(122);
+      arms_still.set_y(y - 22);
+      arms_still.set_x(x - 50);
+
+      // Set height and width
+      arms_attack.set_width(387);
+      arms_attack.set_height(122);
+      arms_attack.set_y(y - 57);
+      arms_attack.set_x(x + 230);
+
+      arms_attack.textures["attack"].set_x(arms_attack.get_x());
+      arms_attack.textures["attack"].set_y(arms_attack.get_y());
+
+      arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y());
+      arms_still.set_hitbox(arms_still.get_x() + 61, arms_still.get_y() + 39, angle);
+
+      arms_attack.set_y(y - 30);
+      arms_attack.set_x(arm_widths_[0]);
+   }
+
+   // Set texture angle
+   textures["idle"].angle = angle;
+   textures["hurt"].angle = angle;
+   arms_still.textures["arms_idle"].angle = angle;
+   arms_still.textures["arms_hurt"].angle = angle;
+   arms_attack.textures["attack"].angle = angle;
+
+   // Set texture centers?
+   textures["idle"].center_ = {0, 0};
+   textures["hurt"].center_ = {0, 0};
+   arms_still.textures["arms_idle"].center_ = {0, 0};
+   arms_still.textures["arms_hurt"].center_ = {0, 0};
+   arms_attack.textures["attack"].center_ = {0, 0};
 
    // Set health
    health = 100;
@@ -350,7 +400,11 @@ void Rosea::move() {
    // Check for enemy_state_ hurt
    if (enemy_state_ == HURT) {
       // Set arm height to 0
-      arms_attack.set_y(arm_heights_[0]);
+      if (angle_ == 0.0f) {
+         arms_attack.set_y(arm_heights_[0]);
+      } else {
+         arms_attack.set_x(arm_widths_[0]);
+      }
 
       // Increment hurt counter
       ++hurt_counter_;
@@ -362,12 +416,20 @@ void Rosea::move() {
          arms_still.textures["arms_hurt"].completed_ = false;
       }
    } else if (enemy_state_ == RETREAT) {
-      arms_attack.set_y(arm_heights_[arms_attack.textures["attack"].frame_]);
+      if (angle_ == 0.0f) {
+         arms_attack.set_y(arm_heights_[arms_attack.textures["attack"].frame_]);
+      } else {
+         arms_attack.set_x(arm_widths_[arms_attack.textures["attack"].frame_]);
+      }
       if (arms_attack.textures["attack"].frame_ > 14) {
          enemy_state_ = IDLE;
          arms_attack.textures["attack"].frame_ = 0;
          arms_attack.textures["attack"].completed_ = false;
-         arms_attack.set_y(arm_heights_[14]);
+         if (angle_ == 0.0f) {
+            arms_attack.set_y(arm_heights_[14]);
+         } else {
+            arms_attack.set_x(arm_widths_[14]);
+         }
       }
    }
 
@@ -391,7 +453,11 @@ void Rosea::move() {
                         arms_attack.textures["attack"].frame_ : arm_state_;
 
          // Sets hitbox to position of arm
-         arms_attack.set_y(arm_heights_[temp]);
+         if (angle_ == 0.0f) {
+            arms_attack.set_y(arm_heights_[temp]);
+         } else {
+            arms_attack.set_x(arm_widths_[temp]);
+         }
       } else {
          // Check to make sure enemy is done attacking
          if (in_bounds_) {
@@ -443,9 +509,16 @@ void Rosea::start_contact(Element *element) {
 
 // Check to see if player is within bounds
 bool Rosea::within_bounds() {
-   if (get_application()->get_player()->get_x() >= get_x() - 175 
-      && get_application()->get_player()->get_x() <= get_x() + 300) {
-      return true;
+   if (angle_ == 0.0f) {
+      if (get_application()->get_player()->get_x() >= get_x() - 175 
+         && get_application()->get_player()->get_x() <= get_x() + 300) {
+         return true;
+      }
+   } else {
+      if (get_application()->get_player()->get_y() >= arms_attack.get_y() - 175 
+         && get_application()->get_player()->get_y() <= arms_attack.get_y() + 300) {
+         return true;
+      }
    }
    return false;
 }
@@ -486,7 +559,7 @@ Mosquibler::Mosquibler(int x, int y, Application *application) :
    Enemy(x, y, 89, 109, application) {
 
    // Set hitbox
-   set_hitbox(x, y, true);
+   set_hitbox(x, y, 0.0f, true);
  
    // Set health
    health = 10;
@@ -762,7 +835,7 @@ Fleet::Fleet(int x, int y, Application *application) :
    Enemy(x, y, 25, 49, application) {
    
    // Set the hitbox (28 x 12)
-   set_hitbox(x, y, true, 0, 0, b2Vec2(0.0f, -0.08f));
+   set_hitbox(x, y, 0.0f, true, 0, 0, b2Vec2(0.0f, -0.08f));
 
    // Create new sensor
    fleet_sensor_ = new FleetSensor(0.07f, 0.07f, this, CONTACT_DOWN, 0.0f, -0.65f);

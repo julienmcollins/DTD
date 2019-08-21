@@ -44,11 +44,13 @@ Level::Level(string file, Application *application) :
    for (int i = 0; i < num_of_enemies_; i++) {
       int x, y;
       string name;
-      input >> x >> y >> name;
+      input >> name >> x >> y;
       if (name == "Fecreez") {
          enemies_.push_back(new Fecreez(x, y, application)); 
       } else if (name == "Rosea") {
-         enemies_.push_back(new Rosea(x, y, application));
+         float angle;
+         input >> angle;
+         enemies_.push_back(new Rosea(x, y, angle, application));
       } else if (name == "Mosquibler") {
          enemies_.push_back(new Mosquibler(x, y, application));
       } else if (name == "Fruig") {

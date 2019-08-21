@@ -112,7 +112,7 @@ class Arm : public Enemy {
 class Rosea : public Enemy {
    public:
       // COnstructor for rosea
-      Rosea(int x, int y, Application *application);
+      Rosea(int x, int y, float angle, Application *application);
 
       // Load Rosea media
       virtual bool load_media();
@@ -173,6 +173,10 @@ class Rosea : public Enemy {
 
       // Dictionary linking box to frames
       std::unordered_map<int, int> arm_heights_;
+      std::unordered_map<int, int> arm_widths_;
+
+      // Angle of rosea
+      float angle_;
 };
 
 class Mosquibler : public Enemy {

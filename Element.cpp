@@ -137,7 +137,7 @@ void Element::load_image(std::unordered_map<std::string, Texture> &textures, Ele
 }
 
 // Setup box2d
-void Element::set_hitbox(int x, int y, bool dynamic, int height, int width, b2Vec2 center, b2Shape **shapes, int num_of_shapes) {
+void Element::set_hitbox(int x, int y, float angle, bool dynamic, int height, int width, b2Vec2 center, b2Shape **shapes, int num_of_shapes) {
    // If dynamic is set, set body to dynamic
    if (dynamic) {
       body_def.type = b2_dynamicBody;
@@ -157,7 +157,7 @@ void Element::set_hitbox(int x, int y, bool dynamic, int height, int width, b2Ve
    int t_w = (width == 0) ? get_width() : width;
    float width_box = (t_w / 2.0f) * get_application()->to_meters_ - 0.02f;
    float height_box = (t_h / 2.0f) * get_application()->to_meters_ - 0.02f;
-   box.SetAsBox(width_box, height_box, center, 0.0f);
+   box.SetAsBox(width_box, height_box, center, angle);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -208,14 +208,14 @@ bool Element::is_alive() {
 
 // Render solely based on texture
 void Element::texture_render(Texture *texture) {
-   texture->render(texture->get_x(), texture->get_y(), texture->curr_clip_, 0.0, 
+   texture->render(texture->get_x(), texture->get_y(), texture->curr_clip_, texture->angle, 
          &texture->center_, texture->flip_);
 }
 
 // Render function
 void Element::render(Texture *texture) {
    // Render based on texture
-   texture->render(get_x(), get_y(), texture->curr_clip_, 0.0, &texture->center_, texture->flip_);
+   texture->render(get_x(), get_y(), texture->curr_clip_, texture->angle, &texture->center_, texture->flip_);
 }
 
 // Move function (does nothing)

@@ -12,7 +12,8 @@ void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2C
    poly.y = -vertices[0].y * 100.0f;
    poly.w = (vertices[0].x - vertices[1].x) > 0 ? (vertices[0].x - vertices[1].x) * 100.0f : (vertices[1].x - vertices[0].x) * 100.0f;
    poly.h = (vertices[0].y - vertices[3].y) > 0 ? (vertices[0].y - vertices[3].y) * 100.0f : (vertices[3].y - vertices[0].y) * 100.0f;
-   std::cout << "poly.w = " << poly.w << std::endl;
+   //std::cout << "poly.w = " << poly.w << std::endl;
+   //std::cout << "poly.h = " << poly.h << std::endl;
    application_->r[application_->test++] = poly;
    if (application_->test >= 7) application_->test = 0;
 }

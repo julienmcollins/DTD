@@ -65,6 +65,9 @@ class Texture {
         // Center parameter
         SDL_Point center_;
 
+         // Angle
+         float angle;
+
         // Get image dimensions
         int getWidth() const;
         int getHeight() const;

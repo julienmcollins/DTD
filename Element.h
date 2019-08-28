@@ -118,6 +118,8 @@ class Element {
       // Contact flag
       // TODO: change in contact to in contact left and right
       bool in_contact;
+      bool in_contact_left;
+      bool in_contact_right;
       bool in_contact_down;
 
       // Element destructor

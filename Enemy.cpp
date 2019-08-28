@@ -586,7 +586,7 @@ Mosquibler::Mosquibler(int x, int y, Application *application) :
    Enemy(x, y, 89, 109, application) {
 
    // Set hitbox
-   set_hitbox(x, y, 0.0f, true);
+   set_hitbox(x, y, 0.0f, true, 0, 0, {0.0f, 0.0f}, nullptr, 0, 1.0f, 2);
  
    // Set health
    health = 10;
@@ -729,18 +729,12 @@ void Mosquibler::start_contact(Element *element) {
       start_death_ = 0;
       end_death_ = 10;
    } if (element && enemy_state_ == DEATH) {
-      if (element->type() == "Platform") {
-         flag_ = true;
-         start_death_ = 12;
-         end_death_ = 26;
-      } else if (element->type() == "Mosqueenbler") {
-         // Set group index
-         b2Filter filter;
-         filter.groupIndex = -5;
-         body->GetFixtureList()[0].SetFilterData(filter);
-         start_death_ = 12;
-         end_death_ = 26;
-      }
+      // Set group index
+      b2Filter filter;
+      filter.groupIndex = -5;
+      body->GetFixtureList()->SetFilterData(filter);
+      start_death_ = 12;
+      end_death_ = 26;
    }
 }
 
@@ -872,6 +866,15 @@ Fleet::Fleet(int x, int y, Application *application) :
    // Create new sensor
    fleet_sensor_ = new FleetSensor(0.07f, 0.07f, this, CONTACT_DOWN, 0.0f, -0.65f);
 
+   // Add a filter
+   b2Filter filter;
+   filter.groupIndex = -1;
+   b2Fixture *fixture_list = body->GetFixtureList();
+   while (fixture_list != nullptr) {
+      fixture_list->SetFilterData(filter);
+      fixture_list = fixture_list->GetNext();
+   }
+
    // Set health
    health = 20;
 
@@ -981,6 +984,12 @@ void Fleet::start_contact(Element *element) {
       health -= 10;
       if (health <= 0) {
          enemy_state_ = DEATH;
+         b2Filter filter;
+         filter.groupIndex = -9;
+         b2Fixture *fixture_list = body->GetFixtureList()->GetNext();
+         if (fixture_list) {
+            fixture_list->SetFilterData(filter);
+         }
       }
    }
 }

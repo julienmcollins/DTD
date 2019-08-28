@@ -78,6 +78,10 @@ void PlayerSensor::start_contact(Element *element) {
          entity_->textures["double_jump"].frame_ = 0;
          entity_->textures["running_jump"].reset_frame = 0;
          entity_->textures["running_jump"].frame_ = 0;
+      } else if (sensor_contact == CONTACT_LEFT) {
+         entity_->in_contact_left = true;
+      } else if (sensor_contact == CONTACT_RIGHT) {
+         entity_->in_contact_right = true;
       } else {
          entity_->in_contact = true;
       }
@@ -88,6 +92,10 @@ void PlayerSensor::start_contact(Element *element) {
 void PlayerSensor::end_contact(Element *element) {
    if (sensor_contact == CONTACT_DOWN) {
       entity_->in_contact_down = false;
+   } else if (sensor_contact == CONTACT_LEFT) {
+      entity_->in_contact_left = false;
+   } else if (sensor_contact == CONTACT_RIGHT) {
+      entity_->in_contact_right = false;
    } else {
       entity_->in_contact = false;
    }
@@ -143,10 +151,14 @@ Player::Player(Application* application) :
    // Set user data
    body->SetUserData(this);
 
-   // Set fixture data
+   // Set sensors to non interactive with da enemy
    b2Filter filter;
    filter.groupIndex = -5;
-   body->GetFixtureList()[0].SetFilterData(filter);
+   b2Fixture *fixture_list = body->GetFixtureList();
+   while (fixture_list != nullptr) {
+      fixture_list->SetFilterData(filter);
+      fixture_list = fixture_list->GetNext();
+   }
 
    // Set health. TODO: set health in a better way
    health = 30;
@@ -160,7 +172,8 @@ Player::Player(Application* application) :
    }
    /************* PLAYER *******************************************/
    // Set in contact = false
-   in_contact = false;
+   in_contact_left = false;
+   in_contact_right = false;
 
    // Start the immunity timer
    immunity_timer_.start();
@@ -475,7 +488,7 @@ void Player::change_player_state() {
    bool up = get_application()->current_key_states_[SDL_SCANCODE_UP];
 
    // Special push state
-   if (in_contact) {
+   if (in_contact_left || in_contact_right) {
       if ((left || right) && (up || !in_contact_down)) {
          player_state_ = JUMP_AND_PUSH;
       } else if (!left && !right && (up || !in_contact_down)) {
@@ -582,6 +595,9 @@ void Player::move() {
 
    // Player running left
    if (key == KEY_LEFT) {
+      // TESTING
+      in_contact_right = false;
+
       // Check for flag
       if (entity_direction == LEFT) {
          for (auto i = textures.begin(); i != textures.end(); i++) {
@@ -603,12 +619,15 @@ void Player::move() {
             body->ApplyForce(force, body->GetPosition(), true);
          }
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == RIGHT) {
-         in_contact = false;
+         in_contact_right = false;
       }
    } 
 
    // Deal with basic movement for now
    if (key == KEY_RIGHT) {
+      // TESTING
+      in_contact_left = false;
+      
       // Check for flag
       if (entity_direction == RIGHT) {
          for (auto i = textures.begin(); i != textures.end(); i++) {
@@ -630,7 +649,7 @@ void Player::move() {
             body->ApplyForce(force, body->GetPosition(), true);
          }
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == LEFT) {
-         in_contact = false;
+         in_contact_left = false;
       }
    }
 
@@ -700,7 +719,7 @@ void Player::move() {
 
 // Start contact function
 void Player::start_contact(Element *element) {
-   if (element && (element->type() == "Projectile" || element->is_enemy())) {
+   if (element && (element->type() == "Projectile" || (element->is_enemy()))) {
       take_damage(10);
    }
 }

@@ -41,6 +41,12 @@ void Platform::setup() {
 
    // Set user data
    body->SetUserData(this);
+
+   // Add a filter for the platforms
+   b2Filter filter;
+   filter.groupIndex = -9;
+   b2Fixture *fixture_list = body->GetFixtureList();
+   fixture_list->SetFilterData(filter);
 }
 
 // Virtual destructor
@@ -153,6 +159,11 @@ Eraser::Eraser(int x, int y,
 
    // Load media for some reason
    load_media();
+
+   // Set filter
+   b2Filter filter;
+   filter.groupIndex = -5;
+   body->GetFixtureList()->SetFilterData(filter);
 }
 
 // Adjust start contact function

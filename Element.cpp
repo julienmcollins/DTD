@@ -180,7 +180,7 @@ void Element::set_hitbox(int x, int y, float angle, bool dynamic, int height, in
    // Set filter
    b2Filter filter;
    filter.groupIndex = group;
-   body->GetFixtureList()[0].SetFilterData(filter);
+   body->GetFixtureList()->SetFilterData(filter);
 
    // Run the load media function
    if (load_media() == false) {

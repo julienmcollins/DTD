@@ -21,7 +21,8 @@ using namespace std;
 
 // Constructor will do all of the setting up essentially
 Level::Level(string file, Application *application) : 
-   num_of_enemies_(0), num_of_platforms_(0), background_(0, -55, 1080, 1920, application), 
+   num_of_enemies_(0), num_of_platforms_(0), completed(false), 
+   background_(0, -55, 1080, 1920, application), level_completed_(false), 
    application_(application) {
 
    // Read from a file based on a specific format
@@ -41,6 +42,7 @@ Level::Level(string file, Application *application) :
 
    // Get the enemies and their position
    input >> num_of_enemies_;
+   num_of_kills_ = num_of_enemies_;
    for (int i = 0; i < num_of_enemies_; i++) {
       int x, y;
       string name;
@@ -51,12 +53,15 @@ Level::Level(string file, Application *application) :
          float angle;
          input >> angle;
          enemies_.push_back(new Rosea(x, y, angle, application));
+         num_of_kills_ -= 1;
       } else if (name == "Mosquibler") {
          enemies_.push_back(new Mosquibler(x, y, application));
       } else if (name == "Fruig") {
          enemies_.push_back(new Fruig(x, y, application));
       } else if (name == "Fleet") {
          enemies_.push_back(new Fleet(x, y, application));
+      } else if (name == "Mosqueenbler") {
+         enemies_.push_back(new Mosqueenbler(x, y, application));
       }
    }
 
@@ -136,8 +141,10 @@ bool Level::load_media_() {
 // Update function will render the stuff itself
 void Level::update() {
    // Only complete levels when number of enemies is 0
-   if (num_of_enemies_ == 0) {
-      application_->set_completed_level();
+   if (num_of_kills_ == 0 && !completed) {
+      if (application_->get_player()->get_x() >= 1890) {
+         completed = true;
+      }
    }
 
    // Need to remove the bodies of dead creatures
@@ -147,7 +154,7 @@ void Level::update() {
             application_->world_.DestroyBody((*it)->body);
             (*it)->body = NULL;
             if ((*it)->type() != "Rosea") {
-               application_->set_completed_level();
+               num_of_kills_ -= 1;
             }
          }
       }
@@ -175,6 +182,11 @@ void Level::update() {
          it = enemies_.erase(it);
       }
    }
+}
+
+// Add an enemy to the level
+void Level::add_enemy(Enemy *new_enemy) {
+   enemies_.push_back(new_enemy);
 }
 
 // Level destructor will just delete everything related to the level

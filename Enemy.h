@@ -9,6 +9,7 @@
 #include "Entity.h"
 #include "Texture.h"
 #include "Element.h"
+#include "Timer.h"
 
 class Enemy : public Entity {
    public:
@@ -59,6 +60,10 @@ class Enemy : public Entity {
       int start_death_;
       int end_death_;
 
+      // Anchor x and y
+      int anchor_x;
+      int anchor_y;
+      
       // Projectile they own
       Projectile *proj_;
 };
@@ -259,6 +264,35 @@ class Fleet : public Enemy {
       }
    private:
       FleetSensor *fleet_sensor_;
+};
+
+class Mosqueenbler : public Enemy {
+   public:
+      // Constructor
+      Mosqueenbler(int x, int y, Application *application);
+
+      // Load fleet media
+      virtual bool load_media();
+
+      // Move and animate functions
+      virtual void move();
+      virtual void animate(Texture *tex, int reset, int max, int start);
+
+      // Get contact function
+      //virtual void start_contact(Element *element = NULL);
+
+      // Set is enemy false
+      virtual bool is_enemy() {
+         return false;
+      }
+
+      // Get type
+      virtual std::string type() {
+         return "Mosqueenbler";
+      }
+   private:
+      // Timer for his movement
+      Timer movement_timer_;
 };
 
 #endif

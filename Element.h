@@ -41,7 +41,7 @@ class Element {
       void load_image(std::unordered_map<std::string, Texture> &textures, Element *element, int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success);
 
       // Set hitboxes
-      void set_hitbox(int x, int y, float angle = 0.0f, bool dynamic = false, int height = 0, int width = 0, b2Vec2 center = {0.0f, 0.0f}, b2Shape **shapes = nullptr, int num_of_shapes = 0);
+      void set_hitbox(int x, int y, float angle = 0.0f, bool dynamic = false, int height = 0, int width = 0, b2Vec2 center = {0.0f, 0.0f}, b2Shape **shapes = nullptr, int num_of_shapes = 0, float density = 1.0f, int group = -1);
 
       // Check to see if it's still alive
       virtual bool is_alive();
@@ -49,7 +49,7 @@ class Element {
 
       // Render function
       void texture_render(Texture *texture);
-      void render(Texture *texture);
+      void render(Texture *texture, int x = 0, int y = 0);
 
       // Update function for all elements
       virtual void move();

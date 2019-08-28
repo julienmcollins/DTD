@@ -274,9 +274,13 @@ Rosea::Rosea(int x, int y, float angle, Application *application) :
          {7, y - 425}, {8, y - 425}, {9, y - 380}, {10, y - 270}, {11, y - 180}, 
          {12, y - 135}, {13, y - 110}, {14, y - 110}, {15, y - 110}}),
    arm_widths_({{0, x - 425}, {1, x - 395}, {2, x - 325}, {3, x - 250}, 
-         {4, x - 150}, {5, x - 150}, {6, x - 150}, 
-         {7, x - 150}, {8, x - 150}, {9, x - 180}, {10, x - 270}, {11, x - 380}, 
+         {4, x - 80}, {5, x - 80}, {6, x - 80}, 
+         {7, x - 80}, {8, x - 80}, {9, x - 180}, {10, x - 270}, {11, x - 380}, 
          {12, x - 400}, {13, x - 425}, {14, x - 425}, {15, x - 425}}) {
+
+   // Set anchors
+   anchor_x = x;
+   anchor_y = y;
 
    // Special state for 0 angle
    if (angle == 0.0f) {
@@ -300,45 +304,55 @@ Rosea::Rosea(int x, int y, float angle, Application *application) :
       // Set width and height of main body
       set_width(144);
       set_height(189);
+      //textures["idle"].set_x(x);
+      //textures["idle"].set_y(x);
+      //textures["hurt"].set_x(x);
+      //textures["hurt"].set_y(x);
 
-      // Set hitbox
-      set_hitbox(x, y);
+      // Set hitboxes
+      set_hitbox(x - 72, y + 94);
 
       // Set arms still height, width, x and y
       arms_still.set_width(78);
-      arms_still.set_height(122);
-      arms_still.set_y(y - 22);
-      arms_still.set_x(x - 50);
+      arms_still.set_height(112);
+      arms_still.set_y(y + 50);
+      arms_still.set_x(x + 47);
 
       // Set height and width
       arms_attack.set_width(387);
       arms_attack.set_height(122);
-      arms_attack.set_y(y - 57);
-      arms_attack.set_x(x + 230);
+      arms_attack.set_y(y + 37);
+      arms_attack.set_x(x + 310);
 
       arms_attack.textures["attack"].set_x(arms_attack.get_x());
       arms_attack.textures["attack"].set_y(arms_attack.get_y());
 
+      arms_still.textures["arms_idle"].set_x(arms_still.get_x());
+      arms_still.textures["arms_idle"].set_y(arms_still.get_y());
+
+      arms_still.textures["arms_hurt"].set_x(arms_still.get_x());
+      arms_still.textures["arms_hurt"].set_y(arms_still.get_y());
+
       arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y());
-      arms_still.set_hitbox(arms_still.get_x() + 61, arms_still.get_y() + 39, angle);
+      arms_still.set_hitbox(arms_still.get_x() - 70, arms_still.get_y() + 60, angle);
 
-      arms_attack.set_y(y - 30);
+      arms_attack.set_y(y + 40);
       arms_attack.set_x(arm_widths_[0]);
+      
+      // Set texture angle
+      textures["idle"].angle = angle;
+      textures["hurt"].angle = angle;
+      arms_still.textures["arms_idle"].angle = angle;
+      arms_still.textures["arms_hurt"].angle = angle;
+      arms_attack.textures["attack"].angle = angle;
+
+      // Set texture centers?
+      textures["idle"].center_ = {0, 0};
+      textures["hurt"].center_ = {0, 0};
+      arms_still.textures["arms_idle"].center_ = {0, 0};
+      arms_still.textures["arms_hurt"].center_ = {0, 0};
+      arms_attack.textures["attack"].center_ = {0, 0};
    }
-
-   // Set texture angle
-   textures["idle"].angle = angle;
-   textures["hurt"].angle = angle;
-   arms_still.textures["arms_idle"].angle = angle;
-   arms_still.textures["arms_hurt"].angle = angle;
-   arms_attack.textures["attack"].angle = angle;
-
-   // Set texture centers?
-   textures["idle"].center_ = {0, 0};
-   textures["hurt"].center_ = {0, 0};
-   arms_still.textures["arms_idle"].center_ = {0, 0};
-   arms_still.textures["arms_hurt"].center_ = {0, 0};
-   arms_attack.textures["attack"].center_ = {0, 0};
 
    // Set health
    health = 100;
@@ -384,15 +398,27 @@ void Rosea::update(bool freeze) {
 
    // Render arms
    if (enemy_state_ == IDLE) {
-      arms_still.render(&arms_still.textures["arms_idle"]);
+      if (angle_ == 0.0f) {
+         arms_still.render(&arms_still.textures["arms_idle"]);
+      } else {
+         arms_still.texture_render(&arms_still.textures["arms_idle"]);
+      }
    } else if (enemy_state_ == HURT) {
-      arms_still.render(&arms_still.textures["arms_hurt"]);
+      if (angle_ == 0.0f) {
+         arms_still.render(&arms_still.textures["arms_hurt"]);
+      } else {
+         arms_still.texture_render(&arms_still.textures["arms_hurt"]);
+      }
    } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       arms_attack.texture_render(&arms_attack.textures["attack"]);
    }
 
    // Render enemy
-   render(enemytexture);
+   if (angle_ == 0.0f) {
+      render(enemytexture);
+   } else {
+      render(enemytexture, anchor_x, anchor_y);
+   }
 }
 
 // Rosea move
@@ -515,8 +541,9 @@ bool Rosea::within_bounds() {
          return true;
       }
    } else {
-      if (get_application()->get_player()->get_y() >= arms_attack.get_y() - 175 
-         && get_application()->get_player()->get_y() <= arms_attack.get_y() + 300) {
+      if (get_application()->get_player()->get_y() >= (get_y() - 175) 
+         && get_application()->get_player()->get_y() <= (get_y() + 300)
+         && get_application()->get_player()->get_x() <= (get_x() + 500)) {
          return true;
       }
    }
@@ -568,7 +595,7 @@ Mosquibler::Mosquibler(int x, int y, Application *application) :
    entity_direction = LEFT;
 
    // Set enemy state
-   enemy_state_ = IDLE;  
+   enemy_state_ = IDLE;
 }
 
 // Load media function
@@ -658,7 +685,7 @@ void Mosquibler::move() {
       } 
       
       if (textures["death"].frame_ > 26 && start_death_ >= 12) {
-         alive = false;
+         //alive = false;
          start_death_ = 26;
          end_death_ = 26;
       }
@@ -701,11 +728,19 @@ void Mosquibler::start_contact(Element *element) {
       enemy_state_ = DEATH;
       start_death_ = 0;
       end_death_ = 10;
-   } if (element && enemy_state_ == DEATH && element->type() == "Platform") {
-      // TODO: play the death part instead
-      flag_ = true;
-      start_death_ = 12;
-      end_death_ = 26;
+   } if (element && enemy_state_ == DEATH) {
+      if (element->type() == "Platform") {
+         flag_ = true;
+         start_death_ = 12;
+         end_death_ = 26;
+      } else if (element->type() == "Mosqueenbler") {
+         // Set group index
+         b2Filter filter;
+         filter.groupIndex = -5;
+         body->GetFixtureList()[0].SetFilterData(filter);
+         start_death_ = 12;
+         end_death_ = 26;
+      }
    }
 }
 
@@ -751,11 +786,8 @@ bool Fruig::load_media() {
 void Fruig::move() {
    // Check death state first
    if (enemy_state_ == DEATH) {
-      // Destroy body
-      if (body) {
-         get_application()->world_.DestroyBody(body);
-         body = nullptr;
-      }
+      // Set enemy to dead
+      alive = false;
 
       // Set animation
       if (textures["death"].frame_ >= 14) {
@@ -874,6 +906,13 @@ bool Fleet::load_media() {
 // Move function
 void Fleet::move() {
    if (alive) {
+      if (enemy_state_ == DEATH) {
+         if (in_contact) {
+            std::cout << "IAMDEAD\n";
+            alive = false;
+         }
+      }
+
       if (in_contact) {
          if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
             entity_direction = LEFT;
@@ -922,9 +961,6 @@ void Fleet::move() {
             textures["idle"].reset_frame = 10;
          }
       }
-   } else {
-      // Set enemy state to death
-      enemy_state_ = DEATH;
    }
 }
 
@@ -944,7 +980,62 @@ void Fleet::start_contact(Element *element) {
    if (element && (element->type() == "Player" || element->type() == "Projectile")) {
       health -= 10;
       if (health <= 0) {
-         alive = false;
+         enemy_state_ = DEATH;
       }
+   }
+}
+
+////////////////////////////////////////////////
+/*********** MOSQUEENBLER ENEMY ***************/
+////////////////////////////////////////////////
+
+Mosqueenbler::Mosqueenbler(int x, int y, Application *application) :
+   Enemy(x, y, 134, 246, application) {
+
+   // Set hitbox
+   set_hitbox(x, y, 0.0f, true, 10, 164, {0.0f, 0.62f}, nullptr, 0, 10000.0f, 1);
+
+   // Set entity direction
+   entity_direction = RIGHT;
+
+   // Set state
+   enemy_state_ = IDLE;
+
+   // set anchors
+   anchor_x = x;
+   anchor_y = y;
+
+   // Start the timer
+   movement_timer_.start();
+}
+
+// Load the media
+bool Mosqueenbler::load_media() {
+   bool success = true;
+
+   // Load idle texture
+   load_image(textures, this, 246, 134, 12, 1.0f / 20.0f, "idle", "images/enemies/Mosqueenbler/idle.png", success);
+
+   // Load attack texture
+   load_image(textures, this, 246, 134, 12, 1.0f / 20.0f, "attack", "images/enemies/Mosqueenbler/attack.png", success);
+
+   // Return if success
+   return success;
+}
+
+// Move function
+void Mosqueenbler::move() {
+   if (enemy_state_ == IDLE) {
+      float y = 1 * cos(movement_timer_.getTicks() / 1000.0f) + 0.197f;
+      body->SetLinearVelocity({0.0f, y});
+   }
+}
+
+// Animate function
+void Mosqueenbler::animate(Texture *tex, int reset, int max, int start) {
+   if (enemy_state_ == IDLE) {
+      Element::animate(&textures["idle"]);
+   } else if (enemy_state_ == ATTACK) {
+      Element::animate(&textures["attack"]);
    }
 }

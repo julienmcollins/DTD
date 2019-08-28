@@ -68,7 +68,7 @@ PlayerSensor::PlayerSensor(float height, float width, Entity *entity, CONTACT co
 
 // Start contact function
 void PlayerSensor::start_contact(Element *element) {
-   if (element->type() == "Platform") {
+   if (element->type() == "Platform" || element->type() == "Mosqueenbler") {
       if (sensor_contact == CONTACT_DOWN) {
          entity_->in_contact_down = true;
          entity_->has_jumped_ = 0;
@@ -142,6 +142,11 @@ Player::Player(Application* application) :
 
    // Set user data
    body->SetUserData(this);
+
+   // Set fixture data
+   b2Filter filter;
+   filter.groupIndex = -5;
+   body->GetFixtureList()[0].SetFilterData(filter);
 
    // Set health. TODO: set health in a better way
    health = 30;

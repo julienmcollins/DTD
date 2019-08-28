@@ -58,6 +58,9 @@ class Finger : public Element {
 
       // Finger state
       FINGER_STATE finger_state;
+
+      // Updating flag
+      bool updating;
 };
 
 class Application {
@@ -122,10 +125,25 @@ class Application {
          quit = true;
       }
 
-      // SET COMPLETED LEVEL
-      void set_completed_level() {
-         completed_level_ = true;
-      }
+      // GAME STATE
+      enum GAME_STATE {
+         SETUP,
+         PLAY
+      };
+
+      // Levels
+      enum LEVELS {
+         LEVEL11,
+         LEVEL12,
+         LEVEL13,
+         LEVEL14,
+         LEVEL15,
+         LEVEL16,
+         LEVEL17,
+         LEVEL18,
+         LEVEL19,
+         LEVEL1BOSS
+      };
 
       // Get FPS timer
       Timer* getFPSTimer() {
@@ -150,6 +168,19 @@ class Application {
 
       /******* DEATH TIMER ***********/
       Timer death_timer_;
+
+      // Set game flag
+      void set_game_flag(GAME_STATE new_flag) {
+         game_flag_ = new_flag;
+      }
+
+      // Get and Set level flag
+      LEVELS get_level_flag() {
+         return level_flag_;
+      }
+      void set_level_flag(LEVELS new_level) {
+         level_flag_ = new_level;
+      }
 
       // Destructrs the application
       ~Application();
@@ -206,20 +237,6 @@ class Application {
          PLAYGROUND
       };
 
-      // Levels
-      enum LEVELS {
-         LEVEL11,
-         LEVEL12,
-         LEVEL13,
-         LEVEL14,
-         LEVEL15,
-         LEVEL16,
-         LEVEL17,
-         LEVEL18,
-         LEVEL19,
-         LEVEL1BOSS
-      };
-
       // Menu Items
       enum MENU {
          START = 665,
@@ -237,12 +254,6 @@ class Application {
          FIRST,
          SECOND,
          THIRD
-      };
-
-      // GAME STATE
-      enum GAME_STATE {
-         SETUP,
-         PLAY
       };
 
       // ANIMATE FUNCTION
@@ -273,6 +284,9 @@ class Application {
       Platform *invisible_wall_;
       /***********************/
 
+      // String for background
+      std::string final_background_;
+
       /***** GAMEOVER *********/
       Element gameover_screen_;
       /************************/
@@ -296,7 +310,6 @@ class Application {
       MENU_SCREENS menu_screen_;
       LEVELS level_flag_;
       GAME_STATE game_flag_;
-      bool completed_level_;
 
       // VECTORS (Might be able to combine the two, since the objects update themselves)
       std::vector<Platform *> platforms;

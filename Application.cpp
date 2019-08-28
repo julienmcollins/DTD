@@ -6,7 +6,6 @@
 //  Copyright © 2017 The Boys. All rights reserved.
 //
 
-#include <stdio.h>
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -31,7 +30,6 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    countedFrames(0), menu_flag(true),
    app_flag_(MAIN_SCREEN),
    menu_screen_(FIRST),
-   completed_level_(false),
    game_flag_(SETUP),
    world_(gravity_), to_meters_(0.01f), to_pixels_(100.0f), debugDraw(this), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2), animation_speed_(20.0f), 
@@ -123,8 +121,8 @@ bool Application::loadMedia() {
 
    /************** MAIN MENU STUFF *********************************/
    // Load title screen
-   if (!menu_background_.texture.loadFromFile("images/miscealaneous/titlescreen.png")) {
-      printf("Failed to load titlescreen.png\n");
+   /*if (!menu_background_.texture.loadFromFile("images/miscealaneous/forestscreen.png")) {
+      printf("Failed to load forestscreen.png\n");
       success = false;
    } else {
       // Allocate enough room
@@ -141,7 +139,12 @@ bool Application::loadMedia() {
 
       // Set curr clip
       menu_background_.texture.curr_clip_ = &temp[0];
-   }
+   }*/
+   // Load forest
+   menu_background_.load_image(menu_background_.textures, &menu_background_, 1920, 1080, 3, 1.0f / 4.0f, "forest", "images/miscealaneous/forestscreen.png", success);
+
+   // Load cloud
+   menu_background_.load_image(menu_background_.textures, &menu_background_, 1920, 1080, 3, 1.0f / 4.0f, "cloud", "images/miscealaneous/cloudscreen.png", success);
 
    // Load title
    if (!menu_title_.texture.loadFromFile("images/miscealaneous/title.png")) {
@@ -275,8 +278,8 @@ void Application::setup_menu() {
    invisible_wall_->setup();
 
    // Setup menu background
-   menu_background_.texture.fps = 1.0f / 4.0f;
-   menu_background_.texture.max_frame_ = 2;
+   //menu_background_.texture.fps = 1.0f / 4.0f;
+   //menu_background_.texture.max_frame_ = 2;
 
    // Setup menu title
    menu_title_.texture.fps = 1.0f / 4.0f;
@@ -482,37 +485,38 @@ void Application::main_screen() {
       } else if (e.type == SDL_KEYDOWN) {
          if (e.key.keysym.sym == SDLK_p) {
             pause *= -1;
-         }
-         if (finger_->get_y() == OPTIONS && e.key.keysym.sym == SDLK_UP) {
-            finger_->set_y(START);
-            finger_->set_x(700);
-         } else if (finger_->get_y() == EGGS && e.key.keysym.sym == SDLK_UP) {
-            finger_->set_y(OPTIONS);
-            finger_->set_x(650);
-         } else if (finger_->get_y() == START && e.key.keysym.sym == SDLK_DOWN) {
-            finger_->set_y(OPTIONS);
-            finger_->set_x(650);
-         } else if (finger_->get_y() == OPTIONS && e.key.keysym.sym == SDLK_DOWN) {
-            finger_->set_y(EGGS);
-            finger_->set_x(720);
-         } else if (finger_->get_y() == WORLD2 && e.key.keysym.sym == SDLK_UP) {
-            finger_->set_y(WORLD1);
-         } else if (finger_->get_y() == WORLD3 && e.key.keysym.sym == SDLK_UP) {
-            finger_->set_y(WORLD2);
-         } else if (finger_->get_y() == WORLD4 && e.key.keysym.sym == SDLK_UP) {
-            finger_->set_y(WORLD3);
-         } else if (finger_->get_y() == WORLD5 && e.key.keysym.sym == SDLK_UP) {
-            finger_->set_y(WORLD4);
-         } else if (finger_->get_y() == WORLD1 && e.key.keysym.sym == SDLK_DOWN) {
-            finger_->set_y(WORLD2);
-         } else if (finger_->get_y() == WORLD2 && e.key.keysym.sym == SDLK_DOWN) {
-            finger_->set_y(WORLD3);
-         } else if (finger_->get_y() == WORLD3 && e.key.keysym.sym == SDLK_DOWN) {
-            finger_->set_y(WORLD4);
-         } else if (finger_->get_y() == WORLD4 && e.key.keysym.sym == SDLK_DOWN) {
-            finger_->set_y(WORLD5);
-         } else if (e.key.keysym.sym == SDLK_RETURN) {
-            finger_->finger_state = Finger::POINT;
+         } if (finger_ && finger_->updating) {
+            if (finger_->get_y() == OPTIONS && e.key.keysym.sym == SDLK_UP) {
+               finger_->set_y(START);
+               finger_->set_x(700);
+            } else if (finger_->get_y() == EGGS && e.key.keysym.sym == SDLK_UP) {
+               finger_->set_y(OPTIONS);
+               finger_->set_x(650);
+            } else if (finger_->get_y() == START && e.key.keysym.sym == SDLK_DOWN) {
+               finger_->set_y(OPTIONS);
+               finger_->set_x(650);
+            } else if (finger_->get_y() == OPTIONS && e.key.keysym.sym == SDLK_DOWN) {
+               finger_->set_y(EGGS);
+               finger_->set_x(720);
+            } else if (finger_->get_y() == WORLD2 && e.key.keysym.sym == SDLK_UP) {
+               finger_->set_y(WORLD1);
+            } else if (finger_->get_y() == WORLD3 && e.key.keysym.sym == SDLK_UP) {
+               finger_->set_y(WORLD2);
+            } else if (finger_->get_y() == WORLD4 && e.key.keysym.sym == SDLK_UP) {
+               finger_->set_y(WORLD3);
+            } else if (finger_->get_y() == WORLD5 && e.key.keysym.sym == SDLK_UP) {
+               finger_->set_y(WORLD4);
+            } else if (finger_->get_y() == WORLD1 && e.key.keysym.sym == SDLK_DOWN) {
+               finger_->set_y(WORLD2);
+            } else if (finger_->get_y() == WORLD2 && e.key.keysym.sym == SDLK_DOWN) {
+               finger_->set_y(WORLD3);
+            } else if (finger_->get_y() == WORLD3 && e.key.keysym.sym == SDLK_DOWN) {
+               finger_->set_y(WORLD4);
+            } else if (finger_->get_y() == WORLD4 && e.key.keysym.sym == SDLK_DOWN) {
+               finger_->set_y(WORLD5);
+            } else if (e.key.keysym.sym == SDLK_RETURN) {
+               finger_->finger_state = Finger::POINT;
+            }
          }
       }
    }
@@ -522,8 +526,15 @@ void Application::main_screen() {
 
    /* ANIMATION FOR TITLE SCREEN */
    // Animate background
-   animate(menu_background_.texture.fps, &menu_background_, &menu_background_.texture, 
-         menu_background_.texture.fps_timer, menu_background_.texture.last_frame);
+   if (finger_) {
+      if (finger_->get_y() == START || finger_->get_y() == WORLD1) {
+         animate(menu_background_.textures["forest"].fps, &menu_background_, &menu_background_.textures["forest"], 
+            menu_background_.textures["forest"].fps_timer, menu_background_.textures["forest"].last_frame);
+      } else if (finger_->get_y() == WORLD2) {
+         animate(menu_background_.textures["cloud"].fps, &menu_background_, &menu_background_.textures["cloud"], 
+            menu_background_.textures["cloud"].fps_timer, menu_background_.textures["cloud"].last_frame);
+      }
+   }
 
    // Animate menu items
    if (menu_screen_ == FIRST) {
@@ -547,6 +558,7 @@ void Application::main_screen() {
       // Update finger
       finger_->update();
    } else if (menu_screen_ == THIRD) {
+      // Animate final background
       // Update player for real (and projectiles)
       player->update();
       update_projectiles();
@@ -554,12 +566,15 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL17;
+         level_flag_ = LEVEL18;
          game_flag_ = SETUP;
-         completed_level_ = false;
          delete menu_platform_;
          delete invisible_wall_;
          //Mix_FreeMusic(music);
+                  
+         // Delete finger_
+         delete finger_;
+         finger_ = nullptr;
       }
    }
 
@@ -568,7 +583,7 @@ void Application::main_screen() {
          menu_title_.texture.fps_timer, menu_title_.texture.last_frame);
 
    // Check enter key state
-   if (finger_->finger_state == Finger::POINT) {
+   if (finger_ && finger_->finger_state == Finger::POINT) {
       if (finger_->get_y() == START) {
          if (finger_->textures["point"].completed_) {
             menu_screen_ = SECOND;
@@ -579,7 +594,11 @@ void Application::main_screen() {
          }
       } else if (finger_->get_y() == WORLD1) {
          if (finger_->textures["point"].completed_) {
+            // Set to final menu screen
             menu_screen_ = THIRD;
+
+            // Tell finger not to update
+            finger_->updating = false;
          }
       }
    }
@@ -663,9 +682,12 @@ void Application::playground() {
          level = new Level("images/levels/Forest/board7/format", this);
          game_flag_ = PLAY;
       } else if (level_flag_ == LEVEL18) {
+         level = new Level("images/levels/Forest/board8/format", this);
+         game_flag_ = PLAY;
+      } else if (level_flag_ == LEVEL19) {
          app_flag_ = THANKS;
          return;
-      }      
+      }
    }
 
    // Clear screen as the first things that's done?
@@ -693,7 +715,7 @@ void Application::playground() {
       if (e.type == SDL_QUIT) {
           quit = true;
       }
-      if (level_flag_ == LEVEL18 & e.type == SDL_KEYDOWN) {
+      if (level_flag_ == LEVEL19 & e.type == SDL_KEYDOWN) {
          app_flag_ = MAIN_SCREEN;
       }
    }
@@ -720,9 +742,10 @@ void Application::playground() {
       }
 
       // Check for completed level and that player as walked to the edge of the screen
-      if (completed_level_ && player->get_x() >= 1890) {
+      if (level->completed) {
          // Destroy the level
          delete level;
+         level = nullptr;
 
          // Change mode to setup
          game_flag_ = SETUP;
@@ -735,6 +758,7 @@ void Application::playground() {
       app_flag_ = GAMEOVER_SCREEN;
       delete player;
       delete level;
+      level = nullptr;
       menu_flag = true;
    }
 
@@ -802,12 +826,12 @@ Application::~Application() {
    capTimer.stop();
 
    // Free menu textures
-   finger_->textures["shake"].free();
-   finger_->textures["point"].free();
-   menu_background_.texture.free();
-   menu_title_.texture.free();
-   menu_items_.texture.free();
-   gameover_screen_.texture.free();
+   //finger_->textures["shake"].free();
+   //finger_->textures["point"].free();
+   //menu_background_.texture.free();
+   //menu_title_.texture.free();
+   //menu_items_.texture.free();
+   //gameover_screen_.texture.free();
 
    // Delete platforms
    /*
@@ -830,7 +854,9 @@ Application::~Application() {
 /********** FINGER ***************/
 
 // Constructor
-Finger::Finger(Application *application) : Element(700, 665, 67, 124, application), finger_state(SHAKE) {
+Finger::Finger(Application *application) : 
+   Element(700, 665, 67, 124, application), finger_state(SHAKE),
+   updating(true) {
    // Setup finger
    textures["shake"].fps = 1.0f / 20.0f;
    textures["point"].fps = 1.0f / 20.0f;

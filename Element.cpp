@@ -137,7 +137,7 @@ void Element::load_image(std::unordered_map<std::string, Texture> &textures, Ele
 }
 
 // Setup box2d
-void Element::set_hitbox(int x, int y, float angle, bool dynamic, int height, int width, b2Vec2 center, b2Shape **shapes, int num_of_shapes) {
+void Element::set_hitbox(int x, int y, float angle, bool dynamic, int height, int width, b2Vec2 center, b2Shape **shapes, int num_of_shapes, float density, int group) {
    // If dynamic is set, set body to dynamic
    if (dynamic) {
       body_def.type = b2_dynamicBody;
@@ -161,7 +161,7 @@ void Element::set_hitbox(int x, int y, float angle, bool dynamic, int height, in
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
-   fixture_def.density = 1.0f;
+   fixture_def.density = density;
    fixture_def.friction = 1.8f;
    fixture_def.userData = this;
    body->CreateFixture(&fixture_def);
@@ -176,6 +176,11 @@ void Element::set_hitbox(int x, int y, float angle, bool dynamic, int height, in
 
    // Set user data so it can react
    body->SetUserData(this);
+
+   // Set filter
+   b2Filter filter;
+   filter.groupIndex = group;
+   body->GetFixtureList()[0].SetFilterData(filter);
 
    // Run the load media function
    if (load_media() == false) {
@@ -213,9 +218,11 @@ void Element::texture_render(Texture *texture) {
 }
 
 // Render function
-void Element::render(Texture *texture) {
+void Element::render(Texture *texture, int x, int y) {
    // Render based on texture
-   texture->render(get_x(), get_y(), texture->curr_clip_, texture->angle, &texture->center_, texture->flip_);
+   int t_x = x == 0 ? get_x() : x;
+   int t_y = y == 0 ? get_y() : y;
+   texture->render(t_x, t_y, texture->curr_clip_, texture->angle, &texture->center_, texture->flip_);
 }
 
 // Move function (does nothing)
@@ -290,12 +297,16 @@ Application *Element::get_application() {
 Element::~Element() {
    if (body) {
       application_->world_.DestroyBody(body);
+      body = nullptr;
    }
 
    // Free textures
    for (auto i = textures.begin(); i != textures.end(); i++) {
       i->second.free();
    }
+
+   // Free texture
+   texture.free();
 }
 
 /*************** SENSOR CLASS *************************/

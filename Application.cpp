@@ -48,10 +48,10 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         SDL_DisplayMode DM;
         SDL_GetCurrentDisplayMode(0, &DM);
         SCREEN_WIDTH = DM.w;
-        SCREEN_HEIGHT = DM.h - 55;
+        SCREEN_HEIGHT = DM.h;
         
         // Creates window
-        mainWindow = SDL_CreateWindow("Doodle 'Till Death", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        mainWindow = SDL_CreateWindow("Doodle 'Till Death", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN);
         
         if (mainWindow == NULL) {
             printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -71,13 +71,11 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         // Set gravity up
         gravity_ = {0.0f, -11.81f};
         world_.SetGravity(gravity_);
-        /*
         // Set up debug drawer
         world_.SetDebugDraw(&debugDraw);
         debugDraw.AppendFlags( b2Draw::e_shapeBit );
         debugDraw.AppendFlags( b2Draw::e_aabbBit );
         debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
-        */
         // Set contact listener
         world_.SetContactListener(&contact_listener_);
     }
@@ -120,26 +118,6 @@ bool Application::loadMedia() {
    bool success = true;
 
    /************** MAIN MENU STUFF *********************************/
-   // Load title screen
-   /*if (!menu_background_.texture.loadFromFile("images/miscealaneous/forestscreen.png")) {
-      printf("Failed to load forestscreen.png\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      menu_background_.texture.clips_ = new SDL_Rect[3];
-      SDL_Rect *temp = menu_background_.texture.clips_;
-
-      // Calculate sprite locations
-      for (int i = 0; i < 3; i++) {
-         temp[i].x = i * 1920;
-         temp[i].y = 0;
-         temp[i].w = 1920;
-         temp[i].h = 1080;
-      }
-
-      // Set curr clip
-      menu_background_.texture.curr_clip_ = &temp[0];
-   }*/
    // Load forest
    menu_background_.load_image(menu_background_.textures, &menu_background_, 1920, 1080, 3, 1.0f / 4.0f, "forest", "images/miscealaneous/forestscreen.png", success);
 
@@ -295,7 +273,7 @@ void Application::setup_menu() {
 
    // Load and play music
    music = Mix_LoadMUS("sounds/hobbits.mp3");
-   Mix_PlayMusic(music, 1);
+   //Mix_PlayMusic(music, 1);
 
    // Set menu screen to first screen
    menu_screen_ = FIRST;
@@ -605,7 +583,6 @@ void Application::main_screen() {
 
    // Render ruler
    //ruler_.render(&ruler_.texture);
-   /*
    // DEBUG DRAW
    world_.DrawDebugData();
 
@@ -619,7 +596,6 @@ void Application::main_screen() {
       SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
       SDL_RenderDrawRect(renderer, &m);
    }
-   */
 
    // Update the screen
    SDL_RenderPresent(renderer);

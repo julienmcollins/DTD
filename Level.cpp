@@ -22,7 +22,7 @@ using namespace std;
 // Constructor will do all of the setting up essentially
 Level::Level(string file, Application *application) : 
    num_of_enemies_(0), num_of_platforms_(0), completed(false), 
-   background_(0, -55, 1080, 1920, application), level_completed_(false), 
+   background_(0, 0, 1080, 1920, application), level_completed_(false), 
    application_(application) {
 
    // Read from a file based on a specific format
@@ -47,6 +47,7 @@ Level::Level(string file, Application *application) :
       int x, y;
       string name;
       input >> name >> x >> y;
+      y += 55;
       if (name == "Fecreez") {
          enemies_.push_back(new Fecreez(x, y, application)); 
       } else if (name == "Rosea") {
@@ -71,7 +72,7 @@ Level::Level(string file, Application *application) :
       int x, y, height, width;
       input >> width >> height >> x >> y;
       x += width / 2;
-      y += (height / 2) - 55;
+      y += (height / 2);
       platforms_.push_back(new Platform(x, y, height, width, application));
       platforms_[i]->setup();
    }
@@ -116,7 +117,7 @@ bool Level::load_media_() {
 
       // Set background location
       background_.texture.set_x(0);
-      background_.texture.set_y(-55);
+      background_.texture.set_y(0);
 
       // Set fps and stuff
       background_.texture.fps = 1.0f / 3.0f;
@@ -131,7 +132,7 @@ bool Level::load_media_() {
    } else {
       // Set platforms location
       platform_texture_.set_x(0);
-      platform_texture_.set_y(-55);
+      platform_texture_.set_y(0);
    }
 
    // Return success
@@ -166,7 +167,7 @@ void Level::update() {
    background_.draw();
 
    // Render the platforms
-   platform_texture_.render(0, -55);
+   platform_texture_.render(0, 0);
 
    // Render platforms
    for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {

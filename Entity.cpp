@@ -139,7 +139,7 @@ Player::Player(Application* application) :
    // TODO: ADD FIXTURES TO THIS AS SENSORS
    left_sensor_ = new PlayerSensor(0.0f, 0.0f, this, CONTACT_LEFT, -0.05f);
    right_sensor_ = new PlayerSensor(0.0f, 0.0f, this, CONTACT_RIGHT, 0.30f);
-   bottom_sensor = new PlayerSensor(0.0f, 0.0f, this, CONTACT_DOWN, 0.1f, -0.5f);
+   bottom_sensor = new PlayerSensor(0.0f, 0.1f, this, CONTACT_DOWN, 0.1f, -0.5f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -305,6 +305,7 @@ void Player::update(bool freeze) {
    //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: DOUBLE_JUMP, 4: STOP, 5: RUN_AND_JUMP, 6: PUSH)" << std::endl;
    //std::cout << "X = " << body->GetLinearVelocity().x << " Y = " << body->GetLinearVelocity().y << std::endl;
    //std::cout << "KEY = " << key << " LAST KEY PRESSED = " << last_key_pressed << std::endl;
+   //std::cout << in_contact_down << std::endl;
 
    // Apply artificial force of gravity
    const b2Vec2 sim_grav = {0.0f, SIM_GRAV};

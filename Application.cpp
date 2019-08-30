@@ -596,7 +596,7 @@ void Application::main_screen() {
       SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
       SDL_RenderDrawRect(renderer, &m);
    }
-
+  
    // Update the screen
    SDL_RenderPresent(renderer);
    ++countedFrames;
@@ -738,7 +738,6 @@ void Application::playground() {
       menu_flag = true;
    }
 
-   /*
    // DEBUG DRAW
    world_.DrawDebugData();
 
@@ -752,7 +751,6 @@ void Application::playground() {
       SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
       SDL_RenderDrawRect(renderer, &m);
    }
-   */
 
    // Update the screen
    SDL_RenderPresent(renderer);
@@ -800,21 +798,6 @@ Application::~Application() {
    // Stop fps timer
    fpsTimer.stop();
    capTimer.stop();
-
-   // Free menu textures
-   //finger_->textures["shake"].free();
-   //finger_->textures["point"].free();
-   //menu_background_.texture.free();
-   //menu_title_.texture.free();
-   //menu_items_.texture.free();
-   //gameover_screen_.texture.free();
-
-   // Delete platforms
-   /*
-   if (!lv3_flag) {
-      destroy_lv3();
-   }
-   */
 
    //Destroy window
    SDL_DestroyRenderer(renderer);

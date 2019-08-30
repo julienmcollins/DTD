@@ -137,9 +137,9 @@ Player::Player(Application* application) :
    box.SetAsBox(width, height, center, 0.0f);
 
    // TODO: ADD FIXTURES TO THIS AS SENSORS
-   left_sensor_ = new PlayerSensor(0.0f, 0.0f, this, CONTACT_LEFT, -0.05f);
-   right_sensor_ = new PlayerSensor(0.0f, 0.0f, this, CONTACT_RIGHT, 0.30f);
-   bottom_sensor = new PlayerSensor(0.0f, 0.1f, this, CONTACT_DOWN, 0.1f, -0.5f);
+   left_sensor_ = new PlayerSensor(0.4f, 0.0f, this, CONTACT_LEFT, -0.05f);
+   right_sensor_ = new PlayerSensor(0.4f, 0.0f, this, CONTACT_RIGHT, 0.30f);
+   bottom_sensor = new PlayerSensor(0.0f, 0.15f, this, CONTACT_DOWN, 0.125f, -0.5f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -479,6 +479,8 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
 
 // Change player state
 void Player::change_player_state() {
+   // TODO: Ask shane for an on the edge of a platform sprite sheet which is tested
+   // by seeing if the main body is in contact with the platform but the feet sensors arent.
    // Velocities
    float vel_x = body->GetLinearVelocity().x;
    float vel_y = body->GetLinearVelocity().y;

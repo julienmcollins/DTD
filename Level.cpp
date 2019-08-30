@@ -77,6 +77,13 @@ Level::Level(string file, Application *application) :
       platforms_[i]->setup();
    }
 
+   // Add invisible walls
+   platforms_.push_back(new Platform(-10, 540, 1080, 10, application));
+   platforms_.back()->setup();
+   platforms_.push_back(new Platform(1930, 540, 1080, 10, application));
+   platforms_.back()->setup();
+   num_of_platforms_ += 2;
+
    // Now, load the media and quit if false
    if (load_media_() == false) {
       cerr << "Failed to load level media" << endl;
@@ -143,6 +150,12 @@ bool Level::load_media_() {
 void Level::update() {
    // Only complete levels when number of enemies is 0
    if (num_of_kills_ == 0 && !completed) {
+      // Delete the right wall
+      if (platforms_.back()) {
+         delete platforms_.back();
+         platforms_.back() = nullptr;
+      }
+
       if (application_->get_player()->get_x() >= 1890) {
          completed = true;
       }
@@ -171,7 +184,9 @@ void Level::update() {
 
    // Render platforms
    for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {
-      (*it)->update();
+      if (*it) {
+         (*it)->update();
+      }
    }
 
    // Render enemies

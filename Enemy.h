@@ -40,6 +40,9 @@ class Enemy : public Entity {
          return true;
       }
 
+      // Get the enemy state
+      STATE get_enemy_state() const;
+
       // Within bounds function
       virtual bool within_bounds();
 

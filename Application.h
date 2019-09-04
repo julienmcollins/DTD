@@ -132,17 +132,17 @@ class Application {
       };
 
       // Levels
-      enum LEVELS {
-         LEVEL11,
-         LEVEL12,
-         LEVEL13,
-         LEVEL14,
-         LEVEL15,
-         LEVEL16,
-         LEVEL17,
-         LEVEL18,
-         LEVEL19,
-         LEVEL1BOSS
+      enum FOREST {
+         FOREST1 = 1,
+         FOREST2 = 2,
+         FOREST3 = 3,
+         FOREST4 = 4,
+         FOREST5 = 5,
+         FOREST6 = 6,
+         FOREST7 = 7,
+         FOREST8 = 8,
+         FOREST9 = 9,
+         FORESTBOSS = 10
       };
 
       // Get FPS timer
@@ -175,10 +175,10 @@ class Application {
       }
 
       // Get and Set level flag
-      LEVELS get_level_flag() {
+      FOREST get_level_flag() {
          return level_flag_;
       }
-      void set_level_flag(LEVELS new_level) {
+      void set_level_flag(FOREST new_level) {
          level_flag_ = new_level;
       }
 
@@ -308,7 +308,7 @@ class Application {
       // GAME FLAG
       APP_STATE app_flag_;
       MENU_SCREENS menu_screen_;
-      LEVELS level_flag_;
+      FOREST level_flag_;
       GAME_STATE game_flag_;
 
       // VECTORS (Might be able to combine the two, since the objects update themselves)

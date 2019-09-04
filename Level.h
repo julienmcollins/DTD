@@ -12,6 +12,7 @@
 #include "Texture.h"
 #include "Entity.h"
 #include "Object.h"
+#include "Application.h"
 
 // Prototype
 class Application;
@@ -21,7 +22,7 @@ class Enemy;
 class Level {
    public:
       // Level constructor takes in a string to the template file
-      Level(std::string file, Application *application);
+      Level(std::string file, Application::FOREST level, Application *application);
 
       // Update function for the level, which will render all of its assets
       void update();
@@ -36,6 +37,9 @@ class Level {
       bool is_level_completed() {
          return level_completed_;
       }
+
+      // Level number
+      Application::FOREST level;
 
       // Destructor will delete the entire level
       ~Level();

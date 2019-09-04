@@ -5,7 +5,7 @@
 
 // Constructor for element
 Element::Element(int x, int y, int height, int width, Application *application) :
-   alive(true), texture(this, 0), body(NULL), flag_(false) {
+   alive(true), texture(this, 0), body(NULL), flag_(false), element_shape() {
 
    // Set application
    application_ = application;
@@ -137,9 +137,9 @@ void Element::load_image(std::unordered_map<std::string, Texture> &textures, Ele
 }
 
 // Setup box2d
-void Element::set_hitbox(int x, int y, float angle, bool dynamic, int height, int width, b2Vec2 center, b2Shape **shapes, int num_of_shapes, float density, int group) {
+void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
    // If dynamic is set, set body to dynamic
-   if (dynamic) {
+   if (element_shape.dynamic) {
       body_def.type = b2_dynamicBody;
    }
 
@@ -153,26 +153,26 @@ void Element::set_hitbox(int x, int y, float angle, bool dynamic, int height, in
    body = get_application()->world_.CreateBody(&body_def);
 
    // Set box dimensions
-   int t_h = (height == 0) ? get_height() : height;
-   int t_w = (width == 0) ? get_width() : width;
-   float width_box = (t_w / 2.0f) * get_application()->to_meters_ - 0.02f;
-   float height_box = (t_h / 2.0f) * get_application()->to_meters_ - 0.02f;
-   box.SetAsBox(width_box, height_box, center, angle);
+   if (type == SQUARE) {
+      int height = element_shape.shape_type.square.height;
+      int width = element_shape.shape_type.square.width;
+      int t_h = (height == 0) ? get_height() : height;
+      int t_w = (width == 0) ? get_width() : width;
+      float width_box = (t_w / 2.0f) * get_application()->to_meters_ - 0.02f;
+      float height_box = (t_h / 2.0f) * get_application()->to_meters_ - 0.02f;
+      box.SetAsBox(width_box, height_box, element_shape.center, element_shape.shape_type.square.angle);
+      fixture_def.shape = &box;
+   } else if (type == CIRCLE) {
+      circle.m_radius = element_shape.shape_type.circle.radius;
+      circle.m_p = element_shape.center;
+      fixture_def.shape = &circle;
+   }
 
    // Set various fixture definitions and create fixture
-   fixture_def.shape = &box;
-   fixture_def.density = density;
+   fixture_def.density = element_shape.density;
    fixture_def.friction = 1.8f;
    fixture_def.userData = this;
    body->CreateFixture(&fixture_def);
-
-   // If there are more shapes to add, do it
-   if (shapes) {
-      for (int i = 0; i < num_of_shapes; i++) {
-         fixture_def.shape = shapes[i];
-         body->CreateFixture(&fixture_def);
-      }
-   }
 
    // Set user data so it can react
    body->SetUserData(this);
@@ -184,7 +184,7 @@ void Element::set_hitbox(int x, int y, float angle, bool dynamic, int height, in
 
    // Run the load media function
    if (load_media() == false) {
-      std::cout << "Quit in here! " << type() << std::endl;
+      std::cout << "Quit in here! " << this->type() << std::endl;
       get_application()->set_quit();
    }
 }

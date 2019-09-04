@@ -37,6 +37,8 @@ void Platform::setup() {
    fixture_def.shape = &box;
    fixture_def.density = 0.0f;
    fixture_def.userData = this;
+   fixture_def.filter.categoryBits = 0x0001;
+   fixture_def.filter.maskBits = 0x0001 | 0x0002;
    body->CreateFixture(&fixture_def);
 
    // Set user data

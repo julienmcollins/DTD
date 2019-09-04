@@ -12,6 +12,33 @@
 class Application;
 class Entity;
 
+// Shape struct
+typedef struct Shape {
+   union ShapeType {
+      ShapeType(int w, int h, float a) : square{.width = w, .height = h, .angle = a} {}
+      ShapeType(float a) : circle{.radius = a} {}
+      struct Square {
+         int width = 0;
+         int height = 0;
+         float angle = 0.0f;
+      } square;
+      struct Circle {
+         float radius = 0.0f;
+      } circle;
+   } shape_type;
+
+   // Flag for movement enabled shape
+   bool dynamic = false;
+
+   // Specify the center of the shape
+   b2Vec2 center {0.0f, 0.0f};
+
+   // Density of the shape
+   float density = 1.0f;
+
+   Shape() : shape_type(0, 0, 0.0f) {}
+} Shape;
+
 // This will be the base class for all elements in the game, including players and objects
 class Element {
    public:
@@ -36,12 +63,55 @@ class Element {
       void add_y(int add);
       void sub_y(int add);
 
+      // Enum for directions
+      enum DIRS {
+         LEFT,
+         RIGHT,
+         NEUTRAL
+      };
+
+      // ENUM for contact type
+      enum CONTACT {
+         CONTACT_LEFT,
+         CONTACT_RIGHT,
+         CONTACT_UP,
+         CONTACT_DOWN
+      };
+
+      /***** BOX2D Variables *********/
+
+      b2Body *body;
+      b2BodyDef body_def;
+      b2PolygonShape box;
+      b2CircleShape circle;
+      b2FixtureDef fixture_def;
+
+      enum COLLISIONS {
+         CAT_PLAYER = 0x0001,
+         CAT_PLATFORM = 0x0002,
+         CAT_PROJECTILE = 0x0004,
+         CAT_ENEMY = 0x0008
+      };
+
+      /*******************************/
+
+      /****** CUSTOM SHAPE STUFF *****/
+
+      Shape element_shape;
+
+      enum SHAPE_TYPE {
+         SQUARE,
+         CIRCLE
+      };
+
+      /*******************************/
+
       // virtual load media
       virtual bool load_media();
       void load_image(std::unordered_map<std::string, Texture> &textures, Element *element, int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success);
 
       // Set hitboxes
-      void set_hitbox(int x, int y, float angle = 0.0f, bool dynamic = false, int height = 0, int width = 0, b2Vec2 center = {0.0f, 0.0f}, b2Shape **shapes = nullptr, int num_of_shapes = 0, float density = 1.0f, int group = -1);
+      void set_hitbox(int x, int y, SHAPE_TYPE type = SQUARE, int group = -1);
 
       // Check to see if it's still alive
       virtual bool is_alive();
@@ -71,30 +141,6 @@ class Element {
 
       // Get application
       Application *get_application();
-
-      /***** BOX2D Variables *********/
-
-      b2Body *body;
-      b2BodyDef body_def;
-      b2PolygonShape box;
-      b2FixtureDef fixture_def;
-
-      /*******************************/
-
-      // Enum for directions
-      enum DIRS {
-         LEFT,
-         RIGHT,
-         NEUTRAL
-      };
-
-      // ENUM for contact type
-      enum CONTACT {
-         CONTACT_LEFT,
-         CONTACT_RIGHT,
-         CONTACT_UP,
-         CONTACT_DOWN
-      };
 
       // Get type of object
       virtual std::string type() {

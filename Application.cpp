@@ -544,7 +544,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = LEVEL11;
+         level_flag_ = FOREST6;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -580,9 +580,7 @@ void Application::main_screen() {
          }
       }
    }
-
-   // Render ruler
-   //ruler_.render(&ruler_.texture);
+   /*
    // DEBUG DRAW
    world_.DrawDebugData();
 
@@ -596,6 +594,7 @@ void Application::main_screen() {
       SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
       SDL_RenderDrawRect(renderer, &m);
    }
+   */
   
    // Update the screen
    SDL_RenderPresent(renderer);
@@ -635,35 +634,11 @@ void Application::update_projectiles() {
 void Application::playground() {
    // Setup level
    if (game_flag_ == SETUP) {
-      // First setup level 1
-      if (level_flag_ == LEVEL11) {
-         level = new Level("images/levels/Forest/board1/format", this);
-         game_flag_ = PLAY;
-      } else if (level_flag_ == LEVEL12) {
-         level = new Level("images/levels/Forest/board2/format", this);
-         game_flag_ = PLAY;
-      } else if (level_flag_ == LEVEL13) {
-         level = new Level("images/levels/Forest/board3/format", this);
-         game_flag_ = PLAY;
-      } else if (level_flag_ == LEVEL14) {
-         level = new Level("images/levels/Forest/board4/format", this);
-         game_flag_ = PLAY;
-      } else if (level_flag_ == LEVEL15) {
-         level = new Level("images/levels/Forest/board5/format", this);
-         game_flag_ = PLAY;
-      } else if (level_flag_ == LEVEL16) {
-         level = new Level("images/levels/Forest/board6/format", this);
-         game_flag_ = PLAY;
-      } else if (level_flag_ == LEVEL17) {
-         level = new Level("images/levels/Forest/board7/format", this);
-         game_flag_ = PLAY;
-      } else if (level_flag_ == LEVEL18) {
-         level = new Level("images/levels/Forest/board8/format", this);
-         game_flag_ = PLAY;
-      } else if (level_flag_ == LEVEL19) {
-         app_flag_ = THANKS;
-         return;
-      }
+      std::string path1("images/levels/Forest/board");
+      std::string path2("/format");
+      std::string path = path1 + std::to_string(static_cast<int>(level_flag_)) + path2;
+      level = new Level(path, level_flag_, this);
+      game_flag_ = PLAY;
    }
 
    // Clear screen as the first things that's done?
@@ -691,7 +666,7 @@ void Application::playground() {
       if (e.type == SDL_QUIT) {
           quit = true;
       }
-      if (level_flag_ == LEVEL19 & e.type == SDL_KEYDOWN) {
+      if (level_flag_ == FOREST9 & e.type == SDL_KEYDOWN) {
          app_flag_ = MAIN_SCREEN;
       }
    }
@@ -728,7 +703,7 @@ void Application::playground() {
 
          // Increment level_flag_
          int inc = static_cast<int>(level_flag_);
-         level_flag_ = static_cast<LEVELS>(inc + 1);
+         level_flag_ = static_cast<FOREST>(inc + 1);
       }
    } else {
       app_flag_ = GAMEOVER_SCREEN;

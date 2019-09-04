@@ -154,6 +154,8 @@ Player::Player(Application* application) :
    // Set sensors to non interactive with da enemy
    b2Filter filter;
    filter.groupIndex = -5;
+   filter.categoryBits = 0x0001;
+   filter.maskBits = 0xFFFF;
    b2Fixture *fixture_list = body->GetFixtureList();
    while (fixture_list != nullptr) {
       fixture_list->SetFilterData(filter);

@@ -24,6 +24,11 @@ Enemy::Enemy(int x, int y, int height, int width, Application *application) :
    proj_ = nullptr;
 }
 
+// Get enemy state
+Enemy::STATE Enemy::get_enemy_state() const {
+   return enemy_state_;
+}
+
 // Create projectile
 // TODO: Create a struct that holds all of the ending parameters and pass it through
 //       such as to properly load each texture properly (one enemy has different sizes for textures)
@@ -137,77 +142,74 @@ bool Fecreez::load_media() {
 
 void Fecreez::move() {
    // Overall check to see if it's alive
-   if (alive) {
-      // Check to see what direction the enemy should be facing
-      if (enemy_state_ != DEATH && within_bounds()) {
-         // Turn if direction changed
-         if (get_application()->get_player()->get_x() <= get_x() 
-            && entity_direction == RIGHT) {
-            enemy_state_ = TURN;
-            entity_direction = LEFT;
-         } else if (get_application()->get_player()->get_x() > get_x() 
-            && entity_direction == LEFT) {
-            enemy_state_ = TURN;
-            entity_direction = RIGHT;
-         }
+   if (enemy_state_ == DEATH) {
+      // TODO: find better solution
+      if (!shift_) {
+         sub_x(-7);
+         shift_ = true;
       }
+   }
 
-      // Turn
-      if (enemy_state_ == TURN) {
-         // Complete texture
-         if (textures["turn"].frame_ > 6) {
-            if (entity_direction == RIGHT) {
-               textures["turn"].flip_ = SDL_FLIP_NONE;
-               textures["idle"].flip_ = SDL_FLIP_NONE;
-               textures["attack"].flip_ = SDL_FLIP_NONE;
-            } else if (entity_direction == LEFT) {
-               textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
-               textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
-               textures["attack"].flip_ = SDL_FLIP_HORIZONTAL;
-            }
-            textures["turn"].completed_ = false;
-            textures["turn"].frame_ = 0;
-            enemy_state_ = IDLE;
-         }
+   // Check to see what direction the enemy should be facing
+   if (enemy_state_ != DEATH && within_bounds()) {
+      // Turn if direction changed
+      if (get_application()->get_player()->get_x() <= get_x() 
+         && entity_direction == RIGHT) {
+         enemy_state_ = TURN;
+         entity_direction = LEFT;
+      } else if (get_application()->get_player()->get_x() > get_x() 
+         && entity_direction == LEFT) {
+         enemy_state_ = TURN;
+         entity_direction = RIGHT;
       }
+   }
 
-      // Check to see if get_player() within bounds of enemy
-      if (get_application()->get_player()->get_y() >= get_y() - get_height() &&
-            get_application()->get_player()->get_y() <= get_y() + get_height()
-            && enemy_state_ != TURN) {
-         // Set state to attack
-         if (shoot_timer_ >= 100) {
-            enemy_state_ = ATTACK;
-         } else if (shoot_timer_ < 100 && textures["attack"].frame_ > 6) {
-            enemy_state_ = IDLE;
-            textures["attack"].frame_ = 0;
+   // Turn
+   if (enemy_state_ == TURN) {
+      // Complete texture
+      if (textures["turn"].frame_ > 6) {
+         if (entity_direction == RIGHT) {
+            textures["turn"].flip_ = SDL_FLIP_NONE;
+            textures["idle"].flip_ = SDL_FLIP_NONE;
+            textures["attack"].flip_ = SDL_FLIP_NONE;
+         } else if (entity_direction == LEFT) {
+            textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
+            textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
+            textures["attack"].flip_ = SDL_FLIP_HORIZONTAL;
          }
+         textures["turn"].completed_ = false;
+         textures["turn"].frame_ = 0;
+         enemy_state_ = IDLE;
+      }
+   }
 
-         // Update timer
-         ++shoot_timer_;
-      } else if (enemy_state_ != TURN) {
+   // Check to see if get_player() within bounds of enemy
+   if (get_application()->get_player()->get_y() >= get_y() - get_height() &&
+         get_application()->get_player()->get_y() <= get_y() + get_height()
+         && enemy_state_ != TURN && enemy_state_ != DEATH) {
+      // Set state to attack
+      if (shoot_timer_ >= 100) {
+         enemy_state_ = ATTACK;
+      } else if (shoot_timer_ < 100 && textures["attack"].frame_ > 6) {
          enemy_state_ = IDLE;
          textures["attack"].frame_ = 0;
       }
 
-      // attack
-      if (enemy_state_ == ATTACK) {
-         if (textures["attack"].frame_ > 6 && shoot_timer_ >= 100) {
-            TextureData normal = {15, 24, 8};
-            TextureData hit = {15, 24, 8};
-            Projectile *tmp = create_projectile(15, -10, 70, 0, 10, 10.4f, 0.0f, normal, hit);
-            tmp->body->SetGravityScale(0);
-            shoot_timer_ = 0;
-         }
-      }
-   } else {
-      // Set state to death
-      enemy_state_ = DEATH;
+      // Update timer
+      ++shoot_timer_;
+   } else if (enemy_state_ != TURN && enemy_state_ != DEATH) {
+      enemy_state_ = IDLE;
+      textures["attack"].frame_ = 0;
+   }
 
-      // TODO: find better solution
-      if (!shift_) {
-         sub_x(31);
-         shift_ = true;
+   // attack
+   if (enemy_state_ == ATTACK) {
+      if (textures["attack"].frame_ > 6 && shoot_timer_ >= 100) {
+         TextureData normal = {15, 24, 8};
+         TextureData hit = {15, 24, 8};
+         Projectile *tmp = create_projectile(15, -10, 70, 0, 10, 10.4f, 0.0f, normal, hit);
+         tmp->body->SetGravityScale(0);
+         shoot_timer_ = 0;
       }
    }
 
@@ -220,7 +222,11 @@ void Fecreez::start_contact(Element *element) {
    if (element && (element->type() == "Player" || element->type() == "Projectile")) {
       health -= 10;
       if (health <= 0) {
-         alive = false;
+         //alive = false;
+         enemy_state_ = DEATH;
+         b2Filter filter;
+         filter.groupIndex = -5;
+         body->GetFixtureList()->SetFilterData(filter);
       }
    }
 }
@@ -281,14 +287,15 @@ Rosea::Rosea(int x, int y, float angle, Application *application) :
    // Set anchors
    anchor_x = x;
    anchor_y = y;
+   element_shape.shape_type.square.angle = angle;
 
    // Special state for 0 angle
    if (angle == 0.0f) {
       // Set hitbox for rosea body
       set_hitbox(x, y);
 
-      arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y(), angle);
-      arms_still.set_hitbox(arms_still.get_x() + 61, arms_still.get_y() + 39, angle);
+      arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y());
+      arms_still.set_hitbox(arms_still.get_x() + 61, arms_still.get_y() + 39);
 
       // TODO: get separate elements for the arms (ie new elements and set is as dynamic body)
       // Set texture location
@@ -304,10 +311,6 @@ Rosea::Rosea(int x, int y, float angle, Application *application) :
       // Set width and height of main body
       set_width(144);
       set_height(189);
-      //textures["idle"].set_x(x);
-      //textures["idle"].set_y(x);
-      //textures["hurt"].set_x(x);
-      //textures["hurt"].set_y(x);
 
       // Set hitboxes
       set_hitbox(x - 72, y + 94);
@@ -334,7 +337,7 @@ Rosea::Rosea(int x, int y, float angle, Application *application) :
       arms_still.textures["arms_hurt"].set_y(arms_still.get_y());
 
       arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y());
-      arms_still.set_hitbox(arms_still.get_x() - 70, arms_still.get_y() + 60, angle);
+      arms_still.set_hitbox(arms_still.get_x() - 70, arms_still.get_y() + 60);
 
       arms_attack.set_y(y + 40);
       arms_attack.set_x(arm_widths_[0]);
@@ -585,8 +588,11 @@ Rosea::~Rosea() {}
 Mosquibler::Mosquibler(int x, int y, Application *application) :
    Enemy(x, y, 89, 109, application) {
 
+   // Set element shape stuff
+   element_shape.dynamic = true;
+
    // Set hitbox
-   set_hitbox(x, y, 0.0f, true, 0, 0, {0.0f, 0.0f}, nullptr, 0, 1.0f, 2);
+   set_hitbox(x, y, SQUARE, 2);
  
    // Set health
    health = 10;
@@ -781,7 +787,7 @@ void Fruig::move() {
    // Check death state first
    if (enemy_state_ == DEATH) {
       // Set enemy to dead
-      alive = false;
+      //alive = false;
 
       // Set animation
       if (textures["death"].frame_ >= 14) {
@@ -822,10 +828,13 @@ void Fruig::animate(Texture *tex, int reset, int max, int start) {
 
 // Get contact function
 void Fruig::start_contact(Element *element) {
-   if ((element->type() == "Player" || element->type() == "Projectile")) {
+   if ((element->type() == "Player" || element->type() == "Projectile") && alive) {
       health -= 10;
-      if (health <= 0) {
+      if (health == 0) {
          enemy_state_ = DEATH;
+         b2Filter filter;
+         filter.groupIndex = -5;
+         body->GetFixtureList()->SetFilterData(filter);
          start_death_ = 14;
          end_death_ = 19;
       }
@@ -842,13 +851,19 @@ FleetSensor::FleetSensor(float height, float width, Entity *entity, CONTACT cont
 
 // Contact functions
 void FleetSensor::start_contact(Element *element) {
-   if (element && element->type() == "Platform") {
-      entity_->in_contact = true;
+   if (element) {
+      if (element->type() == "Platform") {
+         entity_->in_contact = true;
+      } else if (element->type() == "Fleet") {
+         entity_->body->ApplyLinearImpulseToCenter(b2Vec2(2.0f, 0.0f), true);
+      }
    }
 }
 void FleetSensor::end_contact(Element *element) {
-   if (element && element->type() == "Platform") {
-      entity_->in_contact = false;
+   if (element) {
+      if (element->type() == "Platform") {
+         entity_->in_contact = false;
+      }
    }
 }
 
@@ -860,19 +875,25 @@ void FleetSensor::end_contact(Element *element) {
 Fleet::Fleet(int x, int y, Application *application) :
    Enemy(x, y, 25, 49, application) {
    
+   // Set shape
+   element_shape.center = {0.0f, -0.08f};
+   element_shape.dynamic = true;
+
    // Set the hitbox (28 x 12)
-   set_hitbox(x, y, 0.0f, true, 0, 0, b2Vec2(0.0f, -0.08f));
+   set_hitbox(x, y, SQUARE, 1);
 
    // Create new sensor
-   fleet_sensor_ = new FleetSensor(0.07f, 0.07f, this, CONTACT_DOWN, 0.0f, -0.65f);
+   fleet_sensor_ = new FleetSensor(0.07f, 0.23f, this, CONTACT_DOWN, 0.0f, -0.65f);
 
    // Add a filter
    b2Filter filter;
-   filter.groupIndex = -1;
    b2Fixture *fixture_list = body->GetFixtureList();
    while (fixture_list != nullptr) {
       fixture_list->SetFilterData(filter);
       fixture_list = fixture_list->GetNext();
+      filter.groupIndex = -1;
+      filter.categoryBits = 0x0004;
+      filter.maskBits = 0x0004 | 0x0002 | 0x0001;
    }
 
    // Set health
@@ -912,7 +933,7 @@ void Fleet::move() {
       if (enemy_state_ == DEATH) {
          if (in_contact) {
             std::cout << "IAMDEAD\n";
-            alive = false;
+            //alive = false;
          }
       }
 
@@ -983,12 +1004,14 @@ void Fleet::start_contact(Element *element) {
    if (element && (element->type() == "Player" || element->type() == "Projectile")) {
       health -= 10;
       if (health <= 0) {
+         std::cout << "IAMDEAD\n";
          enemy_state_ = DEATH;
          b2Filter filter;
-         filter.groupIndex = -9;
-         b2Fixture *fixture_list = body->GetFixtureList()->GetNext();
-         if (fixture_list) {
+         filter.groupIndex = -5;
+         b2Fixture *fixture_list = body->GetFixtureList();
+         while (fixture_list) {
             fixture_list->SetFilterData(filter);
+            fixture_list = fixture_list->GetNext();
          }
       }
    }
@@ -1001,8 +1024,15 @@ void Fleet::start_contact(Element *element) {
 Mosqueenbler::Mosqueenbler(int x, int y, Application *application) :
    Enemy(x, y, 134, 246, application) {
 
+   // Set element shape stuff
+   element_shape.dynamic = true;
+   element_shape.shape_type.square.height = 10;
+   element_shape.shape_type.square.width = 164;
+   element_shape.center = {0.0f, 0.62f};
+   element_shape.density = 10000.0f;
+
    // Set hitbox
-   set_hitbox(x, y, 0.0f, true, 10, 164, {0.0f, 0.62f}, nullptr, 0, 10000.0f, 1);
+   set_hitbox(x, y, SQUARE, 1);
 
    // Set entity direction
    entity_direction = RIGHT;

@@ -20,8 +20,8 @@ using namespace std;
 /************************** LEVEL CLASS ********************/
 
 // Constructor will do all of the setting up essentially
-Level::Level(string file, Application *application) : 
-   num_of_enemies_(0), num_of_platforms_(0), completed(false), 
+Level::Level(string file, Application::FOREST level, Application *application) : 
+   num_of_enemies_(0), num_of_platforms_(0), completed(false), level(level), 
    background_(0, 0, 1080, 1920, application), level_completed_(false), 
    application_(application) {
 
@@ -156,20 +156,19 @@ void Level::update() {
          platforms_.back() = nullptr;
       }
 
-      if (application_->get_player()->get_x() >= 1890) {
+      if (level < Application::FOREST7 && application_->get_player()->get_x() >= 1890) {
+         completed = true;
+      } else if (level >= Application::FOREST7 && application_->get_player()->get_y() <= 10) {
          completed = true;
       }
    }
 
    // Need to remove the bodies of dead creatures
    for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end(); ++it) {
-      if ((*it) && !(*it)->is_alive()) {
-         if ((*it)->body) {
-            application_->world_.DestroyBody((*it)->body);
-            (*it)->body = NULL;
-            if ((*it)->type() != "Rosea") {
-               num_of_kills_ -= 1;
-            }
+      if ((*it) && (*it)->get_enemy_state() == Enemy::DEATH && (*it)->is_alive()) {
+         if ((*it)->type() != "Rosea") {
+            num_of_kills_ -= 1;
+            (*it)->alive = false;
          }
       }
    }

@@ -544,7 +544,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = FOREST6;
+         level_flag_ = FOREST9;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -666,7 +666,7 @@ void Application::playground() {
       if (e.type == SDL_QUIT) {
           quit = true;
       }
-      if (level_flag_ == FOREST9 & e.type == SDL_KEYDOWN) {
+      if (level_flag_ == TEMP & e.type == SDL_KEYDOWN) {
          app_flag_ = MAIN_SCREEN;
       }
    }
@@ -713,6 +713,7 @@ void Application::playground() {
       menu_flag = true;
    }
 
+   /*
    // DEBUG DRAW
    world_.DrawDebugData();
 
@@ -726,6 +727,7 @@ void Application::playground() {
       SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
       SDL_RenderDrawRect(renderer, &m);
    }
+   */
 
    // Update the screen
    SDL_RenderPresent(renderer);

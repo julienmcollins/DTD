@@ -142,7 +142,8 @@ class Application {
          FOREST7 = 7,
          FOREST8 = 8,
          FOREST9 = 9,
-         FORESTBOSS = 10
+         FORESTBOSS = 10,
+         TEMP = 11
       };
 
       // Get FPS timer

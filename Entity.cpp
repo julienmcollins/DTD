@@ -78,6 +78,7 @@ void PlayerSensor::start_contact(Element *element) {
          entity_->textures["double_jump"].frame_ = 0;
          entity_->textures["running_jump"].reset_frame = 0;
          entity_->textures["running_jump"].frame_ = 0;
+         std::cout << "Contact Down is True\n";
       } else if (sensor_contact == CONTACT_LEFT) {
          entity_->in_contact_left = true;
       } else if (sensor_contact == CONTACT_RIGHT) {
@@ -92,6 +93,7 @@ void PlayerSensor::start_contact(Element *element) {
 void PlayerSensor::end_contact(Element *element) {
    if (sensor_contact == CONTACT_DOWN) {
       entity_->in_contact_down = false;
+      std::cout << "COntact Down is False\n";
    } else if (sensor_contact == CONTACT_LEFT) {
       entity_->in_contact_left = false;
    } else if (sensor_contact == CONTACT_RIGHT) {
@@ -308,6 +310,7 @@ void Player::update(bool freeze) {
    //std::cout << "X = " << body->GetLinearVelocity().x << " Y = " << body->GetLinearVelocity().y << std::endl;
    //std::cout << "KEY = " << key << " LAST KEY PRESSED = " << last_key_pressed << std::endl;
    //std::cout << in_contact_down << std::endl;
+   std::cout << "x_pos = " << get_x() << " y_pos = " << get_y() << std::endl;
 
    // Apply artificial force of gravity
    const b2Vec2 sim_grav = {0.0f, SIM_GRAV};

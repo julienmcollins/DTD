@@ -855,13 +855,16 @@ void FleetSensor::start_contact(Element *element) {
       if (element->type() == "Platform") {
          entity_->in_contact = true;
       } else if (element->type() == "Fleet") {
-         entity_->body->ApplyLinearImpulseToCenter(b2Vec2(2.0f, 0.0f), true);
+         entity_->body->ApplyLinearImpulseToCenter(b2Vec2(0.5f, 0.0f), true);
+         entity_->in_contact = true;
       }
    }
 }
 void FleetSensor::end_contact(Element *element) {
    if (element) {
       if (element->type() == "Platform") {
+         entity_->in_contact = false;
+      } else if (element->type() == "Fleet") {
          entity_->in_contact = false;
       }
    }
@@ -1026,9 +1029,9 @@ Mosqueenbler::Mosqueenbler(int x, int y, Application *application) :
 
    // Set element shape stuff
    element_shape.dynamic = true;
-   element_shape.shape_type.square.height = 10;
+   element_shape.shape_type.square.height = 40;
    element_shape.shape_type.square.width = 164;
-   element_shape.center = {0.0f, 0.62f};
+   element_shape.center = {0.0f, 0.50f};
    element_shape.density = 10000.0f;
 
    // Set hitbox

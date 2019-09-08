@@ -63,6 +63,7 @@ Level::Level(string file, Application::FOREST level, Application *application) :
          enemies_.push_back(new Fleet(x, y, application));
       } else if (name == "Mosqueenbler") {
          enemies_.push_back(new Mosqueenbler(x, y, application));
+         num_of_kills_ -= 1;
       }
    }
 
@@ -156,9 +157,9 @@ void Level::update() {
          platforms_.back() = nullptr;
       }
 
-      if (level < Application::FOREST7 && application_->get_player()->get_x() >= 1890) {
+      if ((level < Application::FOREST6 || level == Application::FOREST9) && application_->get_player()->get_x() >= 1890) {
          completed = true;
-      } else if (level >= Application::FOREST7 && application_->get_player()->get_y() <= 10) {
+      } else if (level >= Application::FOREST6 && application_->get_player()->get_y() <= -50) {
          completed = true;
       }
    }

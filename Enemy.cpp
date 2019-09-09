@@ -10,6 +10,7 @@
 #include "Object.h"
 #include "Texture.h"
 #include "Application.h"
+#include "Level.h"
 
 /********************* ENEMY IMPLEMENTATIONS ******************/
 
@@ -1049,6 +1050,9 @@ Mosqueenbler::Mosqueenbler(int x, int y, Application *application) :
 
    // Start the timer
    movement_timer_.start();
+
+   // Set shoot timer
+   shoot_timer_ = 0;
 }
 
 // Load the media
@@ -1070,6 +1074,17 @@ void Mosqueenbler::move() {
    if (enemy_state_ == IDLE) {
       float y = 1 * cos(movement_timer_.getTicks() / 1000.0f) + 0.197f;
       body->SetLinearVelocity({0.0f, y});
+   }
+
+   if (get_application()->get_level_flag() == Application::FORESTBOSS) {
+      if (shoot_timer_ > 200) {
+         enemy_state_ == ATTACK;
+         if (textures["attack"].frame_ == 10) {
+            //get_application()->get_level()->add_enemy(new Mosquibler())
+         } else if (textures["attack"].completed_) {
+            shoot_timer_ = 0;
+         }
+      }
    }
 }
 

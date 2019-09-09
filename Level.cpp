@@ -96,6 +96,7 @@ Level::Level(string file, Application::FOREST level, Application *application) :
    input >> x >> y;
    application_->get_player()->set_x(x);
    application_->get_player()->set_y(y);
+   std::cout << x << " " << y << std::endl;
 }
 
 // Load media function, private
@@ -159,7 +160,7 @@ void Level::update() {
 
       if ((level < Application::FOREST6 || level == Application::FOREST9) && application_->get_player()->get_x() >= 1890) {
          completed = true;
-      } else if (level >= Application::FOREST6 && application_->get_player()->get_y() <= -50) {
+      } else if (level >= Application::FOREST6 && application_->get_player()->get_y() <= -100) {
          completed = true;
       }
    }
@@ -203,6 +204,7 @@ void Level::update() {
 // Add an enemy to the level
 void Level::add_enemy(Enemy *new_enemy) {
    enemies_.push_back(new_enemy);
+   num_of_kills_ += 1;
 }
 
 // Level destructor will just delete everything related to the level

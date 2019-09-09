@@ -78,7 +78,7 @@ void PlayerSensor::start_contact(Element *element) {
          entity_->textures["double_jump"].frame_ = 0;
          entity_->textures["running_jump"].reset_frame = 0;
          entity_->textures["running_jump"].frame_ = 0;
-         std::cout << "Contact Down is True\n";
+         //std::cout << "Contact Down is True\n";
       } else if (sensor_contact == CONTACT_LEFT) {
          entity_->in_contact_left = true;
       } else if (sensor_contact == CONTACT_RIGHT) {
@@ -93,7 +93,7 @@ void PlayerSensor::start_contact(Element *element) {
 void PlayerSensor::end_contact(Element *element) {
    if (sensor_contact == CONTACT_DOWN) {
       entity_->in_contact_down = false;
-      std::cout << "COntact Down is False\n";
+      //std::cout << "COntact Down is False\n";
    } else if (sensor_contact == CONTACT_LEFT) {
       entity_->in_contact_left = false;
    } else if (sensor_contact == CONTACT_RIGHT) {
@@ -310,7 +310,7 @@ void Player::update(bool freeze) {
    //std::cout << "X = " << body->GetLinearVelocity().x << " Y = " << body->GetLinearVelocity().y << std::endl;
    //std::cout << "KEY = " << key << " LAST KEY PRESSED = " << last_key_pressed << std::endl;
    //std::cout << in_contact_down << std::endl;
-   std::cout << "x_pos = " << get_x() << " y_pos = " << get_y() << std::endl;
+   //std::cout << "x_pos = " << get_x() << " y_pos = " << get_y() << std::endl;
 
    // Apply artificial force of gravity
    const b2Vec2 sim_grav = {0.0f, SIM_GRAV};
@@ -375,7 +375,7 @@ void Player::adjust_deltas() {
       }
    } else if (player_state_ == RUN && in_contact_down) {
       if (entity_direction == RIGHT) {
-         arm_delta_x = 0;
+         arm_delta_x = -5;
          arm_delta_y = 43;
          arm_delta_shoot_x = 2;
          arm_delta_shoot_y = 34;
@@ -773,7 +773,7 @@ bool Player::load_media() {
    load_image(textures, this, 44, 33, 9, 1.0f / 20.0f, "arm_throw", "images/player/arm_throw.png", success);
 
    // Load Running arm
-   load_image(textures, this, 7, 22, 4, 1.0f / 20.0f, "running_arm", "images/player/running_arm.png", success);
+   load_image(textures, this, 9, 27, 15, 1.0f / 20.0f, "running_arm", "images/player/running_arm.png", success);
 
    // Load pushing animation
    load_image(textures, this, 59, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);

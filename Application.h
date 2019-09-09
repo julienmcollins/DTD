@@ -167,6 +167,10 @@ class Application {
       /********** LEVEL **************/
       Level *level;
 
+      Level *get_level() {
+         return level;
+      }
+
       /******* DEATH TIMER ***********/
       Timer death_timer_;
 

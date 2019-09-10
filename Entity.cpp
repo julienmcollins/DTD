@@ -773,7 +773,7 @@ bool Player::load_media() {
    load_image(textures, this, 44, 33, 9, 1.0f / 20.0f, "arm_throw", "images/player/arm_throw.png", success);
 
    // Load Running arm
-   load_image(textures, this, 9, 27, 15, 1.0f / 20.0f, "running_arm", "images/player/running_arm.png", success);
+   load_image(textures, this, 9, 27, 15, 1.0f / 30.0f, "running_arm", "images/player/running_arm.png", success);
 
    // Load pushing animation
    load_image(textures, this, 59, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);

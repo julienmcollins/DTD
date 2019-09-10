@@ -298,4 +298,22 @@ class Mosqueenbler : public Enemy {
       Timer movement_timer_;
 };
 
+class Wormored : public Enemy {
+   public:
+      // Constructor
+      Wormored();
+
+      // Load wormored media
+      virtual bool load_media();
+
+      // Move and animate functions
+      virtual void move();
+      virtual void animate(Texture *tex, int reset, int max, int start);
+
+      // Wormored type
+      virtual std::string type() {
+         return "Wormored";
+      }
+};
+
 #endif

@@ -1096,3 +1096,10 @@ void Mosqueenbler::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&textures["attack"]);
    }
 }
+
+////////////////////////////////////////////////
+/*********** WORMORED BOSS ********************/
+////////////////////////////////////////////////
+
+// Constructor for Wormored
+//Wormored::Wormored()

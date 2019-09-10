@@ -375,15 +375,15 @@ void Player::adjust_deltas() {
       }
    } else if (player_state_ == RUN && in_contact_down) {
       if (entity_direction == RIGHT) {
-         arm_delta_x = -5;
-         arm_delta_y = 43;
+         arm_delta_x = -4;
+         arm_delta_y = 44;
          arm_delta_shoot_x = 2;
-         arm_delta_shoot_y = 34;
+         arm_delta_shoot_y = 39;
       } else {
-         arm_delta_x = -19;
-         arm_delta_y = 43;
+         arm_delta_x = -20;
+         arm_delta_y = 44;
          arm_delta_shoot_x = -58;
-         arm_delta_shoot_y = 34;
+         arm_delta_shoot_y = 39;
       }
    } else if (player_state_ == STOP && in_contact_down) {
       if (entity_direction == RIGHT) {
@@ -595,10 +595,15 @@ void Player::move() {
    }
 
    // If not running or running and jumping, then set linear velocity to 0
-   if (player_state_ != RUN && player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DOUBLE_JUMP) {
-      b2Vec2 vel = {0, body->GetLinearVelocity().y};
-      body->SetLinearVelocity(vel);
-      //player_state_ = STOP;
+   if (player_state_ != RUN) {
+      // Reset running arm
+      textures["running_arm"].frame_ = textures["running"].frame_;
+
+      if (player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DOUBLE_JUMP) {
+         b2Vec2 vel = {0, body->GetLinearVelocity().y};
+         body->SetLinearVelocity(vel);
+         //player_state_ = STOP;
+      }
    }
 
    // Player running left

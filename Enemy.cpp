@@ -684,13 +684,10 @@ void Mosquibler::move() {
          flag_ = false;
       }
 
-      if (textures["death"].frame_ > 10 && is_alive() && start_death_ < 7) {
+      if (!in_contact_down) {
          start_death_ = 6;
          end_death_ = 10;
-      } 
-      
-      if (textures["death"].frame_ > 26 && start_death_ >= 12) {
-         //alive = false;
+      } else {
          start_death_ = 26;
          end_death_ = 26;
       }
@@ -729,14 +726,15 @@ Texture* Mosquibler::get_texture() {
 // Start contact function
 void Mosquibler::start_contact(Element *element) {
    if (element && (element->type() == "Player" || element->type() == "Projectile") && enemy_state_ != DEATH) {
-      // TODO: loop falling animation
+      set_collision(CAT_PLATFORM);
       enemy_state_ = DEATH;
       start_death_ = 0;
       end_death_ = 10;
-   } if (element && enemy_state_ == DEATH) {
-      set_collision(CAT_PLATFORM);
-      start_death_ = 12;
-      end_death_ = 26;
+   }
+
+   if (element && element->type() == "Platform") {
+      textures["death"].frame_ = 10;
+      in_contact_down = true;
    }
 }
 

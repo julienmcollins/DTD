@@ -225,9 +225,7 @@ void Fecreez::start_contact(Element *element) {
       if (health <= 0) {
          //alive = false;
          enemy_state_ = DEATH;
-         b2Filter filter;
-         filter.groupIndex = -5;
-         body->GetFixtureList()->SetFilterData(filter);
+         set_collision(CAT_PLATFORM);
       }
    }
 }
@@ -736,10 +734,7 @@ void Mosquibler::start_contact(Element *element) {
       start_death_ = 0;
       end_death_ = 10;
    } if (element && enemy_state_ == DEATH) {
-      b2Filter filter;
-      filter.categoryBits = CAT_ENEMY;
-      filter.maskBits = CAT_PLATFORM; //body->GetFixtureList()->GetFilterData().maskBits & ACAT_ENEMY & ACAT_PLAYER & ACAT_PROJECTILE;
-      body->GetFixtureList()->SetFilterData(filter);
+      set_collision(CAT_PLATFORM);
       start_death_ = 12;
       end_death_ = 26;
    }
@@ -833,9 +828,7 @@ void Fruig::start_contact(Element *element) {
       health -= 10;
       if (health == 0) {
          enemy_state_ = DEATH;
-         b2Filter filter;
-         filter.groupIndex = -5;
-         body->GetFixtureList()->SetFilterData(filter);
+         set_collision(CAT_PLATFORM);
          start_death_ = 14;
          end_death_ = 19;
       }
@@ -890,14 +883,12 @@ Fleet::Fleet(int x, int y, Application *application) :
    fleet_sensor_ = new FleetSensor(0.07f, 0.23f, this, CONTACT_DOWN, 0.0f, -0.65f);
 
    // Add a filter
-   b2Filter filter;
-   b2Fixture *fixture_list = body->GetFixtureList();
-   while (fixture_list != nullptr) {
+   b2Fixture *fixture_list = body->GetFixtureList()->GetNext();
+   if (fixture_list != nullptr) {
+      b2Filter filter;
+      filter.categoryBits = CAT_ENEMY;
+      filter.maskBits = CAT_ENEMY | CAT_PLAYER | CAT_PROJECTILE | CAT_PLATFORM;
       fixture_list->SetFilterData(filter);
-      fixture_list = fixture_list->GetNext();
-      filter.groupIndex = -1;
-      filter.categoryBits = 0x0004;
-      filter.maskBits = 0x0004 | 0x0002 | 0x0001;
    }
 
    // Set health
@@ -1049,7 +1040,7 @@ Mosqueenbler::Mosqueenbler(int x, int y, Application *application) :
    movement_timer_.start();
 
    // Set shoot timer
-   shoot_timer_ = 201;
+   shoot_timer_ = 0;
 }
 
 // Load the media
@@ -1154,6 +1145,7 @@ void MosquiblerEgg::animate(Texture *tex, int reset, int max, int start) {
 void MosquiblerEgg::start_contact(Element *element) {
    if (element->type() == "Platform") {
       enemy_state_ = ATTACK;
+      set_collision(CAT_PLATFORM);
    }
 }
 

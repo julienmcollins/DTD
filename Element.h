@@ -100,6 +100,9 @@ class Element {
          ACAT_ENEMY = 0xFFF7
       };
 
+      // Set collisions
+      void set_collision(uint16 collision_types);
+
       /*******************************/
 
       /****** CUSTOM SHAPE STUFF *****/

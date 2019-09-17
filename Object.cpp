@@ -37,18 +37,12 @@ void Platform::setup() {
    fixture_def.shape = &box;
    fixture_def.density = 0.0f;
    fixture_def.userData = this;
-   fixture_def.filter.categoryBits = 0x0001;
-   fixture_def.filter.maskBits = 0x0001 | 0x0002;
+   fixture_def.filter.categoryBits = CAT_PLATFORM;
+   fixture_def.filter.maskBits = CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY;
    body->CreateFixture(&fixture_def);
 
    // Set user data
    body->SetUserData(this);
-
-   // Add a filter for the platforms
-   b2Filter filter;
-   filter.groupIndex = -9;
-   b2Fixture *fixture_list = body->GetFixtureList();
-   fixture_list->SetFilterData(filter);
 }
 
 // Virtual destructor

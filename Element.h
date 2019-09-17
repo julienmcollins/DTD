@@ -93,6 +93,13 @@ class Element {
          CAT_ENEMY = 0x0008
       };
 
+      enum ANTI_COLLISIONS {
+         ACAT_PLAYER = 0xFFFE,
+         ACAT_PLATFORM = 0xFFFD,
+         ACAT_PROJECTILE = 0xFFFB,
+         ACAT_ENEMY = 0xFFF7
+      };
+
       /*******************************/
 
       /****** CUSTOM SHAPE STUFF *****/
@@ -152,6 +159,11 @@ class Element {
          return false;
       }
 
+      // Check if marked for destroy
+      bool is_marked_for_destroy() const {
+         return mark_for_immediate_destroy_;
+      }
+
       // Apply force
       void apply_force(const b2Vec2 force) {
          body->ApplyForceToCenter(force, true);
@@ -173,6 +185,9 @@ class Element {
    protected:
       // Flag for various things
       bool flag_;
+
+      // Flag for destroying object immediately
+      bool mark_for_immediate_destroy_;
    private:
       // X and Y locations
       int x_pos_;

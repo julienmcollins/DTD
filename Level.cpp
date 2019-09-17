@@ -96,7 +96,6 @@ Level::Level(string file, Application::FOREST level, Application *application) :
    input >> x >> y;
    application_->get_player()->set_x(x);
    application_->get_player()->set_y(y);
-   std::cout << x << " " << y << std::endl;
 }
 
 // Load media function, private
@@ -165,6 +164,31 @@ void Level::update() {
       }
    }
 
+   // Spawn enemies that were marked for deferred spawning
+   if (!deferred_enemy_spawns_.empty()) {
+      for (vector<Enemy *>::iterator it = deferred_enemy_spawns_.begin(); it != deferred_enemy_spawns_.end();) {
+         enemies_.push_back(*it);
+         it = deferred_enemy_spawns_.erase(it);
+      }
+   }
+
+   // Destroy enemies that were marked for death
+   if (!enemies_marked_for_death_.empty()) {
+      for (vector<Enemy *>::iterator it = enemies_marked_for_death_.begin(); it != enemies_marked_for_death_.end();) {
+         std::vector<Enemy *>::iterator destroy_it = find(enemies_.begin(), enemies_.end(), *it);
+         if (destroy_it != enemies_.end()) {
+            enemies_.erase(destroy_it);
+            if ((*it)->is_marked_for_destroy()) {
+               delete *it;
+            }
+            it = enemies_marked_for_death_.erase(it);
+         } else {
+            std::cerr << "Level::update() - enemy marked for death not found in level!\n";
+            ++it;
+         }
+      }
+   }
+
    // Need to remove the bodies of dead creatures
    for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end(); ++it) {
       if ((*it) && (*it)->get_enemy_state() == Enemy::DEATH && (*it)->is_alive()) {
@@ -203,8 +227,16 @@ void Level::update() {
 
 // Add an enemy to the level
 void Level::add_enemy(Enemy *new_enemy) {
-   enemies_.push_back(new_enemy);
+   deferred_enemy_spawns_.push_back(new_enemy);
+   //std::cout << "Level::add_enemy() - enemy = " << new_enemy->type() << std::endl;
+   //std::cout << "Level::add_enemy() - size of array = " << enemies_.size() << std::endl;
    num_of_kills_ += 1;
+}
+
+// Destroy enemy
+void Level::destroy_enemy(Enemy *enemy_to_delete) {
+   enemies_marked_for_death_.push_back(enemy_to_delete);
+   num_of_kills_ -= 1;
 }
 
 // Level destructor will just delete everything related to the level
@@ -223,6 +255,22 @@ Level::~Level() {
 
    // Delete enemies
    for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end(); ++it) {
+      if (*it) {
+         delete (*it);
+         (*it) = NULL;
+      }
+   }
+
+   // Delete enemies
+   for (vector<Enemy *>::iterator it = deferred_enemy_spawns_.begin(); it != deferred_enemy_spawns_.end(); ++it) {
+      if (*it) {
+         delete (*it);
+         (*it) = NULL;
+      }
+   }
+
+   // Delete enemies
+   for (vector<Enemy *>::iterator it = enemies_marked_for_death_.begin(); it != enemies_marked_for_death_.end(); ++it) {
       if (*it) {
          delete (*it);
          (*it) = NULL;

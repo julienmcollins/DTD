@@ -544,7 +544,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = FOREST9;
+         level_flag_ = FORESTBOSS;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -672,8 +672,10 @@ void Application::playground() {
    }
 
    /******** UPDATE THE LEVEL *************/
+   // Do this as the last thing (testing)
    level->update();
-
+   /***************************************/
+   
    // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
    update_projectiles();
       

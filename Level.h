@@ -30,6 +30,9 @@ class Level {
       // Add an enemy to the level
       void add_enemy(Enemy *new_enemy);
 
+      // Destroy enemy
+      void destroy_enemy(Enemy *enemy_to_delete);
+
       // Flag for level completion
       bool completed;
 
@@ -60,6 +63,8 @@ class Level {
 
       // Vector for the enemies
       std::vector<Enemy *> enemies_;
+      std::vector<Enemy *> deferred_enemy_spawns_;
+      std::vector<Enemy *> enemies_marked_for_death_;
 
       // Vector for the platforms
       std::vector<Platform *> platforms_;

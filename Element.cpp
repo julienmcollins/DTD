@@ -179,7 +179,9 @@ void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
 
    // Set filter
    b2Filter filter;
-   filter.groupIndex = group;
+   filter.groupIndex = 0;
+   filter.categoryBits = CAT_ENEMY;
+   filter.maskBits = CAT_ENEMY | CAT_PROJECTILE | CAT_PLATFORM | CAT_PLAYER;
    body->GetFixtureList()->SetFilterData(filter);
 
    // Run the load media function

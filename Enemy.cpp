@@ -736,9 +736,9 @@ void Mosquibler::start_contact(Element *element) {
       start_death_ = 0;
       end_death_ = 10;
    } if (element && enemy_state_ == DEATH) {
-      // Set group index
       b2Filter filter;
-      filter.groupIndex = -5;
+      filter.categoryBits = CAT_ENEMY;
+      filter.maskBits = CAT_PLATFORM; //body->GetFixtureList()->GetFilterData().maskBits & ACAT_ENEMY & ACAT_PLAYER & ACAT_PROJECTILE;
       body->GetFixtureList()->SetFilterData(filter);
       start_death_ = 12;
       end_death_ = 26;
@@ -978,8 +978,6 @@ void Fleet::move() {
          if (in_contact) {
             if (textures["idle"].frame_ == 1) {
                const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 1.50f, 7.0f};
-
-               // Apply impulse
                body->SetLinearVelocity(impulse);
             }
 
@@ -1008,7 +1006,6 @@ void Fleet::start_contact(Element *element) {
    if (element && (element->type() == "Player" || element->type() == "Projectile")) {
       health -= 10;
       if (health <= 0) {
-         std::cout << "IAMDEAD\n";
          enemy_state_ = DEATH;
          b2Filter filter;
          filter.groupIndex = -5;
@@ -1026,7 +1023,7 @@ void Fleet::start_contact(Element *element) {
 ////////////////////////////////////////////////
 
 Mosqueenbler::Mosqueenbler(int x, int y, Application *application) :
-   Enemy(x, y, 134, 246, application) {
+   Enemy(x, y, 134, 246, application), spawn_num_of_egg_(1) {
 
    // Set element shape stuff
    element_shape.dynamic = true;
@@ -1052,7 +1049,7 @@ Mosqueenbler::Mosqueenbler(int x, int y, Application *application) :
    movement_timer_.start();
 
    // Set shoot timer
-   shoot_timer_ = 0;
+   shoot_timer_ = 201;
 }
 
 // Load the media
@@ -1071,20 +1068,28 @@ bool Mosqueenbler::load_media() {
 
 // Move function
 void Mosqueenbler::move() {
-   if (enemy_state_ == IDLE) {
-      float y = 1 * cos(movement_timer_.getTicks() / 1000.0f) + 0.197f;
-      body->SetLinearVelocity({0.0f, y});
-   }
+   // Allow it to float
+   float y = 1 * cos(movement_timer_.getTicks() / 1000.0f) + 0.197f;
+   body->SetLinearVelocity({0.0f, y});
 
+   // Spawn enemies
    if (get_application()->get_level_flag() == Application::FORESTBOSS) {
       if (shoot_timer_ > 200) {
-         enemy_state_ == ATTACK;
-         if (textures["attack"].frame_ == 10) {
-            //get_application()->get_level()->add_enemy(new Mosquibler())
+         enemy_state_ = ATTACK;
+         if (textures["attack"].frame_ == 8 && spawn_num_of_egg_ == 1) {
+            MosquiblerEgg *egg = new MosquiblerEgg(get_x() + 95, get_y() + 134, get_application());
+            get_application()->get_level()->add_enemy(egg);
+            spawn_num_of_egg_ = 0;
          } else if (textures["attack"].completed_) {
             shoot_timer_ = 0;
+            spawn_num_of_egg_ = 1;
          }
+      } else {
+         enemy_state_ = IDLE;
+         textures["attack"].frame_ = 0;
       }
+
+      ++shoot_timer_;
    }
 }
 
@@ -1094,6 +1099,61 @@ void Mosqueenbler::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&textures["idle"]);
    } else if (enemy_state_ == ATTACK) {
       Element::animate(&textures["attack"]);
+   }
+}
+
+////////////////////////////////////////////////
+/*********** MOSQUIBLER EGG ********************/
+////////////////////////////////////////////////
+
+// Constructor
+MosquiblerEgg::MosquiblerEgg(int x, int y, Application *application) :
+   Enemy(x, y, 42, 28, application) {
+
+   // Set hitbox
+   element_shape.dynamic = true;
+   set_hitbox(x, y);
+
+   // Set enemy state
+   enemy_state_ = IDLE;
+}
+
+// Load egg media
+bool MosquiblerEgg::load_media() {
+   bool success = true;
+
+   // Load idle (falling)
+   load_image(textures, this, 92, 59, 6, 1.0 / 20.0f, "idle", "images/enemies/Mosqueenbler/egg_idle.png", success);
+
+   // Load break
+   load_image(textures, this, 92, 59, 5, 1.0 / 20.0f, "attack", "images/enemies/Mosqueenbler/egg_break.png", success);
+
+   return success;
+}
+
+// MosquiblerEgg move function
+void MosquiblerEgg::move() {
+   if (enemy_state_ == ATTACK) {
+      if (textures["attack"].completed_) {
+         get_application()->get_level()->add_enemy(new Mosquibler(get_x(), get_y(), get_application()));
+         get_application()->get_level()->destroy_enemy(this);
+      }
+   }
+}
+
+// Animate
+void MosquiblerEgg::animate(Texture *tex, int reset, int max, int start) {
+   if (enemy_state_ == IDLE) {
+      Element::animate(&textures["idle"]);
+   } else if (enemy_state_ == ATTACK) {
+      Element::animate(&textures["attack"]);
+   }
+}
+
+// Start contact for egg
+void MosquiblerEgg::start_contact(Element *element) {
+   if (element->type() == "Platform") {
+      enemy_state_ = ATTACK;
    }
 }
 

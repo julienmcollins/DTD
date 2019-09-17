@@ -296,6 +296,30 @@ class Mosqueenbler : public Enemy {
    private:
       // Timer for his movement
       Timer movement_timer_;
+
+      // Spawn number of mosquiblers
+      int spawn_num_of_egg_;
+};
+
+class MosquiblerEgg : public Enemy {
+   public:
+      // Constructor
+      MosquiblerEgg(int x, int y, Application *application);
+
+      // Load wormored media
+      virtual bool load_media();
+
+      // Move and animate functions
+      virtual void move();
+      virtual void animate(Texture *tex, int reset, int max, int start);
+
+      // Start contact function
+      virtual void start_contact(Element *element = NULL);
+
+      // Wormored type
+      virtual std::string type() {
+         return "MosquiblerEgg";
+      }
 };
 
 class Wormored : public Enemy {

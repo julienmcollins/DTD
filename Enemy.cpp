@@ -609,13 +609,19 @@ bool Mosquibler::load_media() {
    bool success = true;
 
    // Load fly for mosquibler
-   load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "fly", "images/enemies/Mosquibler/mosquibler_fly.png", success);
+   load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "fly", "images/enemies/Mosquibler/fly.png", success);
 
    // Load death for mosquibler
-   load_image(textures, this, 109, 89, 27, 1.0f / 20.0f, "death", "images/enemies/Mosquibler/mosquibler_death.png", success);
+   load_image(textures, this, 109, 89, 27, 1.0f / 20.0f, "death", "images/enemies/Mosquibler/death.png", success);
 
    // Load turn texture
-   load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "turn", "images/enemies/Mosquibler/mosquibler_turn.png", success);
+   load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "turn", "images/enemies/Mosquibler/turn.png", success);
+
+   // Load hit texture
+   load_image(textures, this, 109, 89, 4, 1.0f / 20.0f, "hit", "images/enemies/Mosquibler/hit.png", success);
+
+   // Load fall texture
+   load_image(textures, this, 109, 89, 6, 1.0f / 20.0f, "fall", "images/enemies/Mosquibler/fall.png", success);
 
    // Return success
    return success;
@@ -624,7 +630,7 @@ bool Mosquibler::load_media() {
 // Move function
 void Mosquibler::move() {
    // Check to see what direction the enemy should be facing
-   if (enemy_state_ != DEATH) {
+   if (enemy_state_ != DEATH && enemy_state_ != HURT && enemy_state_ != FALL) {
       if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
          entity_direction = LEFT;
          enemy_state_ = TURN;
@@ -676,21 +682,19 @@ void Mosquibler::move() {
       body->SetLinearVelocity(impulse);
    }
 
-   // In state death
-   if (enemy_state_ == DEATH) {
-      if (flag_ && body) {
-         get_application()->world_.DestroyBody(body);
-         body = nullptr;
-         flag_ = false;
+   // In state hurt
+   if (enemy_state_ == HURT) {
+      if (textures["hit"].frame_ > 3) {
+         enemy_state_ = FALL;
       }
+   }
 
-      if (!in_contact_down) {
-         start_death_ = 6;
-         end_death_ = 10;
-      } else {
-         start_death_ = 26;
-         end_death_ = 26;
-      }
+   // Set to dead
+   if (in_contact_down && (enemy_state_ == HURT || enemy_state_ == FALL || enemy_state_ == DEATH)) {
+      //std::cout << "Mosquibler::move() - dead\n";
+      enemy_state_ = DEATH;
+      start_death_ = 16;
+      end_death_ = 16;
    }
 }
 
@@ -700,6 +704,10 @@ void Mosquibler::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&textures["fly"]);
    } else if (enemy_state_ == TURN) {
       Element::animate(&textures["turn"]);
+   } else if (enemy_state_ == HURT) {
+      Element::animate(&textures["hit"]);
+   } else if (enemy_state_ == FALL) {
+      Element::animate(&textures["fall"]);
    } else if (enemy_state_ == DEATH) {
       Element::animate(&textures["death"], start_death_, end_death_);
    }
@@ -717,6 +725,16 @@ Texture* Mosquibler::get_texture() {
       return &textures["turn"];
    }
 
+   // Get hit texture
+   if (enemy_state_ == HURT) {
+      return &textures["hit"];
+   }
+
+   // Get fall texture
+   if (enemy_state_ == FALL) {
+      return &textures["fall"];
+   }
+
    // Get death texture
    if (enemy_state_ == DEATH) {
       return &textures["death"];
@@ -725,16 +743,28 @@ Texture* Mosquibler::get_texture() {
 
 // Start contact function
 void Mosquibler::start_contact(Element *element) {
-   if (element && (element->type() == "Player" || element->type() == "Projectile") && enemy_state_ != DEATH) {
-      set_collision(CAT_PLATFORM);
-      enemy_state_ = DEATH;
-      start_death_ = 0;
-      end_death_ = 10;
-   }
+   if (element) {
+      if ((element->type() == "Player" || element->type() == "Projectile") && enemy_state_ != DEATH) {
+         //std::cout << "Mosquibler::start_contact() - hit by player\n";
+         set_collision(CAT_PLATFORM);
+         enemy_state_ = HURT;
+      }
 
-   if (element && element->type() == "Platform") {
-      textures["death"].frame_ = 10;
-      in_contact_down = true;
+      if (element->type() == "Platform") {
+         in_contact_down = true;
+         if ((enemy_state_ == HURT || enemy_state_ == FALL || enemy_state_ == DEATH)) {
+            //std::cout << "Mosquibler::start_contact() - hit the ground\n";
+            enemy_state_ = DEATH;
+         }
+      }
+   }
+}
+
+void Mosquibler::end_contact(Element *element) {
+   if (element) {
+      if (element->type() == "Platform") {
+         in_contact_down = false;
+      }
    }
 }
 
@@ -925,7 +955,6 @@ void Fleet::move() {
    if (alive) {
       if (enemy_state_ == DEATH) {
          if (in_contact) {
-            std::cout << "IAMDEAD\n";
             //alive = false;
          }
       }

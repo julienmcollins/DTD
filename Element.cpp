@@ -5,7 +5,8 @@
 
 // Constructor for element
 Element::Element(int x, int y, int height, int width, Application *application) :
-   alive(true), texture(this, 0), body(NULL), flag_(false), element_shape() {
+   alive(true), texture(this, 0), body(NULL), flag_(false), element_shape(), 
+   in_contact_down(false), in_contact_left(false), in_contact_right(false) {
 
    // Set application
    application_ = application;

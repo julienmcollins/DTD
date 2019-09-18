@@ -23,6 +23,7 @@ class Enemy : public Entity {
          RETREAT,
          HURT,
          TURN,
+         FALL,
          DEATH
       };
 
@@ -204,6 +205,7 @@ class Mosquibler : public Enemy {
 
       // Get contact
       virtual void start_contact(Element *element = NULL);
+      virtual void end_contact(Element *element = NULL);
 
       // Get type
       virtual std::string type() {

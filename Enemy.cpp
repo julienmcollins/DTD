@@ -1144,7 +1144,7 @@ bool MosquiblerEgg::load_media() {
    load_image(textures, this, 92, 59, 6, 1.0 / 20.0f, "idle", "images/enemies/Mosqueenbler/egg_idle.png", success);
 
    // Load break
-   load_image(textures, this, 92, 59, 5, 1.0 / 20.0f, "attack", "images/enemies/Mosqueenbler/egg_break.png", success);
+   load_image(textures, this, 92, 59, 7, 1.0 / 20.0f, "attack", "images/enemies/Mosqueenbler/egg_break.png", success);
 
    return success;
 }

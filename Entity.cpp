@@ -334,7 +334,7 @@ void Player::update(bool freeze) {
    Texture *playertexture = get_texture();
 
    // Render arm if idle, render shooting if not
-   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DEATH && player_state_ != DOUBLE_JUMP) {
+   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DEATH) {
       if (!shooting) {
          if (get_player_state() == 1) {
             textures["running_arm"].render(get_x() + get_width() +
@@ -397,7 +397,7 @@ void Player::adjust_deltas() {
          arm_delta_shoot_x = -58;
          arm_delta_shoot_y = 34;
       }
-   } else if (player_state_ == RUN_AND_JUMP || player_state_ == JUMP) {
+   } else if (player_state_ == RUN_AND_JUMP || player_state_ == JUMP || player_state_ == DOUBLE_JUMP) {
       // Adjust deltas
       if (entity_direction == RIGHT) {
          arm_delta_x = -3;

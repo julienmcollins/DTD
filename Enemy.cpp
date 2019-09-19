@@ -123,7 +123,7 @@ bool Fecreez::load_media() {
    load_image(textures, this, 82, 92, 18, 1.0f / 20.0f, "idle", "images/enemies/Fecreez/fecreez_idle.png", success);
 
    // Load attack
-   load_image(textures, this, 82, 92, 7, 1.0f / 20.0f, "attack", "images/enemies/Fecreez/fecreez_shoot.png", success);
+   load_image(textures, this, 82, 92, 9, 1.0f / 20.0f, "attack", "images/enemies/Fecreez/fecreez_shoot.png", success);
 
    // Load death
    load_image(textures, this, 143, 92, 16, 1.0f / 20.0f, "death", "images/enemies/Fecreez/fecreez_death.png", success);
@@ -186,31 +186,31 @@ void Fecreez::move() {
 
    // Check to see if get_player() within bounds of enemy
    if (get_application()->get_player()->get_y() >= get_y() - get_height() &&
-         get_application()->get_player()->get_y() <= get_y() + get_height()
-         && enemy_state_ != TURN && enemy_state_ != DEATH) {
-      // Set state to attack
+      get_application()->get_player()->get_y() <= get_y() + get_height()
+      && enemy_state_ != TURN && enemy_state_ != DEATH) {
       if (shoot_timer_ >= 100) {
          enemy_state_ = ATTACK;
-      } else if (shoot_timer_ < 100 && textures["attack"].frame_ > 6) {
+      } else if (shoot_timer_ < 100 && textures["attack"].frame_ > 8) {
          enemy_state_ = IDLE;
          textures["attack"].frame_ = 0;
       }
-
-      // Update timer
       ++shoot_timer_;
-   } else if (enemy_state_ != TURN && enemy_state_ != DEATH) {
+   } else if (enemy_state_ != TURN && enemy_state_ != DEATH && enemy_state_ != ATTACK) {
       enemy_state_ = IDLE;
-      textures["attack"].frame_ = 0;
    }
 
    // attack
    if (enemy_state_ == ATTACK) {
-      if (textures["attack"].frame_ > 6 && shoot_timer_ >= 100) {
+      if (textures["attack"].frame_ > 4 && shoot_timer_ >= 100) {
          TextureData normal = {15, 24, 8};
          TextureData hit = {15, 24, 8};
          Projectile *tmp = create_projectile(15, -10, 70, 0, 10, 10.4f, 0.0f, normal, hit);
          tmp->body->SetGravityScale(0);
          shoot_timer_ = 0;
+      }
+      if (textures["attack"].frame_ > 8) {
+         enemy_state_ = IDLE;
+         textures["attack"].frame_ = 0;
       }
    }
 

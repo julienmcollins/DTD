@@ -15,8 +15,8 @@ class Entity;
 // Shape struct
 typedef struct Shape {
    union ShapeType {
-      ShapeType(int w, int h, float a) : square{.width = w, .height = h, .angle = a} {}
-      ShapeType(float a) : circle{.radius = a} {}
+      ShapeType(int w, int h, float a) : square{w, h, a} {}
+      ShapeType(float a) : circle{a} {}
       struct Square {
          int width = 0;
          int height = 0;

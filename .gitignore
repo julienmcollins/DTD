@@ -3,3 +3,4 @@ dtd
 *.a
 Makefile
 .vscode
+.gitignore

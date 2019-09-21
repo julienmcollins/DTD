@@ -1028,6 +1028,7 @@ void Fleet::start_contact(Element *element) {
          b2Fixture *fixture_list = body->GetFixtureList();
          while (fixture_list) {
             set_collision(CAT_PLATFORM);
+            fixture_list = fixture_list->GetNext();
          }
       }
    }

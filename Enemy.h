@@ -332,7 +332,7 @@ class WormoredSensor : public Sensor {
 
       // Contact functions
       virtual void start_contact(Element *element);
-      virtual void end_contact(Element *element);
+      virtual void end_contact(Element *element) {};
 };
 
 class Wormored : public Enemy {
@@ -344,8 +344,8 @@ class Wormored : public Enemy {
       virtual bool load_media();
 
       // Move and animate functions
-      virtual void move();
-      virtual void animate(Texture *tex, int reset, int max, int start);
+      virtual void move() {};
+      virtual void animate(Texture *tex, int reset, int max, int start) {};
 
       // Wormored type
       virtual std::string type() {

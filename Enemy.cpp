@@ -1199,14 +1199,32 @@ Wormored::Wormored(int x, int y, Application *application) :
    element_shape.dynamic = true;
    element_shape.shape_type.square.width = 143;
    element_shape.shape_type.square.height = 395;
-   set_hitbox(x - 239, y);
+   set_hitbox(x - 239, y + 13);
 
    // Add new sensors to the body
-   sensors_[0] = new WormoredSensor(395, 124, this, CONTACT_UP, x - 109, 0);
-   sensors_[1] = new WormoredSensor(363, 80, this, CONTACT_UP, x - 7, 0);
-   sensors_[2] = new WormoredSensor(320, 86, this, CONTACT_UP, x + 77, 0);
-   sensors_[3] = new WormoredSensor(230, 60, this, CONTACT_UP, x + 150, 0);
-   sensors_[4] = new WormoredSensor(179, 44, this, CONTACT_UP, x + 202, 0);
+   sensors_[0] = new WormoredSensor(395, 124, this, CONTACT_UP, x - 109, y + 13);
+   sensors_[1] = new WormoredSensor(363, 80, this, CONTACT_UP, x - 7, y + 28);
+   sensors_[2] = new WormoredSensor(320, 86, this, CONTACT_UP, x + 77, y + 50);
+   sensors_[3] = new WormoredSensor(230, 60, this, CONTACT_UP, x + 150, y + 95);
+   sensors_[4] = new WormoredSensor(179, 44, this, CONTACT_UP, x + 202, y + 120);
+}
+
+bool Wormored::load_media() {
+   bool success = true;
+
+   // Load idle
+   load_image(textures, this, 796, 418, 21, 1.0f / 24.0f, "idle", "images/enemies/Wormored/idle.png", success);
+
+   // Load turn
+   load_image(textures, this, 796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/turn.png", success);
+
+   // Load attack
+   load_image(textures, this, 796, 418, 22, 1.0f / 24.0f, "attack", "images/enemies/Wormored/attack.png", success);
+
+   // Load excrete
+   load_image(textures, this, 796, 418, 28, 1.0f / 24.0f, "excrete", "images/enemies/Wormored/excrete.png", success);
+
+   return success;
 }
 
 Wormored::~Wormored() {

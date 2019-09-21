@@ -336,11 +336,15 @@ void Player::update(bool freeze) {
    // Render arm if idle, render shooting if not
    if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DEATH) {
       if (!shooting) {
-         if (get_player_state() == 1) {
+         if (get_player_state() == RUN) {
             textures["running_arm"].render(get_x() + get_width() +
                arm_delta_x, get_y() + arm_delta_y,
                textures["running_arm"].curr_clip_, 0.0,
                &textures["running_arm"].center_, textures["running_arm"].flip_);
+         } else if (get_player_state() == DOUBLE_JUMP) {
+            textures["double_jump_arm"].render(get_x() + get_width() +
+               arm_delta_x, get_y() + arm_delta_y, textures["double_jump_arm"].curr_clip_, 0.0,
+               &textures["double_jump_arm"].center_, textures["double_jump_arm"].flip_);
          } else {
             //std::cout << textures["idle_arm"].max_frame_ << std::endl;
             textures["idle_arm"].render(get_x() + get_width() + 
@@ -473,6 +477,7 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&textures["running_jump"], textures["running_jump"].reset_frame, textures["running_jump"].stop_frame);
    } else if (player_state_ == DOUBLE_JUMP) {
       Element::animate(&textures["double_jump"], textures["double_jump"].reset_frame, textures["double_jump"].stop_frame);
+      Element::animate(&textures["double_jump_arm"], textures["double_jump_arm"].reset_frame, textures["double_jump_arm"].stop_frame);
    } else if (player_state_ == PUSH) {
       Element::animate(&textures["push"]);
    } else if (player_state_ == JUMP_AND_PUSH) {
@@ -578,6 +583,13 @@ void Player::move() {
          textures["death"].stop_frame = 19;
       }
       return;
+   }
+
+   // Reset frames
+   if (player_state_ != DOUBLE_JUMP) {
+      textures["double_jump_arm"].reset_frame = 0;
+   } else {
+      textures["double_jump_arm"].reset_frame = textures["double_jump_arm"].max_frame_;
    }
 
    // Check for changing directions on second jump
@@ -779,6 +791,9 @@ bool Player::load_media() {
 
    // Load Running arm
    load_image(textures, this, 9, 27, 15, 1.0f / 30.0f, "running_arm", "images/player/running_arm.png", success);
+
+   // Load double jump arm
+   load_image(textures, this, 9, 27, 8, 1.0f / 24.0f, "double_jump_arm", "images/player/double_jump_arm.png", success);
 
    // Load pushing animation
    load_image(textures, this, 59, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);

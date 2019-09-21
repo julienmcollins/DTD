@@ -327,7 +327,7 @@ class MosquiblerEgg : public Enemy {
 class Wormored : public Enemy {
    public:
       // Constructor
-      Wormored();
+      Wormored(int x, int y, Application *application);
 
       // Load wormored media
       virtual bool load_media();

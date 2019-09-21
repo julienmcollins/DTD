@@ -1181,4 +1181,14 @@ void MosquiblerEgg::start_contact(Element *element) {
 ////////////////////////////////////////////////
 
 // Constructor for Wormored
-//Wormored::Wormored()
+/*
+Wormored::Wormored(int x, int y, Application *application) :
+   Enemy(x, y, 404, 640, application) {
+
+   // Set the body type to dynamic
+   element_shape.dynamic = true;
+   element_shape.shape_type.square.width = 143;
+   element_shape.shape_type.square.height = 395;
+   set_hitbox(x, y);
+}
+*/

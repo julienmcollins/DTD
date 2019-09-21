@@ -192,11 +192,15 @@ void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
    }
 }
 
-void Element::set_collision(uint16 collision_types) {
+void Element::set_collision(uint16 collision_types, b2Fixture *fixture) {
    b2Filter filter;
    filter.categoryBits = body->GetFixtureList()->GetFilterData().categoryBits;
    filter.maskBits = collision_types;
-   body->GetFixtureList()->SetFilterData(filter);
+   if (!fixture) {
+      body->GetFixtureList()->SetFilterData(filter);
+   } else {
+      fixture->SetFilterData(filter);
+   }
 }
 
 // Is alive function

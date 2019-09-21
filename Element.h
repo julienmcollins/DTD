@@ -101,7 +101,7 @@ class Element {
       };
 
       // Set collisions
-      void set_collision(uint16 collision_types);
+      void set_collision(uint16 collision_types, b2Fixture *fixture = nullptr);
 
       /*******************************/
 

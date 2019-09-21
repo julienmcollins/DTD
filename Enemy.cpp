@@ -1025,12 +1025,9 @@ void Fleet::start_contact(Element *element) {
       health -= 10;
       if (health <= 0) {
          enemy_state_ = DEATH;
-         b2Filter filter;
-         filter.groupIndex = -5;
          b2Fixture *fixture_list = body->GetFixtureList();
          while (fixture_list) {
-            fixture_list->SetFilterData(filter);
-            fixture_list = fixture_list->GetNext();
+            set_collision(CAT_PLATFORM);
          }
       }
    }

@@ -114,8 +114,8 @@ bool Element::load_media() {
 }
 
 // Loads an image
-void Element::load_image(std::unordered_map<std::string, Texture> &textures, Element *element, int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success) {
-   textures.emplace(name, Texture(element, frame_num - 1, fps));
+void Element::load_image(int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success) {
+   textures.emplace(name, Texture(this, frame_num - 1, fps));
    if (!textures[name].loadFromFile(file)) {
       std::cerr << "Failed to load " << file << std::endl;
       success = false;

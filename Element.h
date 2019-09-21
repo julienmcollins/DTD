@@ -118,7 +118,7 @@ class Element {
 
       // virtual load media
       virtual bool load_media();
-      void load_image(std::unordered_map<std::string, Texture> &textures, Element *element, int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success);
+      void load_image(int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success);
 
       // Set and add hitboxes
       void set_hitbox(int x, int y, SHAPE_TYPE type = SQUARE, int group = -1);

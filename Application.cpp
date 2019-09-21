@@ -119,10 +119,10 @@ bool Application::loadMedia() {
 
    /************** MAIN MENU STUFF *********************************/
    // Load forest
-   menu_background_.load_image(menu_background_.textures, &menu_background_, 1920, 1080, 3, 1.0f / 4.0f, "forest", "images/miscealaneous/forestscreen.png", success);
+   menu_background_.load_image(1920, 1080, 3, 1.0f / 4.0f, "forest", "images/miscealaneous/forestscreen.png", success);
 
    // Load cloud
-   menu_background_.load_image(menu_background_.textures, &menu_background_, 1920, 1080, 3, 1.0f / 4.0f, "cloud", "images/miscealaneous/cloudscreen.png", success);
+   menu_background_.load_image(1920, 1080, 3, 1.0f / 4.0f, "cloud", "images/miscealaneous/cloudscreen.png", success);
 
    // Load title
    if (!menu_title_.texture.loadFromFile("images/miscealaneous/title.png")) {

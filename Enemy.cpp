@@ -120,16 +120,16 @@ bool Fecreez::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(textures, this, 82, 92, 18, 1.0f / 20.0f, "idle", "images/enemies/Fecreez/fecreez_idle.png", success);
+   load_image(82, 92, 18, 1.0f / 20.0f, "idle", "images/enemies/Fecreez/fecreez_idle.png", success);
 
    // Load attack
-   load_image(textures, this, 82, 92, 9, 1.0f / 20.0f, "attack", "images/enemies/Fecreez/fecreez_shoot.png", success);
+   load_image(82, 92, 9, 1.0f / 20.0f, "attack", "images/enemies/Fecreez/fecreez_shoot.png", success);
 
    // Load death
-   load_image(textures, this, 143, 92, 16, 1.0f / 20.0f, "death", "images/enemies/Fecreez/fecreez_death.png", success);
+   load_image(143, 92, 16, 1.0f / 20.0f, "death", "images/enemies/Fecreez/fecreez_death.png", success);
 
    // Load turn
-   load_image(textures, this, 82, 92, 7, 1.0f / 20.0f, "turn", "images/enemies/Fecreez/fecreez_turn.png", success);
+   load_image(82, 92, 7, 1.0f / 20.0f, "turn", "images/enemies/Fecreez/fecreez_turn.png", success);
 
    // Start flipped
    textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
@@ -369,19 +369,19 @@ bool Rosea::load_media() {
    bool success = true;
 
    // Load idle texture
-   load_image(textures, this, 189, 144, 15, 1.0f / 20.0f, "idle", "images/enemies/Rosea/rosea_idle.png", success);
+   load_image(189, 144, 15, 1.0f / 20.0f, "idle", "images/enemies/Rosea/rosea_idle.png", success);
 
    // Load hurt texture
-   load_image(textures, this, 189, 144, 15, 1.0f / 20.0f, "hurt", "images/enemies/Rosea/rosea_hurt.png", success);
+   load_image(189, 144, 15, 1.0f / 20.0f, "hurt", "images/enemies/Rosea/rosea_hurt.png", success);
 
    // Load arms_idle texture
-   load_image(arms_still.textures, this, 112, 78, 15, 1.0f/ 20.0f, "arms_idle", "images/enemies/Rosea/arms_idle.png", success);
+   arms_still.load_image(112, 78, 15, 1.0f/ 20.0f, "arms_idle", "images/enemies/Rosea/arms_idle.png", success);
 
    // Load arms_hurt texture
-   load_image(arms_still.textures, this, 112, 78, 15, 1.0f/ 20.0f, "arms_hurt", "images/enemies/Rosea/arms_hurt.png", success);
+   arms_still.load_image(112, 78, 15, 1.0f/ 20.0f, "arms_hurt", "images/enemies/Rosea/arms_hurt.png", success);
 
    // Load arms_hurt texture
-   load_image(arms_attack.textures, this, 122, 387, 15, 1.0f / 20.0f, "attack", "images/enemies/Rosea/arms_attack.png", success);
+   arms_attack.load_image(122, 387, 15, 1.0f / 20.0f, "attack", "images/enemies/Rosea/arms_attack.png", success);
 
    // Return success
    return success;
@@ -609,19 +609,19 @@ bool Mosquibler::load_media() {
    bool success = true;
 
    // Load fly for mosquibler
-   load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "fly", "images/enemies/Mosquibler/fly.png", success);
+   load_image(109, 97, 12, 1.0f / 20.0f, "fly", "images/enemies/Mosquibler/fly.png", success);
 
    // Load death for mosquibler
-   load_image(textures, this, 109, 89, 27, 1.0f / 20.0f, "death", "images/enemies/Mosquibler/death.png", success);
+   load_image(109, 89, 27, 1.0f / 20.0f, "death", "images/enemies/Mosquibler/death.png", success);
 
    // Load turn texture
-   load_image(textures, this, 109, 97, 12, 1.0f / 20.0f, "turn", "images/enemies/Mosquibler/turn.png", success);
+   load_image(109, 97, 12, 1.0f / 20.0f, "turn", "images/enemies/Mosquibler/turn.png", success);
 
    // Load hit texture
-   load_image(textures, this, 109, 89, 4, 1.0f / 20.0f, "hit", "images/enemies/Mosquibler/hit.png", success);
+   load_image(109, 89, 4, 1.0f / 20.0f, "hit", "images/enemies/Mosquibler/hit.png", success);
 
    // Load fall texture
-   load_image(textures, this, 109, 89, 6, 1.0f / 20.0f, "fall", "images/enemies/Mosquibler/fall.png", success);
+   load_image(109, 89, 6, 1.0f / 20.0f, "fall", "images/enemies/Mosquibler/fall.png", success);
 
    // Return success
    return success;
@@ -797,10 +797,10 @@ bool Fruig::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(textures, this, 79, 140, 20, 1.0f / 20.0f, "idle", "images/enemies/Fruig/idle.png", success);
+   load_image(79, 140, 20, 1.0f / 20.0f, "idle", "images/enemies/Fruig/idle.png", success);
 
    // Load death
-   load_image(textures, this, 85, 136, 20, 1.0f / 20.0f, "death", "images/enemies/Fruig/death.png", success);
+   load_image(85, 136, 20, 1.0f / 20.0f, "death", "images/enemies/Fruig/death.png", success);
 
    // Return success
    return success;
@@ -938,13 +938,13 @@ bool Fleet::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(textures, this, 63, 87, 11, 1.0f / 20.0f, "idle", "images/enemies/Fleet/idle.png", success);
+   load_image(63, 87, 11, 1.0f / 20.0f, "idle", "images/enemies/Fleet/idle.png", success);
 
    // Load turn
-   load_image(textures, this, 63, 87, 11, 1.0f / 20.0f, "turn", "images/enemies/Fleet/turn.png", success);
+   load_image(63, 87, 11, 1.0f / 20.0f, "turn", "images/enemies/Fleet/turn.png", success);
 
    // Load death
-   load_image(textures, this, 63, 87, 18, 1.0f / 20.0f, "death", "images/enemies/Fleet/death.png", success);
+   load_image(63, 87, 18, 1.0f / 20.0f, "death", "images/enemies/Fleet/death.png", success);
 
    // Return success
    return success;
@@ -1073,10 +1073,10 @@ bool Mosqueenbler::load_media() {
    bool success = true;
 
    // Load idle texture
-   load_image(textures, this, 246, 134, 12, 1.0f / 20.0f, "idle", "images/enemies/Mosqueenbler/idle.png", success);
+   load_image(246, 134, 12, 1.0f / 20.0f, "idle", "images/enemies/Mosqueenbler/idle.png", success);
 
    // Load attack texture
-   load_image(textures, this, 246, 134, 12, 1.0f / 20.0f, "attack", "images/enemies/Mosqueenbler/attack.png", success);
+   load_image(246, 134, 12, 1.0f / 20.0f, "attack", "images/enemies/Mosqueenbler/attack.png", success);
 
    // Return if success
    return success;
@@ -1139,10 +1139,10 @@ bool MosquiblerEgg::load_media() {
    bool success = true;
 
    // Load idle (falling)
-   load_image(textures, this, 92, 59, 6, 1.0 / 20.0f, "idle", "images/enemies/Mosqueenbler/egg_idle.png", success);
+   load_image(92, 59, 6, 1.0 / 20.0f, "idle", "images/enemies/Mosqueenbler/egg_idle.png", success);
 
    // Load break
-   load_image(textures, this, 92, 59, 7, 1.0 / 20.0f, "attack", "images/enemies/Mosqueenbler/egg_break.png", success);
+   load_image(92, 59, 7, 1.0 / 20.0f, "attack", "images/enemies/Mosqueenbler/egg_break.png", success);
 
    return success;
 }
@@ -1218,16 +1218,16 @@ bool Wormored::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(textures, this, 796, 418, 21, 1.0f / 24.0f, "idle", "images/enemies/Wormored/idle.png", success);
+   load_image(796, 418, 21, 1.0f / 24.0f, "idle", "images/enemies/Wormored/idle.png", success);
 
    // Load turn
-   load_image(textures, this, 796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/Wormored/turn.png", success);
+   load_image(796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/Wormored/turn.png", success);
 
    // Load attack
-   load_image(textures, this, 796, 418, 22, 1.0f / 24.0f, "attack", "images/enemies/Wormored/attack.png", success);
+   load_image(796, 418, 22, 1.0f / 24.0f, "attack", "images/enemies/Wormored/attack.png", success);
 
    // Load excrete
-   load_image(textures, this, 796, 418, 28, 1.0f / 24.0f, "excrete", "images/enemies/Wormored/excrete.png", success);
+   load_image(796, 418, 28, 1.0f / 24.0f, "excrete", "images/enemies/Wormored/excrete.png", success);
 
    return success;
 }

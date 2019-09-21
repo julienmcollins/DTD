@@ -754,49 +754,49 @@ bool Player::load_media() {
    bool success = true;
 
    // Load player kick
-   load_image(textures, this, 59, 104, 17, 1.0f / 24.0f, "kick", "images/player/idle_kick_no_arm.png", success);
+   load_image(59, 104, 17, 1.0f / 24.0f, "kick", "images/player/idle_kick_no_arm.png", success);
 
    // Load player tap
-   load_image(textures, this, 59, 104, 12, 1.0f / 24.0f, "tap", "images/player/idle_tap_no_arm.png", success);
+   load_image(59, 104, 12, 1.0f / 24.0f, "tap", "images/player/idle_tap_no_arm.png", success);
    
    // Set current idle texture to tap
    curr_idle_texture = &textures["tap"];
 
    // Load look
-   load_image(textures, this, 59, 104, 20, 1.0f / 24.0f, "look", "images/player/idle_look_no_arm.png", success);
+   load_image(59, 104, 20, 1.0f / 24.0f, "look", "images/player/idle_look_no_arm.png", success);
 
    // Load player jumping idly
-   load_image(textures, this, 59, 104, 15, 1.0f / 24.0f, "jump", "images/player/idle_jump_no_arm.png", success);
+   load_image(59, 104, 15, 1.0f / 24.0f, "jump", "images/player/idle_jump_no_arm.png", success);
 
    // Load player running
-   load_image(textures, this, 59, 104, 15, 1.0f / 30.0f, "running", "images/player/running_no_arm.png", success);
+   load_image(59, 104, 15, 1.0f / 30.0f, "running", "images/player/running_no_arm.png", success);
 
    // Load double jump
-   load_image(textures, this, 59, 104, 11, 1.0f / 24.0f, "double_jump", "images/player/double_jump.png", success);
+   load_image(59, 104, 11, 1.0f / 24.0f, "double_jump", "images/player/double_jump.png", success);
 
    // Load jump and run
-   load_image(textures, this, 59, 104, 15, 1.0f / 24.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
+   load_image(59, 104, 15, 1.0f / 24.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
 
    // Load arm
-   load_image(textures, this, 7, 24, 5, 1.0f / 20.0f, "idle_arm", "images/player/idle_arm.png", success);
+   load_image(7, 24, 5, 1.0f / 20.0f, "idle_arm", "images/player/idle_arm.png", success);
 
    // Load shooting arm
-   load_image(textures, this, 44, 33, 9, 1.0f / 20.0f, "arm_throw", "images/player/arm_throw.png", success);
+   load_image(44, 33, 9, 1.0f / 20.0f, "arm_throw", "images/player/arm_throw.png", success);
 
    // Load Running arm
-   load_image(textures, this, 9, 27, 15, 1.0f / 30.0f, "running_arm", "images/player/running_arm.png", success);
+   load_image(9, 27, 15, 1.0f / 30.0f, "running_arm", "images/player/running_arm.png", success);
 
    // Load double jump arm
-   load_image(textures, this, 9, 27, 8, 1.0f / 24.0f, "double_jump_arm", "images/player/double_jump_arm.png", success);
+   load_image(9, 27, 8, 1.0f / 24.0f, "double_jump_arm", "images/player/double_jump_arm.png", success);
 
    // Load pushing animation
-   load_image(textures, this, 59, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);
+   load_image(59, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);
 
    // Load jump and push
-   load_image(textures, this, 59, 104, 8, 1.0f / 20.0f, "jump_push", "images/player/jump_push.png", success);
+   load_image(59, 104, 8, 1.0f / 20.0f, "jump_push", "images/player/jump_push.png", success);
 
    // Load death animation
-   load_image(textures, this, 105, 104, 20, 1.0f / 20.0f, "death", "images/player/death.png", success);
+   load_image(105, 104, 20, 1.0f / 20.0f, "death", "images/player/death.png", success);
 
    // Return success
    return success;
@@ -870,10 +870,10 @@ bool Hitmarker::load_media() {
    bool success = true;
 
    // Load alive texture
-   load_image(textures, this, 76, 103, 21, 1.0 / 20.0f, "alive", "images/player/hp_idle.png", success);
+   load_image(76, 103, 21, 1.0 / 20.0f, "alive", "images/player/hp_idle.png", success);
 
    // Load dead texture
-   load_image(textures, this, 76, 103, 19, 1.0 / 20.0f, "dead", "images/player/hp_hit.png", success);
+   load_image(76, 103, 19, 1.0 / 20.0f, "dead", "images/player/hp_hit.png", success);
 
    // Return success
    return success;

@@ -177,10 +177,10 @@ bool Eraser::load_media() {
    bool success = true;
 
    // Normal eraser
-   load_image(textures, this, 21, 12, 3, 1.0f / 20.0f, "normal", "images/player/eraser.png", success);
+   load_image(21, 12, 3, 1.0f / 20.0f, "normal", "images/player/eraser.png", success);
 
    // Exploading eraser
-   load_image(textures, this, 21, 12, 4, 1.0f / 20.0f, "explode", "images/player/eraser_break.png", success);
+   load_image(21, 12, 4, 1.0f / 20.0f, "explode", "images/player/eraser_break.png", success);
 
    // Return success
    return success;
@@ -214,11 +214,11 @@ bool EnemyProjectile::load_media() {
 
    // Normal projectile
    std::string normal = "images/enemies/" + owning_entity->type() + "/projectile.png";
-   load_image(textures, this, normal_.width, normal_.height, normal_.frames, 1.0f / 20.0f, "normal", normal, success);
+   load_image(normal_.width, normal_.height, normal_.frames, 1.0f / 20.0f, "normal", normal, success);
 
    // Hit projectile
    std::string hit = "images/enemies/" + owning_entity->type() + "/hit.png";
-   load_image(textures, this, hit_.width, hit_.height, hit_.frames, 1.0f / 20.0f, "explode", hit, success);
+   load_image(hit_.width, hit_.height, hit_.frames, 1.0f / 20.0f, "explode", hit, success);
 
    // Return success
    return success;   

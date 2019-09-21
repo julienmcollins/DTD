@@ -20,6 +20,7 @@ class Enemy : public Entity {
       enum STATE {
          IDLE,
          ATTACK,
+         EXCRETE,
          RETREAT,
          HURT,
          TURN,
@@ -344,8 +345,9 @@ class Wormored : public Enemy {
       virtual bool load_media();
 
       // Move and animate functions
-      virtual void move() {};
-      virtual void animate(Texture *tex, int reset, int max, int start) {};
+      virtual void move();
+      virtual void animate(Texture *tex, int reset, int max, int start);
+      virtual Texture *get_texture();
 
       // Wormored type
       virtual std::string type() {

@@ -628,7 +628,7 @@ void Player::move() {
       // Check for midair
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
          //player_state_ = RUN;
-         b2Vec2 vel = {-4.5f, body->GetLinearVelocity().y};
+         b2Vec2 vel = {-5.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP || player_state_ == DOUBLE_JUMP) {
          b2Vec2 vel = {body->GetLinearVelocity().x, body->GetLinearVelocity().y};

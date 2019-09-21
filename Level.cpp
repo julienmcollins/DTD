@@ -64,6 +64,8 @@ Level::Level(string file, Application::FOREST level, Application *application) :
       } else if (name == "Mosqueenbler") {
          enemies_.push_back(new Mosqueenbler(x, y, application));
          num_of_kills_ -= 1;
+      } else if (name == "Wormored") {
+         enemies_.push_back(new Wormored(x, y, application));
       }
    }
 

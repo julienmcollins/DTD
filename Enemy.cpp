@@ -1185,8 +1185,8 @@ WormoredSensor::WormoredSensor(float height, float width, Entity *entity, CONTAC
 void WormoredSensor::start_contact(Element *element) {
    if (element) {
       if (element->type() == "Player" || element->type() == "Projectile") {
-         Wormored *wormored = dynamic_cast<Wormored*>(entity_);
-         wormored->set_state(Wormored::HURT);
+         //Wormored *wormored = dynamic_cast<Wormored*>(entity_);
+         //get_application()->get_player()->take_damage(10);
       }
    }
 }
@@ -1207,6 +1207,10 @@ Wormored::Wormored(int x, int y, Application *application) :
    sensors_[2] = new WormoredSensor(320, 86, this, CONTACT_UP, x + 77, y + 50);
    sensors_[3] = new WormoredSensor(230, 60, this, CONTACT_UP, x + 150, y + 95);
    sensors_[4] = new WormoredSensor(179, 44, this, CONTACT_UP, x + 202, y + 120);
+
+   // Set state to idle
+   enemy_state_ = IDLE;
+   entity_direction = LEFT;
 }
 
 bool Wormored::load_media() {
@@ -1216,7 +1220,7 @@ bool Wormored::load_media() {
    load_image(textures, this, 796, 418, 21, 1.0f / 24.0f, "idle", "images/enemies/Wormored/idle.png", success);
 
    // Load turn
-   load_image(textures, this, 796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/turn.png", success);
+   load_image(textures, this, 796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/Wormored/turn.png", success);
 
    // Load attack
    load_image(textures, this, 796, 418, 22, 1.0f / 24.0f, "attack", "images/enemies/Wormored/attack.png", success);
@@ -1225,6 +1229,69 @@ bool Wormored::load_media() {
    load_image(textures, this, 796, 418, 28, 1.0f / 24.0f, "excrete", "images/enemies/Wormored/excrete.png", success);
 
    return success;
+}
+
+void Wormored::move() {
+   if (enemy_state_ != DEATH && enemy_state_ != ATTACK && enemy_state_ != EXCRETE) {
+      if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
+         entity_direction = LEFT;
+         enemy_state_ = TURN;
+      } else if (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT) {
+         entity_direction = RIGHT;
+         enemy_state_ = TURN;
+      }
+   }
+
+   if (enemy_state_ == IDLE) {
+      if (entity_direction == LEFT) {
+         b2Vec2 vel = {-1.0f, 0.0f};
+         body->SetLinearVelocity(vel);
+      } else if (entity_direction == RIGHT) {
+         b2Vec2 vel = {1.0f, 0.0f};
+         body->SetLinearVelocity(vel);
+      }
+   }
+
+   if (enemy_state_ == TURN) {
+      if (textures["turn"].frame_ > textures["turn"].max_frame_ - 1) {
+         if (entity_direction == RIGHT) {
+            textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
+            textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
+         } else if (entity_direction == LEFT) {
+            textures["idle"].flip_ = SDL_FLIP_NONE;
+            textures["turn"].flip_ = SDL_FLIP_NONE;
+         }
+         textures["turn"].completed_ = false;
+         textures["turn"].frame_ = 0;
+         enemy_state_ = IDLE;
+      }
+   }
+}
+
+void Wormored::animate(Texture *tex, int reset, int max, int start) {
+   if (enemy_state_ == IDLE) {
+      Element::animate(&textures["idle"]);
+   } else if (enemy_state_ == TURN) {
+      Element::animate(&textures["turn"]);
+   }
+}
+
+Texture *Wormored::get_texture() {
+   if (enemy_state_ == IDLE) {
+      return &textures["idle"];
+   }
+
+   if (enemy_state_ == TURN) {
+      return &textures["turn"];
+   }
+
+   if (enemy_state_ == ATTACK) {
+      return &textures["attack"];
+   }
+
+   if (enemy_state_ == EXCRETE) {
+      return &textures["excrete"];
+   }
 }
 
 Wormored::~Wormored() {

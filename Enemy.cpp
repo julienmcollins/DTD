@@ -911,13 +911,13 @@ Fleet::Fleet(int x, int y, Application *application) :
    fleet_sensor_ = new FleetSensor(0.07f, 0.23f, this, CONTACT_DOWN, 0.0f, -0.65f);
 
    // Add a filter
-   b2Fixture *fixture_list = body->GetFixtureList()->GetNext();
-   if (fixture_list != nullptr) {
-      b2Filter filter;
-      filter.categoryBits = CAT_ENEMY;
-      filter.maskBits = CAT_ENEMY | CAT_PLAYER | CAT_PROJECTILE | CAT_PLATFORM;
-      fixture_list->SetFilterData(filter);
-   }
+   // b2Fixture *fixture_list = body->GetFixtureList()->GetNext();
+   // if (fixture_list != nullptr) {
+   //    b2Filter filter;
+   //    filter.categoryBits = CAT_ENEMY;
+   //    filter.maskBits = CAT_ENEMY | CAT_PLAYER | CAT_PROJECTILE | CAT_PLATFORM;
+   //    fixture_list->SetFilterData(filter);
+   // }
 
    // Set health
    health = 20;
@@ -1027,7 +1027,7 @@ void Fleet::start_contact(Element *element) {
          enemy_state_ = DEATH;
          b2Fixture *fixture_list = body->GetFixtureList();
          while (fixture_list) {
-            set_collision(CAT_PLATFORM);
+            set_collision(CAT_PLATFORM, fixture_list);
             fixture_list = fixture_list->GetNext();
          }
       }

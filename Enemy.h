@@ -44,6 +44,11 @@ class Enemy : public Entity {
       // Get the enemy state
       STATE get_enemy_state() const;
 
+      // Set enemy_state_
+      void set_state(STATE state) {
+         enemy_state_ = state;
+      }
+
       // Within bounds function
       virtual bool within_bounds();
 
@@ -140,11 +145,6 @@ class Rosea : public Enemy {
       // Get type
       virtual std::string type() {
          return "Rosea";
-      }
-
-      // Set enemy_state_
-      void set_state(STATE state) {
-         enemy_state_ = state;
       }
 
       // get enemy state
@@ -324,6 +324,17 @@ class MosquiblerEgg : public Enemy {
       }
 };
 
+// Fleet Sensor
+class WormoredSensor : public Sensor {
+   public:
+      // Constructor
+      WormoredSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y);
+
+      // Contact functions
+      virtual void start_contact(Element *element);
+      virtual void end_contact(Element *element);
+};
+
 class Wormored : public Enemy {
    public:
       // Constructor
@@ -340,6 +351,13 @@ class Wormored : public Enemy {
       virtual std::string type() {
          return "Wormored";
       }
+
+      // Virtual destructor
+      virtual ~Wormored();
+
+   private:
+      // List of sensors
+      Sensor *sensors_[5];
 };
 
 #endif

@@ -242,11 +242,6 @@ void Player::process_input(const Uint8 *key_state) {
    // Set previous direction
    prev_entity_dir = entity_direction;
 
-   // Set last key pressed
-   if (key != NONE) {
-      last_key_pressed = key;
-   }
-
    // Set key to none by default
    key = NONE;
 
@@ -308,7 +303,6 @@ void Player::process_input(const Uint8 *key_state) {
 void Player::update(bool freeze) {
    //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: DOUBLE_JUMP, 4: STOP, 5: RUN_AND_JUMP, 6: PUSH)" << std::endl;
    //std::cout << "X = " << body->GetLinearVelocity().x << " Y = " << body->GetLinearVelocity().y << std::endl;
-   //std::cout << "KEY = " << key << " LAST KEY PRESSED = " << last_key_pressed << std::endl;
    //std::cout << in_contact_down << std::endl;
    //std::cout << "x_pos = " << get_x() << " y_pos = " << get_y() << std::endl;
 

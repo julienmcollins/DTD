@@ -1177,8 +1177,21 @@ void MosquiblerEgg::start_contact(Element *element) {
 /*********** WORMORED BOSS ********************/
 ////////////////////////////////////////////////
 
+// Sensor constructor
+WormoredSensor::WormoredSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y) :
+   Sensor(height, width, entity, contact_type, center_x, center_y, 1.0f) {}
+
+// start contact
+void WormoredSensor::start_contact(Element *element) {
+   if (element) {
+      if (element->type() == "Player" || element->type() == "Projectile") {
+         Wormored *wormored = dynamic_cast<Wormored*>(entity_);
+         wormored->set_state(Wormored::HURT);
+      }
+   }
+}
+
 // Constructor for Wormored
-/*
 Wormored::Wormored(int x, int y, Application *application) :
    Enemy(x, y, 404, 640, application) {
 
@@ -1186,6 +1199,18 @@ Wormored::Wormored(int x, int y, Application *application) :
    element_shape.dynamic = true;
    element_shape.shape_type.square.width = 143;
    element_shape.shape_type.square.height = 395;
-   set_hitbox(x, y);
+   set_hitbox(x - 239, y);
+
+   // Add new sensors to the body
+   sensors_[0] = new WormoredSensor(395, 124, this, CONTACT_UP, x - 109, 0);
+   sensors_[1] = new WormoredSensor(363, 80, this, CONTACT_UP, x - 7, 0);
+   sensors_[2] = new WormoredSensor(320, 86, this, CONTACT_UP, x + 77, 0);
+   sensors_[3] = new WormoredSensor(230, 60, this, CONTACT_UP, x + 150, 0);
+   sensors_[4] = new WormoredSensor(179, 44, this, CONTACT_UP, x + 202, 0);
 }
-*/
+
+Wormored::~Wormored() {
+   for (int i = 0; i < 5; i++) {
+      delete sensors_[i];
+   }
+}

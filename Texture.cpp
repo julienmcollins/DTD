@@ -140,3 +140,6 @@ Texture &Texture::operator=(const Texture &src) {
 Texture::~Texture() {
    //free();
 }
+
+TextureData::TextureData(int width, int height, int num_of_frames, int frame_width, int frame_height, std::string path) :
+    width(width), height(height), frame_width(frame_width), frame_height(frame_height), num_of_frames(num_of_frames), path(path) {}

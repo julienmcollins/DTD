@@ -114,7 +114,7 @@ bool Element::load_media() {
 }
 
 // Loads an image
-void Element::load_image(int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success) {
+void Element::load_image(int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success, int rows) {
    textures.emplace(name, Texture(this, frame_num - 1, fps));
    if (!textures[name].loadFromFile(file)) {
       std::cerr << "Failed to load " << file << std::endl;
@@ -124,12 +124,24 @@ void Element::load_image(int w, int h, int frame_num, float fps, std::string nam
       textures[name].clips_ = new SDL_Rect[frame_num];
       SDL_Rect *temp = textures[name].clips_;
 
+      int columns = (frame_num + rows - 1) / rows;
+
       // Set sprites
-      for (int i = 0; i < frame_num; i++) {
-         temp[i].x = i * w;
-         temp[i].y = 0;
-         temp[i].w = w;
-         temp[i].h = h;
+      int k = 0;
+      for (int i = 0; i < rows; i++) {
+         for (int j = 0; j < columns; j++) {
+            if (k == frame_num) {
+               break;
+            }
+            temp[k].x = j * w;
+            temp[k].y = i * h;
+            temp[k].w = w;
+            temp[k].h = h;
+            k++;
+         }
+         if (k == frame_num) {
+            break;
+         }
       }
 
       // Set to 0

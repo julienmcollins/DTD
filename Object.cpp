@@ -121,7 +121,7 @@ void Projectile::update() {
          get_application()->world_.DestroyBody(body);
          body = nullptr;
       }
-      if (textures["explode"].frame_ >= hit_.frames) {
+      if (textures["explode"].frame_ >= hit_.num_of_frames) {
          alive = false;
          return;
       }
@@ -213,12 +213,12 @@ bool EnemyProjectile::load_media() {
    bool success = true;
 
    // Normal projectile
-   std::string normal = "images/enemies/" + owning_entity->type() + "/projectile.png";
-   load_image(normal_.width, normal_.height, normal_.frames, 1.0f / 20.0f, "normal", normal, success);
+   normal_.path = "images/enemies/" + owning_entity->type() + "/projectile.png";
+   load_image(normal_.width, normal_.height, normal_.num_of_frames, 1.0f / 20.0f, "normal", normal_.path, success);
 
    // Hit projectile
-   std::string hit = "images/enemies/" + owning_entity->type() + "/hit.png";
-   load_image(hit_.width, hit_.height, hit_.frames, 1.0f / 20.0f, "explode", hit, success);
+   hit_.path = "images/enemies/" + owning_entity->type() + "/hit.png";
+   load_image(hit_.width, hit_.height, hit_.num_of_frames, 1.0f / 20.0f, "explode", hit_.path, success);
 
    // Return success
    return success;   

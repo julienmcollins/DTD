@@ -17,12 +17,6 @@
 
 class Element;
 
-typedef struct {
-   int height;
-   int width;
-   int frames;
-} TextureData;
-
 class Texture {
     public:
         // Initialize
@@ -112,6 +106,20 @@ class Texture {
         // Image position
         int x;
         int y;
+};
+
+class TextureData {
+   public:
+      // Constructor
+      TextureData(int width, int height, int num_of_frames, int frame_width = 0, int frame_height = 0, std::string path = "");
+
+      // Data associated to texture
+      int width;
+      int height;
+      int frame_width;
+      int frame_height;
+      int num_of_frames;
+      std::string path;
 };
 
 #endif /* Texture_h */

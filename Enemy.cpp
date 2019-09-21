@@ -202,8 +202,8 @@ void Fecreez::move() {
    // attack
    if (enemy_state_ == ATTACK) {
       if (textures["attack"].frame_ > 4 && shoot_timer_ >= 100) {
-         TextureData normal = {15, 24, 8};
-         TextureData hit = {15, 24, 8};
+         TextureData normal(24, 15, 8);
+         TextureData hit(24, 15, 8);
          Projectile *tmp = create_projectile(15, -10, 70, 0, 10, 10.4f, 0.0f, normal, hit);
          tmp->body->SetGravityScale(0);
          shoot_timer_ = 0;
@@ -824,8 +824,8 @@ void Fruig::move() {
    if (enemy_state_ == IDLE) {
       // Let goop fall if it reaches the correct point in the animation.
       if (textures["idle"].frame_ == 8 && shoot_timer_ > 20) {
-         TextureData normal = {9, 10, 5};
-         TextureData hit = {9, 65, 9};
+         TextureData normal(10, 9, 5);
+         TextureData hit(65, 9, 9);
          proj_ = create_projectile(-30, 0, 170, 10, 10, 0.0f, 0.0f, normal, hit);
          shoot_timer_ = 0;
       }
@@ -1218,16 +1218,16 @@ bool Wormored::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(796, 418, 21, 1.0f / 24.0f, "idle", "images/enemies/Wormored/idle.png", success);
+   load_image(796, 418, 21, 1.0f / 24.0f, "idle", "images/enemies/Wormored/idle.png", success, 2);
 
    // Load turn
-   load_image(796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/Wormored/turn.png", success);
+   load_image(796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/Wormored/turn.png", success, 2);
 
    // Load attack
-   load_image(796, 418, 22, 1.0f / 24.0f, "attack", "images/enemies/Wormored/attack.png", success);
+   load_image(796, 418, 22, 1.0f / 24.0f, "attack", "images/enemies/Wormored/attack.png", success, 2);
 
    // Load excrete
-   load_image(796, 418, 28, 1.0f / 24.0f, "excrete", "images/enemies/Wormored/excrete.png", success);
+   load_image(796, 418, 28, 1.0f / 24.0f, "excrete", "images/enemies/Wormored/excrete.png", success, 2);
 
    return success;
 }

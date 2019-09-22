@@ -1194,20 +1194,28 @@ void WormoredSensor::start_contact(Element *element) {
 
 // Constructor for Wormored
 Wormored::Wormored(int x, int y, Application *application) :
-   Enemy(x, y, 404, 640, application) {
+   Enemy(x, y, 418, 796, application) {
 
    // Set the body type to dynamic
    element_shape.dynamic = true;
-   element_shape.shape_type.square.width = 143;
-   element_shape.shape_type.square.height = 395;
-   set_hitbox(x - 239, y + 13);
+   element_shape.shape_type.square.width = 640;
+   element_shape.shape_type.square.height = 404;
+   element_shape.center = {0.05f, -0.06f};
+   set_hitbox(x, y);
+   
+   // Set Wormored's collision logic
+   b2Filter filter;
+   filter.categoryBits = CAT_ENEMY;
+   filter.maskBits = CAT_PLATFORM;
+   body->GetFixtureList()->SetFilterData(filter);
 
    // Add new sensors to the body
-   sensors_[0] = new WormoredSensor(395, 124, this, CONTACT_UP, x - 109, y + 13);
-   sensors_[1] = new WormoredSensor(363, 80, this, CONTACT_UP, x - 7, y + 28);
-   sensors_[2] = new WormoredSensor(320, 86, this, CONTACT_UP, x + 77, y + 50);
-   sensors_[3] = new WormoredSensor(230, 60, this, CONTACT_UP, x + 150, y + 95);
-   sensors_[4] = new WormoredSensor(179, 44, this, CONTACT_UP, x + 202, y + 120);
+   //sensors_[0] = new WormoredSensor(395, 143, this, CONTACT_UP, x - 239, y + 13);
+   //sensors_[1] = new WormoredSensor(395, 124, this, CONTACT_UP, x - 109, y + 13);
+   //sensors_[2] = new WormoredSensor(363, 80, this, CONTACT_UP, x - 7, y + 28);
+   //sensors_[3] = new WormoredSensor(320, 86, this, CONTACT_UP, x + 77, y + 50);
+   //sensors_[4] = new WormoredSensor(230, 60, this, CONTACT_UP, x + 150, y + 95);
+   //sensors_[5] = new WormoredSensor(179, 44, this, CONTACT_UP, x + 202, y + 120);
 
    // Set state to idle
    enemy_state_ = IDLE;
@@ -1219,10 +1227,12 @@ bool Wormored::load_media() {
 
    // Load idle
    load_image(796, 418, 21, 1.0f / 24.0f, "idle", "images/enemies/Wormored/idle.png", success, 2);
+   textures["idle"].center_ = {0, 0};
 
    // Load turn
    load_image(796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/Wormored/turn.png", success, 2);
-
+   textures["turn"].center_ = {0, 0};
+   
    // Load attack
    load_image(796, 418, 22, 1.0f / 24.0f, "attack", "images/enemies/Wormored/attack.png", success, 2);
 
@@ -1234,10 +1244,10 @@ bool Wormored::load_media() {
 
 void Wormored::move() {
    if (enemy_state_ != DEATH && enemy_state_ != ATTACK && enemy_state_ != EXCRETE) {
-      if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
+      if (get_application()->get_player()->get_x() < (get_x()) && entity_direction == RIGHT) {
          entity_direction = LEFT;
          enemy_state_ = TURN;
-      } else if (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT) {
+      } else if (get_application()->get_player()->get_x() > (get_x()) && entity_direction == LEFT) {
          entity_direction = RIGHT;
          enemy_state_ = TURN;
       }

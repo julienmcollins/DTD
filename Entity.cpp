@@ -165,7 +165,7 @@ Player::Player(Application* application) :
    }
 
    // Set health. TODO: set health in a better way
-   health = 30;
+   health = 300;
 
    // TEMPORARY SOLUTION
    textures["arm_throw"].completed_ = true;

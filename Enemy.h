@@ -334,6 +334,11 @@ class WormoredSensor : public Sensor {
       // Contact functions
       virtual void start_contact(Element *element);
       virtual void end_contact(Element *element) {};
+
+      // State type
+      virtual std::string type() {
+         return "Wormored";
+      }
 };
 
 class Wormored : public Enemy {

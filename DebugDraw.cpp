@@ -15,7 +15,7 @@ void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2C
    //std::cout << "poly.w = " << poly.w << std::endl;
    //std::cout << "poly.h = " << poly.h << std::endl;
    application_->r[application_->test++] = poly;
-   if (application_->test >= 7) application_->test = 0;
+   if (application_->test >= 15) application_->test = 0;
 }
 
 void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)

@@ -112,7 +112,7 @@ class Application {
 
       // DebugDraw
       DebugDraw debugDraw;
-      SDL_Rect r[7];
+      SDL_Rect r[15];
 
       // Animation speed
       float animation_speed_;

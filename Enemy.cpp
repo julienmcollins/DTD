@@ -11,6 +11,7 @@
 #include "Texture.h"
 #include "Application.h"
 #include "Level.h"
+#include "Global.h"
 
 /********************* ENEMY IMPLEMENTATIONS ******************/
 
@@ -32,7 +33,8 @@ Enemy::STATE Enemy::get_enemy_state() const {
 
 // Create projectile
 // TODO: Create a struct that holds all of the ending parameters and pass it through
-//       such as to properly load each texture properly (one enemy has different sizes for textures)
+//       such as to properly load each texture (one enemy has different sizes for textures)
+// TODO: Do it based on get_x() instead of get_tex_x() (will need to change consts)
 Projectile* Enemy::create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
       bool owner, bool damage, float force_x, float force_y, 
       const TextureData &normal, const TextureData &hit) {
@@ -42,10 +44,10 @@ Projectile* Enemy::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
 
    // Create based on direction
    if (entity_direction == RIGHT) {
-      proj = new EnemyProjectile(get_x() + get_width() + delta_x_r, get_y() + delta_y, 
+      proj = new EnemyProjectile(get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
             damage, force_x, force_y, normal, hit, this, tmp);
    } else {
-      proj = new EnemyProjectile(get_x() + delta_x_l, get_y() + delta_y,
+      proj = new EnemyProjectile(get_tex_x() + delta_x_l, get_tex_y() + delta_y,
             damage, force_x, force_y, normal, hit, this, tmp);
    }
 
@@ -146,7 +148,7 @@ void Fecreez::move() {
    if (enemy_state_ == DEATH) {
       // TODO: find better solution
       if (!shift_) {
-         sub_x(-7);
+         sub_tex_x(-7);
          shift_ = true;
       }
    }
@@ -293,16 +295,16 @@ Rosea::Rosea(int x, int y, float angle, Application *application) :
       // Set hitbox for rosea body
       set_hitbox(x, y);
 
-      arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y());
-      arms_still.set_hitbox(arms_still.get_x() + 61, arms_still.get_y() + 39);
+      arms_attack.set_hitbox(arms_attack.get_tex_x(), arms_attack.get_tex_y());
+      arms_still.set_hitbox(arms_still.get_tex_x() + 61, arms_still.get_tex_y() + 39);
 
       // TODO: get separate elements for the arms (ie new elements and set is as dynamic body)
       // Set texture location
-      arms_attack.textures["attack"].set_x(arms_attack.get_x());
-      arms_attack.textures["attack"].set_y(arms_attack.get_y());
+      arms_attack.textures["attack"].set_x(arms_attack.get_tex_x());
+      arms_attack.textures["attack"].set_y(arms_attack.get_tex_y());
 
       // Set initial arm postion
-      arms_attack.set_y(arm_heights_[0]);
+      arms_attack.set_tex_y(arm_heights_[0]);
    }
    
    // Need to change arm position if rotated
@@ -323,8 +325,8 @@ Rosea::Rosea(int x, int y, float angle, Application *application) :
       // Set height and width
       arms_attack.set_width(387);
       arms_attack.set_height(122);
-      arms_attack.set_y(y + 37);
-      arms_attack.set_x(x + 310);
+      arms_attack.set_tex_y(y + 37);
+      arms_attack.set_tex_x(x + 310);
 
       arms_attack.textures["attack"].set_x(arms_attack.get_x());
       arms_attack.textures["attack"].set_y(arms_attack.get_y());
@@ -335,11 +337,11 @@ Rosea::Rosea(int x, int y, float angle, Application *application) :
       arms_still.textures["arms_hurt"].set_x(arms_still.get_x());
       arms_still.textures["arms_hurt"].set_y(arms_still.get_y());
 
-      arms_attack.set_hitbox(arms_attack.get_x(), arms_attack.get_y());
-      arms_still.set_hitbox(arms_still.get_x() - 70, arms_still.get_y() + 60);
+      arms_attack.set_hitbox(arms_attack.get_tex_x(), arms_attack.get_tex_y());
+      arms_still.set_hitbox(arms_still.get_tex_x() - 70, arms_still.get_tex_y() + 60);
 
-      arms_attack.set_y(y + 40);
-      arms_attack.set_x(arm_widths_[0]);
+      arms_attack.set_tex_y(y + 40);
+      arms_attack.set_tex_x(arm_widths_[0]);
       
       // Set texture angle
       textures["idle"].angle = angle;
@@ -429,9 +431,9 @@ void Rosea::move() {
    if (enemy_state_ == HURT) {
       // Set arm height to 0
       if (angle_ == 0.0f) {
-         arms_attack.set_y(arm_heights_[0]);
+         arms_attack.set_tex_y(arm_heights_[0]);
       } else {
-         arms_attack.set_x(arm_widths_[0]);
+         arms_attack.set_tex_x(arm_widths_[0]);
       }
 
       // Increment hurt counter
@@ -445,18 +447,18 @@ void Rosea::move() {
       }
    } else if (enemy_state_ == RETREAT) {
       if (angle_ == 0.0f) {
-         arms_attack.set_y(arm_heights_[arms_attack.textures["attack"].frame_]);
+         arms_attack.set_tex_y(arm_heights_[arms_attack.textures["attack"].frame_]);
       } else {
-         arms_attack.set_x(arm_widths_[arms_attack.textures["attack"].frame_]);
+         arms_attack.set_tex_x(arm_widths_[arms_attack.textures["attack"].frame_]);
       }
       if (arms_attack.textures["attack"].frame_ > 14) {
          enemy_state_ = IDLE;
          arms_attack.textures["attack"].frame_ = 0;
          arms_attack.textures["attack"].completed_ = false;
          if (angle_ == 0.0f) {
-            arms_attack.set_y(arm_heights_[14]);
+            arms_attack.set_tex_y(arm_heights_[14]);
          } else {
-            arms_attack.set_x(arm_widths_[14]);
+            arms_attack.set_tex_x(arm_widths_[14]);
          }
       }
    }
@@ -482,9 +484,9 @@ void Rosea::move() {
 
          // Sets hitbox to position of arm
          if (angle_ == 0.0f) {
-            arms_attack.set_y(arm_heights_[temp]);
+            arms_attack.set_tex_y(arm_heights_[temp]);
          } else {
-            arms_attack.set_x(arm_widths_[temp]);
+            arms_attack.set_tex_x(arm_widths_[temp]);
          }
       } else {
          // Check to make sure enemy is done attacking
@@ -538,14 +540,14 @@ void Rosea::start_contact(Element *element) {
 // Check to see if player is within bounds
 bool Rosea::within_bounds() {
    if (angle_ == 0.0f) {
-      if (get_application()->get_player()->get_x() >= get_x() - 175 
-         && get_application()->get_player()->get_x() <= get_x() + 300) {
+      if (get_application()->get_player()->get_x() >= get_x() - 250 
+         && get_application()->get_player()->get_x() <= get_x() + 250) {
          return true;
       }
    } else {
-      if (get_application()->get_player()->get_y() >= (get_y() - 175) 
-         && get_application()->get_player()->get_y() <= (get_y() + 300)
-         && get_application()->get_player()->get_x() <= (get_x() + 500)) {
+      if (get_application()->get_player()->get_y() >= (get_y() - 250) 
+         && get_application()->get_player()->get_y() <= (get_y() + 250)
+         && get_application()->get_player()->get_x() <= (get_x() + 400)) {
          return true;
       }
    }
@@ -691,7 +693,7 @@ void Mosquibler::move() {
 
    // Set to dead
    if (in_contact_down && (enemy_state_ == HURT || enemy_state_ == FALL || enemy_state_ == DEATH)) {
-      //std::cout << "Mosquibler::move() - dead\n";
+      // std::cout << "Mosquibler::move() - dead\n";
       enemy_state_ = DEATH;
       start_death_ = 16;
       end_death_ = 16;
@@ -745,15 +747,15 @@ Texture* Mosquibler::get_texture() {
 void Mosquibler::start_contact(Element *element) {
    if (element) {
       if ((element->type() == "Player" || element->type() == "Projectile") && enemy_state_ != DEATH) {
-         //std::cout << "Mosquibler::start_contact() - hit by player\n";
+         // std::cout << "Mosquibler::start_contact() - hit by player\n";
          set_collision(CAT_PLATFORM);
          enemy_state_ = HURT;
       }
 
-      if (element->type() == "Platform") {
+      if (element->type() == "Platform" || element->type() == "Mosqueenbler") {
          in_contact_down = true;
          if ((enemy_state_ == HURT || enemy_state_ == FALL || enemy_state_ == DEATH)) {
-            //std::cout << "Mosquibler::start_contact() - hit the ground\n";
+            // std::cout << "Mosquibler::start_contact() - hit the ground\n";
             enemy_state_ = DEATH;
          }
       }
@@ -835,7 +837,7 @@ void Fruig::move() {
 
       // Check for death of proj
       if (proj_ && !proj_->shift && proj_->get_state() == Object::DEAD) {
-         proj_->sub_x(24);
+         proj_->sub_tex_x(24);
          proj_->shift = true;
       }
    }
@@ -1049,7 +1051,13 @@ Mosqueenbler::Mosqueenbler(int x, int y, Application *application) :
    element_shape.density = 10000.0f;
 
    // Set hitbox
-   set_hitbox(x, y, SQUARE, 1);
+   set_hitbox(x, y);
+
+   // Reset filter
+   b2Filter filter;
+   filter.categoryBits = CAT_PLATFORM;
+   filter.maskBits = CAT_ENEMY | CAT_PLAYER | CAT_PROJECTILE;
+   body->GetFixtureList()->SetFilterData(filter);
 
    // Set entity direction
    entity_direction = RIGHT;
@@ -1200,7 +1208,7 @@ Wormored::Wormored(int x, int y, Application *application) :
    element_shape.dynamic = true;
    element_shape.shape_type.square.width = 640;
    element_shape.shape_type.square.height = 404;
-   element_shape.center = {0.05f, -0.06f};
+   element_shape.center = {-0.05f, -0.06f};
    set_hitbox(x, y);
    
    // Set Wormored's collision logic
@@ -1210,7 +1218,7 @@ Wormored::Wormored(int x, int y, Application *application) :
    body->GetFixtureList()->SetFilterData(filter);
 
    // Add new sensors to the body
-   //sensors_[0] = new WormoredSensor(395, 143, this, CONTACT_UP, x - 239, y + 13);
+   sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, -2.34f, -0.06f);
    //sensors_[1] = new WormoredSensor(395, 124, this, CONTACT_UP, x - 109, y + 13);
    //sensors_[2] = new WormoredSensor(363, 80, this, CONTACT_UP, x - 7, y + 28);
    //sensors_[3] = new WormoredSensor(320, 86, this, CONTACT_UP, x + 77, y + 50);
@@ -1244,10 +1252,10 @@ bool Wormored::load_media() {
 
 void Wormored::move() {
    if (enemy_state_ != DEATH && enemy_state_ != ATTACK && enemy_state_ != EXCRETE) {
-      if (get_application()->get_player()->get_x() < (get_x()) && entity_direction == RIGHT) {
+      if (get_application()->get_player()->get_x() < (get_x() - get_width() / 2) && entity_direction == RIGHT) {
          entity_direction = LEFT;
          enemy_state_ = TURN;
-      } else if (get_application()->get_player()->get_x() > (get_x()) && entity_direction == LEFT) {
+      } else if (get_application()->get_player()->get_x() > (get_x() + get_width() / 2) && entity_direction == LEFT) {
          entity_direction = RIGHT;
          enemy_state_ = TURN;
       }

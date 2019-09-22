@@ -43,10 +43,10 @@ Projectile* Entity::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
 
    // Create based on direction
    if (entity_direction == RIGHT) {
-      proj = new Projectile(get_x() + get_width() + delta_x_r, get_y() + delta_y, 
+      proj = new Projectile(get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
             owner, damage, force_x, force_y, normal, hit, this, tmp);
    } else {
-      proj = new Projectile(get_x() + delta_x_l, get_y() + delta_y, owner,
+      proj = new Projectile(get_tex_x() + delta_x_l, get_tex_y() + delta_y, owner,
             damage, force_x, force_y, normal, hit, this, tmp);
    }
 
@@ -68,7 +68,7 @@ PlayerSensor::PlayerSensor(float height, float width, Entity *entity, CONTACT co
 
 // Start contact function
 void PlayerSensor::start_contact(Element *element) {
-   if (element->type() == "Platform" || element->type() == "Mosqueenbler") {
+   if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
       if (sensor_contact == CONTACT_DOWN) {
          entity_->in_contact_down = true;
          entity_->has_jumped_ = 0;
@@ -331,23 +331,23 @@ void Player::update(bool freeze) {
    if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DEATH) {
       if (!shooting) {
          if (get_player_state() == RUN) {
-            textures["running_arm"].render(get_x() + get_width() +
-               arm_delta_x, get_y() + arm_delta_y,
+            textures["running_arm"].render(get_tex_x() + get_width() +
+               arm_delta_x, get_tex_y() + arm_delta_y,
                textures["running_arm"].curr_clip_, 0.0,
                &textures["running_arm"].center_, textures["running_arm"].flip_);
          } else if (get_player_state() == DOUBLE_JUMP) {
-            textures["double_jump_arm"].render(get_x() + get_width() +
-               arm_delta_x, get_y() + arm_delta_y, textures["double_jump_arm"].curr_clip_, 0.0,
+            textures["double_jump_arm"].render(get_tex_x() + get_width() +
+               arm_delta_x, get_tex_y() + arm_delta_y, textures["double_jump_arm"].curr_clip_, 0.0,
                &textures["double_jump_arm"].center_, textures["double_jump_arm"].flip_);
          } else {
             //std::cout << textures["idle_arm"].max_frame_ << std::endl;
-            textures["idle_arm"].render(get_x() + get_width() + 
-               arm_delta_x, get_y() + arm_delta_y, textures["idle_arm"].curr_clip_, 0.0, 
+            textures["idle_arm"].render(get_tex_x() + get_width() + 
+               arm_delta_x, get_tex_y() + arm_delta_y, textures["idle_arm"].curr_clip_, 0.0, 
                &textures["idle_arm"].center_, textures["idle_arm"].flip_);
          }
       } else {
-         textures["arm_throw"].render(get_x() + get_width() + 
-            arm_delta_shoot_x, get_y() + arm_delta_shoot_y, 
+         textures["arm_throw"].render(get_tex_x() + get_width() + 
+            arm_delta_shoot_x, get_tex_y() + arm_delta_shoot_y, 
             textures["arm_throw"].curr_clip_, 0.0, 
             &textures["arm_throw"].center_, textures["arm_throw"].flip_);
       }
@@ -813,10 +813,10 @@ Projectile* Player::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
 
    // Create based on direction
    if (entity_direction == RIGHT) {
-      proj = new Eraser(get_x() + get_width() + delta_x_r, get_y() + delta_y, 
+      proj = new Eraser(get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
             normal, hit, this, tmp);
    } else {
-      proj = new Eraser(get_x() + delta_x_l, get_y() + delta_y, normal, hit, this, tmp);
+      proj = new Eraser(get_tex_x() + delta_x_l, get_tex_y() + delta_y, normal, hit, this, tmp);
    }
 
    // Set shot direction

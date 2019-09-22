@@ -112,9 +112,9 @@ void Projectile::update() {
    if (object_state_ == ALIVE) {
       Element::animate(&textures["normal"]);
       if (shot_dir == LEFT) {
-         textures["normal"].render(get_x(), get_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+         textures["normal"].render(get_tex_x(), get_tex_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
       } else {
-         textures["normal"].render(get_x(), get_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
+         textures["normal"].render(get_tex_x(), get_tex_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
       }
    } else if (object_state_ == DEAD) {
       if (body) {
@@ -127,9 +127,9 @@ void Projectile::update() {
       }
       Element::animate(&textures["explode"]);
       if (shot_dir == LEFT) {
-         textures["explode"].render(get_x(), get_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+         textures["explode"].render(get_tex_x(), get_tex_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
       } else {
-         textures["explode"].render(get_x(), get_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE); 
+         textures["explode"].render(get_tex_x(), get_tex_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE); 
       }
    }
 }

@@ -28,12 +28,30 @@ void Element::set_x(int new_x) {
    if (!body) {
       x_pos_ = new_x;
    } else {
+      float nbx = (float) (new_x / 100.0f);
+      body->SetTransform(b2Vec2(nbx, body->GetPosition().y), body->GetAngle());
+   }
+}
+
+void Element::set_tex_x(int new_x) {
+   if (!body) {
+      x_pos_ = new_x;
+   } else {
       float nbx = (float) ((new_x + (get_width() / 2.0f)) / 100.0f);
       body->SetTransform(b2Vec2(nbx, body->GetPosition().y), body->GetAngle());
    }
 }
 
 int Element::get_x() {
+   if (body) {
+      x_pos_ = (int) (100.0f * body->GetPosition().x);
+      return x_pos_;
+   } else {
+      return x_pos_;
+   }
+}
+
+int Element::get_tex_x() {
    if (body) {
       x_pos_ = (int) ((100.0f * body->GetPosition().x) - (get_width() / 2.0f));
       return x_pos_;
@@ -51,6 +69,15 @@ void Element::sub_x(int sub) {
    if (!body) {
       x_pos_ -= sub;
    } else {
+      float subx = (float) (sub / 100.0f);
+      body->SetTransform(b2Vec2(body->GetPosition().x - subx, body->GetPosition().y), body->GetAngle());
+   }
+}
+
+void Element::sub_tex_x(int sub) {
+   if (!body) {
+      x_pos_ -= sub;
+   } else {
       float subx = (float) ((sub + (get_width() / 2.0f)) / 100.0f);
       body->SetTransform(b2Vec2(body->GetPosition().x - subx, body->GetPosition().y), body->GetAngle());
    }
@@ -61,12 +88,30 @@ void Element::set_y(int new_y) {
    if (!body) {
       y_pos_ = new_y;
    } else {
+      float nby = (float) -(new_y / 100.0f);
+      body->SetTransform(b2Vec2(body->GetPosition().x, nby), body->GetAngle());
+   }
+}
+
+void Element::set_tex_y(int new_y) {
+   if (!body) {
+      y_pos_ = new_y;
+   } else {
       float nby = (float) -((new_y + (get_height() / 2.0f)) / 100.0f);
       body->SetTransform(b2Vec2(body->GetPosition().x, nby), body->GetAngle());
    }
 }
 
 int Element::get_y() {
+   if (body) {
+      y_pos_ = (int) (100.0f * -body->GetPosition().y);
+      return y_pos_;
+   } else {
+      return y_pos_;
+   }
+}
+
+int Element::get_tex_y() {
    if (body) {
       y_pos_ = (int) ((100.0f * -body->GetPosition().y) - (get_height() / 2.0f));
       return y_pos_;
@@ -246,8 +291,8 @@ void Element::texture_render(Texture *texture) {
 // Render function
 void Element::render(Texture *texture, int x, int y) {
    // Render based on texture
-   int t_x = x == 0 ? get_x() : x;
-   int t_y = y == 0 ? get_y() : y;
+   int t_x = x == 0 ? get_tex_x() : x;
+   int t_y = y == 0 ? get_tex_y() : y;
    texture->render(t_x, t_y, texture->curr_clip_, texture->angle, &texture->center_, texture->flip_);
 }
 
@@ -311,7 +356,7 @@ SDL_Rect *Element::get_curr_clip() {
 // Update function for basic stuff just calls render
 void Element::update(bool freeze) {
    // Simply render the texture
-   texture.render(get_x(), get_y());
+   texture.render(get_tex_x(), get_tex_y());
 }
 
 // Get application

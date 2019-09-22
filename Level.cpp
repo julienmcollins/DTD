@@ -47,7 +47,11 @@ Level::Level(string file, Application::FOREST level, Application *application) :
       int x, y;
       string name;
       input >> name >> x >> y;
+
+      // Compensate for fullscreen vs windowed
       y += 55;
+
+      // Spawn enemies accordingly
       if (name == "Fecreez") {
          enemies_.push_back(new Fecreez(x, y, application)); 
       } else if (name == "Rosea") {
@@ -151,6 +155,7 @@ bool Level::load_media_() {
 
 // Update function will render the stuff itself
 void Level::update() {
+   //std::cout << "Level::update() - num_of_kills_ = " << num_of_kills_ << std::endl;
    // Only complete levels when number of enemies is 0
    if (num_of_kills_ == 0 && !completed) {
       // Delete the right wall
@@ -159,6 +164,7 @@ void Level::update() {
          platforms_.back() = nullptr;
       }
 
+      //std::cout << "Level::update() - level = " << level << std::endl;
       if ((level < Application::FOREST6 || level == Application::FOREST9) && application_->get_player()->get_x() >= 1890) {
          completed = true;
       } else if (level >= Application::FOREST6 && application_->get_player()->get_y() <= -100) {

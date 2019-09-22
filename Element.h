@@ -48,18 +48,23 @@ class Element {
       // Setters
       void set_x(int new_x);
       void set_y(int new_y);
+      void set_tex_x(int new_x);
+      void set_tex_y(int new_y);
       void set_height(int new_height);
       void set_width(int new_width);
 
       // Getters
       int get_x();
       int get_y();
+      int get_tex_x();
+      int get_tex_y();
       int get_height() const;
       int get_width() const;
 
       // Adders
       void add_x(int add);
       void sub_x(int sub);
+      void sub_tex_x(int sub);
       void add_y(int add);
       void sub_y(int add);
 

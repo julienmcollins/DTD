@@ -380,7 +380,7 @@ void Application::animate(const float &fps, Element *element,
    }
 
    // Draw title screen
-   texture->render(element->get_x(), element->get_y(), texture->curr_clip_, 0.0, 
+   texture->render(element->get_tex_x(), element->get_tex_y(), texture->curr_clip_, 0.0, 
           &texture->center_, texture->flip_);
 }
 
@@ -715,21 +715,23 @@ void Application::playground() {
       menu_flag = true;
    }
 
-   /*
    // DEBUG DRAW
-   world_.DrawDebugData();
+   // world_.DrawDebugData();
 
-   for (int i = 0; i < 7; i++) {
-      SDL_Rect m;
-      m.w = r[i].w;
-      m.h = r[i].h;
-      m.x = r[i].x;
-      m.y = r[i].y - m.h;
+   // for (int i = 0; i < 15; i++) {
+   //    SDL_Rect m;
+   //    m.w = r[i].w;
+   //    m.h = r[i].h;
+   //    m.x = r[i].x;
+   //    m.y = r[i].y - m.h;
 
-      SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-      SDL_RenderDrawRect(renderer, &m);
-   }
-   */
+   //    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+   //    SDL_RenderDrawRect(renderer, &m);
+   // }
+
+   // SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+   // SDL_RenderDrawLine(renderer, 1300, 454, 1500, 454);
+   // SDL_RenderDrawLine(renderer, 1400, 354, 1400, 554);
 
    // Update the screen
    SDL_RenderPresent(renderer);

@@ -1213,17 +1213,30 @@ Wormored::Wormored(int x, int y, Application *application) :
    
    // Set Wormored's collision logic
    b2Filter filter;
-   filter.categoryBits = CAT_ENEMY;
+   filter.categoryBits = CAT_BOSS;
    filter.maskBits = CAT_PLATFORM;
    body->GetFixtureList()->SetFilterData(filter);
 
-   // Add new sensors to the body
-   sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, -2.34f, -0.06f);
-   //sensors_[1] = new WormoredSensor(395, 124, this, CONTACT_UP, x - 109, y + 13);
-   //sensors_[2] = new WormoredSensor(363, 80, this, CONTACT_UP, x - 7, y + 28);
-   //sensors_[3] = new WormoredSensor(320, 86, this, CONTACT_UP, x + 77, y + 50);
-   //sensors_[4] = new WormoredSensor(230, 60, this, CONTACT_UP, x + 150, y + 95);
-   //sensors_[5] = new WormoredSensor(179, 44, this, CONTACT_UP, x + 202, y + 120);
+   // Add new sensors to the body when facing left
+   left_facing_sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, -2.34f, -0.06f);
+   left_facing_sensors_[1] = new WormoredSensor(1.97f, 0.62f, this, CONTACT_UP, -1.09, -0.06f);
+   left_facing_sensors_[2] = new WormoredSensor(1.81f, 0.40f, this, CONTACT_UP, -0.07f, -0.21f);
+   left_facing_sensors_[3] = new WormoredSensor(1.60f, 0.43f, this, CONTACT_UP, 0.77f, -0.43f);
+   left_facing_sensors_[4] = new WormoredSensor(1.15f, 0.30f, this, CONTACT_UP, 1.50f, -0.92f);
+   left_facing_sensors_[5] = new WormoredSensor(0.89f, 0.22f, this, CONTACT_UP, 2.02f, -1.16f);
+
+   // Add new sensors to the body when facing left
+   right_facing_sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, 2.34f, -0.06f);
+   right_facing_sensors_[1] = new WormoredSensor(1.97f, 0.62f, this, CONTACT_UP, 1.09, -0.06f);
+   right_facing_sensors_[2] = new WormoredSensor(1.81f, 0.40f, this, CONTACT_UP, 0.07f, -0.21f);
+   right_facing_sensors_[3] = new WormoredSensor(1.60f, 0.43f, this, CONTACT_UP, -0.77f, -0.43f);
+   right_facing_sensors_[4] = new WormoredSensor(1.15f, 0.30f, this, CONTACT_UP, -1.50f, -0.92f);
+   right_facing_sensors_[5] = new WormoredSensor(0.89f, 0.22f, this, CONTACT_UP, -2.02f, -1.16f);
+
+   // Deactivate right facing sensors to begin with
+   for (int i = 0; i < 6; i++) {
+      right_facing_sensors_[i]->deactivate_sensor();
+   }
 
    // Set state to idle
    enemy_state_ = IDLE;
@@ -1315,6 +1328,7 @@ Texture *Wormored::get_texture() {
 
 Wormored::~Wormored() {
    for (int i = 0; i < 5; i++) {
-      delete sensors_[i];
+      delete left_facing_sensors_[i];
+      delete right_facing_sensors_[i];
    }
 }

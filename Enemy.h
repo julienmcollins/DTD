@@ -364,7 +364,8 @@ class Wormored : public Enemy {
 
    private:
       // List of sensors
-      Sensor *sensors_[6];
+      Sensor *left_facing_sensors_[6];
+      Sensor *right_facing_sensors_[6];
 };
 
 #endif

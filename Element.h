@@ -95,7 +95,9 @@ class Element {
          CAT_PLAYER = 0x0001,
          CAT_PLATFORM = 0x0002,
          CAT_PROJECTILE = 0x0004,
-         CAT_ENEMY = 0x0008
+         CAT_ENEMY = 0x0008,
+         CAT_BOSS = 0x0010,
+         CAT_SENSOR = 0x0020
       };
 
       enum ANTI_COLLISIONS {
@@ -220,6 +222,10 @@ class Sensor : public Element {
       virtual void start_contact(Element *element = NULL) {};
       virtual void end_contact(Element *element = NULL) {};
 
+      // Activation and deactivation of sensor
+      void activate_sensor();
+      void deactivate_sensor();
+
       // Change type
       virtual std::string type() {
          return "Sensor";
@@ -230,6 +236,7 @@ class Sensor : public Element {
    protected:
       Entity *entity_;
       b2CircleShape circle_;
+      b2Fixture *fixture_;
 };
 
 #endif

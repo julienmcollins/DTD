@@ -1268,9 +1268,21 @@ void Wormored::move() {
       if (get_application()->get_player()->get_x() < (get_x() - get_width() / 2) && entity_direction == RIGHT) {
          entity_direction = LEFT;
          enemy_state_ = TURN;
+
+         // Activate left side and deactivate right side
+         for (int i = 0; i < 6; i++) {
+            left_facing_sensors_[i]->activate_sensor();
+            right_facing_sensors_[i]->deactivate_sensor();
+         }
       } else if (get_application()->get_player()->get_x() > (get_x() + get_width() / 2) && entity_direction == LEFT) {
          entity_direction = RIGHT;
          enemy_state_ = TURN;
+
+         // Activate left side and deactivate right side
+         for (int i = 0; i < 6; i++) {
+            right_facing_sensors_[i]->activate_sensor();
+            left_facing_sensors_[i]->deactivate_sensor();
+         }
       }
    }
 

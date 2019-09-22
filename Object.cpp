@@ -38,7 +38,7 @@ void Platform::setup() {
    fixture_def.density = 0.0f;
    fixture_def.userData = this;
    fixture_def.filter.categoryBits = CAT_PLATFORM;
-   fixture_def.filter.maskBits = CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY;
+   fixture_def.filter.maskBits = CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY | CAT_BOSS | CAT_SENSOR;
    body->CreateFixture(&fixture_def);
 
    // Set user data

@@ -393,6 +393,26 @@ Sensor::Sensor(float height, float width, Entity *entity, CONTACT contact_type, 
    //fixture_def.isSensor = true;
    fixture_def.userData = this;
 
+   // Set filter
+   b2Filter filter;
+   filter.categoryBits = CAT_SENSOR;
+   filter.maskBits = CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE;
+   fixture_def.filter = filter;
+
    // Attach fixture
-   entity->body->CreateFixture(&fixture_def);
+   fixture_ = entity->body->CreateFixture(&fixture_def);
+}
+
+void Sensor::activate_sensor() {
+   b2Filter filter;
+   filter.categoryBits = CAT_SENSOR;
+   filter.maskBits = CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE;
+   fixture_->SetFilterData(filter);
+}
+
+void Sensor::deactivate_sensor() {
+   b2Filter filter;
+   filter.categoryBits = CAT_SENSOR;
+   filter.maskBits = CAT_PLATFORM;
+   fixture_->SetFilterData(filter);
 }

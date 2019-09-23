@@ -364,11 +364,17 @@ class Wormored : public Enemy {
 
    private:
       // List of sensors
-      Sensor *left_facing_sensors_[6];
-      Sensor *right_facing_sensors_[6];
+      BodyPart *left_facing_sensors_[6];
+      BodyPart *right_facing_sensors_[6];
 
       // Movement of body parts
-      std::unordered_map<int, int> body_heights_;
+      std::unordered_map<int, int> body_1_heights_;
+      std::unordered_map<int, int> body_2_heights_;
+      std::unordered_map<int, int> body_3_heights_;
+      std::unordered_map<int, int> body_4_heights_;
+      std::unordered_map<int, int> body_5_heights_;
+      std::unordered_map<int, int> body_6_heights_;
+
 };
 
 #endif

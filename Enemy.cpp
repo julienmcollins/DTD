@@ -871,25 +871,29 @@ void Fruig::start_contact(Element *element) {
 
 // Constructor
 FleetSensor::FleetSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y) :
-   Sensor(height, width, entity, contact_type, center_x, center_y, 1.0f) {}
+   Sensor(height, width, entity, contact_type, center_x, center_y, 1.0f) {
+
+   // Initialize
+   initialize(width, height, center_x, center_y);
+}
 
 // Contact functions
 void FleetSensor::start_contact(Element *element) {
    if (element) {
       if (element->type() == "Platform") {
-         entity_->in_contact = true;
+         owner_->in_contact = true;
       } else if (element->type() == "Fleet") {
-         entity_->body->ApplyLinearImpulseToCenter(b2Vec2(0.5f, 0.0f), true);
-         entity_->in_contact = true;
+         owner_->body->ApplyLinearImpulseToCenter(b2Vec2(0.5f, 0.0f), true);
+         owner_->in_contact = true;
       }
    }
 }
 void FleetSensor::end_contact(Element *element) {
    if (element) {
       if (element->type() == "Platform") {
-         entity_->in_contact = false;
+         owner_->in_contact = false;
       } else if (element->type() == "Fleet") {
-         entity_->in_contact = false;
+         owner_->in_contact = false;
       }
    }
 }
@@ -1188,7 +1192,7 @@ void MosquiblerEgg::start_contact(Element *element) {
 
 // Sensor constructor
 WormoredSensor::WormoredSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y) :
-   Sensor(height, width, entity, contact_type, center_x, center_y, 1.0f) {}
+   Sensor(height, width, entity, contact_type, center_x, center_y, 1.0f, true) {}
 
 // start contact
 void WormoredSensor::start_contact(Element *element) {
@@ -1203,13 +1207,13 @@ void WormoredSensor::start_contact(Element *element) {
 // Constructor for Wormored
 Wormored::Wormored(int x, int y, Application *application) :
    Enemy(x, y, 418, 796, application),
-   body_1_heights_({{0, 0}, {1, 2}, {2, 3}, {3, 4}, {4, 6}, {5, 4}, {6, 2},
-                  {7, 1}, {8, 0}}),
-   body_2_heights_({{2, 0}, {3, 1}, {4, 2}, {5, 4}, {6, 6}, {7, 5}, {8, 4}, {9, 3}, {10, 2}, {11, 0}}),
-   body_3_heights_({{5, 0}, {6, 1}, {7, 2}, {8, 4}, {9, 6}, {10, 5}, {11, 4}, {12, 3}, {13, 2}, {14, 0}}),
-   body_4_heights_({{7, 0}, {8, 1}, {9, 2}, {10, 4}, {11, 6}, {12, 5}, {13, 4}, {14, 3}, {15, 2}, {16, 1}, {17, 0}}),
-   body_5_heights_({{10, 0}, {11, 1}, {12, 2}, {13, 4}, {14, 6}, {15, 5}, {16, 4}, {17, 3}, {18, 2}, {19, 0}}),
-   body_6_heights_({{12, 0}, {13, 1}, {14, 2}, {15, 4}, {16, 6}, {17, 4}, {18, 2}, {19, 1}, {20, 0}}) {
+   body_1_heights_({{0, 0}, {1, -2}, {2, -1}, {3, -1}, {4, -2}, {5, 2}, {6, 2},
+                  {7, 1}, {8, 1}}),
+   body_2_heights_({{2, 0}, {3, -1}, {4, -1}, {5, -2}, {6, -2}, {7, 1}, {8, 1}, {9, 1}, {10, 1}, {11, 2}}),
+   body_3_heights_({{5, 0}, {6, -1}, {7, -1}, {8, -2}, {9, -2}, {10, 1}, {11, 1}, {12, 1}, {13, 1}, {14, 2}}),
+   body_4_heights_({{7, 0}, {8, -1}, {9, -1}, {10, -2}, {11, -2}, {12, 1}, {13, 1}, {14, 1}, {15, 1}, {16, 1}, {17, 1}}),
+   body_5_heights_({{10, 0}, {11, -1}, {12, -1}, {13, -2}, {14, -2}, {15, 1}, {16, 1}, {17, 1}, {18, 1}, {19, 2}}),
+   body_6_heights_({{12, 0}, {13, -1}, {14, -1}, {15, -2}, {16, -2}, {17, 2}, {18, 2}, {19, 1}, {20, 1}}) {
 
    // Set the body type to dynamic
    element_shape.dynamic = true;
@@ -1225,24 +1229,31 @@ Wormored::Wormored(int x, int y, Application *application) :
    body->GetFixtureList()->SetFilterData(filter);
 
    // Add new sensors to the body when facing left
-   left_facing_sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, -2.34f, -0.06f);
-   left_facing_sensors_[1] = new WormoredSensor(1.97f, 0.62f, this, CONTACT_UP, -1.09, -0.06f);
-   left_facing_sensors_[2] = new WormoredSensor(1.81f, 0.40f, this, CONTACT_UP, -0.07f, -0.21f);
-   left_facing_sensors_[3] = new WormoredSensor(1.60f, 0.43f, this, CONTACT_UP, 0.77f, -0.43f);
-   left_facing_sensors_[4] = new WormoredSensor(1.15f, 0.30f, this, CONTACT_UP, 1.50f, -0.92f);
-   left_facing_sensors_[5] = new WormoredSensor(0.89f, 0.22f, this, CONTACT_UP, 2.02f, -1.16f);
+   // left_facing_sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, -2.34f, -0.06f);
+   // left_facing_sensors_[1] = new WormoredSensor(1.97f, 0.62f, this, CONTACT_UP, -1.09, -0.06f);
+   // left_facing_sensors_[2] = new WormoredSensor(1.81f, 0.40f, this, CONTACT_UP, -0.07f, -0.21f);
+   // left_facing_sensors_[3] = new WormoredSensor(1.60f, 0.43f, this, CONTACT_UP, 0.77f, -0.43f);
+   // left_facing_sensors_[4] = new WormoredSensor(1.15f, 0.30f, this, CONTACT_UP, 1.50f, -0.92f);
+   // left_facing_sensors_[5] = new WormoredSensor(0.89f, 0.22f, this, CONTACT_UP, 2.02f, -1.16f);
+
+   left_facing_sensors_[0] = new BodyPart(this, -243, -6, 143, 395, application_);
+   left_facing_sensors_[1] = new BodyPart(this, -109, -6, 124, 395, application_);
+   left_facing_sensors_[2] = new BodyPart(this, -7, -21, 80, 363, application_);
+   left_facing_sensors_[3] = new BodyPart(this, 77, -43, 86, 320, application_);
+   left_facing_sensors_[4] = new BodyPart(this, 150, -92, 60, 230, application_);
+   left_facing_sensors_[5] = new BodyPart(this, 202, -116, 44, 179, application_);
 
    // Add new sensors to the body when facing left
-   right_facing_sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, 2.34f, -0.06f);
-   right_facing_sensors_[1] = new WormoredSensor(1.97f, 0.62f, this, CONTACT_UP, 1.09, -0.06f);
-   right_facing_sensors_[2] = new WormoredSensor(1.81f, 0.40f, this, CONTACT_UP, 0.07f, -0.21f);
-   right_facing_sensors_[3] = new WormoredSensor(1.60f, 0.43f, this, CONTACT_UP, -0.77f, -0.43f);
-   right_facing_sensors_[4] = new WormoredSensor(1.15f, 0.30f, this, CONTACT_UP, -1.50f, -0.92f);
-   right_facing_sensors_[5] = new WormoredSensor(0.89f, 0.22f, this, CONTACT_UP, -2.02f, -1.16f);
+   // right_facing_sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, 2.34f, -0.06f);
+   // right_facing_sensors_[1] = new WormoredSensor(1.97f, 0.62f, this, CONTACT_UP, 1.09, -0.06f);
+   // right_facing_sensors_[2] = new WormoredSensor(1.81f, 0.40f, this, CONTACT_UP, 0.07f, -0.21f);
+   // right_facing_sensors_[3] = new WormoredSensor(1.60f, 0.43f, this, CONTACT_UP, -0.77f, -0.43f);
+   // right_facing_sensors_[4] = new WormoredSensor(1.15f, 0.30f, this, CONTACT_UP, -1.50f, -0.92f);
+   // right_facing_sensors_[5] = new WormoredSensor(0.89f, 0.22f, this, CONTACT_UP, -2.02f, -1.16f);
 
    // Deactivate right facing sensors to begin with
    for (int i = 0; i < 6; i++) {
-      right_facing_sensors_[i]->deactivate_sensor();
+      //right_facing_sensors_[i]->deactivate_sensor();
    }
 
    // Set state to idle
@@ -1277,7 +1288,7 @@ void Wormored::move() {
          // Activate left side and deactivate right side
          for (int i = 0; i < 6; i++) {
             left_facing_sensors_[i]->activate_sensor();
-            right_facing_sensors_[i]->deactivate_sensor();
+            //right_facing_sensors_[i]->deactivate_sensor();
          }
       } else if (get_application()->get_player()->get_x() > (get_x() + get_width() / 2) && entity_direction == LEFT) {
          entity_direction = RIGHT;
@@ -1285,7 +1296,7 @@ void Wormored::move() {
 
          // Activate left side and deactivate right side
          for (int i = 0; i < 6; i++) {
-            right_facing_sensors_[i]->activate_sensor();
+            //right_facing_sensors_[i]->activate_sensor();
             left_facing_sensors_[i]->deactivate_sensor();
          }
       }
@@ -1297,7 +1308,25 @@ void Wormored::move() {
          body->SetLinearVelocity(vel);
 
          // Move each individual body part according to the map
-         if (textures["idle"].frame_ > )
+         int curr_frame = textures["idle"].frame_;
+         if (curr_frame < 9) {
+            left_facing_sensors_[0]->update(0, body_1_heights_[curr_frame]);
+         }
+         if (curr_frame > 1 && curr_frame < 12) {
+            left_facing_sensors_[1]->update(0, body_2_heights_[curr_frame]);
+         }
+         if (curr_frame > 4 && curr_frame < 15) {
+            left_facing_sensors_[2]->update(0, body_3_heights_[curr_frame]);
+         }
+         if (curr_frame > 6 && curr_frame < 18) {
+            left_facing_sensors_[3]->update(0, body_4_heights_[curr_frame]);
+         }
+         if (curr_frame > 9 && curr_frame < 20) {
+            left_facing_sensors_[4]->update(0, body_5_heights_[curr_frame]);
+         }
+         if (curr_frame > 11 && curr_frame < 21) {
+            left_facing_sensors_[5]->update(0, body_6_heights_[curr_frame]);
+         }
       } else if (entity_direction == RIGHT) {
          b2Vec2 vel = {0.25f, 0.0f};
          body->SetLinearVelocity(vel);
@@ -1349,6 +1378,6 @@ Texture *Wormored::get_texture() {
 Wormored::~Wormored() {
    for (int i = 0; i < 5; i++) {
       delete left_facing_sensors_[i];
-      delete right_facing_sensors_[i];
+      //delete right_facing_sensors_[i];
    }
 }

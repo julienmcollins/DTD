@@ -64,27 +64,31 @@ Entity::~Entity() {}
 ////////////////////// PLAYER SENSOR ////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 PlayerSensor::PlayerSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y) :
-   Sensor(height, width, entity, contact_type, center_x, center_y) {}
+   Sensor(height, width, entity, contact_type, center_x, center_y) {
+
+   // Initialize
+   initialize(width, height, center_x, center_y);
+}
 
 // Start contact function
 void PlayerSensor::start_contact(Element *element) {
    if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
       if (sensor_contact == CONTACT_DOWN) {
-         entity_->in_contact_down = true;
-         entity_->has_jumped_ = 0;
-         entity_->textures["jump"].reset_frame = 0;
-         entity_->textures["jump"].frame_ = 0;
-         entity_->textures["double_jump"].reset_frame = 0;
-         entity_->textures["double_jump"].frame_ = 0;
-         entity_->textures["running_jump"].reset_frame = 0;
-         entity_->textures["running_jump"].frame_ = 0;
+         owner_->in_contact_down = true;
+         owner_->has_jumped_ = 0;
+         owner_->textures["jump"].reset_frame = 0;
+         owner_->textures["jump"].frame_ = 0;
+         owner_->textures["double_jump"].reset_frame = 0;
+         owner_->textures["double_jump"].frame_ = 0;
+         owner_->textures["running_jump"].reset_frame = 0;
+         owner_->textures["running_jump"].frame_ = 0;
          //std::cout << "Contact Down is True\n";
       } else if (sensor_contact == CONTACT_LEFT) {
-         entity_->in_contact_left = true;
+         owner_->in_contact_left = true;
       } else if (sensor_contact == CONTACT_RIGHT) {
-         entity_->in_contact_right = true;
+         owner_->in_contact_right = true;
       } else {
-         entity_->in_contact = true;
+         owner_->in_contact = true;
       }
    }
 }
@@ -92,14 +96,14 @@ void PlayerSensor::start_contact(Element *element) {
 // End contact function
 void PlayerSensor::end_contact(Element *element) {
    if (sensor_contact == CONTACT_DOWN) {
-      entity_->in_contact_down = false;
+      owner_->in_contact_down = false;
       //std::cout << "COntact Down is False\n";
    } else if (sensor_contact == CONTACT_LEFT) {
-      entity_->in_contact_left = false;
+      owner_->in_contact_left = false;
    } else if (sensor_contact == CONTACT_RIGHT) {
-      entity_->in_contact_right = false;
+      owner_->in_contact_right = false;
    } else {
-      entity_->in_contact = false;
+      owner_->in_contact = false;
    }
 }
 

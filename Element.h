@@ -129,6 +129,7 @@ class Element {
 
       // Set and add hitboxes
       void set_hitbox(int x, int y, SHAPE_TYPE type = SQUARE, int group = -1);
+      void create_hitbox(float x, float y);
 
       // Check to see if it's still alive
       virtual bool is_alive();
@@ -198,6 +199,9 @@ class Element {
 
       // Flag for destroying object immediately
       bool mark_for_immediate_destroy_;
+
+      // Application pointer
+      Application *application_;
    private:
       // X and Y locations
       int x_pos_;
@@ -206,9 +210,6 @@ class Element {
       // Height and widths
       int height_;
       int width_;
-
-      // Application pointer
-      Application *application_;
 };
 
 
@@ -216,7 +217,10 @@ class Element {
 class Sensor : public Element {
    public:
       // Construct the sensor object
-      Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x = 0.0f, float center_y = 0.0f, float density = 0.0f);
+      Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x = 0.0f, float center_y = 0.0f, float density = 0.0f, bool set_as_body = false);
+
+      // Initialize function
+      void initialize(float width, float height, float center_x, float center_y);
 
       // Start contact function
       virtual void start_contact(Element *element = NULL) {};
@@ -233,10 +237,32 @@ class Sensor : public Element {
 
       // Only one contact at a time
       CONTACT sensor_contact;
+
    protected:
-      Entity *entity_;
+      Entity *owner_;
       b2CircleShape circle_;
       b2Fixture *fixture_;
+      float density_;
+};
+
+// Body part class for enemies
+class BodyPart : public Sensor {
+   public:
+      // Constructor
+      BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application);
+
+      // Update function only takes the offsetted values
+      void update(int x_offset = 0, int y_offset = 0);
+
+      // Return type
+      virtual std::string type() {
+         return type_;
+      }
+   private:
+      int x_rel;
+      int y_rel;
+
+      std::string type_;
 };
 
 #endif

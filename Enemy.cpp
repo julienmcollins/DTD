@@ -1202,7 +1202,14 @@ void WormoredSensor::start_contact(Element *element) {
 
 // Constructor for Wormored
 Wormored::Wormored(int x, int y, Application *application) :
-   Enemy(x, y, 418, 796, application) {
+   Enemy(x, y, 418, 796, application),
+   body_1_heights_({{0, 0}, {1, 2}, {2, 3}, {3, 4}, {4, 6}, {5, 4}, {6, 2},
+                  {7, 1}, {8, 0}}),
+   body_2_heights_({{2, 0}, {3, 1}, {4, 2}, {5, 4}, {6, 6}, {7, 5}, {8, 4}, {9, 3}, {10, 2}, {11, 0}}),
+   body_3_heights_({{5, 0}, {6, 1}, {7, 2}, {8, 4}, {9, 6}, {10, 5}, {11, 4}, {12, 3}, {13, 2}, {14, 0}}),
+   body_4_heights_({{7, 0}, {8, 1}, {9, 2}, {10, 4}, {11, 6}, {12, 5}, {13, 4}, {14, 3}, {15, 2}, {16, 1}, {17, 0}}),
+   body_5_heights_({{10, 0}, {11, 1}, {12, 2}, {13, 4}, {14, 6}, {15, 5}, {16, 4}, {17, 3}, {18, 2}, {19, 0}}),
+   body_6_heights_({{12, 0}, {13, 1}, {14, 2}, {15, 4}, {16, 6}, {17, 4}, {18, 2}, {19, 1}, {20, 0}}) {
 
    // Set the body type to dynamic
    element_shape.dynamic = true;
@@ -1248,11 +1255,9 @@ bool Wormored::load_media() {
 
    // Load idle
    load_image(796, 418, 21, 1.0f / 24.0f, "idle", "images/enemies/Wormored/idle.png", success, 2);
-   textures["idle"].center_ = {0, 0};
 
    // Load turn
    load_image(796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/Wormored/turn.png", success, 2);
-   textures["turn"].center_ = {0, 0};
    
    // Load attack
    load_image(796, 418, 22, 1.0f / 24.0f, "attack", "images/enemies/Wormored/attack.png", success, 2);
@@ -1288,10 +1293,13 @@ void Wormored::move() {
 
    if (enemy_state_ == IDLE) {
       if (entity_direction == LEFT) {
-         b2Vec2 vel = {-1.0f, 0.0f};
+         b2Vec2 vel = {-0.25f, 0.0f};
          body->SetLinearVelocity(vel);
+
+         // Move each individual body part according to the map
+         if (textures["idle"].frame_ > )
       } else if (entity_direction == RIGHT) {
-         b2Vec2 vel = {1.0f, 0.0f};
+         b2Vec2 vel = {0.25f, 0.0f};
          body->SetLinearVelocity(vel);
       }
    }

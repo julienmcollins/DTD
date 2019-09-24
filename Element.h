@@ -227,8 +227,8 @@ class Sensor : public Element {
       virtual void end_contact(Element *element = NULL) {};
 
       // Activation and deactivation of sensor
-      void activate_sensor();
-      void deactivate_sensor();
+      virtual void activate_sensor();
+      virtual void deactivate_sensor();
 
       // Change type
       virtual std::string type() {
@@ -249,10 +249,18 @@ class Sensor : public Element {
 class BodyPart : public Sensor {
    public:
       // Constructor
-      BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application);
+      BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application, bool is_fixture = true);
 
       // Update function only takes the offsetted values
       void update(int x_offset = 0, int y_offset = 0);
+
+      // Activate and deactivate
+      virtual void activate_sensor() {
+         body->SetActive(true);
+      }
+      virtual void deactivate_sensor() {
+         body->SetActive(false);
+      }
 
       // Return type
       virtual std::string type() {

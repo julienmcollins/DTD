@@ -1236,12 +1236,12 @@ Wormored::Wormored(int x, int y, Application *application) :
    // left_facing_sensors_[4] = new WormoredSensor(1.15f, 0.30f, this, CONTACT_UP, 1.50f, -0.92f);
    // left_facing_sensors_[5] = new WormoredSensor(0.89f, 0.22f, this, CONTACT_UP, 2.02f, -1.16f);
 
-   left_facing_sensors_[0] = new BodyPart(this, -243, -6, 143, 395, application_);
-   left_facing_sensors_[1] = new BodyPart(this, -109, -6, 124, 395, application_);
-   left_facing_sensors_[2] = new BodyPart(this, -7, -21, 80, 363, application_);
-   left_facing_sensors_[3] = new BodyPart(this, 77, -43, 86, 320, application_);
-   left_facing_sensors_[4] = new BodyPart(this, 150, -92, 60, 230, application_);
-   left_facing_sensors_[5] = new BodyPart(this, 202, -116, 44, 179, application_);
+   left_facing_sensors_[0] = new BodyPart(this, -243, -6, 143, 395, application_, false);
+   left_facing_sensors_[1] = new BodyPart(this, -109, -6, 124, 395, application_, false);
+   left_facing_sensors_[2] = new BodyPart(this, -7, -21, 80, 363, application_, false);
+   left_facing_sensors_[3] = new BodyPart(this, 77, -43, 86, 320, application_, false);
+   left_facing_sensors_[4] = new BodyPart(this, 150, -92, 60, 230, application_, false);
+   left_facing_sensors_[5] = new BodyPart(this, 202, -116, 44, 179, application_, false);
 
    // Add new sensors to the body when facing left
    // right_facing_sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, 2.34f, -0.06f);

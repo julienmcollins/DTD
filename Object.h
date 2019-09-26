@@ -147,6 +147,11 @@ class EnemyProjectile : public Projectile {
 
       // Load images
       virtual bool load_media();
+
+      // Change type
+      virtual std::string type() {
+         return "EnemyProjectile";
+      }
 };
 
 #endif

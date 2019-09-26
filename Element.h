@@ -220,7 +220,7 @@ class Sensor : public Element {
       Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x = 0.0f, float center_y = 0.0f, float density = 0.0f, bool set_as_body = false);
 
       // Initialize function
-      void initialize(float width, float height, float center_x, float center_y);
+      virtual void initialize(float width, float height, float center_x, float center_y, uint16 category = CAT_SENSOR);
 
       // Start contact function
       virtual void start_contact(Element *element = NULL) {};
@@ -251,6 +251,9 @@ class BodyPart : public Sensor {
       // Constructor
       BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application, bool is_fixture = true);
 
+      // Initialize function different for body part
+      virtual void initialize(float width, float height, float center_x, float center_y, uint16 category = CAT_SENSOR);
+
       // Update function only takes the offsetted values
       void update(int x_offset = 0, int y_offset = 0);
 
@@ -262,6 +265,10 @@ class BodyPart : public Sensor {
          body->SetActive(false);
       }
 
+      // Start contact function
+      virtual void start_contact(Element *element = NULL) {};
+      virtual void end_contact(Element *element = NULL) {};
+
       // Return type
       virtual std::string type() {
          return type_;
@@ -271,6 +278,8 @@ class BodyPart : public Sensor {
       int y_rel;
 
       std::string type_;
+
+      bool is_fixture_;
 };
 
 #endif

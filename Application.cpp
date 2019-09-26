@@ -73,9 +73,9 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         world_.SetGravity(gravity_);
         // Set up debug drawer
         world_.SetDebugDraw(&debugDraw);
-        debugDraw.AppendFlags( b2Draw::e_shapeBit );
+        //debugDraw.AppendFlags( b2Draw::e_shapeBit );
         debugDraw.AppendFlags( b2Draw::e_aabbBit );
-        debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
+        //debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
         // Set contact listener
         world_.SetContactListener(&contact_listener_);
     }
@@ -544,7 +544,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = FORESTBOSS;
+         level_flag_ = FOREST1;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -580,21 +580,19 @@ void Application::main_screen() {
          }
       }
    }
-   /*
    // DEBUG DRAW
-   world_.DrawDebugData();
+   // world_.DrawDebugData();
 
-   for (int i = 0; i < 7; i++) {
-      SDL_Rect m;
-      m.w = r[i].w;
-      m.h = r[i].h;
-      m.x = r[i].x;
-      m.y = r[i].y - m.h;
+   // for (int i = 0; i < 15; i++) {
+   //    SDL_Rect m;
+   //    m.w = r[i].w;
+   //    m.h = r[i].h;
+   //    m.x = r[i].x;
+   //    m.y = r[i].y - m.h;
 
-      SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-      SDL_RenderDrawRect(renderer, &m);
-   }
-   */
+   //    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+   //    SDL_RenderDrawRect(renderer, &m);
+   // }
   
    // Update the screen
    SDL_RenderPresent(renderer);

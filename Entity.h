@@ -16,6 +16,7 @@
 class Application;
 class Platform;
 class Projectile;
+class Player;
 
 class Entity : public Element {
     public:
@@ -95,6 +96,64 @@ class PlayerSensor : public Sensor {
       virtual void end_contact(Element *element = NULL);
 };
 
+/************** PLAYER BODY PARTS ********************/
+class PlayerHead : public BodyPart {
+   public:
+      PlayerHead(Player *player);
+      
+      // Start contact function
+      virtual void start_contact(Element *element = NULL);
+      virtual void end_contact(Element *element = NULL);
+
+      virtual std::string type() {
+         return "Player";
+      }
+
+      std::string sub_type() {
+         return "PlayerHead";
+      }
+};
+
+class PlayerArm : public BodyPart {
+   public:
+      PlayerArm(Player *player, int x_rel, int y_rel, int width, int height, std::string type);
+
+      // Start contact function
+      virtual void start_contact(Element *element = NULL);
+      virtual void end_contact(Element *element = NULL);
+
+      virtual std::string type() {
+         return "Player";
+      }
+
+      std::string sub_type() {
+         return type_;
+      }
+
+   private:
+      std::string type_;
+};
+
+class PlayerLeg : public BodyPart {
+   public:
+      PlayerLeg(Player *player, int x_rel, int y_rel, int width, int height, std::string type);
+
+      // Start contact function
+      virtual void start_contact(Element *element = NULL);
+      virtual void end_contact(Element *element = NULL);
+
+      virtual std::string type() {
+         return "Player";
+      }
+
+      std::string sub_type() {
+         return type_;
+      }
+   
+   private:
+      std::string type_;
+};
+
 // Player class
 class Player : public Entity {
    public:
@@ -127,6 +186,15 @@ class Player : public Entity {
       };
       KEYS key;
       KEYS last_key_pressed;
+
+      // Contact enums
+      enum CONTACTS {
+         HEAD = 0,
+         LEFT_ARM = 1,
+         RIGHT_ARM = 2,
+         LEFT_LEG = 3,
+         RIGHT_LEG = 4
+      };
 
       // Flag for locking direction
       bool lock_dir_left;
@@ -190,6 +258,9 @@ class Player : public Entity {
       // Hitmarkers
       std::vector<Hitmarker *> hit_markers;
 
+      // Flags for interactions
+      bool contacts_[5];
+
       // Virtual destructor
       virtual ~Player();
    private:
@@ -207,6 +278,13 @@ class Player : public Entity {
       Sensor *left_sensor_;
       Sensor *right_sensor_;
       Sensor *bottom_sensor;
+
+      // Body parts
+      PlayerHead *player_head_;
+      PlayerArm *player_arm_left_;
+      PlayerArm *player_arm_right_;
+      PlayerLeg *player_leg_right_;
+      PlayerLeg *player_leg_left_;
 
       // Immunity timer
       Timer immunity_timer_;

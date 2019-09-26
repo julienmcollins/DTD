@@ -391,7 +391,7 @@ Element::~Element() {
 Sensor::Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y, float density, bool set_as_body) :
    Element(center_x, center_y, height, width, nullptr), sensor_contact(contact_type), owner_(entity), density_(density) {}
 
-void Sensor::initialize(float width, float height, float center_x, float center_y) {
+void Sensor::initialize(float width, float height, float center_x, float center_y, uint16 category) {
    // Set application
    application_ = owner_->get_application();
 
@@ -405,7 +405,7 @@ void Sensor::initialize(float width, float height, float center_x, float center_
 
    // Set filter
    b2Filter filter;
-   filter.categoryBits = CAT_SENSOR;
+   filter.categoryBits = category;
    filter.maskBits = CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE;
    fixture_def.filter = filter;
 
@@ -429,17 +429,26 @@ void Sensor::deactivate_sensor() {
 
 /*************************** BodyPart ************************************************/
 BodyPart::BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application, bool is_fixture) :
-   Sensor(height, width, owning_entity, CONTACT_UP, x_rel_to_owner, y_rel_to_owner, 1.0f), 
-   x_rel(x_rel_to_owner), y_rel(y_rel_to_owner) {
+   Sensor(height, width, owning_entity, CONTACT_UP, x_rel_to_owner, y_rel_to_owner, 0.0f), 
+   x_rel(x_rel_to_owner), y_rel(y_rel_to_owner), is_fixture_(is_fixture) {
 
-   // Set owner
+   // Set defaults
    owner_ = owning_entity;
+
+   // If it's not a fixture, initialize
+   if (!is_fixture) {
+      initialize(width, height, 0.0f, 0.0f);
+   }
+}
+
+void BodyPart::initialize(float width, float height, float center_x, float center_y, uint16 category) {
+      // Set owner
    application_ = owner_->get_application();
    type_ = owner_->type();
 
    // Set x and y positions relative to owner
-   set_x(owner_->get_x() + x_rel_to_owner);
-   set_y(owner_->get_y() + y_rel_to_owner);
+   set_x(owner_->get_x() + x_rel);
+   set_y(owner_->get_y() + x_rel);
 
    // Create the main body
    // TODO: Add custom shapes other than squares as well
@@ -448,7 +457,7 @@ BodyPart::BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner
    float x = (float) get_x() / 100.0f;
    float y = (float) get_y() / 100.0f;
 
-   if (!is_fixture) {
+   if (!is_fixture_) {
       body_def.position.Set(x, y);
       body_def.fixedRotation = true;
       body = get_application()->world_.CreateBody(&body_def);
@@ -460,7 +469,7 @@ BodyPart::BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner
    fixture_def.friction = 1.0f;
    fixture_def.userData = this;
 
-   if (!is_fixture) {
+   if (!is_fixture_) {
       fixture_ = body->CreateFixture(&fixture_def);
       body->SetUserData(this);
    } else {
@@ -470,8 +479,8 @@ BodyPart::BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner
    // Set filter
    b2Filter filter;
    filter.groupIndex = 0;
-   filter.categoryBits = CAT_SENSOR;
-   filter.maskBits = CAT_SENSOR | CAT_ENEMY | CAT_PROJECTILE | CAT_PLATFORM | CAT_PLAYER;
+   filter.categoryBits = category;
+   filter.maskBits = CAT_ENEMY | CAT_PROJECTILE | CAT_PLATFORM | CAT_PLAYER;
    fixture_->SetFilterData(filter);
 }
 

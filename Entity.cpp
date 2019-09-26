@@ -107,7 +107,154 @@ void PlayerSensor::end_contact(Element *element) {
    }
 }
 
+/////////////////////////////////////////////////////////////////////////
+/******************* PLAYER BODY PARTS *********************************/
+/////////////////////////////////////////////////////////////////////////
+
+PlayerHead::PlayerHead(Player *player) :
+   BodyPart(player, 10, 16, 13, 43, nullptr) {
+
+   // Initialize the body part
+   float width = get_width() / 200.0f;
+   float height = get_height() / 200.0f;
+   float x = get_x() / 100.0f;
+   float y = get_y() / 100.0f;
+   Sensor::initialize(width, height, x, y, CAT_PLAYER);
+}
+
+void PlayerHead::start_contact(Element *element) {
+   // Dynamic cast owner to player
+   Player *player = dynamic_cast<Player *>(owner_);
+
+   // Set contacts of player
+   if (element) {
+      if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
+         player->contacts_[Player::HEAD] = 1;
+      } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
+         player->take_damage(10);
+      }
+   }
+}
+
+void PlayerHead::end_contact(Element *element) {
+   // Dynamic cast owner to player
+   Player *player = dynamic_cast<Player *>(owner_);
+
+   // Set contacts of player
+   if (element) {
+      if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
+         player->contacts_[Player::HEAD] = 0;
+      }
+   }
+}
+
+PlayerArm::PlayerArm(Player *player, int x_rel, int y_rel, int width, int height, std::string type) :
+   BodyPart(player, x_rel, y_rel, width, height, nullptr), type_(type) {
+
+   // Initialize the body part
+   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
+}
+
+void PlayerArm::start_contact(Element *element) {
+   // Dynamic cast owner to player
+   Player *player = dynamic_cast<Player *>(owner_);
+
+   // Set contacts of player
+   if (element) {
+      if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
+         if (sub_type() == "PlayerLeftArm") {
+            player->contacts_[Player::LEFT_ARM] = 1;
+            //std::cout << "PlayerArm::start_contact() - left arm in contact\n";
+         } else {
+            player->contacts_[Player::RIGHT_ARM] = 1;
+            //std::cout << "PlayerArm::start_contact() - right arm in contact\n";
+         }
+      } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
+         player->take_damage(10);
+         if (sub_type() == "PlayerLeftArm") {
+            std::cout << "PlayerArm::start_contact() - left arm is hit!\n";
+         }
+      }
+   }
+}
+
+void PlayerArm::end_contact(Element *element) {
+   // Dynamic cast owner to player
+   Player *player = dynamic_cast<Player *>(owner_);
+
+   // Set contacts of player
+   if (element) {
+      if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
+         if (sub_type() == "PlayerLeftArm") {
+            player->contacts_[Player::LEFT_ARM] = 0;
+            //std::cout << "PlayerArm::start_contact() - lost contact left arm\n";
+         } else {
+            player->contacts_[Player::RIGHT_ARM] = 0;
+            //std::cout << "PlayerArm::start_contact() - lost contact right arm\n";
+         }
+      }
+   }
+}
+
+PlayerLeg::PlayerLeg(Player *player, int x_rel, int y_rel, int width, int height, std::string type) :
+   BodyPart(player, x_rel, y_rel, width, height, nullptr), type_(type) {
+
+   // Initialize the body part
+   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
+}
+
+void PlayerLeg::start_contact(Element *element) {
+   // Dynamic cast owner to player
+   Player *player = dynamic_cast<Player *>(owner_);
+
+   // Set contacts of player
+   if (element) {
+      if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
+         if (sub_type() == "PlayerLeftLeg") {
+            player->contacts_[Player::LEFT_LEG] = 1;
+            //std::cout << "PlayerLeg::start_contact() - in contact left leg\n";
+         } else {
+            player->contacts_[Player::RIGHT_LEG] = 1;
+            //std::cout << "PlayerLeg::start_contact() - in contact right leg\n";
+         }
+         owner_->has_jumped_ = 0;
+         owner_->textures["jump"].reset_frame = 0;
+         owner_->textures["jump"].frame_ = 0;
+         owner_->textures["double_jump"].reset_frame = 0;
+         owner_->textures["double_jump"].frame_ = 0;
+         owner_->textures["running_jump"].reset_frame = 0;
+         owner_->textures["running_jump"].frame_ = 0;
+      }
+   } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
+      player->take_damage(10);
+      if (sub_type() == "PlayerLeftLeg") {
+         std::cout << "PlayerLeg::start_contact() - left leg is hit!\n";
+      }
+   }
+}
+
+void PlayerLeg::end_contact(Element *element) {
+   // Dynamic cast owner to player
+   Player *player = dynamic_cast<Player *>(owner_);
+
+   // Set contacts of player
+   if (element) {
+      if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
+         if (sub_type() == "PlayerLeftLeg") {
+            player->contacts_[Player::LEFT_LEG] = 0;
+            //std::cout << "PlayerLeg::end_contact() - lost contact left leg\n";
+         } else {
+            player->contacts_[Player::RIGHT_LEG] = 0;
+            //std::cout << "PlayerLeg::end_contact() - lost contact right leg\n";
+         }
+      }
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////
 /******************** PLAYER IMPLEMENTATIONS ***************************/
+/////////////////////////////////////////////////////////////////////////
+
 // Initializ the player by calling it's constructor
 Player::Player(Application* application) : 
    // The new sprite is going to be 37 wide (the character itself)
@@ -143,9 +290,9 @@ Player::Player(Application* application) :
    box.SetAsBox(width, height, center, 0.0f);
 
    // TODO: ADD FIXTURES TO THIS AS SENSORS
-   left_sensor_ = new PlayerSensor(0.4f, 0.0f, this, CONTACT_LEFT, -0.05f);
-   right_sensor_ = new PlayerSensor(0.4f, 0.0f, this, CONTACT_RIGHT, 0.30f);
-   bottom_sensor = new PlayerSensor(0.0f, 0.15f, this, CONTACT_DOWN, 0.125f, -0.5f);
+   //left_sensor_ = new PlayerSensor(0.4f, 0.0f, this, CONTACT_LEFT, -0.05f);
+   //right_sensor_ = new PlayerSensor(0.4f, 0.0f, this, CONTACT_RIGHT, 0.30f);
+   //bottom_sensor = new PlayerSensor(0.0f, 0.15f, this, CONTACT_DOWN, 0.125f, -0.5f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -155,18 +302,21 @@ Player::Player(Application* application) :
    body->CreateFixture(&fixture_def);
 
    // Set user data
-   body->SetUserData(this);
+   //body->SetUserData(this);
 
    // Set sensors to non interactive with da enemy
    b2Filter filter;
-   filter.groupIndex = -5;
-   filter.categoryBits = 0x0001;
-   filter.maskBits = 0xFFFF;
+   filter.categoryBits = 0;
+   filter.maskBits = 0;
    b2Fixture *fixture_list = body->GetFixtureList();
-   while (fixture_list != nullptr) {
-      fixture_list->SetFilterData(filter);
-      fixture_list = fixture_list->GetNext();
-   }
+   fixture_list->SetFilterData(filter);
+
+   // ADD BODY PARTS
+   player_head_ = new PlayerHead(this);
+   player_arm_left_ = new PlayerArm(this, 6, -27, 7, 26, "PlayerLeftArm");
+   player_arm_right_ = new PlayerArm(this, 17, -27, 7, 26, "PlayerRightArm");
+   player_leg_left_ = new PlayerLeg(this, 8, -35, 9, 32, "PlayerLeftLeg");
+   player_leg_right_ = new PlayerLeg(this, 15, -35, 9, 32, "PlayerRightLeg");
 
    // Set health. TODO: set health in a better way
    health = 300;
@@ -178,10 +328,12 @@ Player::Player(Application* application) :
    for (int i = 0; i < 3; i++) {
       hit_markers.push_back(new Hitmarker(76 * i, 0));
    }
+
    /************* PLAYER *******************************************/
    // Set in contact = false
-   in_contact_left = false;
-   in_contact_right = false;
+   for (int i = 0; i < 5; i++) {
+      contacts_[i] = 0;
+   }
 
    // Start the immunity timer
    immunity_timer_.start();
@@ -375,7 +527,7 @@ void Player::adjust_deltas() {
          arm_delta_shoot_x = -57;
          arm_delta_shoot_y = 39;
       }
-   } else if (player_state_ == RUN && in_contact_down) {
+   } else if (player_state_ == RUN && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
       if (entity_direction == RIGHT) {
          arm_delta_x = -4;
          arm_delta_y = 44;
@@ -387,7 +539,7 @@ void Player::adjust_deltas() {
          arm_delta_shoot_x = -58;
          arm_delta_shoot_y = 39;
       }
-   } else if (player_state_ == STOP && in_contact_down) {
+   } else if (player_state_ == STOP && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
       if (entity_direction == RIGHT) {
          arm_delta_x = 2;
          arm_delta_y = 43;
@@ -464,10 +616,10 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
       if (rand_idle == 100) {
          Element::animate(&textures["kick"]);
       }
-   } else if (player_state_ == RUN && in_contact_down) {
+   } else if (player_state_ == RUN && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
       Element::animate(&textures["running"]);
       Element::animate(&textures["running_arm"]);
-   } else if (player_state_ == STOP && in_contact_down) {
+   } else if (player_state_ == STOP && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
       Element::animate(&textures["running"], 20);
    } else if (player_state_ == JUMP) {
       Element::animate(&textures["jump"], textures["jump"].reset_frame, textures["jump"].stop_frame);
@@ -499,10 +651,10 @@ void Player::change_player_state() {
    bool up = get_application()->current_key_states_[SDL_SCANCODE_UP];
 
    // Special push state
-   if (in_contact_left || in_contact_right) {
-      if ((left || right) && (up || !in_contact_down)) {
+   if (contacts_[LEFT_ARM] || contacts_[RIGHT_ARM]) {
+      if ((left || right) && (up || !(contacts_[LEFT_LEG] || contacts_[RIGHT_LEG]))) {
          player_state_ = JUMP_AND_PUSH;
-      } else if (!left && !right && (up || !in_contact_down)) {
+      } else if (!left && !right && (up || !(contacts_[LEFT_LEG] || contacts_[RIGHT_LEG]))) {
          player_state_ = JUMP;
       } else if (entity_direction == LEFT && left) {
          player_state_ = PUSH;
@@ -521,7 +673,7 @@ void Player::change_player_state() {
    }
 
    // Special stand state
-   if ((!right && !left) && BOUNDED(vel_x) && in_contact_down) {
+   if ((!right && !left) && BOUNDED(vel_x) && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
       // Set state to stand
       player_state_ = STAND;
 
@@ -530,7 +682,7 @@ void Player::change_player_state() {
    }
 
    // Special stop state
-   if ((!right && !left) && !BOUNDED(vel_x) && in_contact_down && player_state_ != PUSH) {
+   if ((!right && !left) && !BOUNDED(vel_x) && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG]) && player_state_ != PUSH) {
       // Set state
       player_state_ = STOP;
 
@@ -539,7 +691,7 @@ void Player::change_player_state() {
    }
 
    // Special fall state, TODO: add falling animation
-   if ((right || left) && BOUNDED(vel_x) && !in_contact_down) {
+   if ((right || left) && BOUNDED(vel_x) && !(contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
       // Set state
       player_state_ = JUMP;
 
@@ -548,7 +700,7 @@ void Player::change_player_state() {
    }
 
    // Check for non-zero y-vel
-   if (!in_contact_down) {
+   if (!(contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
       // Run and jump or just jump
       if (!BOUNDED(vel_x)) {
          player_state_ = RUN_AND_JUMP;
@@ -619,7 +771,7 @@ void Player::move() {
    // Player running left
    if (key == KEY_LEFT) {
       // TESTING
-      in_contact_right = false;
+      contacts_[RIGHT_ARM] = 0;
 
       // Check for flag
       if (entity_direction == LEFT) {
@@ -642,14 +794,14 @@ void Player::move() {
             body->ApplyForce(force, body->GetPosition(), true);
          }
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == RIGHT) {
-         in_contact_right = false;
+         contacts_[RIGHT_ARM] = 0;
       }
    } 
 
    // Deal with basic movement for now
    if (key == KEY_RIGHT) {
       // TESTING
-      in_contact_left = false;
+      contacts_[LEFT_ARM] = 0;
       
       // Check for flag
       if (entity_direction == RIGHT) {
@@ -672,7 +824,7 @@ void Player::move() {
             body->ApplyForce(force, body->GetPosition(), true);
          }
       } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == LEFT) {
-         in_contact_left = false;
+         contacts_[LEFT_ARM] = 0;
       }
    }
 
@@ -724,13 +876,6 @@ void Player::move() {
          }
       }
    } 
-   
-   if (key == KEY_DOWN) {
-     // Need to revisit this
-     //b2Vec2 down = {0.0f, -0.2f};
-     //body->ApplyLinearImpulse(down, body->GetPosition(), true);
-     // TODO: FIX SLIDING
-   }
 
    // Update player state
    change_player_state();

@@ -249,12 +249,13 @@ class Sensor : public Element {
 class BodyPart : public Sensor {
    public:
       // Constructor
-      BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application, bool is_fixture = true);
+      BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application, bool is_fixture = true, uint16 category = CAT_SENSOR);
 
       // Initialize function different for body part
       virtual void initialize(float width, float height, float center_x, float center_y, uint16 category = CAT_SENSOR);
 
       // Update function only takes the offsetted values
+      virtual void update(bool freeze = false) {};
       void update(int x_offset = 0, int y_offset = 0);
 
       // Activate and deactivate
@@ -273,10 +274,11 @@ class BodyPart : public Sensor {
       virtual std::string type() {
          return type_;
       }
-   private:
+      
       int x_rel;
       int y_rel;
 
+   private:
       std::string type_;
 
       bool is_fixture_;

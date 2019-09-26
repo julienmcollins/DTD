@@ -554,31 +554,6 @@ bool Rosea::within_bounds() {
    return false;
 }
 
-// Checks to see what side player is on
-bool Rosea::left_bound() {
-   return (get_application()->get_player()->get_x() >= get_x() - 200) && 
-            (get_application()->get_player()->get_x() < get_x());
-}
-bool Rosea::right_bound() {
-   return (get_application()->get_player()->get_x() <= get_x() + 200) &&
-            (get_application()->get_player()->get_x() > get_x());
-}
-
-// Checks to see if player is leaving bounds
-bool Rosea::is_leaving_bounds() {
-   if (within_bounds()) {
-      if (get_application()->get_player()->get_x() + 
-            get_application()->get_player()->body->GetLinearVelocity().x < get_x() - 200) {
-         return true;
-      }
-      if (get_application()->get_player()->get_x() +
-            get_application()->get_player()->body->GetLinearVelocity().x > get_x() + 200) {
-         return true;
-      }
-   }
-   return false;
-}
-
 // Rosea destructor
 Rosea::~Rosea() {}
 
@@ -888,6 +863,7 @@ void FleetSensor::start_contact(Element *element) {
       }
    }
 }
+
 void FleetSensor::end_contact(Element *element) {
    if (element) {
       if (element->type() == "Platform") {
@@ -1207,8 +1183,8 @@ void WormoredSensor::start_contact(Element *element) {
 // Constructor for Wormored
 Wormored::Wormored(int x, int y, Application *application) :
    Enemy(x, y, 418, 796, application),
-   body_1_heights_({{0, 0}, {1, -2}, {2, -1}, {3, -1}, {4, -2}, {5, 2}, {6, 2},
-                  {7, 1}, {8, 1}}),
+   body_1_heights_({{0, 0}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, 2}, {6, 2},
+                  {7, 2}, {8, 2}}),
    body_2_heights_({{2, 0}, {3, -1}, {4, -1}, {5, -2}, {6, -2}, {7, 1}, {8, 1}, {9, 1}, {10, 1}, {11, 2}}),
    body_3_heights_({{5, 0}, {6, -1}, {7, -1}, {8, -2}, {9, -2}, {10, 1}, {11, 1}, {12, 1}, {13, 1}, {14, 2}}),
    body_4_heights_({{7, 0}, {8, -1}, {9, -1}, {10, -2}, {11, -2}, {12, 1}, {13, 1}, {14, 1}, {15, 1}, {16, 1}, {17, 1}}),
@@ -1236,12 +1212,12 @@ Wormored::Wormored(int x, int y, Application *application) :
    // left_facing_sensors_[4] = new WormoredSensor(1.15f, 0.30f, this, CONTACT_UP, 1.50f, -0.92f);
    // left_facing_sensors_[5] = new WormoredSensor(0.89f, 0.22f, this, CONTACT_UP, 2.02f, -1.16f);
 
-   left_facing_sensors_[0] = new BodyPart(this, -243, -6, 143, 395, application_, false);
-   left_facing_sensors_[1] = new BodyPart(this, -109, -6, 124, 395, application_, false);
-   left_facing_sensors_[2] = new BodyPart(this, -7, -21, 80, 363, application_, false);
-   left_facing_sensors_[3] = new BodyPart(this, 77, -43, 86, 320, application_, false);
-   left_facing_sensors_[4] = new BodyPart(this, 150, -92, 60, 230, application_, false);
-   left_facing_sensors_[5] = new BodyPart(this, 202, -116, 44, 179, application_, false);
+   left_facing_sensors_[0] = new BodyPart(this, -243, -6, 143, 395, application_, false, CAT_BOSS);
+   left_facing_sensors_[1] = new BodyPart(this, -109, -6, 124, 395, application_, false, CAT_BOSS);
+   left_facing_sensors_[2] = new BodyPart(this, -7, -21, 80, 363, application_, false, CAT_BOSS);
+   left_facing_sensors_[3] = new BodyPart(this, 77, -43, 86, 320, application_, false, CAT_BOSS);
+   left_facing_sensors_[4] = new BodyPart(this, 150, -92, 60, 230, application_, false, CAT_BOSS);
+   left_facing_sensors_[5] = new BodyPart(this, 202, -116, 44, 179, application_, false, CAT_BOSS);
 
    // Add new sensors to the body when facing left
    // right_facing_sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, 2.34f, -0.06f);
@@ -1308,25 +1284,33 @@ void Wormored::move() {
          body->SetLinearVelocity(vel);
 
          // Move each individual body part according to the map
-         int curr_frame = textures["idle"].frame_;
-         if (curr_frame < 9) {
-            left_facing_sensors_[0]->update(0, body_1_heights_[curr_frame]);
-         }
-         if (curr_frame > 1 && curr_frame < 12) {
-            left_facing_sensors_[1]->update(0, body_2_heights_[curr_frame]);
-         }
-         if (curr_frame > 4 && curr_frame < 15) {
-            left_facing_sensors_[2]->update(0, body_3_heights_[curr_frame]);
-         }
-         if (curr_frame > 6 && curr_frame < 18) {
-            left_facing_sensors_[3]->update(0, body_4_heights_[curr_frame]);
-         }
-         if (curr_frame > 9 && curr_frame < 20) {
-            left_facing_sensors_[4]->update(0, body_5_heights_[curr_frame]);
-         }
-         if (curr_frame > 11 && curr_frame < 21) {
-            left_facing_sensors_[5]->update(0, body_6_heights_[curr_frame]);
-         }
+         prev_frame = curr_frame;
+         curr_frame = textures["idle"].frame_;
+         //if (prev_frame != curr_frame) {
+            if (curr_frame < 9) {
+               std::cout << "curr_frame = " << curr_frame << std::endl;
+               std::cout << "offset = " << body_1_heights_[curr_frame] << std::endl;
+               std::cout << "get_y() before = " << left_facing_sensors_[0]->get_y() << std::endl;
+               left_facing_sensors_[0]->update(0, body_1_heights_[curr_frame]);
+               left_facing_sensors_[0]->set_y(left_facing_sensors_[0]->get_y() + body_1_heights_[curr_frame]);
+               std::cout << "get_y() after = " << left_facing_sensors_[0]->get_y() << std::endl;
+            }
+            if (curr_frame > 1 && curr_frame < 12) {
+               //left_facing_sensors_[1]->update(0, body_2_heights_[curr_frame]);
+            }
+            if (curr_frame > 4 && curr_frame < 15) {
+               //left_facing_sensors_[2]->update(0, body_3_heights_[curr_frame]);
+            }
+            if (curr_frame > 6 && curr_frame < 18) {
+               //left_facing_sensors_[3]->update(0, body_4_heights_[curr_frame]);
+            }
+            if (curr_frame > 9 && curr_frame < 20) {
+               //left_facing_sensors_[4]->update(0, body_5_heights_[curr_frame]);
+            }
+            if (curr_frame > 11 && curr_frame < 21) {
+               //left_facing_sensors_[5]->update(0, body_6_heights_[curr_frame]);
+            }
+         //}
       } else if (entity_direction == RIGHT) {
          b2Vec2 vel = {0.25f, 0.0f};
          body->SetLinearVelocity(vel);

@@ -85,17 +85,6 @@ class Hitmarker : public Element {
       STATE state;
 };
 
-// Player sensor class
-class PlayerSensor : public Sensor {
-   public:
-      // Construct sensor
-      PlayerSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x = 0.0f, float center_y = 0.0f);
-
-      // Start contact function
-      virtual void start_contact(Element *element = NULL);
-      virtual void end_contact(Element *element = NULL);
-};
-
 /************** PLAYER BODY PARTS ********************/
 class PlayerHead : public BodyPart {
    public:
@@ -117,6 +106,26 @@ class PlayerHead : public BodyPart {
 class PlayerArm : public BodyPart {
    public:
       PlayerArm(Player *player, int x_rel, int y_rel, int width, int height, std::string type);
+
+      // Start contact function
+      virtual void start_contact(Element *element = NULL);
+      virtual void end_contact(Element *element = NULL);
+
+      virtual std::string type() {
+         return "Player";
+      }
+
+      std::string sub_type() {
+         return type_;
+      }
+
+   private:
+      std::string type_;
+};
+
+class PlayerHand : public BodyPart {
+   public:
+      PlayerHand(Player *player, int x_rel, int y_rel, std::string type);
 
       // Start contact function
       virtual void start_contact(Element *element = NULL);
@@ -192,8 +201,10 @@ class Player : public Entity {
          HEAD = 0,
          LEFT_ARM = 1,
          RIGHT_ARM = 2,
-         LEFT_LEG = 3,
-         RIGHT_LEG = 4
+         LEFT_HAND = 3,
+         RIGHT_HAND = 4,
+         LEFT_LEG = 5,
+         RIGHT_LEG = 6
       };
 
       // Flag for locking direction
@@ -274,15 +285,12 @@ class Player : public Entity {
       // TODO: USE PRIVATE VEL VARIABLES AND SET BODY VELOCITY ONLY ONCE WITH VALS ADDED ONTO IT
       b2Vec2 final_force_;
 
-      // Sensor
-      Sensor *left_sensor_;
-      Sensor *right_sensor_;
-      Sensor *bottom_sensor;
-
       // Body parts
       PlayerHead *player_head_;
       PlayerArm *player_arm_left_;
       PlayerArm *player_arm_right_;
+      PlayerHand *player_hand_left_;
+      PlayerHand *player_hand_right_;
       PlayerLeg *player_leg_right_;
       PlayerLeg *player_leg_left_;
 

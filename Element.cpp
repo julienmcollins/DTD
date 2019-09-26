@@ -62,8 +62,14 @@ int Element::get_tex_x() {
 
 // Add and sub x
 void Element::add_x(int add) {
-   x_pos_ += add;
-}
+   if (!body) {
+      x_pos_ += add;
+   } else {
+      float addx = (float) (add / 100.0f);
+      //std::cout << "pos y before = " << body->GetPosition().y << std::endl;
+      body->SetTransform(b2Vec2(body->GetPosition().x, body->GetPosition().y + addx), body->GetAngle());
+      //std::cout << "pos y after = " << body->GetPosition().y << std::endl;
+   }}
 
 void Element::sub_x(int sub) {
    if (!body) {
@@ -122,7 +128,14 @@ int Element::get_tex_y() {
 
 // Add and sub y
 void Element::add_y(int add) {
-    y_pos_ += add;
+   if (!body) {
+      y_pos_ += add;
+   } else {
+      float addy = (float) (add / 100.0f);
+      std::cout << "pos y before = " << body->GetPosition().y << std::endl;
+      body->SetTransform(b2Vec2(body->GetPosition().x, body->GetPosition().y - addy), body->GetAngle());
+      std::cout << "pos y after = " << body->GetPosition().y << std::endl;
+   }
 }
 
 void Element::sub_y(int sub) {
@@ -406,7 +419,7 @@ void Sensor::initialize(float width, float height, float center_x, float center_
    // Set filter
    b2Filter filter;
    filter.categoryBits = category;
-   filter.maskBits = CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE;
+   filter.maskBits = CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY | CAT_BOSS;
    fixture_def.filter = filter;
 
    // Attach fixture
@@ -428,7 +441,7 @@ void Sensor::deactivate_sensor() {
 }
 
 /*************************** BodyPart ************************************************/
-BodyPart::BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application, bool is_fixture) :
+BodyPart::BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application, bool is_fixture, uint16 category) :
    Sensor(height, width, owning_entity, CONTACT_UP, x_rel_to_owner, y_rel_to_owner, 0.0f), 
    x_rel(x_rel_to_owner), y_rel(y_rel_to_owner), is_fixture_(is_fixture) {
 
@@ -437,12 +450,11 @@ BodyPart::BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner
 
    // If it's not a fixture, initialize
    if (!is_fixture) {
-      initialize(width, height, 0.0f, 0.0f);
+      initialize(width, height, 0.0f, 0.0f, category);
    }
 }
 
 void BodyPart::initialize(float width, float height, float center_x, float center_y, uint16 category) {
-      // Set owner
    application_ = owner_->get_application();
    type_ = owner_->type();
 
@@ -486,5 +498,13 @@ void BodyPart::initialize(float width, float height, float center_x, float cente
 
 void BodyPart::update(int x_offset, int y_offset) {
    set_x(owner_->get_x() + x_rel + x_offset);
-   set_y(owner_->get_y() - y_rel + y_offset);
+   // set_y(owner_->get_y() + y_rel + y_offset);
+   // set_y(get_y() + y_offset);
+
+   //add_x(x_offset);
+   // std::cout << "y_offset = " << y_offset << std::endl;
+   // std::cout << "get_y() before = " << get_y() << std::endl;
+   //add_y(y_offset);
+   // std::cout << "get_y() after = " << get_y() << std::endl;
+   //std::cout << "res = " << owner_->get_y() + y_rel + y_offset << std::endl;
 }

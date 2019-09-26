@@ -174,13 +174,6 @@ class Rosea : public Enemy {
       // Check to see if player is within bounds
       bool in_bounds_;
 
-      // Checks to see if player is on left or right
-      bool left_bound();
-      bool right_bound();
-
-      // Check to see if player is leaving the bounds
-      bool is_leaving_bounds();
-
       // Dictionary linking box to frames
       std::unordered_map<int, int> arm_heights_;
       std::unordered_map<int, int> arm_widths_;
@@ -374,6 +367,10 @@ class Wormored : public Enemy {
       std::unordered_map<int, int> body_4_heights_;
       std::unordered_map<int, int> body_5_heights_;
       std::unordered_map<int, int> body_6_heights_;
+
+      // curr and prev frame
+      int curr_frame = 0;
+      int prev_frame = 0;
 
 };
 

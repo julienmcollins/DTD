@@ -61,58 +61,13 @@ Projectile* Entity::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
 Entity::~Entity() {}
 
 /////////////////////////////////////////////////////////////////////////
-////////////////////// PLAYER SENSOR ////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-PlayerSensor::PlayerSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y) :
-   Sensor(height, width, entity, contact_type, center_x, center_y) {
-
-   // Initialize
-   initialize(width, height, center_x, center_y);
-}
-
-// Start contact function
-void PlayerSensor::start_contact(Element *element) {
-   if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
-      if (sensor_contact == CONTACT_DOWN) {
-         owner_->in_contact_down = true;
-         owner_->has_jumped_ = 0;
-         owner_->textures["jump"].reset_frame = 0;
-         owner_->textures["jump"].frame_ = 0;
-         owner_->textures["double_jump"].reset_frame = 0;
-         owner_->textures["double_jump"].frame_ = 0;
-         owner_->textures["running_jump"].reset_frame = 0;
-         owner_->textures["running_jump"].frame_ = 0;
-         //std::cout << "Contact Down is True\n";
-      } else if (sensor_contact == CONTACT_LEFT) {
-         owner_->in_contact_left = true;
-      } else if (sensor_contact == CONTACT_RIGHT) {
-         owner_->in_contact_right = true;
-      } else {
-         owner_->in_contact = true;
-      }
-   }
-}
-
-// End contact function
-void PlayerSensor::end_contact(Element *element) {
-   if (sensor_contact == CONTACT_DOWN) {
-      owner_->in_contact_down = false;
-      //std::cout << "COntact Down is False\n";
-   } else if (sensor_contact == CONTACT_LEFT) {
-      owner_->in_contact_left = false;
-   } else if (sensor_contact == CONTACT_RIGHT) {
-      owner_->in_contact_right = false;
-   } else {
-      owner_->in_contact = false;
-   }
-}
-
-/////////////////////////////////////////////////////////////////////////
 /******************* PLAYER BODY PARTS *********************************/
 /////////////////////////////////////////////////////////////////////////
 
+/********* HEAD **************/
+
 PlayerHead::PlayerHead(Player *player) :
-   BodyPart(player, 10, 16, 13, 43, nullptr) {
+   BodyPart(player, 11, 16, 16, 43, nullptr) {
 
    // Initialize the body part
    float width = get_width() / 200.0f;
@@ -148,6 +103,8 @@ void PlayerHead::end_contact(Element *element) {
    }
 }
 
+/********* ARM ****************/
+
 PlayerArm::PlayerArm(Player *player, int x_rel, int y_rel, int width, int height, std::string type) :
    BodyPart(player, x_rel, y_rel, width, height, nullptr), type_(type) {
 
@@ -171,9 +128,6 @@ void PlayerArm::start_contact(Element *element) {
          }
       } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
          player->take_damage(10);
-         if (sub_type() == "PlayerLeftArm") {
-            std::cout << "PlayerArm::start_contact() - left arm is hit!\n";
-         }
       }
    }
 }
@@ -195,6 +149,51 @@ void PlayerArm::end_contact(Element *element) {
       }
    }
 }
+
+/********* HAND ****************/
+
+PlayerHand::PlayerHand(Player *player, int x_rel, int y_rel, std::string type) :
+   BodyPart(player, x_rel, y_rel, 7, 6, nullptr), type_(type) {
+
+   // Initialize the body part
+   Sensor::initialize(get_width() / 200.0f, get_height() / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
+}
+
+void PlayerHand::start_contact(Element *element) {
+   // Dynamic cast owner to player
+   Player *player = dynamic_cast<Player *>(owner_);
+
+   // Set contacts of player
+   if (element) {
+      if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
+         if (sub_type() == "PlayerLeftHand") {
+            player->contacts_[Player::LEFT_HAND] = 1;
+         } else {
+            player->contacts_[Player::RIGHT_HAND] = 1;
+         }
+      } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
+         player->take_damage(10);
+      }
+   }
+}
+
+void PlayerHand::end_contact(Element *element) {
+   // Dynamic cast owner to player
+   Player *player = dynamic_cast<Player *>(owner_);
+
+   // Set contacts of player
+   if (element) {
+      if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
+         if (sub_type() == "PlayerLeftHAND") {
+            player->contacts_[Player::LEFT_HAND] = 0;
+         } else {
+            player->contacts_[Player::RIGHT_HAND] = 0;
+         }
+      }
+   }
+}
+
+/********* LEG *****************/
 
 PlayerLeg::PlayerLeg(Player *player, int x_rel, int y_rel, int width, int height, std::string type) :
    BodyPart(player, x_rel, y_rel, width, height, nullptr), type_(type) {
@@ -227,9 +226,6 @@ void PlayerLeg::start_contact(Element *element) {
       }
    } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
       player->take_damage(10);
-      if (sub_type() == "PlayerLeftLeg") {
-         std::cout << "PlayerLeg::start_contact() - left leg is hit!\n";
-      }
    }
 }
 
@@ -313,8 +309,10 @@ Player::Player(Application* application) :
 
    // ADD BODY PARTS
    player_head_ = new PlayerHead(this);
-   player_arm_left_ = new PlayerArm(this, 6, -27, 7, 26, "PlayerLeftArm");
-   player_arm_right_ = new PlayerArm(this, 17, -27, 7, 26, "PlayerRightArm");
+   player_arm_left_ = new PlayerArm(this, 6, -28, 7, 27, "PlayerLeftArm");
+   player_arm_right_ = new PlayerArm(this, 17, -28, 7, 27, "PlayerRightArm");
+   player_hand_left_ = new PlayerHand(this, 6, -41, "PlayerLeftHand");
+   player_hand_right_ = new PlayerHand(this, 17, -41, "PlayerRightHand");
    player_leg_left_ = new PlayerLeg(this, 8, -35, 9, 32, "PlayerLeftLeg");
    player_leg_right_ = new PlayerLeg(this, 15, -35, 9, 32, "PlayerRightLeg");
 
@@ -403,7 +401,7 @@ void Player::process_input(const Uint8 *key_state) {
 
    // Process left key
    if (key_state[SDL_SCANCODE_LEFT]) {
-      if (!key_state[SDL_SCANCODE_RIGHT]) {
+      if (!lock_dir_right) {
          key = KEY_LEFT;
          entity_direction = LEFT;
          lock_dir_left = true;
@@ -414,7 +412,7 @@ void Player::process_input(const Uint8 *key_state) {
 
    // Process right key
    if (key_state[SDL_SCANCODE_RIGHT]) {
-      if (!key_state[SDL_SCANCODE_LEFT]) {
+      if (!lock_dir_left) {
          key = KEY_RIGHT;
          entity_direction = RIGHT;
          lock_dir_right = true;
@@ -461,6 +459,7 @@ void Player::update(bool freeze) {
    //std::cout << "X = " << body->GetLinearVelocity().x << " Y = " << body->GetLinearVelocity().y << std::endl;
    //std::cout << in_contact_down << std::endl;
    //std::cout << "x_pos = " << get_x() << " y_pos = " << get_y() << std::endl;
+   //std::cout << "Key = " << key << std::endl;
 
    // Apply artificial force of gravity
    const b2Vec2 sim_grav = {0.0f, SIM_GRAV};

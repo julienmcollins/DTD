@@ -67,7 +67,7 @@ Entity::~Entity() {}
 /********* HEAD **************/
 
 PlayerHead::PlayerHead(Player *player) :
-   BodyPart(player, 11, 16, 16, 43, nullptr) {
+   BodyPart(player, 11, 16, 18, 43, nullptr) {
 
    // Initialize the body part
    float width = get_width() / 200.0f;
@@ -313,8 +313,8 @@ Player::Player(Application* application) :
    player_arm_right_ = new PlayerArm(this, 17, -28, 7, 27, "PlayerRightArm");
    player_hand_left_ = new PlayerHand(this, 6, -41, "PlayerLeftHand");
    player_hand_right_ = new PlayerHand(this, 17, -41, "PlayerRightHand");
-   player_leg_left_ = new PlayerLeg(this, 8, -35, 9, 32, "PlayerLeftLeg");
-   player_leg_right_ = new PlayerLeg(this, 15, -35, 9, 32, "PlayerRightLeg");
+   player_leg_left_ = new PlayerLeg(this, 7, -35, 9, 32, "PlayerLeftLeg");
+   player_leg_right_ = new PlayerLeg(this, 16, -35, 9, 32, "PlayerRightLeg");
 
    // Set health. TODO: set health in a better way
    health = 300;

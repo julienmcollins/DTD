@@ -544,7 +544,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = FORESTBOSS;
+         level_flag_ = FOREST1;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -581,18 +581,18 @@ void Application::main_screen() {
       }
    }
    // DEBUG DRAW
-   // world_.DrawDebugData();
+   world_.DrawDebugData();
 
-   // for (int i = 0; i < 15; i++) {
-   //    SDL_Rect m;
-   //    m.w = r[i].w;
-   //    m.h = r[i].h;
-   //    m.x = r[i].x;
-   //    m.y = r[i].y - m.h;
+   for (int i = 0; i < 15; i++) {
+      SDL_Rect m;
+      m.w = r[i].w;
+      m.h = r[i].h;
+      m.x = r[i].x;
+      m.y = r[i].y - m.h;
 
-   //    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-   //    SDL_RenderDrawRect(renderer, &m);
-   // }
+      SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+      SDL_RenderDrawRect(renderer, &m);
+   }
   
    // Update the screen
    SDL_RenderPresent(renderer);

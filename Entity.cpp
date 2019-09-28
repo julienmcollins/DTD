@@ -67,7 +67,7 @@ Entity::~Entity() {}
 /********* HEAD **************/
 
 PlayerHead::PlayerHead(Player *player) :
-   BodyPart(player, 11, 16, 18, 43, nullptr) {
+   BodyPart(player, -3.5f, 26, 26, 44, nullptr) {
 
    // Initialize the body part
    float width = get_width() / 200.0f;
@@ -105,7 +105,7 @@ void PlayerHead::end_contact(Element *element) {
 
 /********* ARM ****************/
 
-PlayerArm::PlayerArm(Player *player, int x_rel, int y_rel, int width, int height, std::string type) :
+PlayerArm::PlayerArm(Player *player, float x_rel, float y_rel, int width, int height, std::string type) :
    BodyPart(player, x_rel, y_rel, width, height, nullptr), type_(type) {
 
    // Initialize the body part
@@ -152,7 +152,7 @@ void PlayerArm::end_contact(Element *element) {
 
 /********* HAND ****************/
 
-PlayerHand::PlayerHand(Player *player, int x_rel, int y_rel, std::string type) :
+PlayerHand::PlayerHand(Player *player, float x_rel, float y_rel, std::string type) :
    BodyPart(player, x_rel, y_rel, 7, 6, nullptr), type_(type) {
 
    // Initialize the body part
@@ -168,6 +168,7 @@ void PlayerHand::start_contact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftHand") {
             player->contacts_[Player::LEFT_HAND] = 1;
+            std::cout << "PlayerHand::start_contact() - in contact with left hand\n";
          } else {
             player->contacts_[Player::RIGHT_HAND] = 1;
          }
@@ -184,8 +185,9 @@ void PlayerHand::end_contact(Element *element) {
    // Set contacts of player
    if (element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
-         if (sub_type() == "PlayerLeftHAND") {
+         if (sub_type() == "PlayerLeftHand") {
             player->contacts_[Player::LEFT_HAND] = 0;
+            std::cout << "PlayerHand::end_contact() - lost contact with left hand\n";
          } else {
             player->contacts_[Player::RIGHT_HAND] = 0;
          }
@@ -195,7 +197,7 @@ void PlayerHand::end_contact(Element *element) {
 
 /********* LEG *****************/
 
-PlayerLeg::PlayerLeg(Player *player, int x_rel, int y_rel, int width, int height, std::string type) :
+PlayerLeg::PlayerLeg(Player *player, float x_rel, float y_rel, int width, int height, std::string type) :
    BodyPart(player, x_rel, y_rel, width, height, nullptr), type_(type) {
 
    // Initialize the body part
@@ -309,12 +311,12 @@ Player::Player(Application* application) :
 
    // ADD BODY PARTS
    player_head_ = new PlayerHead(this);
-   player_arm_left_ = new PlayerArm(this, 6, -28, 7, 27, "PlayerLeftArm");
-   player_arm_right_ = new PlayerArm(this, 17, -28, 7, 27, "PlayerRightArm");
-   player_hand_left_ = new PlayerHand(this, 6, -41, "PlayerLeftHand");
-   player_hand_right_ = new PlayerHand(this, 17, -41, "PlayerRightHand");
-   player_leg_left_ = new PlayerLeg(this, 7, -35, 9, 32, "PlayerLeftLeg");
-   player_leg_right_ = new PlayerLeg(this, 16, -35, 9, 32, "PlayerRightLeg");
+   player_arm_left_ = new PlayerArm(this, -4.5, -7, 8, 22, "PlayerLeftArm");
+   player_arm_right_ = new PlayerArm(this, 17.5, -7, 8, 22, "PlayerRightArm");
+   //player_hand_left_ = new PlayerHand(this, 6, -41, "PlayerLeftHand");
+   //player_hand_right_ = new PlayerHand(this, 17, -41, "PlayerRightHand");
+   player_leg_left_ = new PlayerLeg(this, -2.5, -33, 8, 34, "PlayerLeftLeg");
+   player_leg_right_ = new PlayerLeg(this, 16.5, -33, 6, 34, "PlayerRightLeg");
 
    // Set health. TODO: set health in a better way
    health = 300;
@@ -367,6 +369,11 @@ Texture *Player::get_texture() {
    // Return jump and push texture
    if (player_state_ == JUMP_AND_PUSH) {
       return &textures["jump_push"];
+   }
+
+   // Return balance
+   if (player_state_ == BALANCE) {
+      return &textures["balance"];
    }
 
    // Death
@@ -483,7 +490,7 @@ void Player::update(bool freeze) {
    Texture *playertexture = get_texture();
 
    // Render arm if idle, render shooting if not
-   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DEATH) {
+   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != BALANCE && player_state_ != DEATH) {
       if (!shooting) {
          if (get_player_state() == RUN) {
             textures["running_arm"].render(get_tex_x() + get_width() +
@@ -631,6 +638,8 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
       Element::animate(&textures["push"]);
    } else if (player_state_ == JUMP_AND_PUSH) {
       Element::animate(&textures["jump_push"]);
+   } else if (player_state_ == BALANCE) {
+      Element::animate(&textures["balance"]);
    } else if (player_state_ == DEATH) {
       Element::animate(&textures["death"], textures["death"].reset_frame, textures["death"].stop_frame);
    }
@@ -668,6 +677,12 @@ void Player::change_player_state() {
    // Might be a hack, but essentially only let it switch if double jump is completed
    if (has_jumped_ == 2) {
       player_state_ = DOUBLE_JUMP;
+      return;
+   }
+
+   // Change state to balance if one leg on and the other one not
+   if ((contacts_[LEFT_LEG] && !contacts_[RIGHT_LEG]) || (!contacts_[LEFT_LEG] && contacts_[RIGHT_LEG])) {
+      player_state_ = BALANCE;
       return;
    }
 
@@ -781,7 +796,7 @@ void Player::move() {
       }
 
       // Check for midair
-      if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
+      if (player_state_ == RUN || player_state_ == STAND || player_state_ == BALANCE) {
          //player_state_ = RUN;
          b2Vec2 vel = {-5.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
@@ -811,7 +826,7 @@ void Player::move() {
       }
 
       // Set to jump and run if not on the ground
-      if (player_state_ == RUN || player_state_ == STAND || player_state_ == STOP) {
+      if (player_state_ == RUN || player_state_ == STAND || player_state_ == BALANCE) {
          //player_state_ = RUN;
          b2Vec2 vel = {5.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
@@ -942,6 +957,9 @@ bool Player::load_media() {
 
    // Load jump and push
    load_image(59, 104, 8, 1.0f / 20.0f, "jump_push", "images/player/jump_push.png", success);
+
+   // Load balance
+   load_image(88, 104, 19, 1.0f / 20.0f, "balance", "images/player/balance.png", success);
 
    // Load death animation
    load_image(105, 104, 20, 1.0f / 20.0f, "death", "images/player/death.png", success);

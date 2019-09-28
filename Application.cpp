@@ -32,7 +32,7 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    menu_screen_(FIRST),
    game_flag_(SETUP),
    world_(gravity_), to_meters_(0.01f), to_pixels_(100.0f), debugDraw(this), test(0),
-   timeStep_(1.0f / 60.0f), velocityIterations_(6), positionIterations_(2), animation_speed_(20.0f), 
+   timeStep_(1.0f / 60.0f), velocityIterations_(10), positionIterations_(10), animation_speed_(20.0f), 
    animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), 
    menu_background_(0, 0, 1080, 1920, this),
    menu_title_(640, 70, 513, 646, this),
@@ -445,6 +445,7 @@ void Application::main_screen() {
 
    // Update world timer
    world_.Step(timeStep_, velocityIterations_, positionIterations_);
+   world_.ClearForces();
 
    // Start cap timer
    capTimer.start();
@@ -645,6 +646,7 @@ void Application::playground() {
 
    // Update world timer
    world_.Step(timeStep_, velocityIterations_, positionIterations_);
+   world_.ClearForces();
 
    // Start cap timer
    capTimer.start();
@@ -714,18 +716,18 @@ void Application::playground() {
    }
 
    // DEBUG DRAW
-   world_.DrawDebugData();
+   // world_.DrawDebugData();
 
-   for (int i = 0; i < 15; i++) {
-      SDL_Rect m;
-      m.w = r[i].w;
-      m.h = r[i].h;
-      m.x = r[i].x;
-      m.y = r[i].y - m.h;
+   // for (int i = 0; i < 15; i++) {
+   //    SDL_Rect m;
+   //    m.w = r[i].w;
+   //    m.h = r[i].h;
+   //    m.x = r[i].x;
+   //    m.y = r[i].y - m.h;
 
-      SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-      SDL_RenderDrawRect(renderer, &m);
-   }
+   //    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+   //    SDL_RenderDrawRect(renderer, &m);
+   // }
 
    // SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
    // SDL_RenderDrawLine(renderer, 1300, 454, 1500, 454);

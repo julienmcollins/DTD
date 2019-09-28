@@ -42,18 +42,18 @@ void Element::set_tex_x(int new_x) {
    }
 }
 
-int Element::get_x() {
+float Element::get_x() {
    if (body) {
-      x_pos_ = (int) (100.0f * body->GetPosition().x);
+      x_pos_ = 100.0f * body->GetPosition().x;
       return x_pos_;
    } else {
       return x_pos_;
    }
 }
 
-int Element::get_tex_x() {
+float Element::get_tex_x() {
    if (body) {
-      x_pos_ = (int) ((100.0f * body->GetPosition().x) - (get_width() / 2.0f));
+      x_pos_ = (100.0f * body->GetPosition().x) - (get_width() / 2.0f);
       return x_pos_;
    } else {
       return x_pos_;
@@ -108,18 +108,18 @@ void Element::set_tex_y(int new_y) {
    }
 }
 
-int Element::get_y() {
+float Element::get_y() {
    if (body) {
-      y_pos_ = (int) (100.0f * -body->GetPosition().y);
+      y_pos_ = 100.0f * -body->GetPosition().y;
       return y_pos_;
    } else {
       return y_pos_;
    }
 }
 
-int Element::get_tex_y() {
+float Element::get_tex_y() {
    if (body) {
-      y_pos_ = (int) ((100.0f * -body->GetPosition().y) - (get_height() / 2.0f));
+      y_pos_ = (100.0f * -body->GetPosition().y) - (get_height() / 2.0f);
       return y_pos_;
    } else {
       return y_pos_;
@@ -147,7 +147,7 @@ void Element::set_height(int new_height) {
     height_ = new_height;
 }
 
-int Element::get_height() const {
+float Element::get_height() const {
    if (height_ == 0)
       return texture.getHeight();
    else
@@ -159,7 +159,7 @@ void Element::set_width(int new_width) {
     width_ = new_width;
 }
 
-int Element::get_width() const {
+float Element::get_width() const {
    if (width_ == 0)
       return texture.getWidth();
    else
@@ -414,6 +414,7 @@ void Sensor::initialize(float width, float height, float center_x, float center_
    // Create fixture
    fixture_def.shape = &box;
    fixture_def.density = density_;
+   fixture_def.friction = 0.0f;
    fixture_def.userData = this;
 
    // Set filter
@@ -441,7 +442,7 @@ void Sensor::deactivate_sensor() {
 }
 
 /*************************** BodyPart ************************************************/
-BodyPart::BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application, bool is_fixture, uint16 category) :
+BodyPart::BodyPart(Entity *owning_entity, float x_rel_to_owner, float y_rel_to_owner, float width, float height, Application *application, bool is_fixture, uint16 category) :
    Sensor(height, width, owning_entity, CONTACT_UP, x_rel_to_owner, y_rel_to_owner, 0.0f), 
    x_rel(x_rel_to_owner), y_rel(y_rel_to_owner), is_fixture_(is_fixture) {
 
@@ -478,7 +479,7 @@ void BodyPart::initialize(float width, float height, float center_x, float cente
    box.SetAsBox(width / 200.0f, height / 200.0f, b2Vec2(0.0f, 0.0f), 0.0f);
    fixture_def.shape = &box;
    fixture_def.density = 1000.0f;
-   fixture_def.friction = 1.0f;
+   fixture_def.friction = 0.0f;
    fixture_def.userData = this;
 
    if (!is_fixture_) {

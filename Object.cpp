@@ -36,6 +36,7 @@ void Platform::setup() {
    // Create fixture
    fixture_def.shape = &box;
    fixture_def.density = 0.0f;
+   fixture_def.friction = 0.0f;
    fixture_def.userData = this;
    fixture_def.filter.categoryBits = CAT_PLATFORM;
    fixture_def.filter.maskBits = CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY | CAT_BOSS | CAT_SENSOR;

@@ -105,7 +105,7 @@ class PlayerHead : public BodyPart {
 
 class PlayerArm : public BodyPart {
    public:
-      PlayerArm(Player *player, int x_rel, int y_rel, int width, int height, std::string type);
+      PlayerArm(Player *player, float x_rel, float y_rel, int width, int height, std::string type);
 
       // Start contact function
       virtual void start_contact(Element *element = NULL);
@@ -125,7 +125,7 @@ class PlayerArm : public BodyPart {
 
 class PlayerHand : public BodyPart {
    public:
-      PlayerHand(Player *player, int x_rel, int y_rel, std::string type);
+      PlayerHand(Player *player, float x_rel, float y_rel, std::string type);
 
       // Start contact function
       virtual void start_contact(Element *element = NULL);
@@ -145,7 +145,7 @@ class PlayerHand : public BodyPart {
 
 class PlayerLeg : public BodyPart {
    public:
-      PlayerLeg(Player *player, int x_rel, int y_rel, int width, int height, std::string type);
+      PlayerLeg(Player *player, float x_rel, float y_rel, int width, int height, std::string type);
 
       // Start contact function
       virtual void start_contact(Element *element = NULL);
@@ -179,7 +179,7 @@ class Player : public Entity {
          RUN_AND_JUMP,
          PUSH,
          JUMP_AND_PUSH,
-         CROUCH,
+         BALANCE,
          DEATH
       };
 

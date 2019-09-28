@@ -54,12 +54,12 @@ class Element {
       void set_width(int new_width);
 
       // Getters
-      int get_x();
-      int get_y();
-      int get_tex_x();
-      int get_tex_y();
-      int get_height() const;
-      int get_width() const;
+      float get_x();
+      float get_y();
+      float get_tex_x();
+      float get_tex_y();
+      float get_height() const;
+      float get_width() const;
 
       // Adders
       void add_x(int add);
@@ -204,12 +204,12 @@ class Element {
       Application *application_;
    private:
       // X and Y locations
-      int x_pos_;
-      int y_pos_;
+      float x_pos_;
+      float y_pos_;
 
       // Height and widths
-      int height_;
-      int width_;
+      float height_;
+      float width_;
 };
 
 
@@ -249,7 +249,7 @@ class Sensor : public Element {
 class BodyPart : public Sensor {
    public:
       // Constructor
-      BodyPart(Entity *owning_entity, int x_rel_to_owner, int y_rel_to_owner, int width, int height, Application *application, bool is_fixture = true, uint16 category = CAT_SENSOR);
+      BodyPart(Entity *owning_entity, float x_rel_to_owner, float y_rel_to_owner, float width, float height, Application *application, bool is_fixture = true, uint16 category = CAT_SENSOR);
 
       // Initialize function different for body part
       virtual void initialize(float width, float height, float center_x, float center_y, uint16 category = CAT_SENSOR);
@@ -274,7 +274,7 @@ class BodyPart : public Sensor {
       virtual std::string type() {
          return type_;
       }
-      
+
       int x_rel;
       int y_rel;
 

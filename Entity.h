@@ -88,7 +88,7 @@ class Hitmarker : public Element {
 /************** PLAYER BODY PARTS ********************/
 class PlayerHead : public BodyPart {
    public:
-      PlayerHead(Player *player);
+      PlayerHead(Player *player, float x_rel, float y_rel);
       
       // Start contact function
       virtual void start_contact(Element *element = NULL);
@@ -193,6 +193,7 @@ class Player : public Entity {
          KEY_DOWN, // = 0x01000
          KEY_SPACE // = 0x10000
       };
+
       KEYS key;
       KEYS last_key_pressed;
 
@@ -282,17 +283,13 @@ class Player : public Entity {
       float prev_pos_x_;
       float prev_pos_y_;
 
-      // TODO: USE PRIVATE VEL VARIABLES AND SET BODY VELOCITY ONLY ONCE WITH VALS ADDED ONTO IT
-      b2Vec2 final_force_;
+      // Player body parts
+      std::vector<BodyPart*> player_body_right_;
+      std::vector<BodyPart*> player_body_left_;
 
-      // Body parts
-      PlayerHead *player_head_;
-      PlayerArm *player_arm_left_;
-      PlayerArm *player_arm_right_;
-      PlayerHand *player_hand_left_;
-      PlayerHand *player_hand_right_;
-      PlayerLeg *player_leg_right_;
-      PlayerLeg *player_leg_left_;
+      // Deactivation flags
+      bool right_deactivated_ = false;
+      bool left_deactivated_ = true;
 
       // Immunity timer
       Timer immunity_timer_;

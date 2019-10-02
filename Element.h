@@ -238,6 +238,9 @@ class Sensor : public Element {
       // Only one contact at a time
       CONTACT sensor_contact;
 
+      // Maintain a filter
+      b2Filter filter;
+
    protected:
       Entity *owner_;
       b2CircleShape circle_;

@@ -716,18 +716,18 @@ void Application::playground() {
    }
 
    // DEBUG DRAW
-   // world_.DrawDebugData();
+   world_.DrawDebugData();
 
-   // for (int i = 0; i < 15; i++) {
-   //    SDL_Rect m;
-   //    m.w = r[i].w;
-   //    m.h = r[i].h;
-   //    m.x = r[i].x;
-   //    m.y = r[i].y - m.h;
+   for (int i = 0; i < 15; i++) {
+      SDL_Rect m;
+      m.w = r[i].w;
+      m.h = r[i].h;
+      m.x = r[i].x;
+      m.y = r[i].y - m.h;
 
-   //    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-   //    SDL_RenderDrawRect(renderer, &m);
-   // }
+      SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+      SDL_RenderDrawRect(renderer, &m);
+   }
 
    // SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
    // SDL_RenderDrawLine(renderer, 1300, 454, 1500, 454);

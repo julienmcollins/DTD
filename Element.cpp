@@ -418,7 +418,6 @@ void Sensor::initialize(float width, float height, float center_x, float center_
    fixture_def.userData = this;
 
    // Set filter
-   b2Filter filter;
    filter.categoryBits = category;
    filter.maskBits = CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY | CAT_BOSS;
    fixture_def.filter = filter;
@@ -428,16 +427,12 @@ void Sensor::initialize(float width, float height, float center_x, float center_
 }
 
 void Sensor::activate_sensor() {
-   b2Filter filter;
-   filter.categoryBits = CAT_SENSOR;
    filter.maskBits = CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE;
    fixture_->SetFilterData(filter);
 }
 
 void Sensor::deactivate_sensor() {
-   b2Filter filter;
-   filter.categoryBits = CAT_SENSOR;
-   filter.maskBits = CAT_PLATFORM;
+   filter.maskBits = 0;
    fixture_->SetFilterData(filter);
 }
 

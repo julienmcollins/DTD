@@ -66,8 +66,8 @@ Entity::~Entity() {}
 
 /********* HEAD **************/
 
-PlayerHead::PlayerHead(Player *player) :
-   BodyPart(player, -3.5f, 26, 26, 44, nullptr) {
+PlayerHead::PlayerHead(Player *player, float x_rel, float y_rel) :
+   BodyPart(player, x_rel, y_rel, 14, 44, nullptr) {
 
    // Initialize the body part
    float width = get_width() / 200.0f;
@@ -309,14 +309,28 @@ Player::Player(Application* application) :
    b2Fixture *fixture_list = body->GetFixtureList();
    fixture_list->SetFilterData(filter);
 
-   // ADD BODY PARTS
-   player_head_ = new PlayerHead(this);
-   player_arm_left_ = new PlayerArm(this, -4.5, -7, 8, 22, "PlayerLeftArm");
-   player_arm_right_ = new PlayerArm(this, 17.5, -7, 8, 22, "PlayerRightArm");
-   //player_hand_left_ = new PlayerHand(this, 6, -41, "PlayerLeftHand");
-   //player_hand_right_ = new PlayerHand(this, 17, -41, "PlayerRightHand");
-   player_leg_left_ = new PlayerLeg(this, -2.5, -33, 8, 34, "PlayerLeftLeg");
-   player_leg_right_ = new PlayerLeg(this, 16.5, -33, 6, 34, "PlayerRightLeg");
+   // ADD BODY PARTS FOR LEFT BODY
+   player_body_right_.push_back(new PlayerHead(this, 11.5f, 26));
+   player_body_right_.push_back(new PlayerArm(this, 3.5, -7, 6, 22, "PlayerLeftArm"));
+   player_body_right_.push_back(new PlayerArm(this, 19.5, -7, 6, 22, "PlayerRightArm"));
+   // player_body_right_.push_back(new PlayerHand(this, 6, -41, "PlayerLeftHand"));
+   // player_body_right_.push_back(new PlayerHand(this, 17, -41, "PlayerRightHand"));
+   player_body_right_.push_back(new PlayerLeg(this, 5.5, -33, 6, 34, "PlayerLeftLeg"));
+   player_body_right_.push_back(new PlayerLeg(this, 18.5, -33, 6, 34, "PlayerRightLeg"));
+
+   // ADD BODY PARTS FOR RIGHT BODY
+   player_body_left_.push_back(new PlayerHead(this, 11.5f, 26));
+   player_body_left_.push_back(new PlayerArm(this, 3.5, -7, 6, 22, "PlayerLeftArm"));
+   player_body_left_.push_back(new PlayerArm(this, 19.5, -7, 6, 22, "PlayerRightArm"));
+   // player_body_left_.push_back(new PlayerHand(this, 6, -41, "PlayerLeftHand"));
+   // player_body_left_.push_back(new PlayerHand(this, 17, -41, "PlayerRightHand"));
+   player_body_left_.push_back(new PlayerLeg(this, 5.5, -33, 6, 34, "PlayerLeftLeg"));
+   player_body_left_.push_back(new PlayerLeg(this, 18.5, -33, 6, 34, "PlayerRightLeg"));
+
+   // Deactivate the left
+   for (int i = 0; i < player_body_left_.size(); i++) {
+      player_body_left_[i]->Sensor::deactivate_sensor();
+   }
 
    // Set health. TODO: set health in a better way
    health = 300;
@@ -747,6 +761,23 @@ void Player::move() {
          textures["death"].stop_frame = 19;
       }
       return;
+   }
+
+   // Deactivate and activate bodies
+   if (entity_direction == LEFT && !right_deactivated_) {
+      for (int i = 0; i < player_body_left_.size(); i++) {
+         player_body_right_[i]->Sensor::deactivate_sensor();
+         player_body_left_[i]->Sensor::activate_sensor();
+      }
+      right_deactivated_ = true;
+      left_deactivated_ = false;
+   } else if (entity_direction == RIGHT && !left_deactivated_) {
+      for (int i = 0; i < player_body_right_.size(); i++) {
+         player_body_left_[i]->Sensor::deactivate_sensor();
+         player_body_right_[i]->Sensor::activate_sensor();
+      }
+      left_deactivated_ = true;
+      right_deactivated_ = false;
    }
 
    // Reset frames

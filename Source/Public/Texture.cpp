@@ -5,10 +5,11 @@
 //  Created by Julien Collins on 9/14/17.
 //  Copyright © 2017 The Boys. All rights reserved.
 //
+#include "Source/Private/Texture.h"
+#include "Source/Private/Global.h"
+#include "Source/Private/Element.h"
+
 #include <iostream>
-#include "Texture.h"
-#include "Global.h"
-#include "Element.h"
 
 // Texture constructor
 Texture::Texture(Element *element, int max_frame, float fps_val) : clips_(NULL), curr_clip_(NULL), 

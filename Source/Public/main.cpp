@@ -6,21 +6,19 @@
 //  Copyright © 2017 The Boys. All rights reserved.
 //
 
+#include "Source/Private/Application.h"
+
 #include <iostream>
 #include <stdio.h>
-#include "Application.h"
 
 int main(int argc, char * argv[]) {
-    // Create Application
-    Application application;
-    
     // Start up SDL and create window
     //Load media
-    if (!application.loadMedia()) {
+    if (!Application::get_instance().loadMedia()) {
         printf("Failed to load media!\n");
     } else {
         //Apply the image
-        application.update();
+        Application::get_instance().update();
     }
     
     return 0;

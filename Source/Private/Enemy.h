@@ -14,7 +14,7 @@
 class Enemy : public Entity {
    public:
       // Construct the enemy
-      Enemy(int x, int y, int height, int width, Application *application);
+      Enemy(int x, int y, int height, int width);
       
       // Different enemy states
       enum STATE {
@@ -31,6 +31,9 @@ class Enemy : public Entity {
       // Update function and get texture
       virtual void update(bool freeze = false);      
       virtual Texture *get_texture();
+
+      // Static string
+      static const std::string media_path;
 
       // Get type
       virtual std::string type() {
@@ -81,7 +84,7 @@ class Enemy : public Entity {
 class Fecreez : public Enemy {
    public:
       // Constructor for fecreez
-      Fecreez(int x, int y, Application *application);
+      Fecreez(int x, int y);
 
       // Load media
       virtual bool load_media();
@@ -109,7 +112,7 @@ class Rosea;
 class Arm : public Enemy {
    public:
       // Constructor for arm
-      Arm(int x, int y, int height, int width, Application *application, Rosea *rosea);
+      Arm(int x, int y, int height, int width, Rosea *rosea);
 
       // Callback function will set enemy's state to HURT
       virtual void start_contact(Element *element = NULL);
@@ -127,7 +130,7 @@ class Arm : public Enemy {
 class Rosea : public Enemy {
    public:
       // COnstructor for rosea
-      Rosea(int x, int y, float angle, Application *application);
+      Rosea(int x, int y, float angle);
 
       // Load Rosea media
       virtual bool load_media();
@@ -185,7 +188,7 @@ class Rosea : public Enemy {
 class Mosquibler : public Enemy {
    public:
       // Constructor for mosquibler
-      Mosquibler(int x, int y, Application *application);
+      Mosquibler(int x, int y);
 
       // Load Rosea media
       virtual bool load_media();
@@ -213,7 +216,7 @@ class Mosquibler : public Enemy {
 class Fruig : public Enemy {
    public:
       // Constructor
-      Fruig(int x, int y, Application *application);
+      Fruig(int x, int y);
 
       // Load fruig media
       virtual bool load_media();
@@ -245,7 +248,7 @@ class FleetSensor : public Sensor {
 class Fleet : public Enemy {
    public:
       // Constructor
-      Fleet(int x, int y, Application *application);
+      Fleet(int x, int y);
 
       // Load fleet media
       virtual bool load_media();
@@ -268,7 +271,7 @@ class Fleet : public Enemy {
 class Mosqueenbler : public Enemy {
    public:
       // Constructor
-      Mosqueenbler(int x, int y, Application *application);
+      Mosqueenbler(int x, int y);
 
       // Load fleet media
       virtual bool load_media();
@@ -300,7 +303,7 @@ class Mosqueenbler : public Enemy {
 class MosquiblerEgg : public Enemy {
    public:
       // Constructor
-      MosquiblerEgg(int x, int y, Application *application);
+      MosquiblerEgg(int x, int y);
 
       // Load wormored media
       virtual bool load_media();
@@ -337,7 +340,7 @@ class WormoredSensor : public Sensor {
 class Wormored : public Enemy {
    public:
       // Constructor
-      Wormored(int x, int y, Application *application);
+      Wormored(int x, int y);
 
       // Load wormored media
       virtual bool load_media();

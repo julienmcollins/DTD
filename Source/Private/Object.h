@@ -8,13 +8,12 @@
 #include "Element.h"
 
 class Entity;
-class Application;
 
 // A parent class because I might add other objects in the future
 class Object : public Element {
    public:
       // Constructor
-      Object(int x, int y, int height, int width, Entity* owner, Application *application);
+      Object(int x, int y, int height, int width, Entity* owner);
 
       // Might need to add a function that gets texture
       
@@ -47,7 +46,7 @@ class Object : public Element {
 class Platform : public Object {
    public:
       // Constructor
-      Platform(int x, int y, int height, int width, Application *application);
+      Platform(int x, int y, int height, int width);
 
       // Setup function for the stuff
       void setup();
@@ -74,7 +73,7 @@ class Projectile : public Object {
       Projectile(int x, int y, bool owner, int damage, 
             float force_x, float force_y,
             const TextureData &normal, const TextureData &hit,
-            Entity *entity, Application *application);
+            Entity *entity);
 
       // doNothing function
       //virtual void doNothing();
@@ -125,7 +124,7 @@ class Eraser : public Projectile {
    public:
       // Constructor
       Eraser(int x, int y, const TextureData &normal, const TextureData &hit,
-         Entity *entity, Application *application);
+         Entity *entity);
       
       // Start contact function
       virtual void start_contact(Element *element);
@@ -140,7 +139,7 @@ class EnemyProjectile : public Projectile {
       EnemyProjectile(int x, int y, int damage,
          float force_x, float force_y,
          const TextureData &normal, const TextureData &hit,
-         Entity *entity, Application *application);
+         Entity *entity);
 
       // Start contact function
       virtual void start_contact(Element *element);

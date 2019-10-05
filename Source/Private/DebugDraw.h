@@ -4,14 +4,10 @@
 #include <Box2D/Box2D.h>
 #include <SDL2/SDL.h>
 
-class Application;
-
 class DebugDraw : public b2Draw
 {
 public:
-   DebugDraw(Application* application) {
-      this->application_ = application;
-   }
+   DebugDraw() {}
 
    void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
 
@@ -30,8 +26,6 @@ public:
     void DrawString(int x, int y, const char* string, ...); 
 
     void DrawAABB(b2AABB* aabb, const b2Color& color);
-
-    Application* application_;
 };
 
 #endif

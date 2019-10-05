@@ -6,9 +6,10 @@
 //  Copyright © 2017 The Boys. All rights reserved.
 //
 
+#include "Source/Private/Timer.h"
+
 #include <stdio.h>
 #include <SDL2/SDL.h>
-#include "Timer.h"
 
 // Initialize timer
 Timer::Timer() : m_startTicks(0), m_pausedTicks(0), delta_(0), curr_tick_(0), last_tick_(0),
@@ -105,7 +106,3 @@ bool Timer::isPaused() {
     // Timer is running and paused
     return m_paused && m_started;
 }
-
-
-
-

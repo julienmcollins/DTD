@@ -1,6 +1,12 @@
 #ifndef Level_h
 #define Level_h
 
+#include "Element.h"
+#include "Texture.h"
+#include "Entity.h"
+#include "Object.h"
+#include "Application.h"
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <Box2D/Box2D.h>
@@ -8,21 +14,14 @@
 #include <string>
 #include <vector>
 
-#include "Element.h"
-#include "Texture.h"
-#include "Entity.h"
-#include "Object.h"
-#include "Application.h"
-
 // Prototype
-class Application;
 class Enemy;
 
 /***** LEVEL CLASS *******/
 class Level {
    public:
       // Level constructor takes in a string to the template file
-      Level(std::string file, Application::FOREST level, Application *application);
+      Level(std::string file, Application::FOREST level);
 
       // Update function for the level, which will render all of its assets
       void update();
@@ -77,9 +76,6 @@ class Level {
 
       // flag for completed level
       bool level_completed_;
-
-      // Application holder
-      Application *application_;
 };
 
 #endif

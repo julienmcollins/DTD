@@ -6,6 +6,12 @@
 //  Copyright © 2017 The Boys. All rights reserved.
 //
 
+#include "Source/Private/Application.h"
+#include "Source/Private/Entity.h"
+#include "Source/Private/Global.h"
+#include "Source/Private/Level.h"
+#include "Source/Private/Enemy.h"
+
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -15,13 +21,9 @@
 #include <unordered_map>
 #include <string>
 
-#include "Application.h"
-#include "Entity.h"
-#include "Global.h"
-#include "Level.h"
-#include "Enemy.h"
-
-//#define NUM_BLOCKS 11
+// Initialize paths
+const std::string Application::sprite_path = "Media/Sprites/";
+const std::string Application::audio_path = "Media/Audio/";
 
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
@@ -31,16 +33,16 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    app_flag_(MAIN_SCREEN),
    menu_screen_(FIRST),
    game_flag_(SETUP),
-   world_(gravity_), to_meters_(0.01f), to_pixels_(100.0f), debugDraw(this), test(0),
+   world_(gravity_), to_meters_(0.01f), to_pixels_(100.0f), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(10), positionIterations_(10), animation_speed_(20.0f), 
    animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), 
-   menu_background_(0, 0, 1080, 1920, this),
-   menu_title_(640, 70, 513, 646, this),
-   menu_items_(800, 650, 299, 321, this),
-   world_items_(850, 650, 332, 193, this),
-   ruler_(200, 722, 200, 50, this),
-   gameover_screen_(0, 0, 1080, 1920, this),
-   thanks_screen_(0, 0, 1080, 1920, this) {
+   menu_background_(0, 0, 1080, 1920),
+   menu_title_(640, 70, 513, 646),
+   menu_items_(800, 650, 299, 321),
+   world_items_(850, 650, 332, 193),
+   ruler_(200, 722, 200, 50),
+   gameover_screen_(0, 0, 1080, 1920),
+   thanks_screen_(0, 0, 1080, 1920) {
     
     //Initialize SDL
     if (init()) {
@@ -119,13 +121,13 @@ bool Application::loadMedia() {
 
    /************** MAIN MENU STUFF *********************************/
    // Load forest
-   menu_background_.load_image(1920, 1080, 3, 1.0f / 4.0f, "forest", "images/miscealaneous/forestscreen.png", success);
+   menu_background_.load_image(1920, 1080, 3, 1.0f / 4.0f, "forest", sprite_path + "Miscealaneous/forestscreen.png", success);
 
    // Load cloud
-   menu_background_.load_image(1920, 1080, 3, 1.0f / 4.0f, "cloud", "images/miscealaneous/cloudscreen.png", success);
+   menu_background_.load_image(1920, 1080, 3, 1.0f / 4.0f, "cloud", sprite_path + "Miscealaneous/cloudscreen.png", success);
 
    // Load title
-   if (!menu_title_.texture.loadFromFile("images/miscealaneous/title.png")) {
+   if (!menu_title_.texture.loadFromFile(sprite_path + "Miscealaneous/title.png")) {
       printf("Failed to load title.png\n");
       success = false;
    } else {
@@ -144,7 +146,7 @@ bool Application::loadMedia() {
    }
 
    // Load menu
-   if (!menu_items_.texture.loadFromFile("images/miscealaneous/menu.png")) {
+   if (!menu_items_.texture.loadFromFile(sprite_path + "Miscealaneous/menu.png")) {
       printf("Failed to load menu.png\n");
       success = false;
    } else {
@@ -165,7 +167,7 @@ bool Application::loadMedia() {
    }
 
    // Load world items
-   if (!world_items_.texture.loadFromFile("images/miscealaneous/worlds.png")) {
+   if (!world_items_.texture.loadFromFile(sprite_path + "Miscealaneous/worlds.png")) {
       printf("Failed to load worlds.png\n");
       success = false;
    } else {
@@ -186,7 +188,7 @@ bool Application::loadMedia() {
    }
 
    // Gameover screen
-   if (!gameover_screen_.texture.loadFromFile("images/miscealaneous/gameover.png")) {
+   if (!gameover_screen_.texture.loadFromFile(sprite_path + "Miscealaneous/gameover.png")) {
       printf("Failed to load gameover.png\n");
       success = false;
    } else {
@@ -211,13 +213,13 @@ bool Application::loadMedia() {
    }
 
    // load ruler
-   if (!ruler_.texture.loadFromFile("images/miscealaneous/ruler_200.png")) {
+   if (!ruler_.texture.loadFromFile(sprite_path + "Miscealaneous/ruler_200.png")) {
       printf("Failed to load ruler.png\n");
       success = false;
    }
 
    // Load thanks
-   if (!thanks_screen_.texture.loadFromFile("images/miscealaneous/thanks.png")) {
+   if (!thanks_screen_.texture.loadFromFile(sprite_path + "Miscealaneous/thanks.png")) {
       printf("Failed to load thanks.png\n");
       success = false;
    }
@@ -229,13 +231,13 @@ bool Application::loadMedia() {
 // Setup main menu
 void Application::setup_menu() {
    // Create player
-   player = new Player(this);
+   player = new Player();
    if (player->load_media() == false) {
       quit = true;
    }
 
    // Create finger
-   finger_ = new Finger(this);
+   finger_ = new Finger();
    if (finger_->load_media() == false) {
       quit = true;
    }
@@ -248,11 +250,11 @@ void Application::setup_menu() {
    player->set_y(782);
 
    // Setup platform
-   menu_platform_ = new Platform(960, 925, 10, 1920, this);
+   menu_platform_ = new Platform(960, 925, 10, 1920);
    menu_platform_->setup();
 
    // Setup invisible wall
-   invisible_wall_ = new Platform(0, 1055, 1000, 10, this);
+   invisible_wall_ = new Platform(0, 1055, 1000, 10);
    invisible_wall_->setup();
 
    // Setup menu background
@@ -633,10 +635,10 @@ void Application::update_projectiles() {
 void Application::playground() {
    // Setup level
    if (game_flag_ == SETUP) {
-      std::string path1("images/levels/Forest/board");
+      std::string path1(sprite_path + "Levels/Forest/board");
       std::string path2("/format");
       std::string path = path1 + std::to_string(static_cast<int>(level_flag_)) + path2;
-      level = new Level(path, level_flag_, this);
+      level = new Level(path, level_flag_);
       game_flag_ = PLAY;
    }
 
@@ -794,8 +796,8 @@ Application::~Application() {
 /********** FINGER ***************/
 
 // Constructor
-Finger::Finger(Application *application) : 
-   Element(700, 665, 67, 124, application), finger_state(SHAKE),
+Finger::Finger() : 
+   Element(700, 665, 67, 124), finger_state(SHAKE),
    updating(true) {
    // Setup finger
    textures["shake"].fps = 1.0f / 20.0f;
@@ -836,7 +838,7 @@ bool Finger::load_media() {
 
    // Load finger point
    textures.emplace("point", Texture());
-   if (!textures["point"].loadFromFile("images/miscealaneous/finger_point.png")) {
+   if (!textures["point"].loadFromFile(Application::sprite_path + "Miscealaneous/finger_point.png")) {
       printf("Failed to load finger_point.png\n");
       success = false;
    } else {
@@ -858,7 +860,7 @@ bool Finger::load_media() {
 
    // Load finger shake
    textures.emplace("shake", Texture());
-   if (!textures["shake"].loadFromFile("images/miscealaneous/finger_shake.png")) {
+   if (!textures["shake"].loadFromFile(Application::sprite_path + "Miscealaneous/finger_shake.png")) {
       printf("Failed to load finger_shake.png\n");
       success = false;
    } else {

@@ -1,3 +1,9 @@
+#include "Source/Private/Entity.h"
+#include "Source/Private/Object.h"
+#include "Source/Private/Texture.h"
+#include "Source/Private/Application.h"
+#include "Source/Private/Timer.h"
+
 #include <cmath>
 #include <stdlib.h>
 #include <SDL2/SDL_image.h>
@@ -5,19 +11,15 @@
 #include <iostream>
 #include <Box2D/Box2D.h>
 
-#include "Entity.h"
-#include "Object.h"
-#include "Texture.h"
-#include "Application.h"
-#include "Timer.h"
-
 #define BOUNDED(var) (var > -0.0000001f && var < 0.0000001f)
+
+const std::string Player::media_path = Application::sprite_path + "/Player/";
 
 /*************************** ENTITY IMPLEMENTATIONS ******************************/
 
 // Entity constructor which will provide basic establishment for all entities
-Entity::Entity(int x_pos, int y_pos, double height, double width, Application* application) : 
-   Element(x_pos, y_pos, height, width, application),
+Entity::Entity(int x_pos, int y_pos, double height, double width) : 
+   Element(x_pos, y_pos, height, width),
    has_jumped_(0), health(0), shift_(false), entity_direction(NEUTRAL),
    prev_entity_dir(NEUTRAL) {
 }
@@ -38,16 +40,15 @@ Projectile* Entity::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
      float force_x, float force_y,
      const TextureData &normal, const TextureData &hit) {
    // First, create a new projectile
-   Application *tmp = get_application();
    Projectile *proj;
 
    // Create based on direction
    if (entity_direction == RIGHT) {
       proj = new Projectile(get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-            owner, damage, force_x, force_y, normal, hit, this, tmp);
+            owner, damage, force_x, force_y, normal, hit, this);
    } else {
       proj = new Projectile(get_tex_x() + delta_x_l, get_tex_y() + delta_y, owner,
-            damage, force_x, force_y, normal, hit, this, tmp);
+            damage, force_x, force_y, normal, hit, this);
    }
 
    // Set shot direction
@@ -67,7 +68,7 @@ Entity::~Entity() {}
 /********* HEAD **************/
 
 PlayerHead::PlayerHead(Player *player, float x_rel, float y_rel) :
-   BodyPart(player, x_rel, y_rel, 14, 44, nullptr) {
+   BodyPart(player, x_rel, y_rel, 14, 44) {
 
    // Initialize the body part
    float width = get_width() / 200.0f;
@@ -106,7 +107,7 @@ void PlayerHead::end_contact(Element *element) {
 /********* ARM ****************/
 
 PlayerArm::PlayerArm(Player *player, float x_rel, float y_rel, int width, int height, std::string type) :
-   BodyPart(player, x_rel, y_rel, width, height, nullptr), type_(type) {
+   BodyPart(player, x_rel, y_rel, width, height), type_(type) {
 
    // Initialize the body part
    Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
@@ -153,7 +154,7 @@ void PlayerArm::end_contact(Element *element) {
 /********* HAND ****************/
 
 PlayerHand::PlayerHand(Player *player, float x_rel, float y_rel, std::string type) :
-   BodyPart(player, x_rel, y_rel, 7, 6, nullptr), type_(type) {
+   BodyPart(player, x_rel, y_rel, 7, 6), type_(type) {
 
    // Initialize the body part
    Sensor::initialize(get_width() / 200.0f, get_height() / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
@@ -198,7 +199,7 @@ void PlayerHand::end_contact(Element *element) {
 /********* LEG *****************/
 
 PlayerLeg::PlayerLeg(Player *player, float x_rel, float y_rel, int width, int height, std::string type) :
-   BodyPart(player, x_rel, y_rel, width, height, nullptr), type_(type) {
+   BodyPart(player, x_rel, y_rel, width, height), type_(type) {
 
    // Initialize the body part
    Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
@@ -254,10 +255,10 @@ void PlayerLeg::end_contact(Element *element) {
 /////////////////////////////////////////////////////////////////////////
 
 // Initializ the player by calling it's constructor
-Player::Player(Application* application) : 
+Player::Player() : 
    // The new sprite is going to be 37 wide (the character itself)
    // TODO: Load in new smaller sprite sheet
-   Entity(960, 412, 104, 37, application), player_state_(STAND),
+   Entity(960, 412, 104, 37), player_state_(STAND),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
    immunity_duration_(0.5f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
@@ -271,20 +272,20 @@ Player::Player(Application* application) :
    body_def.type = b2_dynamicBody;
 
    // Set initial position and set fixed rotation
-   float x = 600.0f * application->to_meters_;
-   float y = -412.5f * application->to_meters_;
+   float x = 600.0f * Application::get_instance().to_meters_;
+   float y = -412.5f * Application::get_instance().to_meters_;
    body_def.position.Set(x, y);
    body_def.fixedRotation = true;
 
    // Attach body to world
-   body = get_application()->world_.CreateBody(&body_def);
+   body = Application::get_instance().world_.CreateBody(&body_def);
 
    // Set box dimensions
-   float width = (get_width() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
-   float height = (get_height() / 2.0f) * application->to_meters_ - 0.02f;// - 0.11f;
+   float width = (get_width() / 2.0f) * Application::get_instance().to_meters_ - 0.02f;// - 0.11f;
+   float height = (get_height() / 2.0f) * Application::get_instance().to_meters_ - 0.02f;// - 0.11f;
    //printf("width = %d, height = %d\n", get_width(), get_height());
-   const b2Vec2 center = {(PC_OFF_X - get_width()) / 2.0f * application->to_meters_, 
-                          PC_OFF_Y * application->to_meters_};
+   const b2Vec2 center = {(PC_OFF_X - get_width()) / 2.0f * Application::get_instance().to_meters_, 
+                          PC_OFF_Y * Application::get_instance().to_meters_};
    box.SetAsBox(width, height, center, 0.0f);
 
    // TODO: ADD FIXTURES TO THIS AS SENSORS
@@ -487,7 +488,7 @@ void Player::update(bool freeze) {
    body->ApplyForceToCenter(sim_grav, true);
 
    // Process key inputs
-   process_input(get_application()->current_key_states_);
+   process_input(Application::get_instance().current_key_states_);
 
    // Animate the function
    animate();
@@ -593,7 +594,7 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
    if (shooting) {
       textures["arm_throw"].last_frame += 
       (textures["arm_throw"].fps_timer.getDeltaTime() / 1000.0f);
-      if (textures["arm_throw"].last_frame > get_application()->animation_update_time_) {
+      if (textures["arm_throw"].last_frame > Application::get_instance().animation_update_time_) {
          if (textures["arm_throw"].frame_ > 6) {
             textures["arm_throw"].frame_ = 0;
             shooting = false;
@@ -668,9 +669,9 @@ void Player::change_player_state() {
    float vel_y = body->GetLinearVelocity().y;
    
    // Key touches
-   bool right = get_application()->current_key_states_[SDL_SCANCODE_RIGHT];
-   bool left = get_application()->current_key_states_[SDL_SCANCODE_LEFT];
-   bool up = get_application()->current_key_states_[SDL_SCANCODE_UP];
+   bool right = Application::get_instance().current_key_states_[SDL_SCANCODE_RIGHT];
+   bool left = Application::get_instance().current_key_states_[SDL_SCANCODE_LEFT];
+   bool up = Application::get_instance().current_key_states_[SDL_SCANCODE_UP];
 
    // Special push state
    if (contacts_[LEFT_ARM] || contacts_[RIGHT_ARM]) {
@@ -753,9 +754,9 @@ void Player::move() {
          shift_ = true;
       }
       if (textures["death"].frame_ >= 20) {
-         if (((float) get_application()->death_timer_.getTicks() / 1000.0f) >= 3.0f) {
+         if (((float) Application::get_instance().death_timer_.getTicks() / 1000.0f) >= 3.0f) {
             alive = false;
-            get_application()->death_timer_.stop();
+            Application::get_instance().death_timer_.stop();
          }
          textures["death"].reset_frame = 19;
          textures["death"].stop_frame = 19;
@@ -948,52 +949,52 @@ bool Player::load_media() {
    bool success = true;
 
    // Load player kick
-   load_image(59, 104, 17, 1.0f / 24.0f, "kick", "images/player/idle_kick_no_arm.png", success);
+   load_image(59, 104, 17, 1.0f / 24.0f, "kick", media_path + "idle_kick_no_arm.png", success);
 
    // Load player tap
-   load_image(59, 104, 12, 1.0f / 24.0f, "tap", "images/player/idle_tap_no_arm.png", success);
+   load_image(59, 104, 12, 1.0f / 24.0f, "tap", media_path + "idle_tap_no_arm.png", success);
    
    // Set current idle texture to tap
    curr_idle_texture = &textures["tap"];
 
    // Load look
-   load_image(59, 104, 20, 1.0f / 24.0f, "look", "images/player/idle_look_no_arm.png", success);
+   load_image(59, 104, 20, 1.0f / 24.0f, "look", media_path + "idle_look_no_arm.png", success);
 
    // Load player jumping idly
-   load_image(59, 104, 15, 1.0f / 24.0f, "jump", "images/player/idle_jump_no_arm.png", success);
+   load_image(59, 104, 15, 1.0f / 24.0f, "jump", media_path + "idle_jump_no_arm.png", success);
 
    // Load player running
-   load_image(59, 104, 15, 1.0f / 30.0f, "running", "images/player/running_no_arm.png", success);
+   load_image(59, 104, 15, 1.0f / 30.0f, "running", media_path + "running_no_arm.png", success);
 
    // Load double jump
-   load_image(59, 104, 11, 1.0f / 24.0f, "double_jump", "images/player/double_jump.png", success);
+   load_image(59, 104, 11, 1.0f / 24.0f, "double_jump", media_path + "double_jump.png", success);
 
    // Load jump and run
-   load_image(59, 104, 15, 1.0f / 24.0f, "running_jump", "images/player/running_jump_no_arm.png", success);
+   load_image(59, 104, 15, 1.0f / 24.0f, "running_jump", media_path + "running_jump_no_arm.png", success);
 
    // Load arm
-   load_image(7, 24, 5, 1.0f / 20.0f, "idle_arm", "images/player/idle_arm.png", success);
+   load_image(7, 24, 5, 1.0f / 20.0f, "idle_arm", media_path + "idle_arm.png", success);
 
    // Load shooting arm
-   load_image(44, 33, 9, 1.0f / 20.0f, "arm_throw", "images/player/arm_throw.png", success);
+   load_image(44, 33, 9, 1.0f / 20.0f, "arm_throw", media_path + "arm_throw.png", success);
 
    // Load Running arm
-   load_image(9, 27, 15, 1.0f / 30.0f, "running_arm", "images/player/running_arm.png", success);
+   load_image(9, 27, 15, 1.0f / 30.0f, "running_arm", media_path + "running_arm.png", success);
 
    // Load double jump arm
-   load_image(9, 27, 8, 1.0f / 24.0f, "double_jump_arm", "images/player/double_jump_arm.png", success);
+   load_image(9, 27, 8, 1.0f / 24.0f, "double_jump_arm", media_path + "double_jump_arm.png", success);
 
    // Load pushing animation
-   load_image(59, 104, 16, 1.0f / 20.0f, "push", "images/player/push.png", success);
+   load_image(59, 104, 16, 1.0f / 20.0f, "push", media_path + "push.png", success);
 
    // Load jump and push
-   load_image(59, 104, 8, 1.0f / 20.0f, "jump_push", "images/player/jump_push.png", success);
+   load_image(59, 104, 8, 1.0f / 20.0f, "jump_push", media_path + "jump_push.png", success);
 
    // Load balance
-   load_image(88, 104, 19, 1.0f / 20.0f, "balance", "images/player/balance.png", success);
+   load_image(88, 104, 19, 1.0f / 20.0f, "balance", media_path + "balance.png", success);
 
    // Load death animation
-   load_image(105, 104, 20, 1.0f / 20.0f, "death", "images/player/death.png", success);
+   load_image(105, 104, 20, 1.0f / 20.0f, "death", media_path + "death.png", success);
 
    // Return success
    return success;
@@ -1005,15 +1006,14 @@ Projectile* Player::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
      float force_x, float force_y,
      const TextureData &normal, const TextureData &hit) {
    // First, create a new projectile
-   Application *tmp = get_application();
    Projectile *proj;
 
    // Create based on direction
    if (entity_direction == RIGHT) {
       proj = new Eraser(get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-            normal, hit, this, tmp);
+            normal, hit, this);
    } else {
-      proj = new Eraser(get_tex_x() + delta_x_l, get_tex_y() + delta_y, normal, hit, this, tmp);
+      proj = new Eraser(get_tex_x() + delta_x_l, get_tex_y() + delta_y, normal, hit, this);
    }
 
    // Set shot direction
@@ -1039,7 +1039,7 @@ void Player::take_damage(int damage) {
       health -= damage;
       if (health == 0) {
          player_state_ = DEATH;
-         get_application()->death_timer_.start();
+         Application::get_instance().death_timer_.start();
       }
    }
 }
@@ -1056,7 +1056,7 @@ Player::~Player() {
 /////////////// HITMARKER CLASS ///////////////////////
 ///////////////////////////////////////////////////////
 Hitmarker::Hitmarker(int x, int y) :
-   Element(x, y, 103, 76, NULL), state(ALIVE) {
+   Element(x, y, 103, 76), state(ALIVE) {
    
    // Load media
    load_media();
@@ -1067,10 +1067,10 @@ bool Hitmarker::load_media() {
    bool success = true;
 
    // Load alive texture
-   load_image(76, 103, 21, 1.0 / 20.0f, "alive", "images/player/hp_idle.png", success);
+   load_image(76, 103, 21, 1.0 / 20.0f, "alive", Player::media_path + "hp_idle.png", success);
 
    // Load dead texture
-   load_image(76, 103, 19, 1.0 / 20.0f, "dead", "images/player/hp_hit.png", success);
+   load_image(76, 103, 19, 1.0 / 20.0f, "dead", Player::media_path + "hp_hit.png", success);
 
    // Return success
    return success;

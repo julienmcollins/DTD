@@ -1,15 +1,12 @@
-#include "Element.h"
-#include "Entity.h"
-#include "Application.h"
-#include "Timer.h"
+#include "Source/Private/Element.h"
+#include "Source/Private/Entity.h"
+#include "Source/Private/Application.h"
+#include "Source/Private/Timer.h"
 
 // Constructor for element
-Element::Element(int x, int y, int height, int width, Application *application) :
+Element::Element(int x, int y, int height, int width) :
    alive(true), texture(this, 0), body(NULL), flag_(false), element_shape(), 
    in_contact_down(false), in_contact_left(false), in_contact_right(false) {
-
-   // Set application
-   application_ = application;
 
    // Set x and y
    x_pos_ = x;
@@ -215,13 +212,13 @@ void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
    }
 
    // Set initial position and set fixed rotation
-   float x_temp = float(x) * get_application()->to_meters_;
-   float y_temp = -float(y) * get_application()->to_meters_;
+   float x_temp = float(x) * Application::get_instance().to_meters_;
+   float y_temp = -float(y) * Application::get_instance().to_meters_;
    body_def.position.Set(x_temp, y_temp);
    body_def.fixedRotation = true;
 
    // Attach body to world
-   body = get_application()->world_.CreateBody(&body_def);
+   body = Application::get_instance().world_.CreateBody(&body_def);
 
    // Set box dimensions
    if (type == SQUARE) {
@@ -229,8 +226,8 @@ void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
       int width = element_shape.shape_type.square.width;
       int t_h = (height == 0) ? get_height() : height;
       int t_w = (width == 0) ? get_width() : width;
-      float width_box = (t_w / 2.0f) * get_application()->to_meters_ - 0.02f;
-      float height_box = (t_h / 2.0f) * get_application()->to_meters_ - 0.02f;
+      float width_box = (t_w / 2.0f) * Application::get_instance().to_meters_ - 0.02f;
+      float height_box = (t_h / 2.0f) * Application::get_instance().to_meters_ - 0.02f;
       box.SetAsBox(width_box, height_box, element_shape.center, element_shape.shape_type.square.angle);
       fixture_def.shape = &box;
    } else if (type == CIRCLE) {
@@ -258,7 +255,7 @@ void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
    // Run the load media function
    if (load_media() == false) {
       std::cout << "Quit in here! " << this->type() << std::endl;
-      get_application()->set_quit();
+      Application::get_instance().set_quit();
    }
 }
 
@@ -266,7 +263,7 @@ void Element::create_hitbox(float x, float y) {
    body_def.type = b2_dynamicBody;
    body_def.position.Set(x, y);
    body_def.fixedRotation = true;
-   body = get_application()->world_.CreateBody(&body_def);
+   body = Application::get_instance().world_.CreateBody(&body_def);
 }
 
 void Element::set_collision(uint16 collision_types, b2Fixture *fixture) {
@@ -379,15 +376,10 @@ void Element::update(bool freeze) {
    texture.render(get_tex_x(), get_tex_y());
 }
 
-// Get application
-Application *Element::get_application() {
-   return application_;
-}
-
 // Destructor
 Element::~Element() {
    if (body) {
-      application_->world_.DestroyBody(body);
+      Application::get_instance().world_.DestroyBody(body);
       body = nullptr;
    }
 
@@ -402,12 +394,9 @@ Element::~Element() {
 
 /*************** SENSOR CLASS *************************/
 Sensor::Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y, float density, bool set_as_body) :
-   Element(center_x, center_y, height, width, nullptr), sensor_contact(contact_type), owner_(entity), density_(density) {}
+   Element(center_x, center_y, height, width), sensor_contact(contact_type), owner_(entity), density_(density) {}
 
 void Sensor::initialize(float width, float height, float center_x, float center_y, uint16 category) {
-   // Set application
-   application_ = owner_->get_application();
-
    // Create box shape
    box.SetAsBox(width, height, {center_x, center_y}, 0.0f);
 
@@ -437,7 +426,7 @@ void Sensor::deactivate_sensor() {
 }
 
 /*************************** BodyPart ************************************************/
-BodyPart::BodyPart(Entity *owning_entity, float x_rel_to_owner, float y_rel_to_owner, float width, float height, Application *application, bool is_fixture, uint16 category) :
+BodyPart::BodyPart(Entity *owning_entity, float x_rel_to_owner, float y_rel_to_owner, float width, float height, bool is_fixture, uint16 category) :
    Sensor(height, width, owning_entity, CONTACT_UP, x_rel_to_owner, y_rel_to_owner, 0.0f), 
    x_rel(x_rel_to_owner), y_rel(y_rel_to_owner), is_fixture_(is_fixture) {
 
@@ -451,7 +440,6 @@ BodyPart::BodyPart(Entity *owning_entity, float x_rel_to_owner, float y_rel_to_o
 }
 
 void BodyPart::initialize(float width, float height, float center_x, float center_y, uint16 category) {
-   application_ = owner_->get_application();
    type_ = owner_->type();
 
    // Set x and y positions relative to owner
@@ -468,7 +456,7 @@ void BodyPart::initialize(float width, float height, float center_x, float cente
    if (!is_fixture_) {
       body_def.position.Set(x, y);
       body_def.fixedRotation = true;
-      body = get_application()->world_.CreateBody(&body_def);
+      body = Application::get_instance().world_.CreateBody(&body_def);
    }
 
    box.SetAsBox(width / 200.0f, height / 200.0f, b2Vec2(0.0f, 0.0f), 0.0f);

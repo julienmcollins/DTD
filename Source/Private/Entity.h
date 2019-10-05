@@ -13,7 +13,6 @@
 #define PC_OFF_Y 0.0f
 #define SIM_GRAV -3.0f
 
-class Application;
 class Platform;
 class Projectile;
 class Player;
@@ -21,7 +20,7 @@ class Player;
 class Entity : public Element {
     public:
         // Constructor
-        Entity(int x_pos, int y_pos, double height, double width, Application* application);
+        Entity(int x_pos, int y_pos, double height, double width);
 
         // Flags
         int has_jumped_;
@@ -167,7 +166,7 @@ class PlayerLeg : public BodyPart {
 class Player : public Entity {
    public:
       // Construct the player
-      Player(Application* application);
+      Player();
 
       // State construct for state machine
       enum STATE {
@@ -261,6 +260,9 @@ class Player : public Entity {
 
       // Load media function for the player
       virtual bool load_media();
+
+      // File path
+      static const std::string media_path;
 
       // Create projectile
       virtual Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 

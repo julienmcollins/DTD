@@ -39,7 +39,7 @@ typedef struct {
 class Finger : public Element {
    public:
       // Constructor
-      Finger(Application *application);
+      Finger();
 
       // Get texture
       virtual Texture *get_texture();
@@ -65,18 +65,27 @@ class Finger : public Element {
 
 class Application {
    public:
-      // Initialize the application
-      Application();
-   
+      // Get instance
+      static Application& get_instance() {
+         static Application instance;
+         return instance;
+      }
+
       // Initialize SDL
       bool init();
    
       // Load Media
       bool loadMedia();
+
+      // Paths to media
+      static const std::string sprite_path;
+      static const std::string audio_path;
    
       // Update the application
       void update();
       void update_projectiles();
+
+      /*********** SDL WINDOW STUFF ***************/
 
       // The main window of the application
       SDL_Window* mainWindow;
@@ -89,6 +98,8 @@ class Application {
 
       // Handles events
       SDL_Event e;
+
+      /*********************************************/
 
       // Set viewport
       void setViewport();
@@ -191,6 +202,13 @@ class Application {
       ~Application();
    
    private:
+      // Initialize the application
+      Application();
+
+      // // Singleton stuff
+      // Application(Application const&);
+      // void operator=(Application const&);
+
       // Screen Dimensions
       int SCREEN_WIDTH;
       int SCREEN_HEIGHT;
@@ -325,6 +343,11 @@ class Application {
    
       // Quit flag for application
       bool quit;
+
+   public:
+      // More singleton stuff
+      Application(Application const&) = delete;
+      void operator=(Application const&) = delete;
 };
 
 #endif /* Application_h */

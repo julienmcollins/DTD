@@ -1,3 +1,11 @@
+#include "Source/Private/Enemy.h"
+#include "Source/Private/Entity.h"
+#include "Source/Private/Object.h"
+#include "Source/Private/Texture.h"
+#include "Source/Private/Application.h"
+#include "Source/Private/Level.h"
+#include "Source/Private/Global.h"
+
 #include <stdio.h>
 #include <cmath>
 #include <SDL2/SDL_image.h>
@@ -5,18 +13,12 @@
 #include <iostream>
 #include <Box2D/Box2D.h>
 
-#include "Enemy.h"
-#include "Entity.h"
-#include "Object.h"
-#include "Texture.h"
-#include "Application.h"
-#include "Level.h"
-#include "Global.h"
+const std::string Enemy::media_path = Application::sprite_path + "/Enemies/";
 
 /********************* ENEMY IMPLEMENTATIONS ******************/
 
-Enemy::Enemy(int x, int y, int height, int width, Application *application) :
-   Entity(x, y, height, width, application), enemy_state_(IDLE), shoot_timer_(101) {
+Enemy::Enemy(int x, int y, int height, int width) :
+   Entity(x, y, height, width), enemy_state_(IDLE), shoot_timer_(101) {
 
    // Set
    start_death_ = 0;
@@ -39,16 +41,15 @@ Projectile* Enemy::create_projectile(int delta_x_r, int delta_x_l, int delta_y,
       bool owner, bool damage, float force_x, float force_y, 
       const TextureData &normal, const TextureData &hit) {
    // First, create a new projectile
-   Application *tmp = get_application();
    Projectile *proj;
 
    // Create based on direction
    if (entity_direction == RIGHT) {
       proj = new EnemyProjectile(get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-            damage, force_x, force_y, normal, hit, this, tmp);
+            damage, force_x, force_y, normal, hit, this);
    } else {
       proj = new EnemyProjectile(get_tex_x() + delta_x_l, get_tex_y() + delta_y,
-            damage, force_x, force_y, normal, hit, this, tmp);
+            damage, force_x, force_y, normal, hit, this);
    }
 
    // Set shot direction
@@ -96,15 +97,15 @@ Texture *Enemy::get_texture() {
 }
 
 bool Enemy::within_bounds() {
-   return get_application()->get_player()->get_y() >= get_y() - get_height() &&
-            get_application()->get_player()->get_y() <= get_y() + get_height();
+   return Application::get_instance().get_player()->get_y() >= get_y() - get_height() &&
+            Application::get_instance().get_player()->get_y() <= get_y() + get_height();
 }
 
 Enemy::~Enemy() {}
 
 /************** FECREEZ IMPLEMENTATIONS ********************/
-Fecreez::Fecreez(int x, int y, Application *application) :
-   Enemy(x, y, 92, 82, application) {
+Fecreez::Fecreez(int x, int y) :
+   Enemy(x, y, 92, 82) {
 
    // Set the hitboxes
    set_hitbox(x, y);
@@ -122,16 +123,16 @@ bool Fecreez::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(82, 92, 18, 1.0f / 20.0f, "idle", "images/enemies/Fecreez/fecreez_idle.png", success);
+   load_image(82, 92, 18, 1.0f / 20.0f, "idle", media_path + "Fecreez/fecreez_idle.png", success);
 
    // Load attack
-   load_image(82, 92, 9, 1.0f / 20.0f, "attack", "images/enemies/Fecreez/fecreez_shoot.png", success);
+   load_image(82, 92, 9, 1.0f / 20.0f, "attack", media_path + "Fecreez/fecreez_shoot.png", success);
 
    // Load death
-   load_image(143, 92, 16, 1.0f / 20.0f, "death", "images/enemies/Fecreez/fecreez_death.png", success);
+   load_image(143, 92, 16, 1.0f / 20.0f, "death", media_path + "Fecreez/fecreez_death.png", success);
 
    // Load turn
-   load_image(82, 92, 7, 1.0f / 20.0f, "turn", "images/enemies/Fecreez/fecreez_turn.png", success);
+   load_image(82, 92, 7, 1.0f / 20.0f, "turn", media_path + "Fecreez/fecreez_turn.png", success);
 
    // Start flipped
    textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
@@ -156,11 +157,11 @@ void Fecreez::move() {
    // Check to see what direction the enemy should be facing
    if (enemy_state_ != DEATH && within_bounds()) {
       // Turn if direction changed
-      if (get_application()->get_player()->get_x() <= get_x() 
+      if (Application::get_instance().get_player()->get_x() <= get_x() 
          && entity_direction == RIGHT) {
          enemy_state_ = TURN;
          entity_direction = LEFT;
-      } else if (get_application()->get_player()->get_x() > get_x() 
+      } else if (Application::get_instance().get_player()->get_x() > get_x() 
          && entity_direction == LEFT) {
          enemy_state_ = TURN;
          entity_direction = RIGHT;
@@ -187,8 +188,8 @@ void Fecreez::move() {
    }
 
    // Check to see if get_player() within bounds of enemy
-   if (get_application()->get_player()->get_y() >= get_y() - get_height() &&
-      get_application()->get_player()->get_y() <= get_y() + get_height()
+   if (Application::get_instance().get_player()->get_y() >= get_y() - get_height() &&
+      Application::get_instance().get_player()->get_y() <= get_y() + get_height()
       && enemy_state_ != TURN && enemy_state_ != DEATH) {
       if (shoot_timer_ >= 100) {
          enemy_state_ = ATTACK;
@@ -253,13 +254,13 @@ Fecreez::~Fecreez() {
 /********************* ARM **************************/
 //////////////////////////////////////////////////////
 
-Arm::Arm(int x, int y, int height, int width, Application *application, Rosea *rosea) :
-   Enemy(x, y, height, width, application), rosea_(rosea) {}
+Arm::Arm(int x, int y, int height, int width, Rosea *rosea) :
+   Enemy(x, y, height, width), rosea_(rosea) {}
 
 // Callback function for arm will set rosea's state to hurt
 void Arm::start_contact(Element *element) {
    if (element->type() == "Player") {
-      rosea_->get_application()->get_player()->take_damage(10);
+      Application::get_instance().get_player()->take_damage(10);
    } else if (element->type() == "Projectile") {
       if (rosea_->get_state() != ATTACK) {
          rosea_->set_state(HURT);
@@ -271,10 +272,10 @@ void Arm::start_contact(Element *element) {
 /****************** ROSEA ENEMY *********************/
 //////////////////////////////////////////////////////
 
-Rosea::Rosea(int x, int y, float angle, Application *application) :
-   Enemy(x, y, 144, 189, application), 
-   arms_still(x - 46, y - 118, 78, 122, application, this),
-   arms_attack(x + 5, y - 230, 387, 122, application, this), 
+Rosea::Rosea(int x, int y, float angle) :
+   Enemy(x, y, 144, 189), 
+   arms_still(x - 46, y - 118, 78, 122, this),
+   arms_attack(x + 5, y - 230, 387, 122, this), 
    hurt_counter_(0), arm_state_(0), in_bounds_(false), angle_(angle),
    arm_heights_({{0, y - 110}, {1, y - 250}, {2, y - 325}, {3, y - 395}, 
          {4, y - 425}, {5, y - 425}, {6, y - 425}, 
@@ -371,19 +372,19 @@ bool Rosea::load_media() {
    bool success = true;
 
    // Load idle texture
-   load_image(189, 144, 15, 1.0f / 20.0f, "idle", "images/enemies/Rosea/rosea_idle.png", success);
+   load_image(189, 144, 15, 1.0f / 20.0f, "idle", media_path + "Rosea/rosea_idle.png", success);
 
    // Load hurt texture
-   load_image(189, 144, 15, 1.0f / 20.0f, "hurt", "images/enemies/Rosea/rosea_hurt.png", success);
+   load_image(189, 144, 15, 1.0f / 20.0f, "hurt", media_path + "Rosea/rosea_hurt.png", success);
 
    // Load arms_idle texture
-   arms_still.load_image(112, 78, 15, 1.0f/ 20.0f, "arms_idle", "images/enemies/Rosea/arms_idle.png", success);
+   arms_still.load_image(112, 78, 15, 1.0f/ 20.0f, "arms_idle", media_path + "Rosea/arms_idle.png", success);
 
    // Load arms_hurt texture
-   arms_still.load_image(112, 78, 15, 1.0f/ 20.0f, "arms_hurt", "images/enemies/Rosea/arms_hurt.png", success);
+   arms_still.load_image(112, 78, 15, 1.0f/ 20.0f, "arms_hurt", media_path + "Rosea/arms_hurt.png", success);
 
    // Load arms_hurt texture
-   arms_attack.load_image(122, 387, 15, 1.0f / 20.0f, "attack", "images/enemies/Rosea/arms_attack.png", success);
+   arms_attack.load_image(122, 387, 15, 1.0f / 20.0f, "attack", media_path + "Rosea/arms_attack.png", success);
 
    // Return success
    return success;
@@ -540,14 +541,14 @@ void Rosea::start_contact(Element *element) {
 // Check to see if player is within bounds
 bool Rosea::within_bounds() {
    if (angle_ == 0.0f) {
-      if (get_application()->get_player()->get_x() >= get_x() - 250 
-         && get_application()->get_player()->get_x() <= get_x() + 250) {
+      if (Application::get_instance().get_player()->get_x() >= get_x() - 250 
+         && Application::get_instance().get_player()->get_x() <= get_x() + 250) {
          return true;
       }
    } else {
-      if (get_application()->get_player()->get_y() >= (get_y() - 250) 
-         && get_application()->get_player()->get_y() <= (get_y() + 250)
-         && get_application()->get_player()->get_x() <= (get_x() + 400)) {
+      if (Application::get_instance().get_player()->get_y() >= (get_y() - 250) 
+         && Application::get_instance().get_player()->get_y() <= (get_y() + 250)
+         && Application::get_instance().get_player()->get_x() <= (get_x() + 400)) {
          return true;
       }
    }
@@ -561,8 +562,8 @@ Rosea::~Rosea() {}
 /************** MOSQUIBLER ENEMY *******************/
 /////////////////////////////////////////////////////
 
-Mosquibler::Mosquibler(int x, int y, Application *application) :
-   Enemy(x, y, 89, 109, application) {
+Mosquibler::Mosquibler(int x, int y) :
+   Enemy(x, y, 89, 109) {
 
    // Set element shape stuff
    element_shape.dynamic = true;
@@ -586,19 +587,19 @@ bool Mosquibler::load_media() {
    bool success = true;
 
    // Load fly for mosquibler
-   load_image(109, 97, 12, 1.0f / 20.0f, "fly", "images/enemies/Mosquibler/fly.png", success);
+   load_image(109, 97, 12, 1.0f / 20.0f, "fly", media_path + "Mosquibler/fly.png", success);
 
    // Load death for mosquibler
-   load_image(109, 89, 27, 1.0f / 20.0f, "death", "images/enemies/Mosquibler/death.png", success);
+   load_image(109, 89, 27, 1.0f / 20.0f, "death", media_path + "Mosquibler/death.png", success);
 
    // Load turn texture
-   load_image(109, 97, 12, 1.0f / 20.0f, "turn", "images/enemies/Mosquibler/turn.png", success);
+   load_image(109, 97, 12, 1.0f / 20.0f, "turn", media_path + "Mosquibler/turn.png", success);
 
    // Load hit texture
-   load_image(109, 89, 4, 1.0f / 20.0f, "hit", "images/enemies/Mosquibler/hit.png", success);
+   load_image(109, 89, 4, 1.0f / 20.0f, "hit", media_path + "Mosquibler/hit.png", success);
 
    // Load fall texture
-   load_image(109, 89, 6, 1.0f / 20.0f, "fall", "images/enemies/Mosquibler/fall.png", success);
+   load_image(109, 89, 6, 1.0f / 20.0f, "fall", media_path + "Mosquibler/fall.png", success);
 
    // Return success
    return success;
@@ -608,10 +609,10 @@ bool Mosquibler::load_media() {
 void Mosquibler::move() {
    // Check to see what direction the enemy should be facing
    if (enemy_state_ != DEATH && enemy_state_ != HURT && enemy_state_ != FALL) {
-      if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
+      if (Application::get_instance().get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
          entity_direction = LEFT;
          enemy_state_ = TURN;
-      } else if (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT) {
+      } else if (Application::get_instance().get_player()->get_x() > get_x() && entity_direction == LEFT) {
          entity_direction = RIGHT;
          enemy_state_ = TURN;
       }
@@ -620,12 +621,12 @@ void Mosquibler::move() {
    // Turn around
    if (enemy_state_ == TURN) {
       // Magnitude of impulse
-      float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
-                              + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
+      float magnitude = sqrt(pow((Application::get_instance().get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
+                              + pow((Application::get_instance().get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
 
       // Get a vector towards the player and apply as impulse
-      const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
-                     (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
+      const b2Vec2 impulse = {(Application::get_instance().get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
+                     (Application::get_instance().get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
       
       // Apply impulse
       body->SetLinearVelocity(impulse);
@@ -648,12 +649,12 @@ void Mosquibler::move() {
    // Fly towards player
    if (enemy_state_ == IDLE) {
       // Magnitude of impulse
-      float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
-                              + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
+      float magnitude = sqrt(pow((Application::get_instance().get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
+                              + pow((Application::get_instance().get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
 
       // Get a vector towards the player and apply as impulse
-      const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
-                     (get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
+      const b2Vec2 impulse = {(Application::get_instance().get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 0.90f, 
+                     (Application::get_instance().get_player()->body->GetPosition().y - body->GetPosition().y) / magnitude * 0.90f};
       
       // Apply impulse
       body->SetLinearVelocity(impulse);
@@ -753,8 +754,8 @@ Mosquibler::~Mosquibler() {}
 ///////////////////////////////////////////////////
 
 // Constructor
-Fruig::Fruig(int x, int y, Application *application) :
-   Enemy(x, y, 140, 79, application) {
+Fruig::Fruig(int x, int y) :
+   Enemy(x, y, 140, 79) {
 
    // Set hitbox
    set_hitbox(x, y);
@@ -774,10 +775,10 @@ bool Fruig::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(79, 140, 20, 1.0f / 20.0f, "idle", "images/enemies/Fruig/idle.png", success);
+   load_image(79, 140, 20, 1.0f / 20.0f, "idle", media_path + "Fruig/idle.png", success);
 
    // Load death
-   load_image(85, 136, 20, 1.0f / 20.0f, "death", "images/enemies/Fruig/death.png", success);
+   load_image(85, 136, 20, 1.0f / 20.0f, "death", media_path + "Fruig/death.png", success);
 
    // Return success
    return success;
@@ -879,8 +880,8 @@ void FleetSensor::end_contact(Element *element) {
 ///////////////////////////////////////////////////
 
 // Constructor
-Fleet::Fleet(int x, int y, Application *application) :
-   Enemy(x, y, 25, 49, application) {
+Fleet::Fleet(int x, int y) :
+   Enemy(x, y, 25, 49) {
    
    // Set shape
    element_shape.center = {0.0f, -0.08f};
@@ -920,13 +921,13 @@ bool Fleet::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(63, 87, 11, 1.0f / 20.0f, "idle", "images/enemies/Fleet/idle.png", success);
+   load_image(63, 87, 11, 1.0f / 20.0f, "idle", media_path + "Fleet/idle.png", success);
 
    // Load turn
-   load_image(63, 87, 11, 1.0f / 20.0f, "turn", "images/enemies/Fleet/turn.png", success);
+   load_image(63, 87, 11, 1.0f / 20.0f, "turn", media_path + "Fleet/turn.png", success);
 
    // Load death
-   load_image(63, 87, 18, 1.0f / 20.0f, "death", "images/enemies/Fleet/death.png", success);
+   load_image(63, 87, 18, 1.0f / 20.0f, "death", media_path + "Fleet/death.png", success);
 
    // Return success
    return success;
@@ -942,10 +943,10 @@ void Fleet::move() {
       }
 
       if (in_contact) {
-         if (get_application()->get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
+         if (Application::get_instance().get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
             entity_direction = LEFT;
             enemy_state_ = TURN;
-         } else if (get_application()->get_player()->get_x() > get_x() && entity_direction == LEFT) {
+         } else if (Application::get_instance().get_player()->get_x() > get_x() && entity_direction == LEFT) {
             entity_direction = RIGHT;
             enemy_state_ = TURN;
          }
@@ -971,13 +972,13 @@ void Fleet::move() {
       // Idle is him just hopping around towards the player
       if (enemy_state_ == IDLE) {
          // Magnitude of impulse
-         float magnitude = sqrt(pow((get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
-                                 + pow((get_application()->get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
+         float magnitude = sqrt(pow((Application::get_instance().get_player()->body->GetPosition().x - body->GetPosition().x) / 1.920f, 2)
+                                 + pow((Application::get_instance().get_player()->body->GetPosition().y - body->GetPosition().y) / 1.080f, 2));
 
          // Get a vector towards the player and apply as impulse
          if (in_contact) {
             if (textures["idle"].frame_ == 1) {
-               const b2Vec2 impulse = {(get_application()->get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 1.50f, 7.0f};
+               const b2Vec2 impulse = {(Application::get_instance().get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 1.50f, 7.0f};
                body->SetLinearVelocity(impulse);
             }
 
@@ -1020,8 +1021,8 @@ void Fleet::start_contact(Element *element) {
 /*********** MOSQUEENBLER ENEMY ***************/
 ////////////////////////////////////////////////
 
-Mosqueenbler::Mosqueenbler(int x, int y, Application *application) :
-   Enemy(x, y, 134, 246, application), spawn_num_of_egg_(1) {
+Mosqueenbler::Mosqueenbler(int x, int y) :
+   Enemy(x, y, 134, 246), spawn_num_of_egg_(1) {
 
    // Set element shape stuff
    element_shape.dynamic = true;
@@ -1061,10 +1062,10 @@ bool Mosqueenbler::load_media() {
    bool success = true;
 
    // Load idle texture
-   load_image(246, 134, 12, 1.0f / 20.0f, "idle", "images/enemies/Mosqueenbler/idle.png", success);
+   load_image(246, 134, 12, 1.0f / 20.0f, "idle", media_path + "Mosqueenbler/idle.png", success);
 
    // Load attack texture
-   load_image(246, 134, 12, 1.0f / 20.0f, "attack", "images/enemies/Mosqueenbler/attack.png", success);
+   load_image(246, 134, 12, 1.0f / 20.0f, "attack", media_path + "Mosqueenbler/attack.png", success);
 
    // Return if success
    return success;
@@ -1077,12 +1078,12 @@ void Mosqueenbler::move() {
    body->SetLinearVelocity({0.0f, y});
 
    // Spawn enemies
-   if (get_application()->get_level_flag() == Application::FORESTBOSS) {
+   if (Application::get_instance().get_level_flag() == Application::FORESTBOSS) {
       if (shoot_timer_ > 200) {
          enemy_state_ = ATTACK;
          if (textures["attack"].frame_ == 8 && spawn_num_of_egg_ == 1) {
-            MosquiblerEgg *egg = new MosquiblerEgg(get_x() + 95, get_y() + 134, get_application());
-            get_application()->get_level()->add_enemy(egg);
+            MosquiblerEgg *egg = new MosquiblerEgg(get_x() + 95, get_y() + 134);
+            Application::get_instance().get_level()->add_enemy(egg);
             spawn_num_of_egg_ = 0;
          } else if (textures["attack"].completed_) {
             shoot_timer_ = 0;
@@ -1111,8 +1112,8 @@ void Mosqueenbler::animate(Texture *tex, int reset, int max, int start) {
 ////////////////////////////////////////////////
 
 // Constructor
-MosquiblerEgg::MosquiblerEgg(int x, int y, Application *application) :
-   Enemy(x, y, 42, 28, application) {
+MosquiblerEgg::MosquiblerEgg(int x, int y) :
+   Enemy(x, y, 42, 28) {
 
    // Set hitbox
    element_shape.dynamic = true;
@@ -1127,10 +1128,10 @@ bool MosquiblerEgg::load_media() {
    bool success = true;
 
    // Load idle (falling)
-   load_image(92, 59, 6, 1.0 / 20.0f, "idle", "images/enemies/Mosqueenbler/egg_idle.png", success);
+   load_image(92, 59, 6, 1.0 / 20.0f, "idle", media_path + "Mosqueenbler/egg_idle.png", success);
 
    // Load break
-   load_image(92, 59, 7, 1.0 / 20.0f, "attack", "images/enemies/Mosqueenbler/egg_break.png", success);
+   load_image(92, 59, 7, 1.0 / 20.0f, "attack", media_path + "Mosqueenbler/egg_break.png", success);
 
    return success;
 }
@@ -1139,8 +1140,8 @@ bool MosquiblerEgg::load_media() {
 void MosquiblerEgg::move() {
    if (enemy_state_ == ATTACK) {
       if (textures["attack"].completed_) {
-         get_application()->get_level()->add_enemy(new Mosquibler(get_x(), get_y(), get_application()));
-         get_application()->get_level()->destroy_enemy(this);
+         Application::get_instance().get_level()->add_enemy(new Mosquibler(get_x(), get_y()));
+         Application::get_instance().get_level()->destroy_enemy(this);
       }
    }
 }
@@ -1175,14 +1176,14 @@ void WormoredSensor::start_contact(Element *element) {
    if (element) {
       if (element->type() == "Player" || element->type() == "Projectile") {
          //Wormored *wormored = dynamic_cast<Wormored*>(entity_);
-         //get_application()->get_player()->take_damage(10);
+         //Application::get_instance().get_player()->take_damage(10);
       }
    }
 }
 
 // Constructor for Wormored
-Wormored::Wormored(int x, int y, Application *application) :
-   Enemy(x, y, 418, 796, application),
+Wormored::Wormored(int x, int y) :
+   Enemy(x, y, 418, 796),
    body_1_heights_({{0, 0}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, 2}, {6, 2},
                   {7, 2}, {8, 2}}),
    body_2_heights_({{2, 0}, {3, -1}, {4, -1}, {5, -2}, {6, -2}, {7, 1}, {8, 1}, {9, 1}, {10, 1}, {11, 2}}),
@@ -1212,12 +1213,12 @@ Wormored::Wormored(int x, int y, Application *application) :
    // left_facing_sensors_[4] = new WormoredSensor(1.15f, 0.30f, this, CONTACT_UP, 1.50f, -0.92f);
    // left_facing_sensors_[5] = new WormoredSensor(0.89f, 0.22f, this, CONTACT_UP, 2.02f, -1.16f);
 
-   left_facing_sensors_[0] = new BodyPart(this, -243, -6, 143, 395, application_, false, CAT_BOSS);
-   left_facing_sensors_[1] = new BodyPart(this, -109, -6, 124, 395, application_, false, CAT_BOSS);
-   left_facing_sensors_[2] = new BodyPart(this, -7, -21, 80, 363, application_, false, CAT_BOSS);
-   left_facing_sensors_[3] = new BodyPart(this, 77, -43, 86, 320, application_, false, CAT_BOSS);
-   left_facing_sensors_[4] = new BodyPart(this, 150, -92, 60, 230, application_, false, CAT_BOSS);
-   left_facing_sensors_[5] = new BodyPart(this, 202, -116, 44, 179, application_, false, CAT_BOSS);
+   left_facing_sensors_[0] = new BodyPart(this, -243, -6, 143, 395, false, CAT_BOSS);
+   left_facing_sensors_[1] = new BodyPart(this, -109, -6, 124, 395, false, CAT_BOSS);
+   left_facing_sensors_[2] = new BodyPart(this, -7, -21, 80, 363, false, CAT_BOSS);
+   left_facing_sensors_[3] = new BodyPart(this, 77, -43, 86, 320, false, CAT_BOSS);
+   left_facing_sensors_[4] = new BodyPart(this, 150, -92, 60, 230, false, CAT_BOSS);
+   left_facing_sensors_[5] = new BodyPart(this, 202, -116, 44, 179, false, CAT_BOSS);
 
    // Add new sensors to the body when facing left
    // right_facing_sensors_[0] = new WormoredSensor(1.97f, 0.71f, this, CONTACT_UP, 2.34f, -0.06f);
@@ -1241,23 +1242,23 @@ bool Wormored::load_media() {
    bool success = true;
 
    // Load idle
-   load_image(796, 418, 21, 1.0f / 24.0f, "idle", "images/enemies/Wormored/idle.png", success, 2);
+   load_image(796, 418, 21, 1.0f / 24.0f, "idle", media_path + "Wormored/idle.png", success, 2);
 
    // Load turn
-   load_image(796, 418, 29, 1.0f / 24.0f, "turn", "images/enemies/Wormored/turn.png", success, 2);
+   load_image(796, 418, 29, 1.0f / 24.0f, "turn", media_path + "Wormored/turn.png", success, 2);
    
    // Load attack
-   load_image(796, 418, 22, 1.0f / 24.0f, "attack", "images/enemies/Wormored/attack.png", success, 2);
+   load_image(796, 418, 22, 1.0f / 24.0f, "attack", media_path + "Wormored/attack.png", success, 2);
 
    // Load excrete
-   load_image(796, 418, 28, 1.0f / 24.0f, "excrete", "images/enemies/Wormored/excrete.png", success, 2);
+   load_image(796, 418, 28, 1.0f / 24.0f, "excrete", media_path + "Wormored/excrete.png", success, 2);
 
    return success;
 }
 
 void Wormored::move() {
    if (enemy_state_ != DEATH && enemy_state_ != ATTACK && enemy_state_ != EXCRETE) {
-      if (get_application()->get_player()->get_x() < (get_x() - get_width() / 2) && entity_direction == RIGHT) {
+      if (Application::get_instance().get_player()->get_x() < (get_x() - get_width() / 2) && entity_direction == RIGHT) {
          entity_direction = LEFT;
          enemy_state_ = TURN;
 
@@ -1266,7 +1267,7 @@ void Wormored::move() {
             left_facing_sensors_[i]->activate_sensor();
             //right_facing_sensors_[i]->deactivate_sensor();
          }
-      } else if (get_application()->get_player()->get_x() > (get_x() + get_width() / 2) && entity_direction == LEFT) {
+      } else if (Application::get_instance().get_player()->get_x() > (get_x() + get_width() / 2) && entity_direction == LEFT) {
          entity_direction = RIGHT;
          enemy_state_ = TURN;
 

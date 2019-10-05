@@ -1,24 +1,26 @@
+#include "Source/Private/Object.h"
+#include "Source/Private/Entity.h"
+#include "Source/Private/Enemy.h"
+#include "Source/Private/Texture.h"
+#include "Source/Private/Application.h"
+
 #include <iostream>
-#include "Entity.h"
-#include "Object.h"
-#include "Texture.h"
-#include "Application.h"
 
 /******************** Object Implementations **********************/
 
 // Constructor
-Object::Object(int x, int y, int height, int width, Entity* owner, Application *application) :
-   Element(x, y, height, width, application), owning_entity(owner), shift(false) {}
+Object::Object(int x, int y, int height, int width, Entity* owner) :
+   Element(x, y, height, width), owning_entity(owner), shift(false) {}
 
 /***************** Platform Implementations *************************/
 
 // Constructor
-Platform::Platform(int x, int y, int height, int width, Application *application) :
-   Object(x, y, height, width, NULL, application) {
+Platform::Platform(int x, int y, int height, int width) :
+   Object(x, y, height, width, NULL) {
 
    // Set position
-   float x_pos = x * application->to_meters_;
-   float y_pos = -y * application->to_meters_;
+   float x_pos = x * Application::get_instance().to_meters_;
+   float y_pos = -y * Application::get_instance().to_meters_;
    body_def.position.Set(x_pos, y_pos);
    body_def.fixedRotation = true;
 }
@@ -26,11 +28,11 @@ Platform::Platform(int x, int y, int height, int width, Application *application
 // Setup function for Box2D stuff
 void Platform::setup() {
    // Create body
-   body = get_application()->world_.CreateBody(&body_def);
+   body = Application::get_instance().world_.CreateBody(&body_def);
 
    // Set box
-   float box_x = (get_width() / 2.0f) * get_application()->to_meters_ - 0.01f;
-   float box_y = (get_height() / 2.0f) * get_application()->to_meters_ - 0.01f;
+   float box_x = (get_width() / 2.0f) * Application::get_instance().to_meters_ - 0.01f;
+   float box_y = (get_height() / 2.0f) * Application::get_instance().to_meters_ - 0.01f;
    box.SetAsBox(box_x, box_y);
 
    // Create fixture
@@ -56,29 +58,26 @@ Platform::~Platform() {
 Projectile::Projectile(int x, int y, bool owner, int damage, 
       float force_x, float force_y,
       const TextureData &normal, const TextureData &hit,
-      Entity *entity, Application *application) :
-   Object(x, y, normal.height, normal.width, entity, application), 
+      Entity *entity) :
+   Object(x, y, normal.height, normal.width, entity), 
    owner_(owner), damage_(damage), normal_(normal), hit_(hit) {
-
-   // Temp pointer to App
-   Application *tmp = get_application();
 
    // Set body type
    body_def.type = b2_dynamicBody;
 
    // Set initial position and set fixed rotation
    float x_pos, y_pos;
-   x_pos = x * tmp->to_meters_;
-   y_pos = -y * tmp->to_meters_;
+   x_pos = x * Application::get_instance().to_meters_;
+   y_pos = -y * Application::get_instance().to_meters_;
    body_def.position.Set(x_pos, y_pos);
    body_def.fixedRotation = false;
 
    // Attach body to world
-   body = tmp->world_.CreateBody(&body_def);
+   body = Application::get_instance().world_.CreateBody(&body_def);
 
    // Set box dimensions
-   float width_dim = (get_width() / 2.0f) * tmp->to_meters_ - 0.02f;// - 0.11f;
-   float height_dim = (get_height() / 2.0f) * tmp->to_meters_ - 0.02f;// - 0.11f;
+   float width_dim = (get_width() / 2.0f) * Application::get_instance().to_meters_ - 0.02f;// - 0.11f;
+   float height_dim = (get_height() / 2.0f) * Application::get_instance().to_meters_ - 0.02f;// - 0.11f;
    box.SetAsBox(width_dim, height_dim);
 
    // Set various fixture definitions and create fixture
@@ -98,7 +97,7 @@ Projectile::Projectile(int x, int y, bool owner, int damage,
    body->ApplyForce(force, body->GetPosition(), true);
    
    // Now add it to the things the world needs to render
-   tmp->getProjectileVector()->push_back(this);
+   Application::get_instance().getProjectileVector()->push_back(this);
    
    // Set object state
    object_state_ = ALIVE;
@@ -119,7 +118,7 @@ void Projectile::update() {
       }
    } else if (object_state_ == DEAD) {
       if (body) {
-         get_application()->world_.DestroyBody(body);
+         Application::get_instance().world_.DestroyBody(body);
          body = nullptr;
       }
       if (textures["explode"].frame_ >= hit_.num_of_frames) {
@@ -151,8 +150,8 @@ Projectile::~Projectile() {}
 /************* ERASER SUBCLASS *******************/
 Eraser::Eraser(int x, int y, 
    const TextureData &normal, const TextureData &hit,
-   Entity *entity, Application *application) :
-   Projectile(x, y, 1, 10, 10.4f, 0.0f, normal, hit, entity, application) {
+   Entity *entity) :
+   Projectile(x, y, 1, 10, 10.4f, 0.0f, normal, hit, entity) {
 
    // Load media for some reason
    load_media();
@@ -178,10 +177,10 @@ bool Eraser::load_media() {
    bool success = true;
 
    // Normal eraser
-   load_image(21, 12, 3, 1.0f / 20.0f, "normal", "images/player/eraser.png", success);
+   load_image(21, 12, 3, 1.0f / 20.0f, "normal", Player::media_path + "eraser.png", success);
 
    // Exploading eraser
-   load_image(21, 12, 4, 1.0f / 20.0f, "explode", "images/player/eraser_break.png", success);
+   load_image(21, 12, 4, 1.0f / 20.0f, "explode", Player::media_path + "eraser_break.png", success);
 
    // Return success
    return success;
@@ -191,8 +190,8 @@ bool Eraser::load_media() {
 EnemyProjectile::EnemyProjectile(int x, int y, int damage, 
    float force_x, float force_y,
    const TextureData &normal, const TextureData &hit,
-   Entity *entity, Application *application) :
-   Projectile(x, y, 0, 10, force_x, force_y, normal, hit, entity, application) {
+   Entity *entity) :
+   Projectile(x, y, 0, 10, force_x, force_y, normal, hit, entity) {
 
    // Load media for some reason
    load_media();
@@ -214,11 +213,11 @@ bool EnemyProjectile::load_media() {
    bool success = true;
 
    // Normal projectile
-   normal_.path = "images/enemies/" + owning_entity->type() + "/projectile.png";
+   normal_.path = Enemy::media_path + owning_entity->type() + "/projectile.png";
    load_image(normal_.width, normal_.height, normal_.num_of_frames, 1.0f / 20.0f, "normal", normal_.path, success);
 
    // Hit projectile
-   hit_.path = "images/enemies/" + owning_entity->type() + "/hit.png";
+   hit_.path = Enemy::media_path + owning_entity->type() + "/hit.png";
    load_image(hit_.width, hit_.height, hit_.num_of_frames, 1.0f / 20.0f, "explode", hit_.path, success);
 
    // Return success

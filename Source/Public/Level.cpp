@@ -1,3 +1,10 @@
+#include "Source/Private/Level.h"
+#include "Source/Private/Application.h"
+#include "Source/Private/Texture.h"
+#include "Source/Private/Entity.h"
+#include "Source/Private/Object.h"
+#include "Source/Private/Enemy.h"
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <Box2D/Box2D.h>
@@ -8,22 +15,14 @@
 #include <iomanip>
 #include <fstream>
 
-#include "Level.h"
-#include "Application.h"
-#include "Texture.h"
-#include "Entity.h"
-#include "Object.h"
-#include "Enemy.h"
-
 using namespace std;
 
 /************************** LEVEL CLASS ********************/
 
 // Constructor will do all of the setting up essentially
-Level::Level(string file, Application::FOREST level, Application *application) : 
+Level::Level(string file, Application::FOREST level) : 
    num_of_enemies_(0), num_of_platforms_(0), completed(false), level(level), 
-   background_(0, 0, 1080, 1920, application), level_completed_(false), 
-   application_(application) {
+   background_(0, 0, 1080, 1920), level_completed_(false) {
 
    // Read from a file based on a specific format
    ifstream input;
@@ -53,23 +52,23 @@ Level::Level(string file, Application::FOREST level, Application *application) :
 
       // Spawn enemies accordingly
       if (name == "Fecreez") {
-         enemies_.push_back(new Fecreez(x, y, application)); 
+         enemies_.push_back(new Fecreez(x, y)); 
       } else if (name == "Rosea") {
          float angle;
          input >> angle;
-         enemies_.push_back(new Rosea(x, y, angle, application));
+         enemies_.push_back(new Rosea(x, y, angle));
          num_of_kills_ -= 1;
       } else if (name == "Mosquibler") {
-         enemies_.push_back(new Mosquibler(x, y, application));
+         enemies_.push_back(new Mosquibler(x, y));
       } else if (name == "Fruig") {
-         enemies_.push_back(new Fruig(x, y, application));
+         enemies_.push_back(new Fruig(x, y));
       } else if (name == "Fleet") {
-         enemies_.push_back(new Fleet(x, y, application));
+         enemies_.push_back(new Fleet(x, y));
       } else if (name == "Mosqueenbler") {
-         enemies_.push_back(new Mosqueenbler(x, y, application));
+         enemies_.push_back(new Mosqueenbler(x, y));
          num_of_kills_ -= 1;
       } else if (name == "Wormored") {
-         enemies_.push_back(new Wormored(x, y, application));
+         enemies_.push_back(new Wormored(x, y));
       }
    }
 
@@ -80,28 +79,28 @@ Level::Level(string file, Application::FOREST level, Application *application) :
       input >> width >> height >> x >> y;
       x += width / 2;
       y += (height / 2);
-      platforms_.push_back(new Platform(x, y, height, width, application));
+      platforms_.push_back(new Platform(x, y, height, width));
       platforms_[i]->setup();
    }
 
    // Add invisible walls
-   platforms_.push_back(new Platform(-10, 540, 1080, 10, application));
+   platforms_.push_back(new Platform(-10, 540, 1080, 10));
    platforms_.back()->setup();
-   platforms_.push_back(new Platform(1930, 540, 1080, 10, application));
+   platforms_.push_back(new Platform(1930, 540, 1080, 10));
    platforms_.back()->setup();
    num_of_platforms_ += 2;
 
    // Now, load the media and quit if false
    if (load_media_() == false) {
       cerr << "Failed to load level media" << endl;
-      application_->set_quit();
+      Application::get_instance().set_quit();
    }
 
    // Set player's location
    int x, y;
    input >> x >> y;
-   application_->get_player()->set_x(x);
-   application_->get_player()->set_y(y);
+   Application::get_instance().get_player()->set_x(x);
+   Application::get_instance().get_player()->set_y(y);
 }
 
 // Load media function, private
@@ -165,9 +164,9 @@ void Level::update() {
       }
 
       //std::cout << "Level::update() - level = " << level << std::endl;
-      if ((level < Application::FOREST6 || level == Application::FOREST9) && application_->get_player()->get_x() >= 1890) {
+      if ((level < Application::FOREST6 || level == Application::FOREST9) && Application::get_instance().get_player()->get_x() >= 1890) {
          completed = true;
-      } else if (level >= Application::FOREST6 && application_->get_player()->get_y() <= -100) {
+      } else if (level >= Application::FOREST6 && Application::get_instance().get_player()->get_y() <= -100) {
          completed = true;
       }
    }

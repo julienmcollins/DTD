@@ -9,7 +9,6 @@
 #include "Timer.h"
 
 // Dependencies
-class Application;
 class Entity;
 
 // Shape struct
@@ -43,7 +42,7 @@ typedef struct Shape {
 class Element {
    public:
       // Constructor
-      Element(int x, int y, int height, int width, Application *application);
+      Element(int x, int y, int height, int width);
 
       // Setters
       void set_x(int new_x);
@@ -157,9 +156,6 @@ class Element {
       // Hash map of texture names to textures
       std::unordered_map<std::string, Texture> textures;
 
-      // Get application
-      Application *get_application();
-
       // Get type of object
       virtual std::string type() {
          return "Element";
@@ -200,8 +196,6 @@ class Element {
       // Flag for destroying object immediately
       bool mark_for_immediate_destroy_;
 
-      // Application pointer
-      Application *application_;
    private:
       // X and Y locations
       float x_pos_;
@@ -252,7 +246,7 @@ class Sensor : public Element {
 class BodyPart : public Sensor {
    public:
       // Constructor
-      BodyPart(Entity *owning_entity, float x_rel_to_owner, float y_rel_to_owner, float width, float height, Application *application, bool is_fixture = true, uint16 category = CAT_SENSOR);
+      BodyPart(Entity *owning_entity, float x_rel_to_owner, float y_rel_to_owner, float width, float height, bool is_fixture = true, uint16 category = CAT_SENSOR);
 
       // Initialize function different for body part
       virtual void initialize(float width, float height, float center_x, float center_y, uint16 category = CAT_SENSOR);

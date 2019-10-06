@@ -1,0 +1,21 @@
+#version 450
+
+//Transformation Matrices
+uniform mat4 projection_matrix;
+uniform mat4 modelview_matrix;
+
+//Vertex position attribute
+in vec2 vertex_pos_2D;
+
+//Texture coordinate attribute
+in vec2 tex_coord;
+out vec2 TextureCoordinates;
+
+void main()
+{
+	//Process texCoord
+	TextureCoordinates = tex_coord;
+	
+	//Process vertex
+	gl_Position = projection_matrix * modelview_matrix * vec4( vertex_pos_2D.x, vertex_pos_2D.y, 0.0, 1.0 );
+}

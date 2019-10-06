@@ -11,15 +11,22 @@
 #include "Source/Private/Global.h"
 #include "Source/Private/Level.h"
 #include "Source/Private/Enemy.h"
+#include "Source/Private/BasicShaderProgram.h"
 
-#include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
-#include <cmath>
+
 #include <Box2D/Box2D.h>
+
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <iostream>
+#include <cmath>
+
+//Shader loading utility programs
+void printProgramLog( GLuint program );
+void printShaderLog( GLuint shader );
 
 // Initialize paths
 const std::string Application::sprite_path = "Media/Sprites/";
@@ -53,12 +60,45 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
         SCREEN_HEIGHT = DM.h;
         
         // Creates window
-        mainWindow = SDL_CreateWindow("Doodle 'Till Death", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN);
+        mainWindow = SDL_CreateWindow("Doodle 'Till Death", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
         
         if (mainWindow == NULL) {
             printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
             exit(0);
         } else {
+            //Create context
+            gl_context_ = SDL_GL_CreateContext( mainWindow );
+            if (gl_context_ == NULL) {
+               printf( "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
+               exit(0);
+            } else {
+               //Initialize GLEW
+               glewExperimental = GL_TRUE; 
+               GLenum glewError = glewInit();
+               if( glewError != GLEW_OK )
+               {
+                  printf( "Error initializing GLEW! %s\n", glewGetErrorString( glewError ) );
+               }
+
+               //Use Vsync
+               if( SDL_GL_SetSwapInterval( 1 ) < 0 )
+               {
+                  printf( "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
+               }
+
+               //Initialize OpenGL
+               if( !initOpenGL() )
+               {
+                  printf( "Unable to initialize OpenGL!\n" );
+                  exit(0);
+               }
+
+               if (!load_program()) {
+                  printf("Unable to load shader program!\n");
+                  exit(0);
+               }
+            }
+
             // Create renderer for window
             renderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
             if (renderer == NULL) {
@@ -86,6 +126,40 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    fpsTimer.start();
 }
 
+// Initialize OpenGL
+bool Application::initOpenGL() {
+   // Set clear color
+   glClearColor( 0.f, 0.f, 0.f, 1.f );
+
+   return true;
+}
+
+// Load program
+bool Application::load_program() {
+   //Load double multicolor shader program
+	if( !BasicShaderProgram::get_instance().load_program() )
+	{
+		printf( "Unable to load basic shader!\n" );
+		return false;
+	}
+
+	//Bind double multicolor shader program
+	BasicShaderProgram::get_instance().bind();
+
+	//Initialize projection
+	BasicShaderProgram::get_instance().set_projection_matrix(glm::ortho<GLfloat>( 0.0, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0, 1.0, -1.0 ));
+	BasicShaderProgram::get_instance().update_projection_matrix();
+
+	//Initialize modelview
+	BasicShaderProgram::get_instance().set_modelview_matrix(glm::mat4());
+	BasicShaderProgram::get_instance().update_modelview_matrix();
+
+   //Set texture unit
+   BasicShaderProgram::get_instance().set_texture_unit(0);
+
+	return true;
+}
+
 // Checks initialization of SDL functions
 bool Application::init() {
    // Success flag 
@@ -99,6 +173,13 @@ bool Application::init() {
       printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
       success = false;
    } else {
+      //Use OpenGL 4.5 core
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+      SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+      SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+
       //Initialize PNG loading
       int imgFlags = IMG_INIT_PNG;
       if (!(IMG_Init(imgFlags) & imgFlags)) {
@@ -111,6 +192,68 @@ bool Application::init() {
       }
    }
    return success;
+}
+
+void printProgramLog(GLuint program) {
+	//Make sure name is shader
+	if( glIsProgram( program ) )
+	{
+		//Program log length
+		int infoLogLength = 0;
+		int maxLength = infoLogLength;
+		
+		//Get info string length
+		glGetProgramiv( program, GL_INFO_LOG_LENGTH, &maxLength );
+		
+		//Allocate string
+		char* infoLog = new char[ maxLength ];
+		
+		//Get info log
+		glGetProgramInfoLog( program, maxLength, &infoLogLength, infoLog );
+		if( infoLogLength > 0 )
+		{
+			//Print Log
+			printf( "%s\n", infoLog );
+		}
+		
+		//Deallocate string
+		delete[] infoLog;
+	}
+	else
+	{
+		printf( "Name %d is not a program\n", program );
+	}
+}
+
+void printShaderLog(GLuint shader) {
+	//Make sure name is shader
+	if( glIsShader( shader ) )
+	{
+		//Shader log length
+		int infoLogLength = 0;
+		int maxLength = infoLogLength;
+		
+		//Get info string length
+		glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &maxLength );
+		
+		//Allocate string
+		char* infoLog = new char[ maxLength ];
+		
+		//Get info log
+		glGetShaderInfoLog( shader, maxLength, &infoLogLength, infoLog );
+		if( infoLogLength > 0 )
+		{
+			//Print Log
+			printf( "%s\n", infoLog );
+		}
+
+		//Deallocate string
+		delete[] infoLog;
+	}
+	else
+	{
+		printf( "Name %d is not a shader\n", shader );
+	}
 }
 
 // Loads images and other media
@@ -310,11 +453,10 @@ SDL_Texture* Application::loadTexture(std::string path) {
 
 // Updates the screen
 void Application::update() {
-   //SDL_SetWindowFullscreen(mainWindow, SDL_WINDOW_FULLSCREEN);
-   //SDL_SetWindowDisplayMode(mainWindow, NULL);
-
    // Game loop
    while(!quit) {
+      glClear( GL_COLOR_BUFFER_BIT );
+
       if (app_flag_ == MAIN_SCREEN) {
          if (pause == -1)
             main_screen();
@@ -363,6 +505,8 @@ void Application::update() {
             // Wait remaining time
             SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
          }
+
+         SDL_GL_SwapWindow( mainWindow );
       }
    }
 }
@@ -584,18 +728,18 @@ void Application::main_screen() {
       }
    }
    // DEBUG DRAW
-   world_.DrawDebugData();
+   // world_.DrawDebugData();
 
-   for (int i = 0; i < 15; i++) {
-      SDL_Rect m;
-      m.w = r[i].w;
-      m.h = r[i].h;
-      m.x = r[i].x;
-      m.y = r[i].y - m.h;
+   // for (int i = 0; i < 15; i++) {
+   //    SDL_Rect m;
+   //    m.w = r[i].w;
+   //    m.h = r[i].h;
+   //    m.x = r[i].x;
+   //    m.y = r[i].y - m.h;
 
-      SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-      SDL_RenderDrawRect(renderer, &m);
-   }
+   //    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+   //    SDL_RenderDrawRect(renderer, &m);
+   // }
   
    // Update the screen
    SDL_RenderPresent(renderer);
@@ -718,18 +862,18 @@ void Application::playground() {
    }
 
    // DEBUG DRAW
-   world_.DrawDebugData();
+   // world_.DrawDebugData();
 
-   for (int i = 0; i < 15; i++) {
-      SDL_Rect m;
-      m.w = r[i].w;
-      m.h = r[i].h;
-      m.x = r[i].x;
-      m.y = r[i].y - m.h;
+   // for (int i = 0; i < 15; i++) {
+   //    SDL_Rect m;
+   //    m.w = r[i].w;
+   //    m.h = r[i].h;
+   //    m.x = r[i].x;
+   //    m.y = r[i].y - m.h;
 
-      SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-      SDL_RenderDrawRect(renderer, &m);
-   }
+   //    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+   //    SDL_RenderDrawRect(renderer, &m);
+   // }
 
    // SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
    // SDL_RenderDrawLine(renderer, 1300, 454, 1500, 454);

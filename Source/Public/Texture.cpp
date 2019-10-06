@@ -16,14 +16,6 @@ Texture::Texture(Element *element, int max_frame, float fps_val) : clips_(NULL),
    frame_(0), completed_(false), max_frame_(max_frame), fps(fps_val), last_frame(0.0f),
    reset_frame(0), stop_frame(max_frame), flip_(SDL_FLIP_NONE), has_flipped_(false), angle(0.0f), element_(element), 
    m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {
-   
-   // Set x and y positions if element isn't null
-      /*
-   if (element) {
-      set_x(element->get_x());
-      set_y(element->get_y());
-   }
-   */
 
    // Start timer
    fps_timer.start();   

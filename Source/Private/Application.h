@@ -12,8 +12,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
-#include <string>
+
+#include "OpenGLIncludes.h"
+
 #include <Box2D/Box2D.h>
+
+#include <string>
 #include <vector>
 #include <unordered_map>
 
@@ -71,9 +75,9 @@ class Application {
          return instance;
       }
 
-      // Initialize SDL
+      // Initialize external libraries
       bool init();
-   
+
       // Load Media
       bool loadMedia();
 
@@ -99,6 +103,13 @@ class Application {
       // Handles events
       SDL_Event e;
 
+      /*********************************************/
+
+      /************* OPENGL STUFF ******************/
+      // Initialze OpenGL
+      bool initOpenGL();
+
+      bool load_program();
       /*********************************************/
 
       // Set viewport
@@ -205,9 +216,9 @@ class Application {
       // Initialize the application
       Application();
 
-      // // Singleton stuff
-      // Application(Application const&);
-      // void operator=(Application const&);
+      //OpenGL context
+      SDL_GLContext gl_context_;
+      GLuint gl_program_id_;
 
       // Screen Dimensions
       int SCREEN_WIDTH;

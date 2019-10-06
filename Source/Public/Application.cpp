@@ -129,7 +129,7 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 // Initialize OpenGL
 bool Application::initOpenGL() {
    // Set clear color
-   glClearColor( 0.f, 0.f, 0.f, 1.f );
+   glClearColor( 1.f, 1.f, 1.f, 1.f );
 
    return true;
 }
@@ -177,8 +177,8 @@ bool Application::init() {
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-      SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-      SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+      // SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+      // SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
       //Initialize PNG loading
       int imgFlags = IMG_INIT_PNG;
@@ -483,8 +483,8 @@ void Application::update() {
          capTimer.start();
 
          // Clear screen
-         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-         SDL_RenderClear(renderer);
+         //SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+         //SDL_RenderClear(renderer);
 
          // Calculate and correct fps
          float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
@@ -496,7 +496,7 @@ void Application::update() {
          thanks_screen_.render(&thanks_screen_.texture);
 
          // Update the screen
-         SDL_RenderPresent(renderer);
+         //SDL_RenderPresent(renderer);
          ++countedFrames;
 
          // If frame finished early
@@ -586,8 +586,8 @@ void Application::main_screen() {
    current_key_states_ = SDL_GetKeyboardState(NULL);
 
    // Clear screen
-   SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-   SDL_RenderClear(renderer);
+   // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+   // SDL_RenderClear(renderer);
 
    // Update world timer
    world_.Step(timeStep_, velocityIterations_, positionIterations_);
@@ -742,7 +742,7 @@ void Application::main_screen() {
    // }
   
    // Update the screen
-   SDL_RenderPresent(renderer);
+   // SDL_RenderPresent(renderer);
    ++countedFrames;
 
    // If frame finished early
@@ -751,6 +751,8 @@ void Application::main_screen() {
       // Wait remaining time
       SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
    }
+
+   SDL_GL_SwapWindow(mainWindow);
 }
 
 // UPDATE PROJECTILES

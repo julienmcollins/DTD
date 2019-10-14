@@ -1,10 +1,10 @@
-#version 450
-
-//Texture Color
-uniform vec4 tex_color;
+#version 330 core
 
 //Texture Unit
 uniform sampler2D tex_unit;
+
+//Texture Color
+uniform vec4 tex_color;
 
 //Texture coordinate
 in vec2 TextureCoordinates;

@@ -117,8 +117,8 @@ bool Level::load_media_() {
       int num_clips = background_.texture.getWidth() / 1920;
 
       // Set the clips
-      background_.texture.clips_ = new SDL_Rect[num_clips];
-      SDL_Rect *temp = background_.texture.clips_;
+      background_.texture.clips_ = new GLFloatRect[num_clips];
+      GLFloatRect *temp = background_.texture.clips_;
 
       // Calc sprite
       for (int i = 0; i < num_clips; i++) {

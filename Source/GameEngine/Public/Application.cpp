@@ -25,8 +25,8 @@
 #include <cmath>
 
 //Shader loading utility programs
-void printProgramLog( GLuint program );
-void printShaderLog( GLuint shader );
+void printProgramLog( unsigned int program );
+void printShaderLog( unsigned int shader );
 
 // Initialize paths
 const std::string Application::sprite_path = "Media/Sprites/";
@@ -147,7 +147,7 @@ bool Application::load_program() {
 	BasicShaderProgram::get_instance().bind();
 
 	//Initialize projection
-	BasicShaderProgram::get_instance().set_projection_matrix(glm::ortho<GLfloat>( 0.0, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0, 1.0, -1.0 ));
+	BasicShaderProgram::get_instance().set_projection_matrix(glm::ortho<float>( 0.0, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0, 1.0, -1.0 ));
 	BasicShaderProgram::get_instance().update_projection_matrix();
 
 	//Initialize modelview
@@ -156,6 +156,9 @@ bool Application::load_program() {
 
    //Set texture unit
    BasicShaderProgram::get_instance().set_texture_unit(0);
+
+   // Set active texture to be the 0 one always?
+   glActiveTexture(GL_TEXTURE0);
 
 	return true;
 }
@@ -174,11 +177,11 @@ bool Application::init() {
       success = false;
    } else {
       //Use OpenGL 4.5 core
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-      // SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-      // SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+      SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+      SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
       //Initialize PNG loading
       int imgFlags = IMG_INIT_PNG;
@@ -194,7 +197,7 @@ bool Application::init() {
    return success;
 }
 
-void printProgramLog(GLuint program) {
+void printProgramLog(unsigned int program) {
 	//Make sure name is shader
 	if( glIsProgram( program ) )
 	{
@@ -225,7 +228,7 @@ void printProgramLog(GLuint program) {
 	}
 }
 
-void printShaderLog(GLuint shader) {
+void printShaderLog(unsigned int shader) {
 	//Make sure name is shader
 	if( glIsShader( shader ) )
 	{
@@ -274,8 +277,8 @@ bool Application::loadMedia() {
       printf("Failed to load title.png\n");
       success = false;
    } else {
-      menu_title_.texture.clips_ = new SDL_Rect[3];
-      SDL_Rect *temp = menu_title_.texture.clips_;
+      menu_title_.texture.clips_ = new GLFloatRect[3];
+      GLFloatRect *temp = menu_title_.texture.clips_;
 
       for (int i = 0; i < 3; i++) {
          temp[i].x = i * 646;
@@ -294,8 +297,8 @@ bool Application::loadMedia() {
       success = false;
    } else {
       // Allocate room
-      menu_items_.texture.clips_ = new SDL_Rect[3];
-      SDL_Rect *temp = menu_items_.texture.clips_;
+      menu_items_.texture.clips_ = new GLFloatRect[3];
+      GLFloatRect *temp = menu_items_.texture.clips_;
 
       // Allocate enough room
       for (int i = 0; i < 3; i++) {
@@ -315,8 +318,8 @@ bool Application::loadMedia() {
       success = false;
    } else {
       // Allocate room
-      world_items_.texture.clips_ = new SDL_Rect[3];
-      SDL_Rect *temp = world_items_.texture.clips_;
+      world_items_.texture.clips_ = new GLFloatRect[3];
+      GLFloatRect *temp = world_items_.texture.clips_;
 
       // Allocate enough room
       for (int i = 0; i < 3; i++) {
@@ -336,8 +339,8 @@ bool Application::loadMedia() {
       success = false;
    } else {
       // Allocate room
-      gameover_screen_.texture.clips_ = new SDL_Rect[3];
-      SDL_Rect *temp = gameover_screen_.texture.clips_;
+      gameover_screen_.texture.clips_ = new GLFloatRect[3];
+      GLFloatRect *temp = gameover_screen_.texture.clips_;
 
       // Allocate enough room
       for (int i = 0; i < 3; i++) {
@@ -453,10 +456,30 @@ SDL_Texture* Application::loadTexture(std::string path) {
 
 // Updates the screen
 void Application::update() {
+   // Set location
+   BasicShaderProgram::get_instance().bind();
+   glUniform1i(glGetUniformLocation(BasicShaderProgram::get_instance().get_program_id(), "tex_unit"), 0);
+
    // Game loop
-   while(!quit) {
+   while (!quit) {
+      // Clear screen at every instance
+      glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
       glClear( GL_COLOR_BUFFER_BIT );
 
+      // Update world timer
+      world_.Step(timeStep_, velocityIterations_, positionIterations_);
+      world_.ClearForces();
+
+      // Start cap timer
+      capTimer.start();
+
+      // Calculate and correct fps
+      float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
+      if( avgFPS > 2000000 ) {
+         avgFPS = 0;
+      }
+      
+      // Update levels independently
       if (app_flag_ == MAIN_SCREEN) {
          if (pause == -1)
             main_screen();
@@ -505,15 +528,27 @@ void Application::update() {
             // Wait remaining time
             SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
          }
-
-         SDL_GL_SwapWindow( mainWindow );
       }
+
+      // Modulate FPS
+      ++countedFrames;
+
+      // If frame finished early
+      int frameTicks = capTimer.getTicks();
+      if (frameTicks < SCREEN_TICKS_PER_FRAME) {
+         // Wait remaining time
+         SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
+      }
+
+      // Swap the windows (render)
+      SDL_GL_SwapWindow( mainWindow );
    }
 }
 
 // ANIMATE FUNCTION
 void Application::animate(const float &fps, Element *element, 
       Texture *texture, Timer &timer, float &last_frame) {
+
    last_frame += (timer.getDeltaTime() / 1000.0f); 
    if (last_frame > fps) {
       if (texture->frame_ > texture->max_frame_) {
@@ -526,8 +561,8 @@ void Application::animate(const float &fps, Element *element,
    }
 
    // Draw title screen
-   texture->render(element->get_tex_x(), element->get_tex_y(), texture->curr_clip_, 0.0, 
-          &texture->center_, texture->flip_);
+   BasicShaderProgram::get_instance().set_texture_color({ 0.f, 0.f, 0.f, 1.f });
+   texture->render(element->get_tex_x(), element->get_tex_y(), texture->curr_clip_);
 }
 
 // GAMEOVER FUNCTION
@@ -589,19 +624,6 @@ void Application::main_screen() {
    // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
    // SDL_RenderClear(renderer);
 
-   // Update world timer
-   world_.Step(timeStep_, velocityIterations_, positionIterations_);
-   world_.ClearForces();
-
-   // Start cap timer
-   capTimer.start();
-
-   // Calculate and correct fps
-   float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
-   if( avgFPS > 2000000 ) {
-      avgFPS = 0;
-   }
-
    // Handle events on queue
    while (SDL_PollEvent( &e )) {
       //User requests quit
@@ -646,11 +668,14 @@ void Application::main_screen() {
       }
    }
 
-   // Process player inputs
-   //player->process_input(current_key_states_);
+   // animate(menu_background_.textures["forest"].fps, &menu_background_, &menu_background_.textures["forest"], 
+   //          menu_background_.textures["forest"].fps_timer, menu_background_.textures["forest"].last_frame);
+
+   thanks_screen_.texture.render(0.f, 0.f);
 
    /* ANIMATION FOR TITLE SCREEN */
    // Animate background
+   /*
    if (finger_) {
       if (finger_->get_y() == START || finger_->get_y() == WORLD1) {
          animate(menu_background_.textures["forest"].fps, &menu_background_, &menu_background_.textures["forest"], 
@@ -731,7 +756,7 @@ void Application::main_screen() {
    // world_.DrawDebugData();
 
    // for (int i = 0; i < 15; i++) {
-   //    SDL_Rect m;
+   //    GLFloatRect m;
    //    m.w = r[i].w;
    //    m.h = r[i].h;
    //    m.x = r[i].x;
@@ -743,16 +768,9 @@ void Application::main_screen() {
   
    // Update the screen
    // SDL_RenderPresent(renderer);
-   ++countedFrames;
 
-   // If frame finished early
-   int frameTicks = capTimer.getTicks();
-   if (frameTicks < SCREEN_TICKS_PER_FRAME) {
-      // Wait remaining time
-      SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
-   }
-
-   SDL_GL_SwapWindow(mainWindow);
+   //SDL_GL_SwapWindow(mainWindow);
+   */
 }
 
 // UPDATE PROJECTILES
@@ -788,22 +806,22 @@ void Application::playground() {
       game_flag_ = PLAY;
    }
 
-   // Clear screen as the first things that's done?
-   SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-   SDL_RenderClear(renderer);
+   // // Clear screen as the first things that's done?
+   // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+   // SDL_RenderClear(renderer);
 
-   // Update world timer
-   world_.Step(timeStep_, velocityIterations_, positionIterations_);
-   world_.ClearForces();
+   // // Update world timer
+   // world_.Step(timeStep_, velocityIterations_, positionIterations_);
+   // world_.ClearForces();
 
-   // Start cap timer
-   capTimer.start();
+   // // Start cap timer
+   // capTimer.start();
       
-   // Calculate and correct fps
-   float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
-   if( avgFPS > 2000000 ) {
-      avgFPS = 0;
-   }
+   // // Calculate and correct fps
+   // float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
+   // if( avgFPS > 2000000 ) {
+   //    avgFPS = 0;
+   // }
 
    // Get current keyboard states
    current_key_states_ = SDL_GetKeyboardState(NULL);
@@ -867,7 +885,7 @@ void Application::playground() {
    // world_.DrawDebugData();
 
    // for (int i = 0; i < 15; i++) {
-   //    SDL_Rect m;
+   //    GLFloatRect m;
    //    m.w = r[i].w;
    //    m.h = r[i].h;
    //    m.x = r[i].x;
@@ -881,26 +899,16 @@ void Application::playground() {
    // SDL_RenderDrawLine(renderer, 1300, 454, 1500, 454);
    // SDL_RenderDrawLine(renderer, 1400, 354, 1400, 554);
 
-   // Update the screen
-   SDL_RenderPresent(renderer);
-   ++countedFrames;
+   // // Update the screen
+   // SDL_RenderPresent(renderer);
+   // ++countedFrames;
 
-   // If frame finished early
-   int frameTicks = capTimer.getTicks();
-   if (frameTicks < SCREEN_TICKS_PER_FRAME) {
-      // Wait remaining time
-      SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
-   }
-}
-
-// Set the viewport for minimaps and stuff like that if needed
-void Application::setViewport() {
-    // Change these values depending on if and where you want your minimap or whatever to be at
-    viewport.x = 0;
-    viewport.y = 0;
-    viewport.h = SCREEN_HEIGHT / 2;
-    viewport.w = SCREEN_WIDTH / 2;
-    SDL_RenderSetViewport(renderer, &viewport);
+   // // If frame finished early
+   // int frameTicks = capTimer.getTicks();
+   // if (frameTicks < SCREEN_TICKS_PER_FRAME) {
+   //    // Wait remaining time
+   //    SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
+   // }
 }
 
 // Get the height
@@ -989,8 +997,8 @@ bool Finger::load_media() {
       success = false;
    } else {
       // Allocate enough room
-      textures["point"].clips_ = new SDL_Rect[6];
-      SDL_Rect *temp = textures["point"].clips_;
+      textures["point"].clips_ = new GLFloatRect[6];
+      GLFloatRect *temp = textures["point"].clips_;
 
       // Calculate sprite locations
       for (int i = 0; i < 6; i++) {
@@ -1011,8 +1019,8 @@ bool Finger::load_media() {
       success = false;
    } else {
       // Allocate enough room
-      textures["shake"].clips_ = new SDL_Rect[8];
-      SDL_Rect *temp = textures["shake"].clips_;
+      textures["shake"].clips_ = new GLFloatRect[8];
+      GLFloatRect *temp = textures["shake"].clips_;
 
       // Calculate sprite locations
       for (int i = 0; i < 8; i++) {

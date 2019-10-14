@@ -18,10 +18,10 @@ bool BasicShaderProgram::load_program() {
 	program_ID = glCreateProgram();
 
 	//Load vertex shader
-	GLuint vertexShader = load_shader_from_file( "Shader/BasicShaderProgram.glvs", GL_VERTEX_SHADER );
+	vertex_shader = load_shader_from_file( "Shader/BasicShaderProgram.glvs", GL_VERTEX_SHADER );
 
     //Check for errors
-    if( vertexShader == 0 )
+    if( vertex_shader == 0 )
     {
         glDeleteProgram( program_ID );
         program_ID = 0;
@@ -29,42 +29,42 @@ bool BasicShaderProgram::load_program() {
     }
 
 	//Attach vertex shader to program
-	glAttachShader( program_ID, vertexShader );
+	glAttachShader( program_ID, vertex_shader );
 
 	//Create fragment shader
-	GLuint fragmentShader = load_shader_from_file( "Shader/BasicShaderProgram.glfs", GL_FRAGMENT_SHADER );
+	fragment_shader = load_shader_from_file( "Shader/BasicShaderProgram.glfs", GL_FRAGMENT_SHADER );
 
     //Check for errors
-    if( fragmentShader == 0 )
+    if( fragment_shader == 0 )
     {
-        glDeleteShader( vertexShader );
+        glDeleteShader( vertex_shader );
         glDeleteProgram( program_ID );
         program_ID = 0;
         return false;
     }
 
 	//Attach fragment shader to program
-	glAttachShader( program_ID, fragmentShader );
+	glAttachShader( program_ID, fragment_shader );
 
 	//Link program
     glLinkProgram( program_ID );
 
 	//Check for errors
-	GLint programSuccess = GL_TRUE;
+	int programSuccess = GL_TRUE;
 	glGetProgramiv( program_ID, GL_LINK_STATUS, &programSuccess );
 	if (programSuccess != GL_TRUE) {
 		printf( "Error linking program %d!\n", program_ID );
 		print_program_log( program_ID );
-        glDeleteShader( vertexShader );
-        glDeleteShader( fragmentShader );
+        glDeleteShader( vertex_shader );
+        glDeleteShader( fragment_shader );
         glDeleteProgram( program_ID );
         program_ID = 0;
         return false;
     }
 
 	//Clean up excess shader references
-    glDeleteShader( vertexShader );
-    glDeleteShader( fragmentShader );
+    glDeleteShader( vertex_shader );
+    glDeleteShader( fragment_shader );
 
 	//Get variable locations
 	vertex_pos2D_location_ = glGetAttribLocation( program_ID, "vertex_pos_2D" );
@@ -107,16 +107,18 @@ bool BasicShaderProgram::load_program() {
 }
 
 void BasicShaderProgram::set_vertex_pointer(GLsizei stride, const GLvoid *data) {
-    glVertexAttribPointer( vertex_pos2D_location_, 2, GL_FLOAT, GL_FALSE, stride, data );
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, data);
+    glEnableVertexAttribArray(0);
 }
 
 void BasicShaderProgram::set_tex_pointer(GLsizei stride, const GLvoid *data) {
-    glVertexAttribPointer( tex_coord_location_, 2, GL_FLOAT, GL_FALSE, stride, data );
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, data);
+	glEnableVertexAttribArray(1);
 }
 
 void BasicShaderProgram::enable_data_pointers() {
-    glEnableVertexAttribArray( vertex_pos2D_location_ );
-	glEnableVertexAttribArray( tex_coord_location_ );
+    glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 }
 
 void BasicShaderProgram::disable_data_pointers() {
@@ -148,10 +150,10 @@ void BasicShaderProgram::update_modelview_matrix() {
     glUniformMatrix4fv(	modelview_matrix_location_, 1, GL_FALSE, glm::value_ptr( modelview_matrix_ ) );
 }
 
-void BasicShaderProgram::set_texture_color(ColorRGBA color) {
+void BasicShaderProgram::set_texture_color(GLColorRGBA color) {
 	glUniform4f( color_location_, color.r, color.g, color.b, color.a );
 }
 
-void BasicShaderProgram::set_texture_unit(GLuint unit) {
+void BasicShaderProgram::set_texture_unit(unsigned int unit) {
 	glUniform1i( tex_unit_location_, unit );
 }

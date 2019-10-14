@@ -43,12 +43,12 @@ void ShaderProgram::unbind() {
 }
 
 // Get the program id back
-GLuint ShaderProgram::get_program_id() {
+unsigned int ShaderProgram::get_program_id() {
     return program_ID;
 }
 
 // Print the program log
-void ShaderProgram::print_program_log(GLuint program) {
+void ShaderProgram::print_program_log(unsigned int program) {
     //Make sure name is shader
 	if( glIsProgram( program ) )
 	{
@@ -80,7 +80,7 @@ void ShaderProgram::print_program_log(GLuint program) {
 }
 
 // Print shader log
-void ShaderProgram::print_shader_log(GLuint shader) {
+void ShaderProgram::print_shader_log(unsigned int shader) {
     //Make sure name is shader
 	if( glIsShader( shader ) )
 	{
@@ -112,9 +112,9 @@ void ShaderProgram::print_shader_log(GLuint shader) {
 }
 
 // Load the shader from file
-GLuint ShaderProgram::load_shader_from_file(std::string path, GLenum shader_type) {
+unsigned int ShaderProgram::load_shader_from_file(std::string path, GLenum shader_type) {
     // Open file
-	GLuint shaderID = 0;
+	unsigned int shaderID = 0;
 	std::string shaderString;
 	std::ifstream sourceFile( path.c_str() );
 
@@ -134,7 +134,7 @@ GLuint ShaderProgram::load_shader_from_file(std::string path, GLenum shader_type
         glCompileShader( shaderID );
 
         //Check shader for errors
-        GLint shaderCompiled = GL_FALSE;
+        int shaderCompiled = GL_FALSE;
         glGetShaderiv( shaderID, GL_COMPILE_STATUS, &shaderCompiled );
         if( shaderCompiled != GL_TRUE )
         {

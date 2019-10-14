@@ -111,9 +111,6 @@ class Application {
 
       bool load_program();
       /*********************************************/
-
-      // Set viewport
-      void setViewport();
       
       // Flag for mouse button pressed
       bool mouseButtonPressed;
@@ -134,7 +131,7 @@ class Application {
 
       // DebugDraw
       DebugDraw debugDraw;
-      SDL_Rect r[15];
+      GLFloatRect r[15];
 
       // Animation speed
       float animation_speed_;
@@ -218,7 +215,7 @@ class Application {
 
       //OpenGL context
       SDL_GLContext gl_context_;
-      GLuint gl_program_id_;
+      unsigned int gl_program_id_;
 
       // Screen Dimensions
       int SCREEN_WIDTH;
@@ -236,7 +233,7 @@ class Application {
       Timer capTimer;
 
       // Viewport
-      SDL_Rect viewport;
+      GLFloatRect viewport;
    
       // Player object
       Player *player;

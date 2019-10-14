@@ -46,30 +46,30 @@ class BasicShaderProgram : public ShaderProgram {
         void update_modelview_matrix();
 
         // Set the texture color
-        void set_texture_color(ColorRGBA color);
+        void set_texture_color(GLColorRGBA color);
 
         // Set the texture unit
-        void set_texture_unit(GLuint unit);
+        void set_texture_unit(unsigned int unit);
 
     private:
         // Construct basic shader program
         BasicShaderProgram();
 
         // Attribute locations
-        GLint vertex_pos2D_location_;
-        GLint tex_coord_location_;
-        GLint color_location_;
+        int vertex_pos2D_location_;
+        int tex_coord_location_;
+        int color_location_;
 
         // Texture unit location
-        GLint tex_unit_location_;
+        int tex_unit_location_;
 
         // Projection matrix
         glm::mat4 projection_matrix_;
-        GLint projection_matrix_location_;
+        int projection_matrix_location_;
 
         // Model view matrix
         glm::mat4 modelview_matrix_;
-        GLint modelview_matrix_location_;
+        int modelview_matrix_location_;
 
     public:
       // More singleton stuff

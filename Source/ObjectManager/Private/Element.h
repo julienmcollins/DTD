@@ -148,7 +148,7 @@ class Element {
 
       // Texture related stuff
       virtual Texture *get_texture();
-      SDL_Rect *get_curr_clip();
+      GLFloatRect *get_curr_clip();
 
       // Texture for each element
       Texture texture;
@@ -204,6 +204,10 @@ class Element {
       // Height and widths
       float height_;
       float width_;
+
+   public:
+      // This section will deal with everything OpenGL related
+      
 };
 
 

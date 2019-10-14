@@ -176,8 +176,8 @@ void Element::load_image(int w, int h, int frame_num, float fps, std::string nam
       success = false;
    } else {
       // Allocate space
-      textures[name].clips_ = new SDL_Rect[frame_num];
-      SDL_Rect *temp = textures[name].clips_;
+      textures[name].clips_ = new GLFloatRect[frame_num];
+      GLFloatRect *temp = textures[name].clips_;
 
       int columns = (frame_num + rows - 1) / rows;
 
@@ -365,7 +365,7 @@ Texture *Element::get_texture() {
 }
 
 // Get current clip
-SDL_Rect *Element::get_curr_clip() {
+GLFloatRect *Element::get_curr_clip() {
    Texture *tmp = get_texture();
    return tmp->curr_clip_;
 }

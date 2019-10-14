@@ -12,6 +12,9 @@ class ShaderProgram {
         // Destructor for shader program
         virtual ~ShaderProgram();
 
+        // Program ID
+        GLuint program_ID;
+
         // Load the actual program
         virtual bool load_program() = 0;
 
@@ -24,8 +27,15 @@ class ShaderProgram {
         // Unbind the program upon deletion
         void unbind();
 
-        // Get the program id
-        GLuint get_program_id();
+        // Get vertex shader id
+        GLuint get_vertex_shader_id() {
+            return vertex_shader;
+        }
+
+        // Get fragment shader id
+        GLuint get_fragment_shader_id() {
+            return fragment_shader;
+        }
 
     protected:
         // Print the program logs
@@ -37,8 +47,9 @@ class ShaderProgram {
         // Load the shader from file
         GLuint load_shader_from_file(std::string path, GLenum shader_type);
 
-        // Program ID
-        GLuint program_ID;
+        // Shader IDs
+        GLuint vertex_shader;
+        GLuint fragment_shader;
 };
 
 #endif

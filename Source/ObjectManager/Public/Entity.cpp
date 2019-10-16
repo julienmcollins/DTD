@@ -1,8 +1,10 @@
-#include "Source/Private/Entity.h"
-#include "Source/Private/Object.h"
-#include "Source/Private/Texture.h"
-#include "Source/Private/Application.h"
-#include "Source/Private/Timer.h"
+#include "Source/ObjectManager/Private/Entity.h"
+#include "Source/ObjectManager/Private/Object.h"
+#include "Source/ObjectManager/Private/Timer.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
+
+#include "Source/GameEngine/Private/Application.h"
 
 #include <cmath>
 #include <stdlib.h>
@@ -504,34 +506,34 @@ void Player::update(bool freeze) {
    // Render player
    Texture *playertexture = get_texture();
 
-   // Render arm if idle, render shooting if not
+   // Render arm if idle, Render shooting if not
    if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != BALANCE && player_state_ != DEATH) {
       if (!shooting) {
-         if (get_player_state() == RUN) {
-            textures["running_arm"].render(get_tex_x() + get_width() +
-               arm_delta_x, get_tex_y() + arm_delta_y,
-               textures["running_arm"].curr_clip_, 0.0,
-               &textures["running_arm"].center_, textures["running_arm"].flip_);
-         } else if (get_player_state() == DOUBLE_JUMP) {
-            textures["double_jump_arm"].render(get_tex_x() + get_width() +
-               arm_delta_x, get_tex_y() + arm_delta_y, textures["double_jump_arm"].curr_clip_, 0.0,
-               &textures["double_jump_arm"].center_, textures["double_jump_arm"].flip_);
-         } else {
-            //std::cout << textures["idle_arm"].max_frame_ << std::endl;
-            textures["idle_arm"].render(get_tex_x() + get_width() + 
-               arm_delta_x, get_tex_y() + arm_delta_y, textures["idle_arm"].curr_clip_, 0.0, 
-               &textures["idle_arm"].center_, textures["idle_arm"].flip_);
-         }
+         // if (get_player_state() == RUN) {
+         //    textures["running_arm"].Render(get_tex_x() + get_width() +
+         //       arm_delta_x, get_tex_y() + arm_delta_y,
+         //       textures["running_arm"].curr_clip_, 0.0,
+         //       &textures["running_arm"].center_, textures["running_arm"].flip_);
+         // } else if (get_player_state() == DOUBLE_JUMP) {
+         //    textures["double_jump_arm"].Render(get_tex_x() + get_width() +
+         //       arm_delta_x, get_tex_y() + arm_delta_y, textures["double_jump_arm"].curr_clip_, 0.0,
+         //       &textures["double_jump_arm"].center_, textures["double_jump_arm"].flip_);
+         // } else {
+         //    //std::cout << textures["idle_arm"].max_frame_ << std::endl;
+         //    textures["idle_arm"].Render(get_tex_x() + get_width() + 
+         //       arm_delta_x, get_tex_y() + arm_delta_y, textures["idle_arm"].curr_clip_, 0.0, 
+         //       &textures["idle_arm"].center_, textures["idle_arm"].flip_);
+         // }
       } else {
-         textures["arm_throw"].render(get_tex_x() + get_width() + 
-            arm_delta_shoot_x, get_tex_y() + arm_delta_shoot_y, 
-            textures["arm_throw"].curr_clip_, 0.0, 
-            &textures["arm_throw"].center_, textures["arm_throw"].flip_);
+         // textures["arm_throw"].Render(get_tex_x() + get_width() + 
+         //    arm_delta_shoot_x, get_tex_y() + arm_delta_shoot_y, 
+         //    textures["arm_throw"].curr_clip_, 0.0, 
+         //    &textures["arm_throw"].center_, textures["arm_throw"].flip_);
       }
    }
 
    // Render player
-   render(playertexture);
+   Render(playertexture);
 }
 
 // Adjust delta function
@@ -1097,8 +1099,8 @@ Texture *Hitmarker::get_texture() {
 
 // Update function
 void Hitmarker::update(bool freeze) {
-   // Animate and render
+   // Animate and Render
    animate();
    Texture *tex = get_texture();
-   render(tex);
+   Render(tex);
 }

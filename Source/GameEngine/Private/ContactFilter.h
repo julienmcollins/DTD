@@ -1,8 +1,9 @@
 #include <Box2D/Box2D.h>
 #include <string>
 #include <iostream>
-#include "Element.h"
-#include "Object.h"
+
+#include "Source/ObjecManager/Private/Element.h"
+#include "Source/ObjecManager/Private/Object.h"
 
 // Contact filter class
 class ContactFilter : public b2ContactFilter {

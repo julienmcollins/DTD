@@ -4,8 +4,10 @@
 #include <Box2D/Box2D.h>
 #include <string>
 #include <iostream>
-#include "Texture.h"
-#include "Element.h"
+
+#include "Source/ObjectManager/Private/Element.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
 
 class Entity;
 

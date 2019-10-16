@@ -21,13 +21,15 @@
 #include <vector>
 #include <unordered_map>
 
-#include "Element.h"
-#include "Texture.h"
-#include "Entity.h"
-#include "Timer.h"
-#include "Object.h"
-#include "DebugDraw.h"
-#include "ContactListener.h"
+#include "Source/RenderingEngine/Private/Texture.h"
+#include "Source/RenderingEngine/Private/DebugDraw.h"
+
+#include "Source/ObjectManager/Private/Element.h"
+#include "Source/ObjectManager/Private/Entity.h"
+#include "Source/ObjectManager/Private/Timer.h"
+#include "Source/ObjectManager/Private/Object.h"
+
+#include "Source/GameEngine/Private/ContactListener.h"
 
 #define NUM_BLOCKS 6
 
@@ -76,7 +78,7 @@ class Application {
       }
 
       // Initialize external libraries
-      bool init();
+      bool Init();
 
       // Load Media
       bool loadMedia();
@@ -92,7 +94,7 @@ class Application {
       /*********** SDL WINDOW STUFF ***************/
 
       // The main window of the application
-      SDL_Window* mainWindow;
+      SDL_Window* main_window;
       
       // Load textures (now redundant)
       SDL_Texture* loadTexture(std::string path);
@@ -107,17 +109,15 @@ class Application {
 
       /************* OPENGL STUFF ******************/
       // Initialze OpenGL
-      bool initOpenGL();
-
-      bool load_program();
+      bool InitOpenGL();
       /*********************************************/
       
       // Flag for mouse button pressed
       bool mouseButtonPressed;
 
       // Get screen height and width
-      const int get_height();
-      const int get_width();
+      const float get_height();
+      const float get_width();
 
       // Get ground
       Texture get_ground();
@@ -218,8 +218,8 @@ class Application {
       unsigned int gl_program_id_;
 
       // Screen Dimensions
-      int SCREEN_WIDTH;
-      int SCREEN_HEIGHT;
+      float SCREEN_WIDTH;
+      float SCREEN_HEIGHT;
 
       // Frame rate capping    
       const int SCREEN_FPS;

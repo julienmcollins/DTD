@@ -6,7 +6,7 @@
 //  Copyright © 2017 The Boys. All rights reserved.
 //
 
-#include "Source/Private/Timer.h"
+#include "Source/ObjectManager/Private/Timer.h"
 
 #include <stdio.h>
 #include <SDL2/SDL.h>

@@ -1,151 +1,202 @@
-#include "Source/Private/ShaderProgram.h"
+#include "Source/RenderingEngine/Private/ShaderProgram.h"
 
+#include <sstream>
 #include <fstream>
 #include <iostream>
+
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
 
 // Instantiate program id to null
 ShaderProgram::ShaderProgram() {
-    program_ID = NULL;
+	// Set program id to 0 at beginning
+	program_ID = 0;
 }
 
 // Delete the program
 ShaderProgram::~ShaderProgram() {
     // Free the program
-    free_program();
-}
-
-// Free the program
-void ShaderProgram::free_program() {
     glDeleteProgram(program_ID);
 }
 
 // Bind the shaders to the program
-bool ShaderProgram::bind() {
+ShaderProgram &ShaderProgram::Use() {
     // Use the shader
     glUseProgram(program_ID);
-
-    // Check for error
-    GLenum error = glGetError();
-    if (error != GL_NO_ERROR) {
-        cout << "Error binding shader! " << gluErrorString(error) << endl;
-        print_program_log(program_ID);
-        return false;
-    }
-
-    return true;
+	return *this;
 }
 
-// Unbind the shader by binding it to NULL
-void ShaderProgram::unbind() {
-    glUseProgram(NULL);
-}
+void ShaderProgram::GetShaderFromFile(const GLchar *vertex_shader_file, const GLchar *frag_shader_file, const GLchar *geo_shader_file) {
+	// Define file paths
+	string vertex_code;
+	string frag_code;
+	string geo_code;
 
-// Get the program id back
-unsigned int ShaderProgram::get_program_id() {
-    return program_ID;
-}
+	// Attempt to load
+	try {
+		// Open the files
+		ifstream vertex_file(vertex_shader_file);
+		ifstream frag_file(frag_shader_file);
+		stringstream vertex_stream, frag_stream;
 
-// Print the program log
-void ShaderProgram::print_program_log(unsigned int program) {
-    //Make sure name is shader
-	if( glIsProgram( program ) )
-	{
-		//Program log length
-		int infoLogLength = 0;
-		int maxLength = infoLogLength;
+		// Read the file's content
+		vertex_stream << vertex_file.rdbuf();
+		frag_stream << frag_file.rdbuf();
 
-		//Get info string length
-		glGetProgramiv( program, GL_INFO_LOG_LENGTH, &maxLength );
+		// Close the handlers
+		vertex_file.close();
+		frag_file.close();
 
-		//Allocate string
-		char* infoLog = new char[ maxLength ];
+		// Convert the stream into string
+		vertex_code = vertex_stream.str();
+		frag_code = frag_stream.str();
 
-		//Get info log
-		glGetProgramInfoLog( program, maxLength, &infoLogLength, infoLog );
-		if( infoLogLength > 0 )
-		{
-			//Print Log
-            cout << infoLog << std::endl;
+		// Load geo shader if present
+		if (geo_shader_file) {
+			ifstream geo_file(geo_shader_file);
+			stringstream geo_stream;
+			geo_stream << geo_file.rdbuf();
+			geo_file.close();
+			geo_code = geo_stream.str();
 		}
-
-		//Deallocate string
-		delete[] infoLog;
+	} catch (exception e) {
+		cout << "ShaderProgram::GetShaderFromFile() - Error reading shader files\n";
 	}
-	else
-	{
-        cout << "Name " << program << " is not a program\n";
+
+	// Convert to cstrings
+	const GLchar *vertex_shader_code = vertex_code.c_str();
+	const GLchar *frag_shader_code = frag_code.c_str();
+	const GLchar *geo_shader_code = geo_shader_file != nullptr ? geo_code.c_str() : nullptr;
+
+	// Load the shader
+	LoadShaderProgram(vertex_shader_code, frag_shader_code, geo_shader_code);
+}
+
+void ShaderProgram::LoadShaderProgram(const GLchar *vertex_source, const GLchar *frag_source, const GLchar *geo_source) {
+	// Define shaders
+	GLuint vertex, frag, geo;
+
+	// Load the vertex shader
+	vertex = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertex, 1, &vertex_source, NULL);
+	glCompileShader(vertex);
+	CheckCompileErrors(vertex, "VERTEX");
+
+	// Load fragment shader
+	frag = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(frag, 1, &frag_source, NULL);
+	glCompileShader(frag);
+	CheckCompileErrors(frag, "FRAGMENT");
+
+	// Load geo shader (if it exists)
+	if (geo_source) {
+		std::cout << "jere\n";
+		geo = glCreateShader(GL_GEOMETRY_SHADER);
+		glShaderSource(geo, 1, &geo_source, NULL);
+		glCompileShader(geo);
+		CheckCompileErrors(geo, "GEOMETRY");
+	}
+
+	// Create the actual program
+	program_ID = glCreateProgram();
+	glAttachShader(program_ID, vertex);
+	glAttachShader(program_ID, frag);
+	if (geo_source) {
+		glAttachShader(program_ID, geo);
+	}
+
+	// Link the program
+	glLinkProgram(program_ID);
+	CheckCompileErrors(program_ID, "PROGRAM");
+
+	// Delete the shaders
+	glDeleteShader(vertex);
+	glDeleteShader(frag);
+	if (geo_source) {
+		glDeleteShader(geo);
 	}
 }
 
-// Print shader log
-void ShaderProgram::print_shader_log(unsigned int shader) {
-    //Make sure name is shader
-	if( glIsShader( shader ) )
-	{
-		//Shader log length
-		int infoLogLength = 0;
-		int maxLength = infoLogLength;
-
-		//Get info string length
-		glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &maxLength );
-
-		//Allocate string
-		char* infoLog = new char[ maxLength ];
-
-		//Get info log
-		glGetShaderInfoLog( shader, maxLength, &infoLogLength, infoLog );
-		if( infoLogLength > 0 )
-		{
-			//Print Log
-            cout << infoLog << endl;
-		}
-
-		//Deallocate string
-		delete[] infoLog;
-	}
-	else
-	{
-        cout << "Name " << shader << " is not a shader\n";
-	}
+void ShaderProgram::SetFloat(const GLchar *name, GLfloat value, GLboolean useShader)
+{
+    if (useShader)
+        this->Use();
+    glUniform1f(glGetUniformLocation(program_ID, name), value);
+}
+void ShaderProgram::SetInteger(const GLchar *name, GLint value, GLboolean useShader)
+{
+    if (useShader)
+        this->Use();
+    glUniform1i(glGetUniformLocation(program_ID, name), value);
+}
+void ShaderProgram::SetVector2f(const GLchar *name, GLfloat x, GLfloat y, GLboolean useShader)
+{
+    if (useShader)
+        this->Use();
+    glUniform2f(glGetUniformLocation(program_ID, name), x, y);
+}
+void ShaderProgram::SetVector2f(const GLchar *name, const glm::vec2 &value, GLboolean useShader)
+{
+    if (useShader)
+        this->Use();
+    glUniform2f(glGetUniformLocation(program_ID, name), value.x, value.y);
+}
+void ShaderProgram::SetVector3f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z, GLboolean useShader)
+{
+    if (useShader)
+        this->Use();
+    glUniform3f(glGetUniformLocation(program_ID, name), x, y, z);
+}
+void ShaderProgram::SetVector3f(const GLchar *name, const glm::vec3 &value, GLboolean useShader)
+{
+    if (useShader)
+        this->Use();
+    glUniform3f(glGetUniformLocation(program_ID, name), value.x, value.y, value.z);
+}
+void ShaderProgram::SetVector4f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLboolean useShader)
+{
+    if (useShader)
+        this->Use();
+    glUniform4f(glGetUniformLocation(program_ID, name), x, y, z, w);
+}
+void ShaderProgram::SetVector4f(const GLchar *name, const glm::vec4 &value, GLboolean useShader)
+{
+    if (useShader)
+        this->Use();
+    glUniform4f(glGetUniformLocation(program_ID, name), value.x, value.y, value.z, value.w);
+}
+void ShaderProgram::SetMatrix4(const GLchar *name, const glm::mat4 &matrix, GLboolean useShader)
+{
+    if (useShader)
+        this->Use();
+    glUniformMatrix4fv(glGetUniformLocation(program_ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-// Load the shader from file
-unsigned int ShaderProgram::load_shader_from_file(std::string path, GLenum shader_type) {
-    // Open file
-	unsigned int shaderID = 0;
-	std::string shaderString;
-	std::ifstream sourceFile( path.c_str() );
-
-	//Source file loaded
-	if(sourceFile) {
-	    //Get shader source
-		shaderString.assign( ( std::istreambuf_iterator< char >( sourceFile ) ), std::istreambuf_iterator< char >() );
-
-		//Create shader ID
-		shaderID = glCreateShader( shader_type );
-
-        //Set shader source
-        const GLchar* shaderSource = shaderString.c_str();
-        glShaderSource( shaderID, 1, (const GLchar**)&shaderSource, NULL );
-
-        //Compile shader source
-        glCompileShader( shaderID );
-
-        //Check shader for errors
-        int shaderCompiled = GL_FALSE;
-        glGetShaderiv( shaderID, GL_COMPILE_STATUS, &shaderCompiled );
-        if( shaderCompiled != GL_TRUE )
+void ShaderProgram::CheckCompileErrors(GLuint object, std::string type)
+{
+    GLint success;
+    GLchar infoLog[1024];
+    if (type != "PROGRAM")
+    {
+        glGetShaderiv(object, GL_COMPILE_STATUS, &success);
+        if (!success)
         {
-            cout << "Unable to compile shader " << shaderID << "\n\nSource:\n" << shaderSource << "\n";
-            print_shader_log( shaderID );
-            glDeleteShader( shaderID );
-            shaderID = 0;
+            glGetShaderInfoLog(object, 1024, NULL, infoLog);
+            std::cout << "| ERROR::SHADER: Compile-time error: Type: " << type << "\n"
+                << infoLog << "\n -- --------------------------------------------------- -- "
+                << std::endl;
         }
-	} else {
-        cout << "Unable to open file " << path.c_str() << endl;
     }
-
-	return shaderID;
+    else
+    {
+        glGetProgramiv(object, GL_LINK_STATUS, &success);
+        if (!success)
+        {
+            glGetProgramInfoLog(object, 1024, NULL, infoLog);
+            std::cout << "| ERROR::Shader: Link-time error: Type: " << type << "\n"
+                << infoLog << "\n -- --------------------------------------------------- -- "
+                << std::endl;
+        }
+    }
 }

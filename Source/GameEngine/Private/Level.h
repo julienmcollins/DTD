@@ -1,11 +1,13 @@
 #ifndef Level_h
 #define Level_h
 
-#include "Element.h"
-#include "Texture.h"
-#include "Entity.h"
-#include "Object.h"
-#include "Application.h"
+#include "Source/ObjectManager/Private/Element.h"
+#include "Source/ObjectManager/Private/Entity.h"
+#include "Source/ObjectManager/Private/Object.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
+
+#include "Source/GameEngine/Private/Application.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -23,7 +25,7 @@ class Level {
       // Level constructor takes in a string to the template file
       Level(std::string file, Application::FOREST level);
 
-      // Update function for the level, which will render all of its assets
+      // Update function for the level, which will Render all of its assets
       void update();
 
       // Add an enemy to the level

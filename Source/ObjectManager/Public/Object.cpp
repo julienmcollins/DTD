@@ -1,8 +1,10 @@
-#include "Source/Private/Object.h"
-#include "Source/Private/Entity.h"
-#include "Source/Private/Enemy.h"
-#include "Source/Private/Texture.h"
-#include "Source/Private/Application.h"
+#include "Source/ObjectManager/Private/Object.h"
+#include "Source/ObjectManager/Private/Entity.h"
+#include "Source/ObjectManager/Private/Enemy.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
+
+#include "Source/GameEngine/Private/Application.h"
 
 #include <iostream>
 
@@ -96,7 +98,7 @@ Projectile::Projectile(int x, int y, bool owner, int damage,
    }
    body->ApplyForce(force, body->GetPosition(), true);
    
-   // Now add it to the things the world needs to render
+   // Now add it to the things the world needs to Render
    Application::get_instance().getProjectileVector()->push_back(this);
    
    // Set object state
@@ -112,9 +114,9 @@ void Projectile::update() {
    if (object_state_ == ALIVE) {
       Element::animate(&textures["normal"]);
       if (shot_dir == LEFT) {
-         textures["normal"].render(get_tex_x(), get_tex_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+         // textures["normal"].Render(get_tex_x(), get_tex_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
       } else {
-         textures["normal"].render(get_tex_x(), get_tex_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
+         // textures["normal"].Render(get_tex_x(), get_tex_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE);
       }
    } else if (object_state_ == DEAD) {
       if (body) {
@@ -127,9 +129,9 @@ void Projectile::update() {
       }
       Element::animate(&textures["explode"]);
       if (shot_dir == LEFT) {
-         textures["explode"].render(get_tex_x(), get_tex_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+         // textures["explode"].Render(get_tex_x(), get_tex_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
       } else {
-         textures["explode"].render(get_tex_x(), get_tex_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE); 
+         // textures["explode"].Render(get_tex_x(), get_tex_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_NONE); 
       }
    }
 }

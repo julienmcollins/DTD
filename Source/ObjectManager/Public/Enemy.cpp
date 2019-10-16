@@ -1,10 +1,12 @@
-#include "Source/Private/Enemy.h"
-#include "Source/Private/Entity.h"
-#include "Source/Private/Object.h"
-#include "Source/Private/Texture.h"
-#include "Source/Private/Application.h"
-#include "Source/Private/Level.h"
-#include "Source/Private/Global.h"
+#include "Source/ObjectManager/Private/Enemy.h"
+#include "Source/ObjectManager/Private/Entity.h"
+#include "Source/ObjectManager/Private/Object.h"
+#include "Source/ObjectManager/Private/Global.h"
+
+#include "Source/GameEngine/Private/Application.h"
+#include "Source/GameEngine/Private/Level.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
 
 #include <stdio.h>
 #include <cmath>
@@ -71,7 +73,7 @@ void Enemy::update(bool freeze) {
    Texture *enemytexture = get_texture();
 
    // Render player
-   render(enemytexture);
+   Render(enemytexture);
 }
 
 Texture *Enemy::get_texture() {
@@ -404,13 +406,13 @@ void Rosea::update(bool freeze) {
    // Render arms
    if (enemy_state_ == IDLE) {
       if (angle_ == 0.0f) {
-         arms_still.render(&arms_still.textures["arms_idle"]);
+         arms_still.Render(&arms_still.textures["arms_idle"]);
       } else {
          arms_still.texture_render(&arms_still.textures["arms_idle"]);
       }
    } else if (enemy_state_ == HURT) {
       if (angle_ == 0.0f) {
-         arms_still.render(&arms_still.textures["arms_hurt"]);
+         arms_still.Render(&arms_still.textures["arms_hurt"]);
       } else {
          arms_still.texture_render(&arms_still.textures["arms_hurt"]);
       }
@@ -420,9 +422,9 @@ void Rosea::update(bool freeze) {
 
    // Render enemy
    if (angle_ == 0.0f) {
-      render(enemytexture);
+      Render(enemytexture);
    } else {
-      render(enemytexture, anchor_x, anchor_y);
+      Render(enemytexture, anchor_x, anchor_y);
    }
 }
 

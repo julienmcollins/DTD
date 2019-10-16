@@ -1,14 +1,19 @@
- //
+//
 //  Texture.cpp
 //  Janitor: The Story
 //
 //  Created by Julien Collins on 9/14/17.
 //  Copyright © 2017 The Boys. All rights reserved.
 //
-#include "Source/Private/Texture.h"
-#include "Source/Private/Global.h"
-#include "Source/Private/Element.h"
-#include "Source/Private/BasicShaderProgram.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
+#include "Source/RenderingEngine/Private/BasicShaderProgram.h"
+#include "Source/RenderingEngine/Private/RenderingEngine.h"
+
+#include "Source/ObjectManager/Private/Global.h"
+#include "Source/ObjectManager/Private/Element.h"
+
+#include "Source/GameEngine/Private/Application.h"
 
 #include <iostream>
 
@@ -21,22 +26,19 @@ Texture::Texture(Element *element, int max_frame, float fps_val) : clips_(NULL),
    m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {
 
     // Set rect
-    tex_dimensions = {0.f, 1.f, 0.f, 1.f};
+    tex_dimensions = {1.f, 0.f, 0.f, 1.f};
 
     // Start timer
     fps_timer.start();
 }
 
 // Loads textures from files
-bool Texture::loadFromFile(std::string path) {
+bool Texture::LoadFromFile(const GLchar *file, GLboolean alpha) {
     // Free preexisting textures
-    free();
-    
-    // The final texture
-    SDL_Texture* newTexture = NULL;
+    Free();
     
     // Load image at specified path
-    SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+    SDL_Surface* loadedSurface = IMG_Load(file);
 
     // Width and Height
     m_width = loadedSurface->w;
@@ -45,10 +47,9 @@ bool Texture::loadFromFile(std::string path) {
     
     // Check loaded surface
     if (loadedSurface == NULL) {
-        printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+        printf("Unable to load image %s! SDL_image Error: %s\n", file, IMG_GetError());
         return false;
     } else {
-        /******* OPENGL SETUP **********/
         // Init VAO
         init_VAO();
 
@@ -72,7 +73,7 @@ bool Texture::loadFromFile(std::string path) {
         glTexImage2D(GL_TEXTURE_2D, 0, pixel_format, loadedSurface->w, loadedSurface->h, 0, pixel_format, GL_UNSIGNED_BYTE, loadedSurface->pixels);
 
         // Unbind texture
-        glBindTexture(GL_TEXTURE_2D, NULL);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         // Check error
         GLenum error = glGetError();
@@ -80,35 +81,13 @@ bool Texture::loadFromFile(std::string path) {
             cout << "Error loading texture from " << loadedSurface->pixels << " pixels! " << gluErrorString(error) << endl;
             return false;
         }
-
-        /*******************************/
-
-        // // Color key image
-        // SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
-        
-        // // Create texture from surface pixels
-        // newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-        // if (newTexture == NULL) {
-        //     printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-        // } else {
-        //     // Get image dimensions
-        //     m_width = loadedSurface->w;
-        //     m_height = loadedSurface->h;
-        //     center_ = {m_width / 2, m_height / 2};
-        // }
-        
-        // // Get rid of old loaded surface
-        // SDL_FreeSurface(loadedSurface);
     }
     
-    // Return success
-    // m_texture = newTexture;
-    // return m_texture != NULL;
     return true;
 }
 
 // Free textures
-void Texture::free() {
+void Texture::Free() {
     // Free texture if it exists
     if (texture_ID != 0) {
         glDeleteTextures( 1, &texture_ID );
@@ -122,23 +101,27 @@ void Texture::free() {
     texture_height = 0;
 
     //Set pixel format
-    pixel_format = NULL;
+    pixel_format = 0;
 }
 
 void Texture::init_VAO() {
     // If texture is loaded and VBO does not already exist
     if (VBO_ID == 0) {
-        cout << "Texture::init_VAO() - INITIALIZING VAO\n";
-
         // Vertex data
-        GLTexturedVertex2D vData[ 4 ];
-        unsigned int iData[ 4 ];
+        // GLTexturedVertex2D vData[ 4 ];
+        float vertices[] = {
+            // positions  // texture coords
+            1.0f,  1.0f,  1.0f, 1.0f, // top right
+            1.0f, -1.0f,  1.0f, 0.0f, // bottom right
+           -1.0f, -1.0f,  0.0f, 0.0f, // bottom left
+           -1.0f,  1.0f,  0.0f, 1.0f  // top left
+        };
 
-        //Set rendering indices
-        iData[ 0 ] = 0;
-        iData[ 1 ] = 1;
-        iData[ 2 ] = 2;
-        iData[ 3 ] = 3;
+        // Indices
+        GLuint indices[] = {
+            0, 1, 3, // First triangle
+            1, 2, 3  // Second triangle
+        };
 
         // Generate buffers
         glGenVertexArrays(1, &VAO_ID);
@@ -150,34 +133,27 @@ void Texture::init_VAO() {
 
         // Create VBO
         glBindBuffer( GL_ARRAY_BUFFER, VBO_ID );
-        glBufferData( GL_ARRAY_BUFFER, 4 * sizeof(GLTexturedVertex2D), vData, GL_STATIC_DRAW );
+        glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW );
 
         // Create IBO
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO_ID );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(unsigned int), iData, GL_STATIC_DRAW );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
 
-        // Set attributes
-        BasicShaderProgram::get_instance().set_vertex_pointer(sizeof(GLTexturedVertex2D), (GLvoid *) offsetof(GLTexturedVertex2D, tex_coord));
-        BasicShaderProgram::get_instance().set_tex_pointer(sizeof(GLTexturedVertex2D), (GLvoid *) offsetof(GLTexturedVertex2D, position));
+        // Position attribute
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        
+        // Color attribute
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+        glEnableVertexAttribArray(1);
 
-        // Unbind buffers
-        // glBindBuffer( GL_ARRAY_BUFFER, NULL );
-        // glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, NULL );
-
-        // Generate, bind and enable vertex array objects
-        //BasicShaderProgram::get_instance().enable_data_pointers();
-
-        // Set vertex data
-        // glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);
-        // BasicShaderProgram::get_instance().set_vertex_pointer(sizeof(GLTexturedVertex2D), (GLvoid *) offsetof(GLTexturedVertex2D, tex_coord));
-        // BasicShaderProgram::get_instance().set_tex_pointer(sizeof(GLTexturedVertex2D), (GLvoid *) offsetof(GLTexturedVertex2D, position));
-
-        // Unbind
-        // glBindVertexArray(NULL);
+        // Disable
+        // glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // glBindVertexArray(0);
     }
 }
 
-void Texture::free_VBO() {
+void Texture::Free_VBO() {
     // Free VBO and IBO
     if (VBO_ID != 0) {
         glDeleteBuffers( 1, &VBO_ID );
@@ -185,73 +161,75 @@ void Texture::free_VBO() {
     }
 }
 
-// Render textures
-void Texture::render(int x, int y, GLFloatRect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip) {
-    // Set rendering space and render to screen
-    GLFloatRect renderQuad = {x, y, m_width, m_height};
-    
-    // Set clip rendering dimensions
-    if (clip != NULL) {
-        renderQuad.w = clip->w;
-        renderQuad.h = clip->h;
-    }
-    
-    // Render to screen
-    //SDL_RenderCopyEx(renderer, m_texture, clip, &renderQuad, angle, center, flip);
-
-    // Set x and y position
-    this->x = x;
-    this->y = y;
-}
-
 // Render OpenGL type textures
-void Texture::render(float x, float y, GLFloatRect *clip) {
+void Texture::Render(float x, float y, GLFloatRect *clip) {
     if (texture_ID != 0) {
-        float quad_width = m_width;
-        float quad_height = m_height;
+        // float quad_width = (float) m_width / Application::get_instance().get_width();
+        // float quad_height = (float) m_height / Application::get_instance().get_height();
 
-        if (clip != NULL) {
-            tex_dimensions.l = clip->x / m_width;
-            tex_dimensions.r = (clip->x + clip->w) / m_width;
-            tex_dimensions.t = clip->y / m_height;
-            tex_dimensions.b = (clip->y + clip->h) / m_height;
+        // if (clip != NULL) {
+        //     tex_dimensions.l = clip->x / m_width;
+        //     tex_dimensions.r = (clip->x + clip->w) / m_width;
+        //     tex_dimensions.t = clip->y / m_height;
+        //     tex_dimensions.b = (clip->y + clip->h) / m_height;
 
-            quad_width = clip->w;
-            quad_height = clip->h;
-        }
+        //     quad_width = clip->w;
+        //     quad_height = clip->h;
+        // }
 
-        // Move to render point
-        BasicShaderProgram::get_instance().left_mult_modelview(glm::translate(glm::vec3(x, y, 0.f)));
-        BasicShaderProgram::get_instance().update_modelview_matrix();
+        // // Move to Render point
+        // // BasicShaderProgram::get_instance().left_mult_modelview(glm::translate(glm::vec3(x, y, 0.f)));
+        // // BasicShaderProgram::get_instance().update_modelview_matrix();
 
-        // Set vertex data
-        GLTexturedVertex2D v_data[4];
-
-        // Tex coords
-        v_data[0].tex_coord.s = tex_dimensions.l; v_data[0].tex_coord.t = tex_dimensions.t;
-        v_data[1].tex_coord.s = tex_dimensions.r; v_data[1].tex_coord.t = tex_dimensions.t;
-        v_data[2].tex_coord.s = tex_dimensions.r; v_data[2].tex_coord.t = tex_dimensions.b;
-        v_data[3].tex_coord.s = tex_dimensions.l; v_data[3].tex_coord.t = tex_dimensions.b;
+        // // Set vertex data
+        // GLTexturedVertex2D v_data[4];
     
-        // Vertex coords
-        v_data[0].position.x =        0.f; v_data[0].position.y =         0.f;
-        v_data[0].position.x = quad_width; v_data[0].position.y =         0.f;
-        v_data[0].position.x = quad_width; v_data[0].position.y = quad_height;
-        v_data[0].position.x =        0.f; v_data[0].position.y = quad_height;
+        // // Vertex coords
+        // v_data[0].position.x = quad_width / 2.f; v_data[0].position.y = quad_height / 2.f; // Top right
+        // v_data[0].position.x = quad_width / 2.f; v_data[0].position.y = -quad_height / 2.f; // Bottom right
+        // v_data[0].position.x = -quad_width / 2.f; v_data[0].position.y = -quad_height / 2.f; // Bottom left
+        // v_data[0].position.x = -quad_width / 2.f; v_data[0].position.y = quad_height / 2.f; // Top left
 
-        // Set texture ID
+        // // Tex coords
+        // v_data[0].tex_coord.s = tex_dimensions.r; v_data[0].tex_coord.t = tex_dimensions.t;
+        // v_data[1].tex_coord.s = tex_dimensions.r; v_data[1].tex_coord.t = tex_dimensions.b;
+        // v_data[2].tex_coord.s = tex_dimensions.l; v_data[2].tex_coord.t = tex_dimensions.b;
+        // v_data[3].tex_coord.s = tex_dimensions.l; v_data[3].tex_coord.t = tex_dimensions.t;
+
+        // // Set texture ID
+        // glActiveTexture(GL_TEXTURE0);
+        // glBindTexture(GL_TEXTURE_2D, texture_ID);
+
+        // // Enable vertex and tex coordinate arrays
+        // // BasicShaderProgram::get_instance().bind();
+        // glBindVertexArray(VAO_ID);
+
+        // // Update texture
+        // //glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(GLTexturedVertex2D), v_data);
+
+        // // Draw it
+        // glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
+
+        // Use shader
+        ShaderProgram shader = RenderingEngine::get_instance().GetShader("texture_shader").Use();
+        
+        // Transform it
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(960, 540, 0.0f));
+        model = glm::scale(model, glm::vec3(1920.0f, 1080.0f, 1.0f));
+
+        // Set transforms and color
+        shader.SetMatrix4("model", model);
+        shader.SetVector3f("color", glm::vec3(1.0f, 0.8f, 0.2f));
+        
+        // Activate texture
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture_ID);
 
-        // Enable vertex and tex coordinate arrays
-        BasicShaderProgram::get_instance().bind();
+        // Draw
         glBindVertexArray(VAO_ID);
-
-        // Update texture
-        //glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(GLTexturedVertex2D), v_data);
-
-        // Draw it
-        glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
     }
 }
 
@@ -276,7 +254,7 @@ int Texture::get_y() const {
 }
 
 Texture &Texture::operator=(const Texture &src) {
-   // Set render equal to it
+   // Set Render equal to it
    // renderer = src.renderer;
    
    // Set textures equal to eachother
@@ -297,9 +275,9 @@ Texture &Texture::operator=(const Texture &src) {
    return (*this);
 }
 
-// Destructor calls free
+// Destructor calls Free
 Texture::~Texture() {
-   //free();
+   //Free();
 }
 
 TextureData::TextureData(int width, int height, int num_of_frames, int frame_width, int frame_height, std::string path) :

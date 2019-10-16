@@ -6,10 +6,11 @@
 #include <string>
 #include <unordered_map>
 
-#include "Entity.h"
-#include "Texture.h"
-#include "Element.h"
-#include "Timer.h"
+#include "Source/ObjectManager/Private/Entity.h"
+#include "Source/ObjectManager/Private/Element.h"
+#include "Source/ObjectManager/Private/Timer.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
 
 class Enemy : public Entity {
    public:

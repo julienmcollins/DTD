@@ -5,9 +5,11 @@
 #include <Box2D/Box2D.h>
 #include <string>
 #include <vector>
-#include "Texture.h"
-#include "Timer.h"
-#include "Element.h"
+
+#include "Source/ObjectManager/Private/Timer.h"
+#include "Source/ObjectManager/Private/Element.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
 
 #define PC_OFF_X 62.0f
 #define PC_OFF_Y 0.0f

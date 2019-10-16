@@ -1,9 +1,11 @@
-#include "Source/Private/Level.h"
-#include "Source/Private/Application.h"
-#include "Source/Private/Texture.h"
-#include "Source/Private/Entity.h"
-#include "Source/Private/Object.h"
-#include "Source/Private/Enemy.h"
+#include "Source/GameEngine/Private/Level.h"
+#include "Source/GameEngine/Private/Application.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
+
+#include "Source/ObjectManager/Private/Entity.h"
+#include "Source/ObjectManager/Private/Object.h"
+#include "Source/ObjectManager/Private/Enemy.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -109,7 +111,8 @@ bool Level::load_media_() {
    bool success = true;
 
    // Get background
-   if (!background_.texture.loadFromFile(dir_ + "background.png")) {
+   std::string dir = dir_ + "background.png";
+   if (!background_.texture.LoadFromFile(dir.c_str(), true)) {
       cerr << "Failed to load background.png" << endl;
       success = false;
    } else {
@@ -139,7 +142,8 @@ bool Level::load_media_() {
    }
 
    // Get platforms texture
-   if (!platform_texture_.loadFromFile(dir_ + "platforms.png")) {
+   dir = dir_ + "platforms.png";
+   if (!platform_texture_.LoadFromFile(dir.c_str(), true)) {
       cerr << "Failed to load platforms.png" << endl;
       success = false;
    } else {
@@ -152,7 +156,7 @@ bool Level::load_media_() {
    return success;
 }
 
-// Update function will render the stuff itself
+// Update function will Render the stuff itself
 void Level::update() {
    //std::cout << "Level::update() - num_of_kills_ = " << num_of_kills_ << std::endl;
    // Only complete levels when number of enemies is 0
@@ -212,7 +216,7 @@ void Level::update() {
    background_.draw();
 
    // Render the platforms
-   platform_texture_.render(0, 0);
+   platform_texture_.Render(0.f, 0.f);
 
    // Render platforms
    for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {
@@ -249,8 +253,8 @@ void Level::destroy_enemy(Enemy *enemy_to_delete) {
 // Level destructor will just delete everything related to the level
 Level::~Level() {
    // Free textures for background
-   background_.texture.free();
-   platform_texture_.free();
+   background_.texture.Free();
+   platform_texture_.Free();
 
    // Delete platforms
    for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {

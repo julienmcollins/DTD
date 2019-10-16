@@ -6,7 +6,7 @@
 //  Copyright © 2017 The Boys. All rights reserved.
 //
 
-#include "Source/Private/Global.h"
+#include "Source/ObjectManager/Private/Global.h"
 
 #include <stdio.h>
 #include <SDL2/SDL.h>

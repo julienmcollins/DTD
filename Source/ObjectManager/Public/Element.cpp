@@ -1,7 +1,8 @@
-#include "Source/Private/Element.h"
-#include "Source/Private/Entity.h"
-#include "Source/Private/Application.h"
-#include "Source/Private/Timer.h"
+#include "Source/ObjectManager/Private/Element.h"
+#include "Source/ObjectManager/Private/Entity.h"
+#include "Source/ObjectManager/Private/Timer.h"
+
+#include "Source/GameEngine/Private/Application.h"
 
 // Constructor for element
 Element::Element(int x, int y, int height, int width) :
@@ -171,7 +172,7 @@ bool Element::load_media() {
 // Loads an image
 void Element::load_image(int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success, int rows) {
    textures.emplace(name, Texture(this, frame_num - 1, fps));
-   if (!textures[name].loadFromFile(file)) {
+   if (!textures[name].LoadFromFile(file.c_str(), true)) {
       std::cerr << "Failed to load " << file << std::endl;
       success = false;
    } else {
@@ -301,16 +302,16 @@ bool Element::is_alive() {
 
 // Render solely based on texture
 void Element::texture_render(Texture *texture) {
-   texture->render(texture->get_x(), texture->get_y(), texture->curr_clip_, texture->angle, 
-         &texture->center_, texture->flip_);
+   // texture->Render(texture->get_x(), texture->get_y(), texture->curr_clip_, texture->angle, 
+   //       &texture->center_, texture->flip_);
 }
 
 // Render function
-void Element::render(Texture *texture, int x, int y) {
+void Element::Render(Texture *texture, int x, int y) {
    // Render based on texture
    int t_x = x == 0 ? get_tex_x() : x;
    int t_y = y == 0 ? get_tex_y() : y;
-   texture->render(t_x, t_y, texture->curr_clip_, texture->angle, &texture->center_, texture->flip_);
+   // texture->Render(t_x, t_y, texture->curr_clip_, texture->angle, &texture->center_, texture->flip_);
 }
 
 // Move function (does nothing)
@@ -351,12 +352,12 @@ void Element::draw(Texture *tex, int reset) {
    animate(tex, reset);
 
    // Render
-   if (tex)
-      tex->render(tex->get_x(), tex->get_y(), tex->curr_clip_, 0.0,
-            &tex->center_, tex->flip_);
-   else
-      texture.render(texture.get_x(), texture.get_y(), texture.curr_clip_, 0.0,
-            &texture.center_, texture.flip_);
+   // if (tex)
+   //    tex->Render(tex->get_x(), tex->get_y(), tex->curr_clip_, 0.0,
+   //          &tex->center_, tex->flip_);
+   // else
+   //    texture.Render(texture.get_x(), texture.get_y(), texture.curr_clip_, 0.0,
+   //          &texture.center_, texture.flip_);
 }
 
 // get texture
@@ -370,10 +371,10 @@ GLFloatRect *Element::get_curr_clip() {
    return tmp->curr_clip_;
 }
 
-// Update function for basic stuff just calls render
+// Update function for basic stuff just calls Render
 void Element::update(bool freeze) {
-   // Simply render the texture
-   texture.render(get_tex_x(), get_tex_y());
+   // Simply Render the texture
+   texture.Render(get_tex_x(), get_tex_y());
 }
 
 // Destructor
@@ -385,11 +386,11 @@ Element::~Element() {
 
    // Free textures
    for (auto i = textures.begin(); i != textures.end(); i++) {
-      i->second.free();
+      i->second.Free();
    }
 
    // Free texture
-   texture.free();
+   texture.Free();
 }
 
 /*************** SENSOR CLASS *************************/

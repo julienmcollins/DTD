@@ -1,8 +1,9 @@
 #include <Box2D/Box2D.h>
 #include <string>
 #include <iostream>
-#include "Element.h"
-#include "Object.h"
+
+#include "Source/ObjectManager/Private/Element.h"
+#include "Source/ObjectManager/Private/Object.h"
 
 // Contact Listener Class
 class ContactListener : public b2ContactListener {

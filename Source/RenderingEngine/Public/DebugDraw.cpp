@@ -1,6 +1,6 @@
-#include "Source/Private/DebugDraw.h"
-#include "Source/Private/Application.h"
-#include "Source/Private/Global.h"
+#include "Source/RenderingEngine/Private/DebugDraw.h"
+#include "Source/GameEngine/Private/Application.h"
+#include "Source/ObjectManager/Private/Global.h"
 
 #include <iostream>
 

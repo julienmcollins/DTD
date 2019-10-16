@@ -6,12 +6,14 @@
 //  Copyright © 2017 The Boys. All rights reserved.
 //
 
-#include "Source/Private/Application.h"
-#include "Source/Private/Entity.h"
-#include "Source/Private/Global.h"
-#include "Source/Private/Level.h"
-#include "Source/Private/Enemy.h"
-#include "Source/Private/BasicShaderProgram.h"
+#include "Source/GameEngine/Private/Application.h"
+#include "Source/GameEngine/Private/Level.h"
+
+#include "Source/ObjectManager/Private/Entity.h"
+#include "Source/ObjectManager/Private/Global.h"
+#include "Source/ObjectManager/Private/Enemy.h"
+
+#include "Source/RenderingEngine/Private/RenderingEngine.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -34,7 +36,7 @@ const std::string Application::audio_path = "Media/Audio/";
 
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
-   SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), pause(-1), mainWindow(NULL), 
+   SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), pause(-1), main_window(NULL), 
    current_key_states_(NULL), mouseButtonPressed(false), quit(false), 
    countedFrames(0), menu_flag(true),
    app_flag_(MAIN_SCREEN),
@@ -51,120 +53,54 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    gameover_screen_(0, 0, 1080, 1920),
    thanks_screen_(0, 0, 1080, 1920) {
     
-    //Initialize SDL
-    if (init()) {
-        // Get screen dimensions
-        SDL_DisplayMode DM;
-        SDL_GetCurrentDisplayMode(0, &DM);
-        SCREEN_WIDTH = DM.w;
-        SCREEN_HEIGHT = DM.h;
-        
-        // Creates window
-        mainWindow = SDL_CreateWindow("Doodle 'Till Death", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
-        
-        if (mainWindow == NULL) {
-            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-            exit(0);
-        } else {
-            //Create context
-            gl_context_ = SDL_GL_CreateContext( mainWindow );
-            if (gl_context_ == NULL) {
-               printf( "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
-               exit(0);
-            } else {
-               //Initialize GLEW
-               glewExperimental = GL_TRUE; 
-               GLenum glewError = glewInit();
-               if( glewError != GLEW_OK )
-               {
-                  printf( "Error initializing GLEW! %s\n", glewGetErrorString( glewError ) );
-               }
+   //Initialize SDL
+   if (!Init()) {
+      std::cout << "Application::Application() - Failed to initialize application\n";
+      exit(0);
+   }
 
-               //Use Vsync
-               if( SDL_GL_SetSwapInterval( 1 ) < 0 )
-               {
-                  printf( "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
-               }
+   //Initialize OpenGL
+   if( !InitOpenGL() )
+   {
+      printf( "Unable to initialize OpenGL!\n" );
+      exit(0);
+   }
 
-               //Initialize OpenGL
-               if( !initOpenGL() )
-               {
-                  printf( "Unable to initialize OpenGL!\n" );
-                  exit(0);
-               }
+   // Set gravity up
+   gravity_ = {0.0f, -11.81f};
+   world_.SetGravity(gravity_);
 
-               if (!load_program()) {
-                  printf("Unable to load shader program!\n");
-                  exit(0);
-               }
-            }
+   // Set up debug drawer
+   world_.SetDebugDraw(&debugDraw);
 
-            // Create renderer for window
-            renderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
-            if (renderer == NULL) {
-                printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-                exit(0);
-            } else {
-                // Initialize renderer color
-                SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-            }
-        }
+   //debugDraw.AppendFlags( b2Draw::e_shapeBit );
+   debugDraw.AppendFlags( b2Draw::e_aabbBit );
+   //debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
 
-        // Set gravity up
-        gravity_ = {0.0f, -11.81f};
-        world_.SetGravity(gravity_);
-        // Set up debug drawer
-        world_.SetDebugDraw(&debugDraw);
-        //debugDraw.AppendFlags( b2Draw::e_shapeBit );
-        debugDraw.AppendFlags( b2Draw::e_aabbBit );
-        //debugDraw.AppendFlags( b2Draw::e_centerOfMassBit );
-        // Set contact listener
-        world_.SetContactListener(&contact_listener_);
-    }
+   // Set contact listener
+   world_.SetContactListener(&contact_listener_);
 
    // Start counting frames per second
    fpsTimer.start();
 }
 
 // Initialize OpenGL
-bool Application::initOpenGL() {
-   // Set clear color
-   glClearColor( 1.f, 1.f, 1.f, 1.f );
+bool Application::InitOpenGL() {
+   // Load shaders, and viewport
+   RenderingEngine::get_instance().LoadShader("texture_shader");
+
+   // Load perspective matrix
+   glm::mat4 projection = glm::ortho(0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, -1.0f, 1.0f);
+   RenderingEngine::get_instance().GetShader("texture_shader").Use().SetInteger("image", 0);
+   RenderingEngine::get_instance().GetShader("texture_shader").SetMatrix4("projection", projection);
+
+   // RenderingEngine::get_instance().LoadApplicationPerspective(projection);
 
    return true;
 }
 
-// Load program
-bool Application::load_program() {
-   //Load double multicolor shader program
-	if( !BasicShaderProgram::get_instance().load_program() )
-	{
-		printf( "Unable to load basic shader!\n" );
-		return false;
-	}
-
-	//Bind double multicolor shader program
-	BasicShaderProgram::get_instance().bind();
-
-	//Initialize projection
-	BasicShaderProgram::get_instance().set_projection_matrix(glm::ortho<float>( 0.0, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0, 1.0, -1.0 ));
-	BasicShaderProgram::get_instance().update_projection_matrix();
-
-	//Initialize modelview
-	BasicShaderProgram::get_instance().set_modelview_matrix(glm::mat4());
-	BasicShaderProgram::get_instance().update_modelview_matrix();
-
-   //Set texture unit
-   BasicShaderProgram::get_instance().set_texture_unit(0);
-
-   // Set active texture to be the 0 one always?
-   glActiveTexture(GL_TEXTURE0);
-
-	return true;
-}
-
 // Checks initialization of SDL functions
-bool Application::init() {
+bool Application::Init() {
    // Success flag 
    bool success = true;
     
@@ -176,7 +112,7 @@ bool Application::init() {
       printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
       success = false;
    } else {
-      //Use OpenGL 4.5 core
+      //Use OpenGL 3.3 core
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -194,6 +130,41 @@ bool Application::init() {
          success = false;
       }
    }
+
+   // Now initialize window
+   SDL_DisplayMode DM;
+   SDL_GetCurrentDisplayMode(0, &DM);
+   SCREEN_WIDTH = DM.w;
+   SCREEN_HEIGHT = DM.h;
+   
+   // Creates window
+   main_window = SDL_CreateWindow("Doodle 'Till Death", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
+   if (main_window == NULL) {
+      printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+      success = false;
+   }
+
+   //Create context
+   gl_context_ = SDL_GL_CreateContext( main_window );
+   if (gl_context_ == NULL) {
+      printf( "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
+      success = false;
+   }
+
+   //Initialize GLEW
+   glewExperimental = GL_TRUE; 
+   GLenum glewError = glewInit();
+   if (glewError != GLEW_OK) {
+      printf( "Error initializing GLEW! %s\n", glewGetErrorString( glewError ) );
+      success = false;
+   }
+
+   //Use Vsync
+   if (SDL_GL_SetSwapInterval(1) < 0) {
+      printf( "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
+      success = false;
+   }
+
    return success;
 }
 
@@ -273,7 +244,8 @@ bool Application::loadMedia() {
    menu_background_.load_image(1920, 1080, 3, 1.0f / 4.0f, "cloud", sprite_path + "Miscealaneous/cloudscreen.png", success);
 
    // Load title
-   if (!menu_title_.texture.loadFromFile(sprite_path + "Miscealaneous/title.png")) {
+   std::string path = sprite_path + "Miscealaneous/title.png";
+   if (!menu_title_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load title.png\n");
       success = false;
    } else {
@@ -292,7 +264,8 @@ bool Application::loadMedia() {
    }
 
    // Load menu
-   if (!menu_items_.texture.loadFromFile(sprite_path + "Miscealaneous/menu.png")) {
+   path = sprite_path + "Miscealaneous/menu.png";
+   if (!menu_items_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load menu.png\n");
       success = false;
    } else {
@@ -313,7 +286,8 @@ bool Application::loadMedia() {
    }
 
    // Load world items
-   if (!world_items_.texture.loadFromFile(sprite_path + "Miscealaneous/worlds.png")) {
+   path = sprite_path + "Miscealaneous/worlds.png";
+   if (!world_items_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load worlds.png\n");
       success = false;
    } else {
@@ -334,7 +308,8 @@ bool Application::loadMedia() {
    }
 
    // Gameover screen
-   if (!gameover_screen_.texture.loadFromFile(sprite_path + "Miscealaneous/gameover.png")) {
+   path = sprite_path + "Miscealaneous/gameover.png";
+   if (!gameover_screen_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load gameover.png\n");
       success = false;
    } else {
@@ -358,14 +333,9 @@ bool Application::loadMedia() {
       gameover_screen_.texture.max_frame_ = 2;
    }
 
-   // load ruler
-   if (!ruler_.texture.loadFromFile(sprite_path + "Miscealaneous/ruler_200.png")) {
-      printf("Failed to load ruler.png\n");
-      success = false;
-   }
-
    // Load thanks
-   if (!thanks_screen_.texture.loadFromFile(sprite_path + "Miscealaneous/thanks.png")) {
+   path = sprite_path + "Miscealaneous/thanks.png";
+   if (!thanks_screen_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load thanks.png\n");
       success = false;
    }
@@ -456,14 +426,10 @@ SDL_Texture* Application::loadTexture(std::string path) {
 
 // Updates the screen
 void Application::update() {
-   // Set location
-   BasicShaderProgram::get_instance().bind();
-   glUniform1i(glGetUniformLocation(BasicShaderProgram::get_instance().get_program_id(), "tex_unit"), 0);
-
    // Game loop
    while (!quit) {
       // Clear screen at every instance
-      glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+      glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
       glClear( GL_COLOR_BUFFER_BIT );
 
       // Update world timer
@@ -516,7 +482,7 @@ void Application::update() {
          }
 
          // Draw title screen
-         thanks_screen_.render(&thanks_screen_.texture);
+         thanks_screen_.Render(&thanks_screen_.texture);
 
          // Update the screen
          //SDL_RenderPresent(renderer);
@@ -540,8 +506,8 @@ void Application::update() {
          SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
       }
 
-      // Swap the windows (render)
-      SDL_GL_SwapWindow( mainWindow );
+      // Swap the windows (Render)
+      SDL_GL_SwapWindow( main_window );
    }
 }
 
@@ -561,8 +527,7 @@ void Application::animate(const float &fps, Element *element,
    }
 
    // Draw title screen
-   BasicShaderProgram::get_instance().set_texture_color({ 0.f, 0.f, 0.f, 1.f });
-   texture->render(element->get_tex_x(), element->get_tex_y(), texture->curr_clip_);
+   texture->Render(element->get_tex_x(), element->get_tex_y(), texture->curr_clip_);
 }
 
 // GAMEOVER FUNCTION
@@ -671,7 +636,7 @@ void Application::main_screen() {
    // animate(menu_background_.textures["forest"].fps, &menu_background_, &menu_background_.textures["forest"], 
    //          menu_background_.textures["forest"].fps_timer, menu_background_.textures["forest"].last_frame);
 
-   thanks_screen_.texture.render(0.f, 0.f);
+   thanks_screen_.texture.Render(0.f, 0.f);
 
    /* ANIMATION FOR TITLE SCREEN */
    // Animate background
@@ -769,7 +734,7 @@ void Application::main_screen() {
    // Update the screen
    // SDL_RenderPresent(renderer);
 
-   //SDL_GL_SwapWindow(mainWindow);
+   //SDL_GL_SwapWindow(main_window);
    */
 }
 
@@ -912,12 +877,12 @@ void Application::playground() {
 }
 
 // Get the height
-const int Application::get_height() {
+const float Application::get_height() {
     return SCREEN_HEIGHT;
 }
 
 // Get the width
-const int Application::get_width() {
+const float Application::get_width() {
     return SCREEN_WIDTH;
 }
 
@@ -938,8 +903,8 @@ Application::~Application() {
 
    //Destroy window
    SDL_DestroyRenderer(renderer);
-   SDL_DestroyWindow(mainWindow);
-   mainWindow = NULL;
+   SDL_DestroyWindow(main_window);
+   main_window = NULL;
    renderer = NULL;
    
    //Quit SDL subsystems
@@ -978,11 +943,11 @@ void Finger::update() {
       animate(&textures["point"]);
    }
 
-   // Get texture and render it
+   // Get texture and Render it
    Texture *tex = get_texture();
    
    // Render finger
-   render(tex);
+   Render(tex);
 }
 
 // Load media function
@@ -992,7 +957,8 @@ bool Finger::load_media() {
 
    // Load finger point
    textures.emplace("point", Texture());
-   if (!textures["point"].loadFromFile(Application::sprite_path + "Miscealaneous/finger_point.png")) {
+   std::string path = Application::sprite_path + "Miscealaneous/finger_point.png";
+   if (!textures["point"].LoadFromFile(path.c_str(), true)) {
       printf("Failed to load finger_point.png\n");
       success = false;
    } else {
@@ -1014,7 +980,8 @@ bool Finger::load_media() {
 
    // Load finger shake
    textures.emplace("shake", Texture());
-   if (!textures["shake"].loadFromFile(Application::sprite_path + "Miscealaneous/finger_shake.png")) {
+   path = Application::sprite_path + "Miscealaneous/finger_shake.png";
+   if (!textures["shake"].LoadFromFile(path.c_str(), true)) {
       printf("Failed to load finger_shake.png\n");
       success = false;
    } else {

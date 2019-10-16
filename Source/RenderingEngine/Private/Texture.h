@@ -14,8 +14,8 @@
 #include <SDL2/SDL_image.h>
 
 #include "OpenGLIncludes.h"
-#include "GLData.h"
-#include "Timer.h"
+#include "Source/RenderingEngine/Private/GLData.h"
+#include "Source/ObjectManager/Private/Timer.h"
 
 class Element;
 
@@ -23,22 +23,16 @@ class Texture {
    public:
       // Initialize
       Texture(Element *element = NULL, int max_frame = 0, float fps_val = 0);
-
-      // Copy constructor
-      //Texture(const Texture &tex);
       
       // Load image at specified path
-      bool loadFromFile(std::string path);
+      bool LoadFromFile(const GLchar *file, GLboolean alpha);
       
       // Deallocate texture
-      void free();
-      
-      // Render texture at given point
-      void render(int x, int y, GLFloatRect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+      void Free();
 
       /****** OPENGL *********/
-      // Overloaded opengl render function
-      void render(float x, float y, GLFloatRect *clip = NULL);
+      // Overloaded opengl Render function
+      void Render(float x, float y, GLFloatRect *clip = NULL);
       /***********************/
 
       // Rect for sprite
@@ -115,9 +109,9 @@ class Texture {
       int y;
 
    protected:
-      // Initialize and free vertex buffer object
+      // Initialize and Free vertex buffer object
       void init_VAO();
-      void free_VBO();
+      void Free_VBO();
 
       // Texture ID
       unsigned int texture_ID;

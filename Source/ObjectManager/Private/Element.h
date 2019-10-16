@@ -5,8 +5,10 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
-#include "Texture.h"
-#include "Timer.h"
+
+#include "Source/ObjectManager/Private/Timer.h"
+
+#include "Source/RenderingEngine/Private/Texture.h"
 
 // Dependencies
 class Entity;
@@ -136,7 +138,7 @@ class Element {
 
       // Render function
       void texture_render(Texture *texture);
-      void render(Texture *texture, int x = 0, int y = 0);
+      void Render(Texture *texture, int x = 0, int y = 0);
 
       // Update function for all elements
       virtual void move();

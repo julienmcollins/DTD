@@ -74,7 +74,7 @@ class Level {
       std::string dir_;
 
       // Load media
-      bool load_media_();
+      bool LoadMedia_();
 
       // flag for completed level
       bool level_completed_;

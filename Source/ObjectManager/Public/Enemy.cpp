@@ -6,6 +6,7 @@
 #include "Source/GameEngine/Private/Application.h"
 #include "Source/GameEngine/Private/Level.h"
 
+#include "Source/RenderingEngine/Private/RenderingEngine.h"
 #include "Source/RenderingEngine/Private/Texture.h"
 
 #include <stdio.h>
@@ -39,7 +40,7 @@ Enemy::STATE Enemy::get_enemy_state() const {
 // TODO: Create a struct that holds all of the ending parameters and pass it through
 //       such as to properly load each texture (one enemy has different sizes for textures)
 // TODO: Do it based on get_x() instead of get_tex_x() (will need to change consts)
-Projectile* Enemy::create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+Projectile* Enemy::CreateProjectile(int delta_x_r, int delta_x_l, int delta_y, 
       bool owner, bool damage, float force_x, float force_y, 
       const TextureData &normal, const TextureData &hit) {
    // First, create a new projectile
@@ -77,25 +78,25 @@ void Enemy::update(bool freeze) {
 }
 
 Texture *Enemy::get_texture() {
-   // Get idle texture
-   if (enemy_state_ == IDLE) {
-      return &textures["idle"];
-   }
+   // // Get idle texture
+   // if (enemy_state_ == IDLE) {
+   //    return &textures["idle"];
+   // }
    
-   // Get attack texture
-   if (enemy_state_ == ATTACK) {
-      return &textures["attack"];
-   }
+   // // Get attack texture
+   // if (enemy_state_ == ATTACK) {
+   //    return &textures["attack"];
+   // }
 
-   // Get death texture
-   if (enemy_state_ == DEATH) {
-      return &textures["death"];
-   }
+   // // Get death texture
+   // if (enemy_state_ == DEATH) {
+   //    return &textures["death"];
+   // }
 
-   // Get turn texture
-   if (enemy_state_ == TURN) {
-      return &textures["turn"];
-   }
+   // // Get turn texture
+   // if (enemy_state_ == TURN) {
+   //    return &textures["turn"];
+   // }
 }
 
 bool Enemy::within_bounds() {
@@ -120,27 +121,25 @@ Fecreez::Fecreez(int x, int y) :
 }
 
 // Load media function for fecreez
-bool Fecreez::load_media() {
+bool Fecreez::LoadMedia() {
    // Flag for success
    bool success = true;
 
-   // Load idle
-   load_image(82, 92, 18, 1.0f / 20.0f, "idle", media_path + "Fecreez/fecreez_idle.png", success);
+   // Load data
+   std::vector<TextureData> data;
+   data.push_back(TextureData(18, 1.0f / 20.0f, "idle", media_path + "Fecreez/fecreez_idle.png"));
+   data.push_back(TextureData(9, 1.0f / 20.0f, "attack", media_path + "Fecreez/fecreez_shoot.png"));
+   data.push_back(TextureData(16, 1.0f / 20.0f, "death", media_path + "Fecreez/fecreez_death.png"));
+   data.push_back(TextureData(7, 1.0f / 20.0f, "turn", media_path + "Fecreez/fecreez_turn.png"));
 
-   // Load attack
-   load_image(82, 92, 9, 1.0f / 20.0f, "attack", media_path + "Fecreez/fecreez_shoot.png", success);
-
-   // Load death
-   load_image(143, 92, 16, 1.0f / 20.0f, "death", media_path + "Fecreez/fecreez_death.png", success);
-
-   // Load turn
-   load_image(82, 92, 7, 1.0f / 20.0f, "turn", media_path + "Fecreez/fecreez_turn.png", success);
+   // Load resource
+   success = RenderingEngine::get_instance().LoadResources(this, data);
 
    // Start flipped
-   textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
-   textures["attack"].flip_ = SDL_FLIP_HORIZONTAL;
-   textures["poojectile"].flip_ = SDL_FLIP_HORIZONTAL;
-   textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
+   // textures["idle"]->flip_ = SDL_FLIP_HORIZONTAL;
+   // textures["attack"]->flip_ = SDL_FLIP_HORIZONTAL;
+   // textures["poojectile"]->flip_ = SDL_FLIP_HORIZONTAL;
+   // textures["turn"]->flip_ = SDL_FLIP_HORIZONTAL;
 
    // Return success
    return success;
@@ -173,18 +172,18 @@ void Fecreez::move() {
    // Turn
    if (enemy_state_ == TURN) {
       // Complete texture
-      if (textures["turn"].frame_ > 6) {
-         if (entity_direction == RIGHT) {
-            textures["turn"].flip_ = SDL_FLIP_NONE;
-            textures["idle"].flip_ = SDL_FLIP_NONE;
-            textures["attack"].flip_ = SDL_FLIP_NONE;
-         } else if (entity_direction == LEFT) {
-            textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
-            textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
-            textures["attack"].flip_ = SDL_FLIP_HORIZONTAL;
-         }
-         textures["turn"].completed_ = false;
-         textures["turn"].frame_ = 0;
+      if (textures["turn"]->frame_ > 6) {
+         // if (entity_direction == RIGHT) {
+         //    textures["turn"]->flip_ = SDL_FLIP_NONE;
+         //    textures["idle"]->flip_ = SDL_FLIP_NONE;
+         //    textures["attack"]->flip_ = SDL_FLIP_NONE;
+         // } else if (entity_direction == LEFT) {
+         //    textures["turn"]->flip_ = SDL_FLIP_HORIZONTAL;
+         //    textures["idle"]->flip_ = SDL_FLIP_HORIZONTAL;
+         //    textures["attack"]->flip_ = SDL_FLIP_HORIZONTAL;
+         // }
+         textures["turn"]->completed_ = false;
+         textures["turn"]->frame_ = 0;
          enemy_state_ = IDLE;
       }
    }
@@ -195,9 +194,9 @@ void Fecreez::move() {
       && enemy_state_ != TURN && enemy_state_ != DEATH) {
       if (shoot_timer_ >= 100) {
          enemy_state_ = ATTACK;
-      } else if (shoot_timer_ < 100 && textures["attack"].frame_ > 8) {
+      } else if (shoot_timer_ < 100 && textures["attack"]->frame_ > 8) {
          enemy_state_ = IDLE;
-         textures["attack"].frame_ = 0;
+         textures["attack"]->frame_ = 0;
       }
       ++shoot_timer_;
    } else if (enemy_state_ != TURN && enemy_state_ != DEATH && enemy_state_ != ATTACK) {
@@ -206,16 +205,16 @@ void Fecreez::move() {
 
    // attack
    if (enemy_state_ == ATTACK) {
-      if (textures["attack"].frame_ > 4 && shoot_timer_ >= 100) {
-         TextureData normal(24, 15, 8);
-         TextureData hit(24, 15, 8);
-         Projectile *tmp = create_projectile(15, -10, 70, 0, 10, 10.4f, 0.0f, normal, hit);
+      if (textures["attack"]->frame_ > 4 && shoot_timer_ >= 100) {
+         TextureData normal = {24, 15, 8};
+         TextureData hit = {24, 15, 8};
+         Projectile *tmp = CreateProjectile(15, -10, 70, 0, 10, 10.4f, 0.0f, normal, hit);
          tmp->body->SetGravityScale(0);
          shoot_timer_ = 0;
       }
-      if (textures["attack"].frame_ > 8) {
+      if (textures["attack"]->frame_ > 8) {
          enemy_state_ = IDLE;
-         textures["attack"].frame_ = 0;
+         textures["attack"]->frame_ = 0;
       }
    }
 
@@ -239,13 +238,13 @@ void Fecreez::start_contact(Element *element) {
 void Fecreez::animate(Texture *tex, int reset, int max) {
    // Animate based on different states
    if (enemy_state_ == IDLE) {
-      Element::animate(&textures["idle"]);
+      Element::animate(textures["idle"]);
    } else if (enemy_state_ == ATTACK) {
-      Element::animate(&textures["attack"], textures["attack"].reset_frame, textures["attack"].stop_frame);
+      Element::animate(textures["attack"], textures["attack"]->reset_frame, textures["attack"]->stop_frame);
    } else if (enemy_state_ == DEATH) {
-      Element::animate(&textures["death"], 15);
+      Element::animate(textures["death"], 15);
    } else if (enemy_state_ == TURN) {
-      Element::animate(&textures["turn"]);
+      Element::animate(textures["turn"]);
    }
 }
 
@@ -303,8 +302,8 @@ Rosea::Rosea(int x, int y, float angle) :
 
       // TODO: get separate elements for the arms (ie new elements and set is as dynamic body)
       // Set texture location
-      arms_attack.textures["attack"].set_x(arms_attack.get_tex_x());
-      arms_attack.textures["attack"].set_y(arms_attack.get_tex_y());
+      arms_attack.textures["attack"]->set_x(arms_attack.get_tex_x());
+      arms_attack.textures["attack"]->set_y(arms_attack.get_tex_y());
 
       // Set initial arm postion
       arms_attack.set_tex_y(arm_heights_[0]);
@@ -331,14 +330,14 @@ Rosea::Rosea(int x, int y, float angle) :
       arms_attack.set_tex_y(y + 37);
       arms_attack.set_tex_x(x + 310);
 
-      arms_attack.textures["attack"].set_x(arms_attack.get_x());
-      arms_attack.textures["attack"].set_y(arms_attack.get_y());
+      arms_attack.textures["attack"]->set_x(arms_attack.get_x());
+      arms_attack.textures["attack"]->set_y(arms_attack.get_y());
 
-      arms_still.textures["arms_idle"].set_x(arms_still.get_x());
-      arms_still.textures["arms_idle"].set_y(arms_still.get_y());
+      arms_still.textures["arms_idle"]->set_x(arms_still.get_x());
+      arms_still.textures["arms_idle"]->set_y(arms_still.get_y());
 
-      arms_still.textures["arms_hurt"].set_x(arms_still.get_x());
-      arms_still.textures["arms_hurt"].set_y(arms_still.get_y());
+      arms_still.textures["arms_hurt"]->set_x(arms_still.get_x());
+      arms_still.textures["arms_hurt"]->set_y(arms_still.get_y());
 
       arms_attack.set_hitbox(arms_attack.get_tex_x(), arms_attack.get_tex_y());
       arms_still.set_hitbox(arms_still.get_tex_x() - 70, arms_still.get_tex_y() + 60);
@@ -347,18 +346,18 @@ Rosea::Rosea(int x, int y, float angle) :
       arms_attack.set_tex_x(arm_widths_[0]);
       
       // Set texture angle
-      textures["idle"].angle = angle;
-      textures["hurt"].angle = angle;
-      arms_still.textures["arms_idle"].angle = angle;
-      arms_still.textures["arms_hurt"].angle = angle;
-      arms_attack.textures["attack"].angle = angle;
+      textures["idle"]->angle = angle;
+      textures["hurt"]->angle = angle;
+      arms_still.textures["arms_idle"]->angle = angle;
+      arms_still.textures["arms_hurt"]->angle = angle;
+      arms_attack.textures["attack"]->angle = angle;
 
       // Set texture centers?
-      textures["idle"].center_ = {0, 0};
-      textures["hurt"].center_ = {0, 0};
-      arms_still.textures["arms_idle"].center_ = {0, 0};
-      arms_still.textures["arms_hurt"].center_ = {0, 0};
-      arms_attack.textures["attack"].center_ = {0, 0};
+      // textures["idle"]->center_ = {0, 0};
+      // textures["hurt"]->center_ = {0, 0};
+      // arms_still.textures["arms_idle"]->center_ = {0, 0};
+      // arms_still.textures["arms_hurt"]->center_ = {0, 0};
+      // arms_attack.textures["attack"]->center_ = {0, 0};
    }
 
    // Set health
@@ -369,24 +368,26 @@ Rosea::Rosea(int x, int y, float angle) :
 }
 
 // Load media for rosea
-bool Rosea::load_media() {
+bool Rosea::LoadMedia() {
    // Flag for success
    bool success = true;
 
-   // Load idle texture
-   load_image(189, 144, 15, 1.0f / 20.0f, "idle", media_path + "Rosea/rosea_idle.png", success);
+   // Instantiate data
+   std::vector<TextureData> rosea_data;
+   rosea_data.push_back(TextureData(15, 1.0f / 20.0f, "idle", media_path + "Rosea/rosea_idle.png"));
+   rosea_data.push_back(TextureData(15, 1.0f / 20.0f, "hurt", media_path + "Rosea/rosea_hurt.png"));
 
-   // Load hurt texture
-   load_image(189, 144, 15, 1.0f / 20.0f, "hurt", media_path + "Rosea/rosea_hurt.png", success);
+   std::vector<TextureData> arm_still_data;
+   arm_still_data.push_back(TextureData(15, 1.0f / 20.0f, "arms_idle", media_path + "Rosea/arms_idle.png"));
+   arm_still_data.push_back(TextureData(15, 1.0f / 20.0f, "arms_hurt", media_path + "Rosea/arms_hurt.png"));
 
-   // Load arms_idle texture
-   arms_still.load_image(112, 78, 15, 1.0f/ 20.0f, "arms_idle", media_path + "Rosea/arms_idle.png", success);
+   std::vector<TextureData> arm_attack_data;
+   arm_attack_data.push_back(TextureData(15, 1.0f / 20.0f, "attack", media_path + "Rosea/arms_attack.png"));
 
-   // Load arms_hurt texture
-   arms_still.load_image(112, 78, 15, 1.0f/ 20.0f, "arms_hurt", media_path + "Rosea/arms_hurt.png", success);
-
-   // Load arms_hurt texture
-   arms_attack.load_image(122, 387, 15, 1.0f / 20.0f, "attack", media_path + "Rosea/arms_attack.png", success);
+   // Load resources
+   success = RenderingEngine::get_instance().LoadResources(this, rosea_data);
+   success = RenderingEngine::get_instance().LoadResources(&arms_still, arm_still_data);
+   success = RenderingEngine::get_instance().LoadResources(&arms_attack, arm_attack_data);
 
    // Return success
    return success;
@@ -406,18 +407,18 @@ void Rosea::update(bool freeze) {
    // Render arms
    if (enemy_state_ == IDLE) {
       if (angle_ == 0.0f) {
-         arms_still.Render(&arms_still.textures["arms_idle"]);
+         arms_still.Render(arms_still.textures["arms_idle"]);
       } else {
-         arms_still.texture_render(&arms_still.textures["arms_idle"]);
+         arms_still.texture_render(arms_still.textures["arms_idle"]);
       }
    } else if (enemy_state_ == HURT) {
       if (angle_ == 0.0f) {
-         arms_still.Render(&arms_still.textures["arms_hurt"]);
+         arms_still.Render(arms_still.textures["arms_hurt"]);
       } else {
-         arms_still.texture_render(&arms_still.textures["arms_hurt"]);
+         arms_still.texture_render(arms_still.textures["arms_hurt"]);
       }
    } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
-      arms_attack.texture_render(&arms_attack.textures["attack"]);
+      arms_attack.texture_render(arms_attack.textures["attack"]);
    }
 
    // Render enemy
@@ -443,21 +444,21 @@ void Rosea::move() {
       ++hurt_counter_;
 
       // Check for expiration
-      if (hurt_counter_ >= 50 && arms_still.textures["arms_hurt"].completed_) {
+      if (hurt_counter_ >= 50 && arms_still.textures["arms_hurt"]->completed_) {
          enemy_state_ = IDLE;
          hurt_counter_ = 0;
-         arms_still.textures["arms_hurt"].completed_ = false;
+         arms_still.textures["arms_hurt"]->completed_ = false;
       }
    } else if (enemy_state_ == RETREAT) {
       if (angle_ == 0.0f) {
-         arms_attack.set_tex_y(arm_heights_[arms_attack.textures["attack"].frame_]);
+         arms_attack.set_tex_y(arm_heights_[arms_attack.textures["attack"]->frame_]);
       } else {
-         arms_attack.set_tex_x(arm_widths_[arms_attack.textures["attack"].frame_]);
+         arms_attack.set_tex_x(arm_widths_[arms_attack.textures["attack"]->frame_]);
       }
-      if (arms_attack.textures["attack"].frame_ > 14) {
+      if (arms_attack.textures["attack"]->frame_ > 14) {
          enemy_state_ = IDLE;
-         arms_attack.textures["attack"].frame_ = 0;
-         arms_attack.textures["attack"].completed_ = false;
+         arms_attack.textures["attack"]->frame_ = 0;
+         arms_attack.textures["attack"]->completed_ = false;
          if (angle_ == 0.0f) {
             arms_attack.set_tex_y(arm_heights_[14]);
          } else {
@@ -482,8 +483,8 @@ void Rosea::move() {
          body->SetActive(false);
 
          // Temp var
-         int temp = (arms_attack.textures["attack"].frame_ < arm_state_) ? 
-                        arms_attack.textures["attack"].frame_ : arm_state_;
+         int temp = (arms_attack.textures["attack"]->frame_ < arm_state_) ? 
+                        arms_attack.textures["attack"]->frame_ : arm_state_;
 
          // Sets hitbox to position of arm
          if (angle_ == 0.0f) {
@@ -506,14 +507,14 @@ void Rosea::move() {
 void Rosea::animate(Texture *tex, int reset, int max, int start) {
    // Animate based on different states
    if (enemy_state_ == IDLE) {
-      Element::animate(&arms_still.textures["arms_idle"]);
-      Element::animate(&textures["idle"]);
+      Element::animate(arms_still.textures["arms_idle"]);
+      Element::animate(textures["idle"]);
    } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
-      Element::animate(&arms_attack.textures["attack"], arm_state_, arm_state_);
-      Element::animate(&textures["idle"]);
+      Element::animate(arms_attack.textures["attack"], arm_state_, arm_state_);
+      Element::animate(textures["idle"]);
    } else if (enemy_state_ == HURT) {
-      Element::animate(&arms_still.textures["arms_hurt"]);
-      Element::animate(&textures["hurt"]);
+      Element::animate(arms_still.textures["arms_hurt"]);
+      Element::animate(textures["hurt"]);
    }
 }
 
@@ -521,12 +522,12 @@ void Rosea::animate(Texture *tex, int reset, int max, int start) {
 Texture* Rosea::get_texture() {
    // Get idle texture
    if (enemy_state_ == IDLE || enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
-      return &textures["idle"];
+      return textures["idle"];
    }
    
    // Get hurt texture for main body
    if (enemy_state_ == HURT) {
-      return &textures["hurt"];
+      return textures["hurt"];
    }
 }
 
@@ -584,24 +585,20 @@ Mosquibler::Mosquibler(int x, int y) :
 }
 
 // Load media function
-bool Mosquibler::load_media() {
+bool Mosquibler::LoadMedia() {
    // Flag for success
    bool success = true;
 
-   // Load fly for mosquibler
-   load_image(109, 97, 12, 1.0f / 20.0f, "fly", media_path + "Mosquibler/fly.png", success);
+   // Instantiate data
+   std::vector<TextureData> data;
+   data.push_back(TextureData(12, 1.0f / 20.0f, "fly", media_path + "Mosquibler/fly.png"));
+   data.push_back(TextureData(27, 1.0f / 20.0f, "death", media_path + "Mosquibler/death.png"));
+   data.push_back(TextureData(12, 1.0f / 20.0f, "turn", media_path + "Mosqubler/turn.png"));
+   data.push_back(TextureData(4, 1.0f / 20.0f, "hit", media_path + "Mosquibler/hit.png"));
+   data.push_back(TextureData(6, 1.0f / 20.0f, "fall", media_path + "Mosquibler/fall.png"));
 
-   // Load death for mosquibler
-   load_image(109, 89, 27, 1.0f / 20.0f, "death", media_path + "Mosquibler/death.png", success);
-
-   // Load turn texture
-   load_image(109, 97, 12, 1.0f / 20.0f, "turn", media_path + "Mosquibler/turn.png", success);
-
-   // Load hit texture
-   load_image(109, 89, 4, 1.0f / 20.0f, "hit", media_path + "Mosquibler/hit.png", success);
-
-   // Load fall texture
-   load_image(109, 89, 6, 1.0f / 20.0f, "fall", media_path + "Mosquibler/fall.png", success);
+   // Load resource
+   success = RenderingEngine::get_instance().LoadResources(this, data);
 
    // Return success
    return success;
@@ -634,16 +631,16 @@ void Mosquibler::move() {
       body->SetLinearVelocity(impulse);
 
       // Complete texture
-      if (textures["turn"].frame_ > 11) {
-         if (entity_direction == RIGHT) {
-            textures["fly"].flip_ = SDL_FLIP_HORIZONTAL;
-            textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
-         } else if (entity_direction == LEFT) {
-            textures["fly"].flip_ = SDL_FLIP_NONE;
-            textures["turn"].flip_ = SDL_FLIP_NONE;
-         }
-         textures["turn"].completed_ = false;
-         textures["turn"].frame_ = 0;
+      if (textures["turn"]->frame_ > 11) {
+         // if (entity_direction == RIGHT) {
+         //    textures["fly"]->flip_ = SDL_FLIP_HORIZONTAL;
+         //    textures["turn"]->flip_ = SDL_FLIP_HORIZONTAL;
+         // } else if (entity_direction == LEFT) {
+         //    textures["fly"]->flip_ = SDL_FLIP_NONE;
+         //    textures["turn"]->flip_ = SDL_FLIP_NONE;
+         // }
+         textures["turn"]->completed_ = false;
+         textures["turn"]->frame_ = 0;
          enemy_state_ = IDLE;
       }
    }
@@ -664,7 +661,7 @@ void Mosquibler::move() {
 
    // In state hurt
    if (enemy_state_ == HURT) {
-      if (textures["hit"].frame_ > 3) {
+      if (textures["hit"]->frame_ > 3) {
          enemy_state_ = FALL;
       }
    }
@@ -681,15 +678,15 @@ void Mosquibler::move() {
 // Animate function
 void Mosquibler::animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
-      Element::animate(&textures["fly"]);
+      Element::animate(textures["fly"]);
    } else if (enemy_state_ == TURN) {
-      Element::animate(&textures["turn"]);
+      Element::animate(textures["turn"]);
    } else if (enemy_state_ == HURT) {
-      Element::animate(&textures["hit"]);
+      Element::animate(textures["hit"]);
    } else if (enemy_state_ == FALL) {
-      Element::animate(&textures["fall"]);
+      Element::animate(textures["fall"]);
    } else if (enemy_state_ == DEATH) {
-      Element::animate(&textures["death"], start_death_, end_death_);
+      Element::animate(textures["death"], start_death_, end_death_);
    }
 }
 
@@ -697,27 +694,27 @@ void Mosquibler::animate(Texture *tex, int reset, int max, int start) {
 Texture* Mosquibler::get_texture() {
    // Get idle texture
    if (enemy_state_ == IDLE) {
-      return &textures["fly"];
+      return textures["fly"];
    }
 
    // Get turn texture
    if (enemy_state_ == TURN) {
-      return &textures["turn"];
+      return textures["turn"];
    }
 
    // Get hit texture
    if (enemy_state_ == HURT) {
-      return &textures["hit"];
+      return textures["hit"];
    }
 
    // Get fall texture
    if (enemy_state_ == FALL) {
-      return &textures["fall"];
+      return textures["fall"];
    }
 
    // Get death texture
    if (enemy_state_ == DEATH) {
-      return &textures["death"];
+      return textures["death"];
    }
 }
 
@@ -773,14 +770,16 @@ Fruig::Fruig(int x, int y) :
 }
 
 // Load media function
-bool Fruig::load_media() {
+bool Fruig::LoadMedia() {
    bool success = true;
 
-   // Load idle
-   load_image(79, 140, 20, 1.0f / 20.0f, "idle", media_path + "Fruig/idle.png", success);
+   // Instantiate data
+   std::vector<TextureData> data;
+   data.push_back(TextureData(20, 1.0f / 20.0f, "idle", media_path + "Fruig/idle.png"));
+   data.push_back(TextureData(20, 1.0f / 20.0f, "death", media_path + "Fruig/death.png"));
 
-   // Load death
-   load_image(85, 136, 20, 1.0f / 20.0f, "death", media_path + "Fruig/death.png", success);
+   // Load resources
+   success = RenderingEngine::get_instance().LoadResources(this, data);
 
    // Return success
    return success;
@@ -794,7 +793,7 @@ void Fruig::move() {
       //alive = false;
 
       // Set animation
-      if (textures["death"].frame_ >= 14) {
+      if (textures["death"]->frame_ >= 14) {
          start_death_ = 14;
          end_death_ = 19;
       }
@@ -803,10 +802,10 @@ void Fruig::move() {
    // Check if state is idle?
    if (enemy_state_ == IDLE) {
       // Let goop fall if it reaches the correct point in the animation.
-      if (textures["idle"].frame_ == 8 && shoot_timer_ > 20) {
-         TextureData normal(10, 9, 5);
-         TextureData hit(65, 9, 9);
-         proj_ = create_projectile(-30, 0, 170, 10, 10, 0.0f, 0.0f, normal, hit);
+      if (textures["idle"]->frame_ == 8 && shoot_timer_ > 20) {
+         TextureData normal = {10, 9, 5};
+         TextureData hit = {65, 9, 9};
+         proj_ = CreateProjectile(-30, 0, 170, 10, 10, 0.0f, 0.0f, normal, hit);
          shoot_timer_ = 0;
       }
 
@@ -824,9 +823,9 @@ void Fruig::move() {
 // Animate function
 void Fruig::animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
-      Element::animate(&textures["idle"]);
+      Element::animate(textures["idle"]);
    } else if (enemy_state_ == DEATH) {
-      Element::animate(&textures["death"], start_death_, end_death_);
+      Element::animate(textures["death"], start_death_, end_death_);
    }
 }
 
@@ -914,22 +913,22 @@ Fleet::Fleet(int x, int y) :
    enemy_state_ = IDLE;
 
    // Start with textures flipped
-   textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
-   textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
+   // textures["turn"]->flip_ = SDL_FLIP_HORIZONTAL;
+   // textures["idle"]->flip_ = SDL_FLIP_HORIZONTAL;
 }
 
 // Load media function
-bool Fleet::load_media() {
+bool Fleet::LoadMedia() {
    bool success = true;
 
-   // Load idle
-   load_image(63, 87, 11, 1.0f / 20.0f, "idle", media_path + "Fleet/idle.png", success);
+   // Instantiate data
+   std::vector<TextureData> data;
+   data.push_back(TextureData(11, 1.0f / 20.0f, "idle", media_path + "Fleet/idle.png"));
+   data.push_back(TextureData(11, 1.0f / 20.0f, "turn", media_path + "Fleet/turn.png"));
+   data.push_back(TextureData(18, 1.0f / 20.0f, "death", media_path + "Fleet/death.png"));
 
-   // Load turn
-   load_image(63, 87, 11, 1.0f / 20.0f, "turn", media_path + "Fleet/turn.png", success);
-
-   // Load death
-   load_image(63, 87, 18, 1.0f / 20.0f, "death", media_path + "Fleet/death.png", success);
+   // Load resources
+   success = RenderingEngine::get_instance().LoadResources(this, data);
 
    // Return success
    return success;
@@ -957,16 +956,16 @@ void Fleet::move() {
       // Check for turn state
       if (enemy_state_ == TURN) {
          // Complete texture
-         if (textures["turn"].frame_ > 10) {
-            if (entity_direction == RIGHT) {
-               textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
-               textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
-            } else if (entity_direction == LEFT) {
-               textures["turn"].flip_ = SDL_FLIP_NONE;
-               textures["idle"].flip_ = SDL_FLIP_NONE;
-            }
-            textures["turn"].completed_ = false;
-            textures["turn"].frame_ = 0;
+         if (textures["turn"]->frame_ > 10) {
+            // if (entity_direction == RIGHT) {
+            //    textures["turn"]->flip_ = SDL_FLIP_HORIZONTAL;
+            //    textures["idle"]->flip_ = SDL_FLIP_HORIZONTAL;
+            // } else if (entity_direction == LEFT) {
+            //    textures["turn"]->flip_ = SDL_FLIP_NONE;
+            //    textures["idle"]->flip_ = SDL_FLIP_NONE;
+            // }
+            textures["turn"]->completed_ = false;
+            textures["turn"]->frame_ = 0;
             enemy_state_ = IDLE;
          }
       }
@@ -979,15 +978,15 @@ void Fleet::move() {
 
          // Get a vector towards the player and apply as impulse
          if (in_contact) {
-            if (textures["idle"].frame_ == 1) {
+            if (textures["idle"]->frame_ == 1) {
                const b2Vec2 impulse = {(Application::get_instance().get_player()->body->GetPosition().x - body->GetPosition().x) / magnitude * 1.50f, 7.0f};
                body->SetLinearVelocity(impulse);
             }
 
             // Reset textures
-            textures["idle"].reset_frame = 0;
+            textures["idle"]->reset_frame = 0;
          } else {
-            textures["idle"].reset_frame = 10;
+            textures["idle"]->reset_frame = 10;
          }
       }
    }
@@ -996,11 +995,11 @@ void Fleet::move() {
 // Animate function
 void Fleet::animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
-      Element::animate(&textures["idle"], textures["idle"].reset_frame, textures["idle"].stop_frame);
+      Element::animate(textures["idle"], textures["idle"]->reset_frame, textures["idle"]->stop_frame);
    } else if (enemy_state_ == TURN) {
-      Element::animate(&textures["turn"]);
+      Element::animate(textures["turn"]);
    } else if (enemy_state_ == DEATH) {
-      Element::animate(&textures["death"], textures["death"].max_frame_);
+      Element::animate(textures["death"], textures["death"]->max_frame_);
    }
 }
 
@@ -1060,14 +1059,16 @@ Mosqueenbler::Mosqueenbler(int x, int y) :
 }
 
 // Load the media
-bool Mosqueenbler::load_media() {
+bool Mosqueenbler::LoadMedia() {
    bool success = true;
 
-   // Load idle texture
-   load_image(246, 134, 12, 1.0f / 20.0f, "idle", media_path + "Mosqueenbler/idle.png", success);
+   // Instantiate data
+   std::vector<TextureData> data;
+   data.push_back(TextureData(12, 1.0f / 20.0f, "idle", media_path + "Mosqueenbler/idle.png"));
+   data.push_back(TextureData(12, 1.0f / 20.0f, "attack", media_path + "Mosqueenbler/attack.png"));
 
-   // Load attack texture
-   load_image(246, 134, 12, 1.0f / 20.0f, "attack", media_path + "Mosqueenbler/attack.png", success);
+   // Load resources
+   RenderingEngine::get_instance().LoadResources(this, data);
 
    // Return if success
    return success;
@@ -1083,17 +1084,17 @@ void Mosqueenbler::move() {
    if (Application::get_instance().get_level_flag() == Application::FORESTBOSS) {
       if (shoot_timer_ > 200) {
          enemy_state_ = ATTACK;
-         if (textures["attack"].frame_ == 8 && spawn_num_of_egg_ == 1) {
+         if (textures["attack"]->frame_ == 8 && spawn_num_of_egg_ == 1) {
             MosquiblerEgg *egg = new MosquiblerEgg(get_x() + 95, get_y() + 134);
             Application::get_instance().get_level()->add_enemy(egg);
             spawn_num_of_egg_ = 0;
-         } else if (textures["attack"].completed_) {
+         } else if (textures["attack"]->completed_) {
             shoot_timer_ = 0;
             spawn_num_of_egg_ = 1;
          }
       } else {
          enemy_state_ = IDLE;
-         textures["attack"].frame_ = 0;
+         textures["attack"]->frame_ = 0;
       }
 
       ++shoot_timer_;
@@ -1103,9 +1104,9 @@ void Mosqueenbler::move() {
 // Animate function
 void Mosqueenbler::animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
-      Element::animate(&textures["idle"]);
+      Element::animate(textures["idle"]);
    } else if (enemy_state_ == ATTACK) {
-      Element::animate(&textures["attack"]);
+      Element::animate(textures["attack"]);
    }
 }
 
@@ -1126,14 +1127,16 @@ MosquiblerEgg::MosquiblerEgg(int x, int y) :
 }
 
 // Load egg media
-bool MosquiblerEgg::load_media() {
+bool MosquiblerEgg::LoadMedia() {
    bool success = true;
 
-   // Load idle (falling)
-   load_image(92, 59, 6, 1.0 / 20.0f, "idle", media_path + "Mosqueenbler/egg_idle.png", success);
+   // Instantiate data
+   std::vector<TextureData> data;
+   data.push_back(TextureData(6, 1.0f / 20.0f, "idle", media_path + "Mosqueenbler/egg_idle.png"));
+   data.push_back(TextureData(7, 1.0f / 20.0f, "attack", media_path + "Mosqueenbler/egg_break.png"));
 
-   // Load break
-   load_image(92, 59, 7, 1.0 / 20.0f, "attack", media_path + "Mosqueenbler/egg_break.png", success);
+   // Load resources
+   success = RenderingEngine::get_instance().LoadResources(this, data);
 
    return success;
 }
@@ -1141,7 +1144,7 @@ bool MosquiblerEgg::load_media() {
 // MosquiblerEgg move function
 void MosquiblerEgg::move() {
    if (enemy_state_ == ATTACK) {
-      if (textures["attack"].completed_) {
+      if (textures["attack"]->completed_) {
          Application::get_instance().get_level()->add_enemy(new Mosquibler(get_x(), get_y()));
          Application::get_instance().get_level()->destroy_enemy(this);
       }
@@ -1151,9 +1154,9 @@ void MosquiblerEgg::move() {
 // Animate
 void MosquiblerEgg::animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
-      Element::animate(&textures["idle"]);
+      Element::animate(textures["idle"]);
    } else if (enemy_state_ == ATTACK) {
-      Element::animate(&textures["attack"]);
+      Element::animate(textures["attack"]);
    }
 }
 
@@ -1240,20 +1243,18 @@ Wormored::Wormored(int x, int y) :
    entity_direction = LEFT;
 }
 
-bool Wormored::load_media() {
+bool Wormored::LoadMedia() {
    bool success = true;
 
-   // Load idle
-   load_image(796, 418, 21, 1.0f / 24.0f, "idle", media_path + "Wormored/idle.png", success, 2);
+   // Instantiate data
+   std::vector<TextureData> data;
+   data.push_back(TextureData(21, 1.0f / 24.0f, "idle", media_path + "Wormored/idle.png"));
+   data.push_back(TextureData(29, 1.0f / 24.0f, "turn", media_path + "Wormored/turn.png"));
+   data.push_back(TextureData(22, 1.0f / 24.0f, "attack", media_path + "Wormored/attack.png"));
+   data.push_back(TextureData(28, 1.0f / 24.0f, "excrete", media_path + "Wormored/excrete.png"));
 
-   // Load turn
-   load_image(796, 418, 29, 1.0f / 24.0f, "turn", media_path + "Wormored/turn.png", success, 2);
-   
-   // Load attack
-   load_image(796, 418, 22, 1.0f / 24.0f, "attack", media_path + "Wormored/attack.png", success, 2);
-
-   // Load excrete
-   load_image(796, 418, 28, 1.0f / 24.0f, "excrete", media_path + "Wormored/excrete.png", success, 2);
+   // Load resources
+   success = RenderingEngine::get_instance().LoadResources(this, data);
 
    return success;
 }
@@ -1288,7 +1289,7 @@ void Wormored::move() {
 
          // Move each individual body part according to the map
          prev_frame = curr_frame;
-         curr_frame = textures["idle"].frame_;
+         curr_frame = textures["idle"]->frame_;
          //if (prev_frame != curr_frame) {
             if (curr_frame < 9) {
                std::cout << "curr_frame = " << curr_frame << std::endl;
@@ -1321,16 +1322,16 @@ void Wormored::move() {
    }
 
    if (enemy_state_ == TURN) {
-      if (textures["turn"].frame_ > textures["turn"].max_frame_ - 1) {
-         if (entity_direction == RIGHT) {
-            textures["idle"].flip_ = SDL_FLIP_HORIZONTAL;
-            textures["turn"].flip_ = SDL_FLIP_HORIZONTAL;
-         } else if (entity_direction == LEFT) {
-            textures["idle"].flip_ = SDL_FLIP_NONE;
-            textures["turn"].flip_ = SDL_FLIP_NONE;
-         }
-         textures["turn"].completed_ = false;
-         textures["turn"].frame_ = 0;
+      if (textures["turn"]->frame_ > textures["turn"]->max_frame_ - 1) {
+         // if (entity_direction == RIGHT) {
+         //    textures["idle"]->flip_ = SDL_FLIP_HORIZONTAL;
+         //    textures["turn"]->flip_ = SDL_FLIP_HORIZONTAL;
+         // } else if (entity_direction == LEFT) {
+         //    textures["idle"]->flip_ = SDL_FLIP_NONE;
+         //    textures["turn"]->flip_ = SDL_FLIP_NONE;
+         // }
+         textures["turn"]->completed_ = false;
+         textures["turn"]->frame_ = 0;
          enemy_state_ = IDLE;
       }
    }
@@ -1338,27 +1339,27 @@ void Wormored::move() {
 
 void Wormored::animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
-      Element::animate(&textures["idle"]);
+      Element::animate(textures["idle"]);
    } else if (enemy_state_ == TURN) {
-      Element::animate(&textures["turn"]);
+      Element::animate(textures["turn"]);
    }
 }
 
 Texture *Wormored::get_texture() {
    if (enemy_state_ == IDLE) {
-      return &textures["idle"];
+      return textures["idle"];
    }
 
    if (enemy_state_ == TURN) {
-      return &textures["turn"];
+      return textures["turn"];
    }
 
    if (enemy_state_ == ATTACK) {
-      return &textures["attack"];
+      return textures["attack"];
    }
 
    if (enemy_state_ == EXCRETE) {
-      return &textures["excrete"];
+      return textures["excrete"];
    }
 }
 

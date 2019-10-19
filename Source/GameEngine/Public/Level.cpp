@@ -93,7 +93,7 @@ Level::Level(string file, Application::FOREST level) :
    num_of_platforms_ += 2;
 
    // Now, load the media and quit if false
-   if (load_media_() == false) {
+   if (LoadMedia_() == false) {
       cerr << "Failed to load level media" << endl;
       Application::get_instance().set_quit();
    }
@@ -106,7 +106,7 @@ Level::Level(string file, Application::FOREST level) :
 }
 
 // Load media function, private
-bool Level::load_media_() {
+bool Level::LoadMedia_() {
    // Flag for quit
    bool success = true;
 
@@ -117,7 +117,7 @@ bool Level::load_media_() {
       success = false;
    } else {
       // Automatically calculate the number of sprites
-      int num_clips = background_.texture.getWidth() / 1920;
+      int num_clips = background_.texture.GetTextureWidth() / 1920;
 
       // Set the clips
       background_.texture.clips_ = new GLFloatRect[num_clips];

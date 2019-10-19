@@ -50,8 +50,9 @@ class Entity : public Element {
         }
 
         // Create projectile (might need to add an entity pointer just in case)
-        virtual Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
-               bool owner, bool damage, float force_x, float force_y,
+        virtual Projectile* CreateProjectile(int delta_x_r, int delta_x_l, int delta_y, 
+               bool owner, bool damage,
+               float force_x, float force_y,
                const TextureData &normal, const TextureData &hit);
 
 
@@ -75,7 +76,7 @@ class Hitmarker : public Element {
       };
 
       // Load media function
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Update function
       virtual void update(bool freeze = false);
@@ -261,13 +262,13 @@ class Player : public Entity {
       }
 
       // Load media function for the player
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // File path
       static const std::string media_path;
 
       // Create projectile
-      virtual Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+      virtual Projectile* CreateProjectile(int delta_x_r, int delta_x_l, int delta_y, 
             bool owner, bool damage, float force_x, float force_y,
             const TextureData &normal, const TextureData &hit);
 

@@ -4,7 +4,6 @@
 //
 //  Created by Julien Collins on 9/14/17.
 //  Copyright © 2017 The Boys. All rights reserved.
-//
 
 #include "Source/RenderingEngine/Private/Texture.h"
 #include "Source/RenderingEngine/Private/BasicShaderProgram.h"
@@ -21,12 +20,9 @@ using namespace std;
 
 // Texture constructor
 Texture::Texture(Element *element, int max_frame, float fps_val) : clips_(NULL), curr_clip_(NULL), 
-   frame_(0), completed_(false), max_frame_(max_frame), fps(fps_val), last_frame(0.0f),
-   reset_frame(0), stop_frame(max_frame), flip_(SDL_FLIP_NONE), has_flipped_(false), angle(0.0f), element_(element), 
-   m_texture(NULL), m_width(0), m_height(0), x(0), y(0) {
-
-    // Set rect
-    tex_dimensions = {1.f, 0.f, 0.f, 1.f};
+   frame_(0), completed_(false), max_frame_(max_frame), frame_num(max_frame + 1), fps(fps_val), last_frame(0.0f),
+   reset_frame(0), stop_frame(max_frame), has_flipped_(false), angle(0.0f), element_(element), 
+   image_width(0), image_height(0), texture_width(0), texture_height(0), x(0), y(0) {
 
     // Start timer
     fps_timer.start();
@@ -41,9 +37,10 @@ bool Texture::LoadFromFile(const GLchar *file, GLboolean alpha) {
     SDL_Surface* loadedSurface = IMG_Load(file);
 
     // Width and Height
-    m_width = loadedSurface->w;
-    m_height = loadedSurface->h;
-    center_ = {m_width / 2, m_height / 2};
+    image_width = loadedSurface->w;
+    image_height = loadedSurface->h;
+    texture_width = loadedSurface->w / frame_num;
+    texture_height = loadedSurface->h;
     
     // Check loaded surface
     if (loadedSurface == NULL) {
@@ -69,6 +66,9 @@ bool Texture::LoadFromFile(const GLchar *file, GLboolean alpha) {
             pixel_format = GL_RGBA;
         }
 
+        // Store pixels
+        pixels_32 = loadedSurface->pixels;
+
         // Generate tex image
         glTexImage2D(GL_TEXTURE_2D, 0, pixel_format, loadedSurface->w, loadedSurface->h, 0, pixel_format, GL_UNSIGNED_BYTE, loadedSurface->pixels);
 
@@ -78,8 +78,8 @@ bool Texture::LoadFromFile(const GLchar *file, GLboolean alpha) {
         // Check error
         GLenum error = glGetError();
         if (error != GL_NO_ERROR) {
-            cout << "Error loading texture from " << loadedSurface->pixels << " pixels! " << gluErrorString(error) << endl;
-            return false;
+            // cout << "Error loading texture from " << loadedSurface->pixels << " pixels! " << gluErrorString(error) << endl;
+            // return false;
         }
     }
     
@@ -133,11 +133,11 @@ void Texture::init_VAO() {
 
         // Create VBO
         glBindBuffer( GL_ARRAY_BUFFER, VBO_ID );
-        glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW );
+        glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW );
 
         // Create IBO
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO_ID );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW );
 
         // Position attribute
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
@@ -148,8 +148,8 @@ void Texture::init_VAO() {
         glEnableVertexAttribArray(1);
 
         // Disable
-        // glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
     }
 }
 
@@ -162,85 +162,71 @@ void Texture::Free_VBO() {
 }
 
 // Render OpenGL type textures
-void Texture::Render(float x, float y, GLFloatRect *clip) {
+void Texture::Render(float x, float y, GLFloatRect *clip, GLfloat rotate, glm::vec3 color) {
     if (texture_ID != 0) {
-        // float quad_width = (float) m_width / Application::get_instance().get_width();
-        // float quad_height = (float) m_height / Application::get_instance().get_height();
-
-        // if (clip != NULL) {
-        //     tex_dimensions.l = clip->x / m_width;
-        //     tex_dimensions.r = (clip->x + clip->w) / m_width;
-        //     tex_dimensions.t = clip->y / m_height;
-        //     tex_dimensions.b = (clip->y + clip->h) / m_height;
-
-        //     quad_width = clip->w;
-        //     quad_height = clip->h;
-        // }
-
-        // // Move to Render point
-        // // BasicShaderProgram::get_instance().left_mult_modelview(glm::translate(glm::vec3(x, y, 0.f)));
-        // // BasicShaderProgram::get_instance().update_modelview_matrix();
-
-        // // Set vertex data
-        // GLTexturedVertex2D v_data[4];
-    
-        // // Vertex coords
-        // v_data[0].position.x = quad_width / 2.f; v_data[0].position.y = quad_height / 2.f; // Top right
-        // v_data[0].position.x = quad_width / 2.f; v_data[0].position.y = -quad_height / 2.f; // Bottom right
-        // v_data[0].position.x = -quad_width / 2.f; v_data[0].position.y = -quad_height / 2.f; // Bottom left
-        // v_data[0].position.x = -quad_width / 2.f; v_data[0].position.y = quad_height / 2.f; // Top left
-
-        // // Tex coords
-        // v_data[0].tex_coord.s = tex_dimensions.r; v_data[0].tex_coord.t = tex_dimensions.t;
-        // v_data[1].tex_coord.s = tex_dimensions.r; v_data[1].tex_coord.t = tex_dimensions.b;
-        // v_data[2].tex_coord.s = tex_dimensions.l; v_data[2].tex_coord.t = tex_dimensions.b;
-        // v_data[3].tex_coord.s = tex_dimensions.l; v_data[3].tex_coord.t = tex_dimensions.t;
-
-        // // Set texture ID
-        // glActiveTexture(GL_TEXTURE0);
-        // glBindTexture(GL_TEXTURE_2D, texture_ID);
-
-        // // Enable vertex and tex coordinate arrays
-        // // BasicShaderProgram::get_instance().bind();
-        // glBindVertexArray(VAO_ID);
-
-        // // Update texture
-        // //glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(GLTexturedVertex2D), v_data);
-
-        // // Draw it
-        // glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
-
         // Use shader
         ShaderProgram shader = RenderingEngine::get_instance().GetShader("texture_shader").Use();
-        
+
+        // Set top right and bottom textures
+        float left, right, bottom, top;
+
+        // Check if clip exists
+        if (clip) {
+            left = clip->x;
+            right = clip->x + clip->w;
+            bottom = clip->y;
+            top = clip->y + clip->h;
+        } else {
+            left = 0.0f;
+            right = 1.0f;
+            bottom = 0.0f;
+            top = 1.0f;
+        }
+
+        // std::cout << left << " " << right << " " << top << " " << bottom << std::endl;
+
+        float w, h;
+        w = (float) texture_width / 2.0f;
+        h = (float) texture_height / 2.0f;
+
+        // std::cout << w << " " << h << std::endl;
+        // std::cout << texture_ID << std::endl;
+
+        // Initialize vertices 
+        float vertices[] = {
+            // positions  // texture coords
+            w,  h,        right, top, // top right
+            w, -h,        right, bottom, // bottom right
+           -w, -h,        left, bottom, // bottom left
+           -w,  h,        left, top  // top left
+        };
+
         // Transform it
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(960, 540, 0.0f));
-        model = glm::scale(model, glm::vec3(1920.0f, 1080.0f, 1.0f));
+        model = glm::translate(model, glm::vec3(x + texture_width / 2, y + texture_height / 2, 0.0f));
+        // model = glm::scale(model, glm::vec3(1, 1, 1.0f));
 
         // Set transforms and color
         shader.SetMatrix4("model", model);
-        shader.SetVector3f("color", glm::vec3(1.0f, 0.8f, 0.2f));
+        shader.SetVector3f("color", color);
         
         // Activate texture
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture_ID);
+        // if (clip) glTexSubImage2D(GL_TEXTURE_2D, 0, clip->x, clip->y, clip->w, clip->h, GL_RGBA, GL_UNSIGNED_BYTE, pixels_32);
+        // else glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texture_width, texture_height, GL_RGBA, GL_UNSIGNED_BYTE, pixels_32);
 
         // Draw
         glBindVertexArray(VAO_ID);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        
+        // Unbind everything
         glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
-}
-
-// Gets image width
-int Texture::getWidth() const {
-    return m_width;
-}
-
-// Gets image height
-int Texture::getHeight() const {
-    return m_height;
 }
 
 // Get x position
@@ -253,32 +239,29 @@ int Texture::get_y() const {
     return y;
 }
 
-Texture &Texture::operator=(const Texture &src) {
-   // Set Render equal to it
-   // renderer = src.renderer;
-   
-   // Set textures equal to eachother
-   m_texture = src.m_texture;
-   
-   // Set dimensions equal to image dimension
-   m_width = src.m_width;
-   m_height = src.m_height;
+// Texture &Texture::operator=(const Texture &src) {
+//    // Set dimensions equal to image dimension
+//    image_width = src.image_width;
+//    image_height = src.image_height;
 
-   // Add a bunch of other missing variables
-   max_frame_ = src.max_frame_;
-   clips_ = new GLFloatRect[max_frame_ + 1];
-   for (int i = 0; i < max_frame_ + 1; i++) {
-      clips_[i] = src.clips_[i];
-   }
+//    // Add a bunch of other missing variables
+//    max_frame_ = src.max_frame_;
+//    clips_ = new GLFloatRect[max_frame_ + 1];
+//    for (int i = 0; i < max_frame_ + 1; i++) {
+//       clips_[i] = src.clips_[i];
+//    }
    
-   // Return
-   return (*this);
-}
+//    // Return
+//    return (*this);
+// }
 
 // Destructor calls Free
 Texture::~Texture() {
    //Free();
 }
 
-TextureData::TextureData(int width, int height, int num_of_frames, int frame_width, int frame_height, std::string path) :
-    width(width), height(height), frame_width(frame_width), frame_height(frame_height), num_of_frames(num_of_frames), path(path) {}
+TextureData::TextureData(int num_of_frames, float fps, std::string name, std::string path) :
+    num_of_frames(num_of_frames), fps(fps), name(name), path(path) {}
+
+TextureData::TextureData(int width, int height, int num_of_frames) :
+    width(width), height(height), num_of_frames(num_of_frames) {}

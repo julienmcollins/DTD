@@ -1,12 +1,15 @@
 #ifndef RENDERINGENGINE_H_
 #define RENDERINGENGINE_H_
 
-#include <string>
-#include <map>
-
 #include <glm/glm.hpp>
 
 #include "Source/RenderingEngine/Private/ShaderProgram.h"
+
+#include "Source/ObjectManager/Private/Element.h"
+
+#include <map>
+#include <vector>
+#include <string>
 
 /* This class will be a singleton responsible for all rendering related
    stuff */
@@ -28,6 +31,12 @@ class RenderingEngine {
 
         /* Get the shader by name */
         ShaderProgram GetShader(std::string name);
+
+        /* Load resources for elements */
+        bool LoadResources(Element *element, std::vector<TextureData> texture_data);
+
+        /* Load the actual image for the element */
+        void LoadImage(Element *element, int frame_num, float fps, std::string name, std::string file, bool &success, int rows = 1);
 
         /* Keep track of shaders used */
         std::map<std::string, ShaderProgram> shaders;

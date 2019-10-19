@@ -2,6 +2,7 @@
 #include "Source/ObjectManager/Private/Entity.h"
 #include "Source/ObjectManager/Private/Enemy.h"
 
+#include "Source/RenderingEngine/Private/RenderingEngine.h"
 #include "Source/RenderingEngine/Private/Texture.h"
 
 #include "Source/GameEngine/Private/Application.h"
@@ -112,7 +113,7 @@ Projectile::Projectile(int x, int y, bool owner, int damage,
 void Projectile::update() {
    // Check the status
    if (object_state_ == ALIVE) {
-      Element::animate(&textures["normal"]);
+      Element::animate(textures["normal"]);
       if (shot_dir == LEFT) {
          // textures["normal"].Render(get_tex_x(), get_tex_y(), textures["normal"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
       } else {
@@ -123,11 +124,11 @@ void Projectile::update() {
          Application::get_instance().world_.DestroyBody(body);
          body = nullptr;
       }
-      if (textures["explode"].frame_ >= hit_.num_of_frames) {
+      if (textures["explode"]->frame_ >= hit_.num_of_frames) {
          alive = false;
          return;
       }
-      Element::animate(&textures["explode"]);
+      Element::animate(textures["explode"]);
       if (shot_dir == LEFT) {
          // textures["explode"].Render(get_tex_x(), get_tex_y(), textures["explode"].curr_clip_, 0.0, NULL, SDL_FLIP_HORIZONTAL);
       } else {
@@ -156,7 +157,7 @@ Eraser::Eraser(int x, int y,
    Projectile(x, y, 1, 10, 10.4f, 0.0f, normal, hit, entity) {
 
    // Load media for some reason
-   load_media();
+   LoadMedia();
 
    // Set filter
    b2Filter filter;
@@ -174,15 +175,17 @@ void Eraser::start_contact(Element *element) {
 }
 
 // Load eraser media
-bool Eraser::load_media() {
+bool Eraser::LoadMedia() {
    // Success flag
    bool success = true;
 
-   // Normal eraser
-   load_image(21, 12, 3, 1.0f / 20.0f, "normal", Player::media_path + "eraser.png", success);
+   // Instantiate data
+   std::vector<TextureData> data;
+   data.push_back(TextureData(3, 1.0f / 20.0f, "normal", Player::media_path + "eraser.png"));
+   data.push_back(TextureData(4, 1.0f / 20.0f, "explode", Player::media_path + "eraser_break.png"));
 
-   // Exploading eraser
-   load_image(21, 12, 4, 1.0f / 20.0f, "explode", Player::media_path + "eraser_break.png", success);
+   // Load resources
+   success = RenderingEngine::get_instance().LoadResources(this, data);
 
    // Return success
    return success;
@@ -196,7 +199,7 @@ EnemyProjectile::EnemyProjectile(int x, int y, int damage,
    Projectile(x, y, 0, 10, force_x, force_y, normal, hit, entity) {
 
    // Load media for some reason
-   load_media();
+   LoadMedia();
 }
 
 // Adjust start contact function
@@ -210,17 +213,17 @@ void EnemyProjectile::start_contact(Element *element) {
 }
 
 // Load eraser media
-bool EnemyProjectile::load_media() {
+bool EnemyProjectile::LoadMedia() {
    // SUccess flag
    bool success = true;
 
-   // Normal projectile
+   // Instantiate data
    normal_.path = Enemy::media_path + owning_entity->type() + "/projectile.png";
-   load_image(normal_.width, normal_.height, normal_.num_of_frames, 1.0f / 20.0f, "normal", normal_.path, success);
-
-   // Hit projectile
    hit_.path = Enemy::media_path + owning_entity->type() + "/hit.png";
-   load_image(hit_.width, hit_.height, hit_.num_of_frames, 1.0f / 20.0f, "explode", hit_.path, success);
+
+   std::vector<TextureData> data;
+   data.push_back(TextureData(normal_.num_of_frames, 1.0f / 20.0f, "normal", normal_.path));
+   data.push_back(TextureData(hit_.num_of_frames, 1.0f / 20.0f, "explode", hit_.path));
 
    // Return success
    return success;   

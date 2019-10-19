@@ -14,6 +14,7 @@
 #include "Source/ObjectManager/Private/Enemy.h"
 
 #include "Source/RenderingEngine/Private/RenderingEngine.h"
+#include "Source/RenderingEngine/Private/Texture.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -25,6 +26,7 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+#include <tuple>
 
 //Shader loading utility programs
 void printProgramLog( unsigned int program );
@@ -91,10 +93,13 @@ bool Application::InitOpenGL() {
 
    // Load perspective matrix
    glm::mat4 projection = glm::ortho(0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, -1.0f, 1.0f);
-   RenderingEngine::get_instance().GetShader("texture_shader").Use().SetInteger("image", 0);
-   RenderingEngine::get_instance().GetShader("texture_shader").SetMatrix4("projection", projection);
+   RenderingEngine::get_instance().LoadApplicationPerspective(projection);
 
-   // RenderingEngine::get_instance().LoadApplicationPerspective(projection);
+   // Blending?
+   glEnable(GL_TEXTURE_2D);
+   glDisable(GL_DEPTH_TEST);
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
    return true;
 }
@@ -231,20 +236,23 @@ void printShaderLog(unsigned int shader) {
 }
 
 // Loads images and other media
-// TODO: Move loadMedia function to constructor of each object --> like level
-bool Application::loadMedia() {
+// TODO: Move LoadMedia function to constructor of each object --> like level
+bool Application::LoadMedia() {
    // Start success = true 
    bool success = true;
 
    /************** MAIN MENU STUFF *********************************/
-   // Load forest
-   menu_background_.load_image(1920, 1080, 3, 1.0f / 4.0f, "forest", sprite_path + "Miscealaneous/forestscreen.png", success);
+   // Instantiate data
+   std::vector<TextureData> menu_data;
+   menu_data.push_back(TextureData(3, 1.0f / 4.0f, "cloud", sprite_path + "Miscealaneous/cloudscreen.png"));
+   menu_data.push_back(TextureData(3, 1.0f / 4.0f, "forest", sprite_path + "Miscealaneous/forestscreen.png"));
 
-   // Load cloud
-   menu_background_.load_image(1920, 1080, 3, 1.0f / 4.0f, "cloud", sprite_path + "Miscealaneous/cloudscreen.png", success);
+   // Load resources
+   success = RenderingEngine::get_instance().LoadResources(&menu_background_, menu_data);
 
    // Load title
    std::string path = sprite_path + "Miscealaneous/title.png";
+   menu_title_.texture.frame_num = 3;
    if (!menu_title_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load title.png\n");
       success = false;
@@ -253,10 +261,10 @@ bool Application::loadMedia() {
       GLFloatRect *temp = menu_title_.texture.clips_;
 
       for (int i = 0; i < 3; i++) {
-         temp[i].x = i * 646;
+         temp[i].x = i * 646.0f / 1938.0f;
          temp[i].y = 0;
-         temp[i].w = 646;
-         temp[i].h = 513;
+         temp[i].w = 646.0f / 1938.0f;
+         temp[i].h = 513.0f / 513.0f;
       }
 
       // Set curr clip
@@ -265,6 +273,7 @@ bool Application::loadMedia() {
 
    // Load menu
    path = sprite_path + "Miscealaneous/menu.png";
+   menu_items_.texture.frame_num = 3;
    if (!menu_items_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load menu.png\n");
       success = false;
@@ -275,10 +284,10 @@ bool Application::loadMedia() {
 
       // Allocate enough room
       for (int i = 0; i < 3; i++) {
-         temp[i].x = i * 321;
+         temp[i].x = i * 321.0f / 963.0f;
          temp[i].y = 0;
-         temp[i].w = 321;
-         temp[i].h = 299;
+         temp[i].w = 321.0f / 963.0f;
+         temp[i].h = 299.0f / 299.0f;
       }
 
       // Set curr clip
@@ -287,6 +296,7 @@ bool Application::loadMedia() {
 
    // Load world items
    path = sprite_path + "Miscealaneous/worlds.png";
+   world_items_.texture.frame_num = 3;
    if (!world_items_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load worlds.png\n");
       success = false;
@@ -297,10 +307,10 @@ bool Application::loadMedia() {
 
       // Allocate enough room
       for (int i = 0; i < 3; i++) {
-         temp[i].x = i * 193;
+         temp[i].x = i * 193.0f / 579.0f;
          temp[i].y = 0;
-         temp[i].w = 193;
-         temp[i].h = 332;
+         temp[i].w = 193.0f / 579.0f;
+         temp[i].h = 332.0f / 332.0f;
       }
 
       // Set curr clip
@@ -309,6 +319,7 @@ bool Application::loadMedia() {
 
    // Gameover screen
    path = sprite_path + "Miscealaneous/gameover.png";
+   gameover_screen_.texture.frame_num = 3;
    if (!gameover_screen_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load gameover.png\n");
       success = false;
@@ -319,10 +330,10 @@ bool Application::loadMedia() {
 
       // Allocate enough room
       for (int i = 0; i < 3; i++) {
-         temp[i].x = i * 1920;
+         temp[i].x = i * 1920.0f / 5760.0f;
          temp[i].y = 0;
-         temp[i].w = 1920;
-         temp[i].h = 1080;
+         temp[i].w = 1920.0f / 5760.0f;
+         temp[i].h = 1080.0f / 1080.0f;
       }
 
       // Set curr clip
@@ -334,9 +345,15 @@ bool Application::loadMedia() {
    }
 
    // Load thanks
-   path = sprite_path + "Miscealaneous/thanks.png";
+   path = sprite_path + "Miscealaneous/test.png";
    if (!thanks_screen_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load thanks.png\n");
+      success = false;
+   }
+
+   path = sprite_path + "Miscealaneous/ruler_200.png";
+   if (!ruler_.texture.LoadFromFile(path.c_str(), true)) {
+      printf("Failed to load ruler.png\n");
       success = false;
    }
       
@@ -348,13 +365,13 @@ bool Application::loadMedia() {
 void Application::setup_menu() {
    // Create player
    player = new Player();
-   if (player->load_media() == false) {
+   if (player->LoadMedia() == false) {
       quit = true;
    }
 
    // Create finger
    finger_ = new Finger();
-   if (finger_->load_media() == false) {
+   if (finger_->LoadMedia() == false) {
       quit = true;
    }
    point_ = false;
@@ -397,39 +414,12 @@ void Application::setup_menu() {
    menu_screen_ = FIRST;
 }
 
-// Load specific textures when needed
-SDL_Texture* Application::loadTexture(std::string path) {
-    
-   //The final optimized image
-   SDL_Texture* newTexture = NULL;
-   
-   //Load image at specified path
-   SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-   
-   if(loadedSurface == NULL) {
-       printf("Unable to load image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-   } else {
-       
-       //Create texture from surface pixels
-       newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-       if(newTexture == NULL)
-       {
-           printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-       }
-       
-       //Get rid of old loaded surface
-       SDL_FreeSurface(loadedSurface);
-   }
-   
-   return newTexture;
-}
-
 // Updates the screen
 void Application::update() {
    // Game loop
    while (!quit) {
       // Clear screen at every instance
-      glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
       glClear( GL_COLOR_BUFFER_BIT );
 
       // Update world timer
@@ -471,10 +461,6 @@ void Application::update() {
          // Start cap timer
          capTimer.start();
 
-         // Clear screen
-         //SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-         //SDL_RenderClear(renderer);
-
          // Calculate and correct fps
          float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
          if( avgFPS > 2000000 ) {
@@ -485,13 +471,11 @@ void Application::update() {
          thanks_screen_.Render(&thanks_screen_.texture);
 
          // Update the screen
-         //SDL_RenderPresent(renderer);
          ++countedFrames;
 
          // If frame finished early
          int frameTicks = capTimer.getTicks();
          if (frameTicks < SCREEN_TICKS_PER_FRAME) {
-            // Wait remaining time
             SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
          }
       }
@@ -549,8 +533,8 @@ void Application::gameover_screen() {
    capTimer.start();
 
    // Clear screen
-   SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-   SDL_RenderClear(renderer);
+   // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+   // SDL_RenderClear(renderer);
 
    // Calculate and correct fps
    float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
@@ -563,7 +547,7 @@ void Application::gameover_screen() {
       gameover_screen_.texture.fps_timer, gameover_screen_.texture.last_frame);
 
    // Update the screen
-   SDL_RenderPresent(renderer);
+   // SDL_RenderPresent(renderer);
    ++countedFrames;
 
    // If frame finished early
@@ -584,10 +568,6 @@ void Application::main_screen() {
 
    // Get current keyboard states
    current_key_states_ = SDL_GetKeyboardState(NULL);
-
-   // Clear screen
-   // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-   // SDL_RenderClear(renderer);
 
    // Handle events on queue
    while (SDL_PollEvent( &e )) {
@@ -633,21 +613,18 @@ void Application::main_screen() {
       }
    }
 
-   // animate(menu_background_.textures["forest"].fps, &menu_background_, &menu_background_.textures["forest"], 
-   //          menu_background_.textures["forest"].fps_timer, menu_background_.textures["forest"].last_frame);
-
-   thanks_screen_.texture.Render(0.f, 0.f);
-
    /* ANIMATION FOR TITLE SCREEN */
    // Animate background
-   /*
    if (finger_) {
+      // std::cout << "Here 1\n";
       if (finger_->get_y() == START || finger_->get_y() == WORLD1) {
-         animate(menu_background_.textures["forest"].fps, &menu_background_, &menu_background_.textures["forest"], 
-            menu_background_.textures["forest"].fps_timer, menu_background_.textures["forest"].last_frame);
+         // std::cout << "Here 2\n";
+         animate(menu_background_.textures["forest"]->fps, &menu_background_, menu_background_.textures["forest"], 
+            menu_background_.textures["forest"]->fps_timer, menu_background_.textures["forest"]->last_frame);
       } else if (finger_->get_y() == WORLD2) {
-         animate(menu_background_.textures["cloud"].fps, &menu_background_, &menu_background_.textures["cloud"], 
-            menu_background_.textures["cloud"].fps_timer, menu_background_.textures["cloud"].last_frame);
+         // std::cout << "Here 3\n";
+         animate(menu_background_.textures["cloud"]->fps, &menu_background_, menu_background_.textures["cloud"], 
+            menu_background_.textures["cloud"]->fps_timer, menu_background_.textures["cloud"]->last_frame);
       }
    }
 
@@ -700,15 +677,15 @@ void Application::main_screen() {
    // Check enter key state
    if (finger_ && finger_->finger_state == Finger::POINT) {
       if (finger_->get_y() == START) {
-         if (finger_->textures["point"].completed_) {
+         if (finger_->textures["point"]->completed_) {
             menu_screen_ = SECOND;
             finger_->finger_state = Finger::SHAKE;
             finger_->set_y(WORLD1);
             finger_->set_x(720);
-            finger_->textures["point"].completed_ = false;
+            finger_->textures["point"]->completed_ = false;
          }
       } else if (finger_->get_y() == WORLD1) {
-         if (finger_->textures["point"].completed_) {
+         if (finger_->textures["point"]->completed_) {
             // Set to final menu screen
             menu_screen_ = THIRD;
 
@@ -735,7 +712,6 @@ void Application::main_screen() {
    // SDL_RenderPresent(renderer);
 
    //SDL_GL_SwapWindow(main_window);
-   */
 }
 
 // UPDATE PROJECTILES
@@ -916,21 +892,16 @@ Application::~Application() {
 
 // Constructor
 Finger::Finger() : 
-   Element(700, 665, 67, 124), finger_state(SHAKE),
-   updating(true) {
-   // Setup finger
-   textures["shake"].fps = 1.0f / 20.0f;
-   textures["point"].fps = 1.0f / 20.0f;
-   textures["shake"].max_frame_ = 7;
-   textures["point"].max_frame_ = 5;
-}
+   Element(700, 665, 67, 124), finger_state(SHAKE), updating(true) {}
 
 // Get texture
 Texture *Finger::get_texture() {
    if (finger_state == SHAKE) {
-      return &textures["shake"];
-   } else if (finger_state == POINT) {
-      return &textures["point"];
+      return textures["shake"];
+   }
+   
+   if (finger_state == POINT) {
+      return textures["point"];
    }
 }
 
@@ -938,9 +909,9 @@ Texture *Finger::get_texture() {
 void Finger::update() {
    // Animate based on state
    if (finger_state == SHAKE) {
-      animate(&textures["shake"]);
+      animate(textures["shake"]);
    } else if (finger_state == POINT) {
-      animate(&textures["point"]);
+      animate(textures["point"]);
    }
 
    // Get texture and Render it
@@ -951,55 +922,65 @@ void Finger::update() {
 }
 
 // Load media function
-bool Finger::load_media() {
+bool Finger::LoadMedia() {
    // Success flag
    bool success = true; 
 
-   // Load finger point
-   textures.emplace("point", Texture());
-   std::string path = Application::sprite_path + "Miscealaneous/finger_point.png";
-   if (!textures["point"].LoadFromFile(path.c_str(), true)) {
-      printf("Failed to load finger_point.png\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      textures["point"].clips_ = new GLFloatRect[6];
-      GLFloatRect *temp = textures["point"].clips_;
+   // Load data
+   // anim_data["shake"] = TextureData(8, 1.0f / 20.0f, "", "");
+   // anim_data["point"] = TextureData(6, 1.0f / 20.0f, "", "");
 
-      // Calculate sprite locations
-      for (int i = 0; i < 6; i++) {
-         temp[i].x = i * 124;
-         temp[i].y = 0;
-         temp[i].w = 124;
-         temp[i].h = 67;
-      }
 
-      // Set curr clip
-      textures["point"].curr_clip_ = &temp[0];
-   }
+   std::vector<TextureData> data;
+   data.push_back(TextureData(8, 1.0f / 20.0f, "shake", Application::sprite_path + "Miscealaneous/finger_shake.png"));
+   data.push_back(TextureData(6, 1.0f / 20.0f, "point", Application::sprite_path + "Miscealaneous/finger_point.png"));
 
-   // Load finger shake
-   textures.emplace("shake", Texture());
-   path = Application::sprite_path + "Miscealaneous/finger_shake.png";
-   if (!textures["shake"].LoadFromFile(path.c_str(), true)) {
-      printf("Failed to load finger_shake.png\n");
-      success = false;
-   } else {
-      // Allocate enough room
-      textures["shake"].clips_ = new GLFloatRect[8];
-      GLFloatRect *temp = textures["shake"].clips_;
+   // Load resources
+   success = RenderingEngine::get_instance().LoadResources(this, data);
 
-      // Calculate sprite locations
-      for (int i = 0; i < 8; i++) {
-         temp[i].x = i * 124;
-         temp[i].y = 0;
-         temp[i].w = 124;
-         temp[i].h = 67;
-      }
+   // // Load finger point
+   // textures.emplace("point", Texture());
+   // if (!textures["point"]->LoadFromFile(path.c_str(), true)) {
+   //    printf("Failed to load finger_point.png\n");
+   //    success = false;
+   // } else {
+   //    // Allocate enough room
+   //    textures["point"]->clips_ = new GLFloatRect[6];
+   //    GLFloatRect *temp = textures["point"].clips_;
 
-      // Set curr clip
-      textures["shake"].curr_clip_ = &temp[0];
-   }
+   //    // Calculate sprite locations
+   //    for (int i = 0; i < 6; i++) {
+   //       temp[i].x = i * 124;
+   //       temp[i].y = 0;
+   //       temp[i].w = 124;
+   //       temp[i].h = 67;
+   //    }
+
+   //    // Set curr clip
+   //    textures["point"].curr_clip_ = &temp[0];
+   // }
+
+   // // Load finger shake
+   // textures.emplace("shake", Texture());
+   // if (!textures["shake"].LoadFromFile(path.c_str(), true)) {
+   //    printf("Failed to load finger_shake.png\n");
+   //    success = false;
+   // } else {
+   //    // Allocate enough room
+   //    textures["shake"].clips_ = new GLFloatRect[8];
+   //    GLFloatRect *temp = textures["shake"].clips_;
+
+   //    // Calculate sprite locations
+   //    for (int i = 0; i < 8; i++) {
+   //       temp[i].x = i * 124;
+   //       temp[i].y = 0;
+   //       temp[i].w = 124;
+   //       temp[i].h = 67;
+   //    }
+
+   //    // Set curr clip
+   //    textures["shake"].curr_clip_ = &temp[0];
+   // }
 
    // Return success flag
    return success;

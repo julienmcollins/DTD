@@ -4,6 +4,9 @@
 
 #include "Source/GameEngine/Private/Application.h"
 
+#include "Source/RenderingEngine/Private/RenderingEngine.h"
+#include "Source/RenderingEngine/Private/Texture.h"
+
 // Constructor for element
 Element::Element(int x, int y, int height, int width) :
    alive(true), texture(this, 0), body(NULL), flag_(false), element_shape(), 
@@ -147,7 +150,7 @@ void Element::set_height(int new_height) {
 
 float Element::get_height() const {
    if (height_ == 0)
-      return texture.getHeight();
+      return texture.GetTextureHeight();
    else
       return height_;
 }
@@ -159,50 +162,14 @@ void Element::set_width(int new_width) {
 
 float Element::get_width() const {
    if (width_ == 0)
-      return texture.getWidth();
+      return texture.GetTextureWidth();
    else
       return width_;
 }
 
 // Load media does nothing
-bool Element::load_media() {
+bool Element::LoadMedia() {
    return true;
-}
-
-// Loads an image
-void Element::load_image(int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success, int rows) {
-   textures.emplace(name, Texture(this, frame_num - 1, fps));
-   if (!textures[name].LoadFromFile(file.c_str(), true)) {
-      std::cerr << "Failed to load " << file << std::endl;
-      success = false;
-   } else {
-      // Allocate space
-      textures[name].clips_ = new GLFloatRect[frame_num];
-      GLFloatRect *temp = textures[name].clips_;
-
-      int columns = (frame_num + rows - 1) / rows;
-
-      // Set sprites
-      int k = 0;
-      for (int i = 0; i < rows; i++) {
-         for (int j = 0; j < columns; j++) {
-            if (k == frame_num) {
-               break;
-            }
-            temp[k].x = j * w;
-            temp[k].y = i * h;
-            temp[k].w = w;
-            temp[k].h = h;
-            k++;
-         }
-         if (k == frame_num) {
-            break;
-         }
-      }
-
-      // Set to 0
-      textures[name].curr_clip_ = &temp[0];
-   }
 }
 
 // Setup box2d
@@ -254,7 +221,7 @@ void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
    body->GetFixtureList()->SetFilterData(filter);
 
    // Run the load media function
-   if (load_media() == false) {
+   if (LoadMedia() == false) {
       std::cout << "Quit in here! " << this->type() << std::endl;
       Application::get_instance().set_quit();
    }
@@ -302,8 +269,7 @@ bool Element::is_alive() {
 
 // Render solely based on texture
 void Element::texture_render(Texture *texture) {
-   // texture->Render(texture->get_x(), texture->get_y(), texture->curr_clip_, texture->angle, 
-   //       &texture->center_, texture->flip_);
+   texture->Render(texture->get_x(), texture->get_y(), texture->curr_clip_);
 }
 
 // Render function
@@ -311,7 +277,7 @@ void Element::Render(Texture *texture, int x, int y) {
    // Render based on texture
    int t_x = x == 0 ? get_tex_x() : x;
    int t_y = y == 0 ? get_tex_y() : y;
-   // texture->Render(t_x, t_y, texture->curr_clip_, texture->angle, &texture->center_, texture->flip_);
+   texture->Render(t_x, t_y, texture->curr_clip_);
 }
 
 // Move function (does nothing)
@@ -352,12 +318,10 @@ void Element::draw(Texture *tex, int reset) {
    animate(tex, reset);
 
    // Render
-   // if (tex)
-   //    tex->Render(tex->get_x(), tex->get_y(), tex->curr_clip_, 0.0,
-   //          &tex->center_, tex->flip_);
-   // else
-   //    texture.Render(texture.get_x(), texture.get_y(), texture.curr_clip_, 0.0,
-   //          &texture.center_, texture.flip_);
+   if (tex)
+      tex->Render(tex->get_x(), tex->get_y(), tex->curr_clip_);
+   else
+      texture.Render(texture.get_x(), texture.get_y(), texture.curr_clip_);
 }
 
 // get texture
@@ -386,7 +350,7 @@ Element::~Element() {
 
    // Free textures
    for (auto i = textures.begin(); i != textures.end(); i++) {
-      i->second.Free();
+      i->second->Free();
    }
 
    // Free texture

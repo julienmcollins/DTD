@@ -9,13 +9,14 @@
 #ifndef Texture_h
 #define Texture_h
 
-#include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
 #include "OpenGLIncludes.h"
 #include "Source/RenderingEngine/Private/GLData.h"
 #include "Source/ObjectManager/Private/Timer.h"
+
+#include <string>
 
 class Element;
 
@@ -32,7 +33,7 @@ class Texture {
 
       /****** OPENGL *********/
       // Overloaded opengl Render function
-      void Render(float x, float y, GLFloatRect *clip = NULL);
+      void Render(float x, float y, GLFloatRect *clip = NULL, GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
       /***********************/
 
       // Rect for sprite
@@ -42,6 +43,7 @@ class Texture {
       // Frame related variables
       int frame_;
       int max_frame_;
+      int frame_num;
       float fps;
       float last_frame;
       Timer fps_timer;
@@ -54,18 +56,26 @@ class Texture {
       bool completed_;
 
       // Flip parameter
-      SDL_RendererFlip flip_;
       bool has_flipped_;
-
-      // Center parameter
-      SDL_Point center_;
 
       // Angle
       float angle;
 
       // Get image dimensions
-      int getWidth() const;
-      int getHeight() const;
+      int GetImageWidth() const {
+         return image_width;
+      }
+      int GetImageHeight() const {
+         return image_height;
+      }
+
+      // Get texture dimensions
+      int GetTextureWidth() const {
+         return texture_width;
+      }
+      int GetTextureHeight() const {
+         return texture_height;
+      }
 
       // Set image positions
       void set_x(int new_x) {
@@ -91,19 +101,12 @@ class Texture {
       Element *element_;
    
       // Assignement operator
-      Texture &operator= (const Texture &src);
+      // Texture &operator= (const Texture &src);
 
       // Destructor
       ~Texture();
    
    private:
-      // Hardware texture
-      SDL_Texture* m_texture;
-      
-      // Image dimensions
-      int m_width;
-      int m_height;
-
       // Image position
       int x;
       int y;
@@ -117,7 +120,7 @@ class Texture {
       unsigned int texture_ID;
 
       // Pixels related to the texture
-      unsigned int *pixels_32;
+      void *pixels_32;
 
       // Pixel format
       unsigned int pixel_format;
@@ -143,8 +146,9 @@ class Texture {
 
 class TextureData {
    public:
-      // Constructor
-      TextureData(int width, int height, int num_of_frames, int frame_width = 0, int frame_height = 0, std::string path = "");
+      // Constructors
+      TextureData(int num_of_frames, float fps, std::string name, std::string path);
+      TextureData(int width, int height, int num_of_frames);
 
       // Data associated to texture
       int width;
@@ -152,7 +156,33 @@ class TextureData {
       int frame_width;
       int frame_height;
       int num_of_frames;
+      float fps;
+      std::string name;
       std::string path;
+};
+
+/* Holds relevant vertex data for rendering */
+struct FrameData {
+   /* Texture width and height */
+   GLfloat tex_width;
+   GLfloat tex_height;
+
+   /* Texture coordinates */
+   GLfloat s;
+   GLfloat t;
+};
+
+/* Animations data */
+class Animation {
+   /* Default constructor does not do anything (for now) */
+   Animation() {}
+
+   /* Half width and height for vertext */
+   GLfloat half_width;
+   GLfloat half_height;
+
+   /* Animation data for the frame */
+   FrameData frame;
 };
 
 #endif /* Texture_h */

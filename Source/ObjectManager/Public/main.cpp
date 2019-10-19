@@ -14,7 +14,7 @@
 int main(int argc, char * argv[]) {
     // Start up SDL and create window
     //Load media
-    if (!Application::get_instance().loadMedia()) {
+    if (!Application::get_instance().LoadMedia()) {
         printf("Failed to load media!\n");
     } else {
         //Apply the image

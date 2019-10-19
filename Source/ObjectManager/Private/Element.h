@@ -125,8 +125,7 @@ class Element {
       /*******************************/
 
       // virtual load media
-      virtual bool load_media();
-      void load_image(int w, int h, int frame_num, float fps, std::string name, std::string file, bool &success, int rows = 1);
+      virtual bool LoadMedia();
 
       // Set and add hitboxes
       void set_hitbox(int x, int y, SHAPE_TYPE type = SQUARE, int group = -1);
@@ -156,7 +155,7 @@ class Element {
       Texture texture;
 
       // Hash map of texture names to textures
-      std::unordered_map<std::string, Texture> textures;
+      std::unordered_map<std::string, Texture *> textures;
 
       // Get type of object
       virtual std::string type() {

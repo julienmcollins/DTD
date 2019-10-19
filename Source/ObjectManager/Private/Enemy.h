@@ -58,7 +58,7 @@ class Enemy : public Entity {
       virtual bool within_bounds();
 
       // Create projectile function
-      virtual Projectile* create_projectile(int delta_x_r, int delta_x_l, int delta_y, 
+      virtual Projectile* CreateProjectile(int delta_x_r, int delta_x_l, int delta_y, 
             bool owner, bool damage, float force_x, float force_y,
             const TextureData &nornal, const TextureData &hit);
 
@@ -88,7 +88,7 @@ class Fecreez : public Enemy {
       Fecreez(int x, int y);
 
       // Load media
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Update, move and animate functions
       virtual void move();
@@ -134,7 +134,7 @@ class Rosea : public Enemy {
       Rosea(int x, int y, float angle);
 
       // Load Rosea media
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Update, move and animate functions
       virtual void update(bool freeze = false);
@@ -192,7 +192,7 @@ class Mosquibler : public Enemy {
       Mosquibler(int x, int y);
 
       // Load Rosea media
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Update, move and animate functions
       virtual void move();
@@ -220,7 +220,7 @@ class Fruig : public Enemy {
       Fruig(int x, int y);
 
       // Load fruig media
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Update, move and animate functions
       virtual void move();
@@ -252,7 +252,7 @@ class Fleet : public Enemy {
       Fleet(int x, int y);
 
       // Load fleet media
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Move and animate functions
       virtual void move();
@@ -275,7 +275,7 @@ class Mosqueenbler : public Enemy {
       Mosqueenbler(int x, int y);
 
       // Load fleet media
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Move and animate functions
       virtual void move();
@@ -307,7 +307,7 @@ class MosquiblerEgg : public Enemy {
       MosquiblerEgg(int x, int y);
 
       // Load wormored media
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Move and animate functions
       virtual void move();
@@ -344,7 +344,7 @@ class Wormored : public Enemy {
       Wormored(int x, int y);
 
       // Load wormored media
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Move and animate functions
       virtual void move();

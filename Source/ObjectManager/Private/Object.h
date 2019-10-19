@@ -132,7 +132,7 @@ class Eraser : public Projectile {
       virtual void start_contact(Element *element);
 
       // Load images
-      virtual bool load_media();
+      virtual bool LoadMedia();
 };
 
 class EnemyProjectile : public Projectile {
@@ -147,7 +147,7 @@ class EnemyProjectile : public Projectile {
       virtual void start_contact(Element *element);
 
       // Load images
-      virtual bool load_media();
+      virtual bool LoadMedia();
 
       // Change type
       virtual std::string type() {

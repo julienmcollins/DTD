@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <tuple>
 
 #include "Source/RenderingEngine/Private/Texture.h"
 #include "Source/RenderingEngine/Private/DebugDraw.h"
@@ -60,7 +61,10 @@ class Finger : public Element {
       };  
 
       // Load media
-      virtual bool load_media();
+      virtual bool LoadMedia();
+
+      // TESTING THIS FEATURE
+      std::unordered_map<std::string, std::vector<Animation>> animations;
 
       // Finger state
       FINGER_STATE finger_state;
@@ -81,7 +85,7 @@ class Application {
       bool Init();
 
       // Load Media
-      bool loadMedia();
+      bool LoadMedia();
 
       // Paths to media
       static const std::string sprite_path;
@@ -95,10 +99,7 @@ class Application {
 
       // The main window of the application
       SDL_Window* main_window;
-      
-      // Load textures (now redundant)
-      SDL_Texture* loadTexture(std::string path);
-      
+            
       // Application keyboard state
       const Uint8* current_key_states_;
 

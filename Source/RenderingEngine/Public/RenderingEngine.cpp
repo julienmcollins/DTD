@@ -89,34 +89,34 @@ void RenderingEngine::LoadImage(Element *element, int frame_num, float fps, std:
    }
 }
 
-// Texture *RenderingEngine::LoadTexture(std::string name, const GLchar *file, GLboolean alpha) {
-//    // textures[name] = LoadTextureFromFile(file, alpha);
-//    textures.emplace(name, LoadTextureFromFile(file, alpha));
-//    return &textures[name];
-// }
+Texture *RenderingEngine::LoadTexture(std::string name, const GLchar *file, GLboolean alpha) {
+   // textures[name] = LoadTextureFromFile(file, alpha);
+   textures.emplace(name, LoadTextureFromFile(file, alpha));
+   return &textures[name];
+}
 
-// Texture RenderingEngine::LoadTextureFromFile(const GLchar *file, GLboolean alpha) {
-//    // Create the texture object
-//    Texture texture;
+Texture RenderingEngine::LoadTextureFromFile(const GLchar *file, GLboolean alpha) {
+   // Create the texture object
+   Texture texture;
 
-//    // Check alpha
-//    if (alpha) {
-//       texture.internal_format = GL_RGBA;
-//       texture.image_format = GL_RGBA;
-//    } else {
-//       texture.internal_format = GL_RGB;
-//       texture.image_format = GL_RGB;
-//    }
+   // Check alpha
+   if (alpha) {
+      texture.internal_format = GL_RGBA;
+      texture.image_format = GL_RGBA;
+   } else {
+      texture.internal_format = GL_RGB;
+      texture.image_format = GL_RGB;
+   }
 
-//    // Load the image
-//    texture.LoadFromFile(file, alpha);
+   // Load the image
+   texture.LoadFromFile(file, alpha);
 
-//    std::cout << texture.texture_ID << std::endl;
+   std::cout << texture.texture_ID << std::endl;
 
-//    // Return the texture
-//    return texture;
-// }
+   // Return the texture
+   return texture;
+}
 
-// Texture *RenderingEngine::GetTextureReference(std::string name) {
-//    return &textures[name];
-// }
+Texture *RenderingEngine::GetTextureReference(std::string name) {
+   return &textures[name];
+}

@@ -64,6 +64,14 @@ bool Texture::LoadFromFile(const GLchar *file, GLboolean alpha) {
     // Store pixels
     pixels_32 = loadedSurface->pixels;
 
+    // Set internal format
+    internal_format = GL_RGB;
+    image_format = GL_RGB;
+    if (loadedSurface->format->BytesPerPixel == 4) {
+        internal_format = GL_RGBA;
+        image_format = GL_RGBA;
+    }
+
     // Generate tex image
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, loadedSurface->w, loadedSurface->h, 0, image_format, GL_UNSIGNED_BYTE, loadedSurface->pixels);
 

@@ -38,9 +38,9 @@ bool RenderingEngine::LoadResources(Element *element, std::vector<TextureData> t
    return success;
 }
 
-void RenderingEngine::LoadResources(Element *element, std::unordered_map<std::string, Animation *> anim_data) {
+void RenderingEngine::LoadResources(Element *element) {
    // Loop through and load
-   for (std::unordered_map<std::string, Animation *>::iterator it = anim_data.begin(); it != anim_data.end(); ++it) {
+   for (std::unordered_map<std::string, Animation *>::iterator it = element->sprite_sheet->animations.begin(); it != element->sprite_sheet->animations.end(); ++it) {
       int i = 0;
       for (auto &frame : it->second->frames) {
          if (i == it->second->num_of_frames) {
@@ -110,8 +110,6 @@ Texture RenderingEngine::LoadTextureFromFile(const GLchar *file, GLboolean alpha
 
    // Load the image
    texture.LoadFromFile(file, alpha);
-
-   std::cout << texture.texture_ID << std::endl;
 
    // Return the texture
    return texture;

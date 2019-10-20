@@ -24,6 +24,12 @@ Texture::Texture(Element *element, int max_frame, float fps_val) : clips_(NULL),
    reset_frame(0), stop_frame(max_frame), has_flipped_(false), angle(0.0f), element_(element), 
    image_width(0), image_height(0), texture_width(0), texture_height(0), x(0), y(0) {
 
+    // Reset everything
+    texture_ID = 0;
+    VBO_ID = 0;
+    IBO_ID = 0;
+    VAO_ID = 0;
+
     // Start timer
     fps_timer.start();
 }
@@ -31,7 +37,7 @@ Texture::Texture(Element *element, int max_frame, float fps_val) : clips_(NULL),
 // Loads textures from files
 bool Texture::LoadFromFile(const GLchar *file, GLboolean alpha) {
     // Free preexisting textures
-    // Free();
+    Free();
     
     // Load image at specified path
     SDL_Surface* loadedSurface = IMG_Load(file);
@@ -87,6 +93,9 @@ void Texture::Free() {
     if (texture_ID != 0) {
         glDeleteTextures( 1, &texture_ID );
         texture_ID = 0;
+        VBO_ID = 0;
+        IBO_ID = 0;
+        VAO_ID = 0;
     }
 
     // Change EVERYTHING
@@ -97,6 +106,8 @@ void Texture::Free() {
 
     //Set pixel format
     pixel_format = 0;
+    internal_format = 0;
+    image_format = 0;
 }
 
 void Texture::init_VAO() {
@@ -290,9 +301,11 @@ void Texture::Animate(Animation *anim, int reset, int max, int start) {
     // Set next frame based on fps
     anim->last_frame += fps_timer.getDeltaTime() / 1000.0f;
     if (anim->last_frame > anim->fps) {
-        if (anim->curr_frame >= temp_max) {
+        if (anim->curr_frame == temp_max) {
             anim->curr_frame = reset;
             anim->completed = true;
+            anim->last_frame = 0.0f;
+            return;
         } else if (anim->curr_frame <= reset + 1) {
             anim->completed = false;
         }
@@ -326,6 +339,10 @@ int Texture::get_y() const {
 //    // Return
 //    return (*this);
 // }
+
+Animation *Texture::GetAnimationFromTexture(std::string name) {
+   return animations[name];
+}
 
 // Destructor calls Free
 Texture::~Texture() {

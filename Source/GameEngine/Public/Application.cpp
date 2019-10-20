@@ -681,15 +681,15 @@ void Application::main_screen() {
    // Check enter key state
    if (finger_ && finger_->finger_state == Finger::POINT) {
       if (finger_->get_y() == START) {
-         if (finger_->textures["point"]->completed_) {
+         if (finger_->GetAnimationByName("point")->completed) {
             menu_screen_ = SECOND;
             finger_->finger_state = Finger::SHAKE;
             finger_->set_y(WORLD1);
             finger_->set_x(720);
-            finger_->textures["point"]->completed_ = false;
+            finger_->GetAnimationByName("point")->completed = false;
          }
       } else if (finger_->get_y() == WORLD1) {
-         if (finger_->textures["point"]->completed_) {
+         if (finger_->GetAnimationByName("point")->completed) {
             // Set to final menu screen
             menu_screen_ = THIRD;
 
@@ -909,32 +909,28 @@ Texture *Finger::get_texture() {
    }
 }
 
-Animation *Finger::GetAnimationFromTexture() {
+Animation *Finger::GetAnimationFromState() {
    if (finger_state == SHAKE) {
-      return animations["shake"];
+      return sprite_sheet->GetAnimationFromTexture("shake");
    }
    
    if (finger_state == POINT) {
-      return animations["point"];
+      return sprite_sheet->GetAnimationFromTexture("point");
    }
-}
-
-Animation *Finger::GetAnimationFromTexture(std::string name) {
-   return animations[name];
 }
 
 // Update function
 void Finger::update() {
    // Animate based on state
    if (finger_state == SHAKE) {
-      texture.Animate(GetAnimationFromTexture("shake"));
+      sprite_sheet->Animate(sprite_sheet->GetAnimationFromTexture("shake"));
    } else if (finger_state == POINT) {
-      texture.Animate(GetAnimationFromTexture("point"));
+      sprite_sheet->Animate(sprite_sheet->GetAnimationFromTexture("point"));
    }
 
    // Render
-   // cout << texture.GetTextureWidth() << " " << texture.GetTextureHeight() << endl;
-   texture.Render(get_tex_x(), get_tex_y(), 0.0f, GetAnimationFromTexture());
+   // cout << sprite_sheet->GetTextureWidth() << " " << sprite_sheet->GetTextureHeight() << endl;
+   sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
 }
 
 // Load media function
@@ -944,17 +940,17 @@ bool Finger::LoadMedia() {
 
    // Load the file
    std::string finger_path = Application::sprite_path + "Menu/finger_master_sheet.png";
-   success = texture.LoadFromFile(finger_path.c_str(), true);
-   // test_texture = RenderingEngine::get_instance().LoadTexture("finger_sheet", finger_path.c_str());
+   // success = texture.LoadFromFile(finger_path.c_str(), true);
+   sprite_sheet = RenderingEngine::get_instance().LoadTexture("finger_sheet", finger_path.c_str());
 
-   // cout << texture.texture_ID << " " << texture.pixel_format << " " << texture.image_width << " " << texture.image_height << " " << texture.VBO_ID << " " << texture.IBO_ID << " " << texture.VAO_ID << endl;
+   // cout << sprite_sheet->texture_ID << " " << sprite_sheet->internal_format << " " << sprite_sheet->image_format << " " << sprite_sheet->image_width << " " << sprite_sheet->image_height << " " << sprite_sheet->VBO_ID << " " << sprite_sheet->IBO_ID << " " << sprite_sheet->VAO_ID << endl;
 
    // // Insantiate animations
-   animations.emplace("shake", new Animation(992.0f, 136.0f, 124.0f, 68.0f, 68.0f / 136.0f, 8, 1.0f / 20.0f));
-   animations.emplace("point", new Animation(992.0f, 136.0f, 124.0f, 68.0f, 0.0f, 6, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("shake", new Animation(992.0f, 136.0f, 124.0f, 68.0f, 68.0f / 136.0f, 8, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("point", new Animation(992.0f, 136.0f, 124.0f, 68.0f, 0.0f, 6, 1.0f / 20.0f));
 
    // // Load resources
-   RenderingEngine::get_instance().LoadResources(this, animations);
+   RenderingEngine::get_instance().LoadResources(this);
 
    // std::vector<TextureData> data;
    // data.push_back(TextureData(8, 1.0f / 20.0f, "shake", Application::sprite_path + "Miscealaneous/finger_shake.png"));
@@ -965,13 +961,13 @@ bool Finger::LoadMedia() {
 
    // // Load finger point
    // textures.emplace("point", Texture());
-   // if (!textures["point"]->LoadFromFile(path.c_str(), true)) {
+   // if (!GetAnimationByName("point")->LoadFromFile(path.c_str(), true)) {
    //    printf("Failed to load finger_point.png\n");
    //    success = false;
    // } else {
    //    // Allocate enough room
-   //    textures["point"]->clips_ = new GLFloatRect[6];
-   //    GLFloatRect *temp = textures["point"].clips_;
+   //    GetAnimationByName("point")->clips_ = new GLFloatRect[6];
+   //    GLFloatRect *temp = GetAnimationByName("point").clips_;
 
    //    // Calculate sprite locations
    //    for (int i = 0; i < 6; i++) {
@@ -982,7 +978,7 @@ bool Finger::LoadMedia() {
    //    }
 
    //    // Set curr clip
-   //    textures["point"].curr_clip_ = &temp[0];
+   //    GetAnimationByName("point").curr_clip_ = &temp[0];
    // }
 
    // // Load finger shake

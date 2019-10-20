@@ -18,6 +18,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 class Element;
 class Animation;
@@ -40,6 +41,10 @@ class Texture {
       
       // Animate function
       void Animate(Animation *anim, int reset = 0, int max = 0, int start = 0);
+      
+      // Retrieve specific animations
+      Animation *GetAnimationFromTexture(std::string name);
+      std::unordered_map<std::string, Animation *> animations;
       /***********************/
 
       // Rect for sprite

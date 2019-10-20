@@ -167,6 +167,29 @@ float Element::get_width() const {
       return width_;
 }
 
+float Element::get_anim_x() {
+   if (body) {
+      std::cout << GetAnimationFromState()->texture_width << " " << GetAnimationFromState()->texture_height << std::endl;
+      x_pos_ = (100.0f * body->GetPosition().x) - (GetAnimationFromState()->texture_width / 2.0f);
+      return x_pos_;
+   } else {
+      return x_pos_ - (GetAnimationFromState()->image_width / 2.0f - GetAnimationFromState()->texture_width / 2.0f);
+   }
+}
+
+float Element::get_anim_y() {
+   if (body) {
+      y_pos_ = (100.0f * -body->GetPosition().y) - (GetAnimationFromState()->texture_height / 2.0f);
+      return y_pos_;
+   } else {
+      return y_pos_ - (GetAnimationFromState()->image_height / 2.0f - GetAnimationFromState()->texture_height / 2.0f);
+   }
+}
+
+Animation *Element::GetAnimationByName(std::string name) {
+   return sprite_sheet->animations[name];
+}
+
 // Load media does nothing
 bool Element::LoadMedia() {
    return true;

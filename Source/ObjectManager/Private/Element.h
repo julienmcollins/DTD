@@ -59,6 +59,8 @@ class Element {
       float get_y();
       float get_tex_x();
       float get_tex_y();
+      float get_anim_x();
+      float get_anim_y();
       float get_height() const;
       float get_width() const;
 
@@ -122,6 +124,15 @@ class Element {
          CIRCLE
       };
 
+      /*******************************/
+
+      /******* ANIMATION *************/
+      // Texture reference
+      Texture *sprite_sheet;
+
+
+      virtual Animation *GetAnimationFromState() {};
+      Animation *GetAnimationByName(std::string name);
       /*******************************/
 
       // virtual load media

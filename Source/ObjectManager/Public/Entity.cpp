@@ -969,6 +969,21 @@ bool Player::LoadMedia() {
    data.push_back(TextureData(19, 1.0f / 20.0f, "balance", media_path + "balance.png"));
    data.push_back(TextureData(20, 1.0f / 20.0f, "death", media_path + "death.png"));
 
+   // Instantiate sprite sheet
+   std::string player_path = media_path + "player_master_sheet.png";
+   sprite_sheet = RenderingEngine::get_instance().LoadTexture("player_master_sheet", player_path.c_str());
+   sprite_sheet->animations.emplace("jump_push", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 0.0f, 8, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("double_jump", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 104.0f / 2394.0f, 11, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("tap", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 208.0f / 2394.0f, 12, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("running", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 312.0f / 2394.0f, 15, 1.0f / 30.0f));
+   sprite_sheet->animations.emplace("jump", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 416.0f / 2394.0f, 15, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("running_jump", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 520.0f / 2394.0f, 15, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("push", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 624.0f / 2394.0f, 16, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("kick", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 728.0f / 2394.0f, 17, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("look", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 832.0f / 2394.0f, 20, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("death", new Animation(2394.0f, 1144.0f, 105.0f, 104.0f, 936.0f / 2394.0f, 20, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("balance", new Animation(2394.0f, 1144.0f, 89.0f, 104.0f, 1040.0f / 1144.0f, 19, 1.0f / 20.0f));
+
    // Load the resources
    success = RenderingEngine::get_instance().LoadResources(this, data);
 

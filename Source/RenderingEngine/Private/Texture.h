@@ -214,6 +214,9 @@ class Animation {
       float fps;
       bool completed;
 
+      /* FPS TIMER */
+      Timer fps_timer;
+
       /* Animation data for the frame */
       std::vector<FrameData> frames;
 };

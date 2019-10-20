@@ -139,11 +139,11 @@ void Texture::init_VAO() {
 
         // Create VBO
         glBindBuffer( GL_ARRAY_BUFFER, VBO_ID );
-        glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW );
+        glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW );
 
         // Create IBO
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO_ID );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW );
 
         // Position attribute
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
@@ -270,7 +270,11 @@ void Texture::Render(float x, float y, GLfloat rotate, Animation *clip, glm::vec
 
         // Transform it
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(x + texture_width / 2, y + texture_height / 2, 0.0f));
+        if (clip) {
+            model = glm::translate(model, glm::vec3(x + clip->half_width, y + clip->half_height, 0.0f));
+        } else {
+            model = glm::translate(model, glm::vec3(x + image_width / 2.0f, y + image_height / 2.0f, 0.0f));
+        }
 
         // Set transforms and color
         shader.SetMatrix4("model", model);
@@ -299,7 +303,7 @@ void Texture::Animate(Animation *anim, int reset, int max, int start) {
     int temp_start = (start == 0) ? 0 : start;
 
     // Set next frame based on fps
-    anim->last_frame += fps_timer.getDeltaTime() / 1000.0f;
+    anim->last_frame += anim->fps_timer.getDeltaTime() / 1000.0f;
     if (anim->last_frame > anim->fps) {
         if (anim->curr_frame == temp_max) {
             anim->curr_frame = reset;
@@ -376,4 +380,7 @@ Animation::Animation(GLfloat image_width, GLfloat image_height, GLfloat texture_
             }
         );
     }
+
+    // Start fps timer
+    fps_timer.start();
 }

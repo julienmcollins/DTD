@@ -130,7 +130,6 @@ class Element {
       // Texture reference
       Texture *sprite_sheet;
 
-
       virtual Animation *GetAnimationFromState() {};
       Animation *GetAnimationByName(std::string name);
       /*******************************/

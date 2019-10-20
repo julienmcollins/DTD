@@ -173,7 +173,7 @@ float Element::get_anim_x() {
       x_pos_ = (100.0f * body->GetPosition().x) - (GetAnimationFromState()->texture_width / 2.0f);
       return x_pos_;
    } else {
-      return x_pos_ - (GetAnimationFromState()->image_width / 2.0f - GetAnimationFromState()->texture_width / 2.0f);
+      return x_pos_;
    }
 }
 
@@ -182,7 +182,7 @@ float Element::get_anim_y() {
       y_pos_ = (100.0f * -body->GetPosition().y) - (GetAnimationFromState()->texture_height / 2.0f);
       return y_pos_;
    } else {
-      return y_pos_ - (GetAnimationFromState()->image_height / 2.0f - GetAnimationFromState()->texture_height / 2.0f);
+      return y_pos_;
    }
 }
 

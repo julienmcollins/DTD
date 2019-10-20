@@ -288,10 +288,6 @@ class Application {
          THIRD
       };
 
-      // ANIMATE FUNCTION
-      void animate(const float &fps, Element* element, 
-            Texture *texture, Timer &timer, float &last_frame);
-
       // MAIN SCREEN FUNCTION
       void main_screen();
 
@@ -309,8 +305,6 @@ class Application {
       /**** MAIN MENU ********/
       Element menu_background_;
       Element menu_title_;
-      Element menu_items_;
-      Element world_items_;
       Element ruler_;
       Platform *menu_platform_;
       Platform *invisible_wall_;

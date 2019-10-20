@@ -38,6 +38,21 @@ bool RenderingEngine::LoadResources(Element *element, std::vector<TextureData> t
    return success;
 }
 
+void RenderingEngine::LoadResources(Element *element, std::unordered_map<std::string, Animation *> anim_data) {
+   // Loop through and load
+   for (std::unordered_map<std::string, Animation *>::iterator it = anim_data.begin(); it != anim_data.end(); ++it) {
+      int i = 0;
+      for (auto &frame : it->second->frames) {
+         if (i == it->second->num_of_frames) {
+            break;
+         }
+         frame.l = i * frame.normal_width;
+         frame.r = (i + 1) * frame.normal_width;
+         ++i;
+      }
+   }
+}
+
 void RenderingEngine::LoadImage(Element *element, int frame_num, float fps, std::string name, std::string file, bool &success, int rows) {
    element->textures.emplace(name, new Texture(element, frame_num - 1, fps));
    if (!element->textures[name]->LoadFromFile(file.c_str(), true)) {

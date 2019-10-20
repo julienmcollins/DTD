@@ -9,7 +9,7 @@
 
 // Constructor for element
 Element::Element(int x, int y, int height, int width) :
-   alive(true), texture(this, 0), body(NULL), flag_(false), element_shape(), 
+   alive(true), texture(this), body(NULL), flag_(false), element_shape(), 
    in_contact_down(false), in_contact_left(false), in_contact_right(false) {
 
    // Set x and y
@@ -338,7 +338,7 @@ GLFloatRect *Element::get_curr_clip() {
 // Update function for basic stuff just calls Render
 void Element::update(bool freeze) {
    // Simply Render the texture
-   texture.Render(get_tex_x(), get_tex_y());
+   // texture.Render(get_tex_x(), get_tex_y());
 }
 
 // Destructor

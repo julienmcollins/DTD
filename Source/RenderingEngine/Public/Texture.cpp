@@ -133,11 +133,11 @@ void Texture::init_VAO() {
 
         // Create VBO
         glBindBuffer( GL_ARRAY_BUFFER, VBO_ID );
-        glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW );
+        glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW );
 
         // Create IBO
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO_ID );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
 
         // Position attribute
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
@@ -229,6 +229,83 @@ void Texture::Render(float x, float y, GLFloatRect *clip, GLfloat rotate, glm::v
     }
 }
 
+void Texture::Render(float x, float y, GLfloat rotate, Animation *clip, glm::vec3 color) {
+    if (texture_ID != 0) {
+        // Use shader
+        ShaderProgram shader = RenderingEngine::get_instance().GetShader("texture_shader").Use();
+
+        // If clip doesn't exist, render entire texture
+        float h_w, h_h;
+        float l, r, b, t;
+        if (!clip) {
+            h_w = image_width / 2.0f;
+            h_h = image_height / 2.0f;
+            l = 0.0f;
+            r = 1.0f;
+            b = 0.0f;
+            t = 1.0f;
+        } else {
+            h_w = clip->half_width;
+            h_h = clip->half_height;
+            l = clip->frames[clip->curr_frame].l;
+            r = clip->frames[clip->curr_frame].r;
+            b = clip->frames[clip->curr_frame].b;
+            t = clip->frames[clip->curr_frame].t;
+        }
+
+        // Initialize vertices 
+        float vertices[] = {
+            // positions  // texture coords
+            h_w,  h_h,    r, t, // top right
+            h_w, -h_h,    r, b, // bottom right
+           -h_w, -h_h,    l, b, // bottom left
+           -h_w,  h_h,    l, t  // top left
+        };
+
+        // Transform it
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(x + texture_width / 2, y + texture_height / 2, 0.0f));
+
+        // Set transforms and color
+        shader.SetMatrix4("model", model);
+        shader.SetVector3f("color", color);
+        
+        // Activate texture
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture_ID);
+
+        // Draw
+        glBindVertexArray(VAO_ID);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        
+        // Unbind everything
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+}
+
+void Texture::Animate(Animation *anim, int reset, int max, int start) {
+    // Define standards 
+    int temp_max = (max == 0) ? anim->max_frame : max;
+    int temp_start = (start == 0) ? 0 : start;
+
+    // Set next frame based on fps
+    anim->last_frame += fps_timer.getDeltaTime() / 1000.0f;
+    if (anim->last_frame > anim->fps) {
+        if (anim->curr_frame >= temp_max) {
+            anim->curr_frame = reset;
+            anim->completed = true;
+        } else if (anim->curr_frame <= reset + 1) {
+            anim->completed = false;
+        }
+        ++anim->curr_frame;
+        anim->last_frame = 0.0f;
+    }
+}
+
 // Get x position
 int Texture::get_x() const {
     return x;
@@ -265,3 +342,26 @@ TextureData::TextureData(int num_of_frames, float fps, std::string name, std::st
 
 TextureData::TextureData(int width, int height, int num_of_frames) :
     width(width), height(height), num_of_frames(num_of_frames) {}
+
+Animation::Animation(GLfloat image_width, GLfloat image_height, GLfloat texture_width, GLfloat texture_height, GLfloat offset, int num_of_frames, float fps) :
+    image_width(image_width), image_height(image_height),
+    texture_width(texture_width), texture_height(texture_height),
+    half_width(texture_width / 2.0f), half_height(texture_height / 2.0f),
+    num_of_frames(num_of_frames), curr_frame(0), max_frame(num_of_frames - 1),
+    last_frame(0.0f), fps(fps), completed(false) {
+
+    // Set normal width and height
+    for (int i = 0; i < num_of_frames; i++) {
+        // Create new frame
+        frames.push_back(
+            {
+                texture_width / image_width, 
+                texture_height / image_height,
+                0.0f,
+                0.0f,
+                offset,
+                offset + (texture_height / image_height)
+            }
+        );
+    }
+}

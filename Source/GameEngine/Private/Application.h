@@ -36,42 +36,12 @@
 
 class Level;
 class Enemy;
+class Finger;
 
 // For returning the screen position
 typedef struct {
    int x, y;
 } Coords;
-
-// Finger class because it's easier
-class Finger : public Element {
-   public:
-      // Constructor
-      Finger();
-
-      // Get texture
-      virtual Texture *get_texture();
-
-      // Update function
-      virtual void update();
-
-      // FINGER STATE
-      enum FINGER_STATE {
-         POINT,
-         SHAKE   
-      };  
-
-      // Load media
-      virtual bool LoadMedia();
-
-      // TESTING THIS FEATURE
-      std::unordered_map<std::string, std::vector<Animation>> animations;
-
-      // Finger state
-      FINGER_STATE finger_state;
-
-      // Updating flag
-      bool updating;
-};
 
 class Application {
    public:
@@ -357,6 +327,42 @@ class Application {
       // More singleton stuff
       Application(Application const&) = delete;
       void operator=(Application const&) = delete;
+};
+
+// Finger class because it's easier
+class Finger : public Element {
+   public:
+      // Constructor
+      Finger();
+
+      // Get texture
+      virtual Texture *get_texture();
+
+      // Update function
+      virtual void update();
+
+      // FINGER STATE
+      enum FINGER_STATE {
+         POINT,
+         SHAKE   
+      };  
+
+      // Load media
+      virtual bool LoadMedia();
+
+      // TESTING THISE FEATURE
+      Texture test_texture;
+
+      // TESTING THESE FEATURE
+      Animation *GetAnimationFromTexture();
+      Animation *GetAnimationFromTexture(std::string name);
+      std::unordered_map<std::string, Animation *> animations;
+
+      // Finger state
+      FINGER_STATE finger_state;
+
+      // Updating flag
+      bool updating;
 };
 
 #endif /* Application_h */

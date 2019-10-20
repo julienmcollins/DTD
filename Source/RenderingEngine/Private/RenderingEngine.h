@@ -7,7 +7,7 @@
 
 #include "Source/ObjectManager/Private/Element.h"
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 
@@ -34,12 +34,13 @@ class RenderingEngine {
 
         /* Load resources for elements */
         bool LoadResources(Element *element, std::vector<TextureData> texture_data);
+        void LoadResources(Element *element, std::unordered_map<std::string, Animation *> anim_data);
 
         /* Load the actual image for the element */
         void LoadImage(Element *element, int frame_num, float fps, std::string name, std::string file, bool &success, int rows = 1);
 
         /* Keep track of shaders used */
-        std::map<std::string, ShaderProgram> shaders;
+        std::unordered_map<std::string, ShaderProgram> shaders;
 
     private:
         /* Private constructor blocks any object from being made */

@@ -36,6 +36,8 @@ void printShaderLog( unsigned int shader );
 const std::string Application::sprite_path = "Media/Sprites/";
 const std::string Application::audio_path = "Media/Audio/";
 
+using namespace std;
+
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
    SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), pause(-1), main_window(NULL), 
@@ -345,7 +347,7 @@ bool Application::LoadMedia() {
    }
 
    // Load thanks
-   path = sprite_path + "Miscealaneous/test.png";
+   path = sprite_path + "Menu/finger_master_sheet.png";
    if (!thanks_screen_.texture.LoadFromFile(path.c_str(), true)) {
       printf("Failed to load thanks.png\n");
       success = false;
@@ -374,6 +376,7 @@ void Application::setup_menu() {
    if (finger_->LoadMedia() == false) {
       quit = true;
    }
+
    point_ = false;
    item_ = false;
    clicked = false;
@@ -577,7 +580,8 @@ void Application::main_screen() {
       } else if (e.type == SDL_KEYDOWN) {
          if (e.key.keysym.sym == SDLK_p) {
             pause *= -1;
-         } if (finger_ && finger_->updating) {
+         } 
+         if (finger_ && finger_->updating) {
             if (finger_->get_y() == OPTIONS && e.key.keysym.sym == SDLK_UP) {
                finger_->set_y(START);
                finger_->set_x(700);
@@ -905,38 +909,57 @@ Texture *Finger::get_texture() {
    }
 }
 
+Animation *Finger::GetAnimationFromTexture() {
+   if (finger_state == SHAKE) {
+      return animations["shake"];
+   }
+   
+   if (finger_state == POINT) {
+      return animations["point"];
+   }
+}
+
+Animation *Finger::GetAnimationFromTexture(std::string name) {
+   return animations[name];
+}
+
 // Update function
 void Finger::update() {
    // Animate based on state
    if (finger_state == SHAKE) {
-      animate(textures["shake"]);
+      texture.Animate(GetAnimationFromTexture("shake"));
    } else if (finger_state == POINT) {
-      animate(textures["point"]);
+      texture.Animate(GetAnimationFromTexture("point"));
    }
 
-   // Get texture and Render it
-   Texture *tex = get_texture();
-   
-   // Render finger
-   Render(tex);
+   // Render
+   texture.Render(get_tex_x(), get_tex_y(), 0.0f, GetAnimationFromTexture());
 }
 
 // Load media function
 bool Finger::LoadMedia() {
-   // Success flag
+   // // Success flag
    bool success = true; 
 
-   // Load data
-   // anim_data["shake"] = TextureData(8, 1.0f / 20.0f, "", "");
-   // anim_data["point"] = TextureData(6, 1.0f / 20.0f, "", "");
+   // Load the file
+   std::string finger_path = Application::sprite_path + "Menu/finger_master_sheet.png";
+   success = texture.LoadFromFile(finger_path.c_str(), true);
 
+   // cout << texture.texture_ID << " " << texture.pixel_format << " " << texture.image_width << " " << texture.image_height << " " << texture.VBO_ID << " " << texture.IBO_ID << " " << texture.VAO_ID << endl;
 
-   std::vector<TextureData> data;
-   data.push_back(TextureData(8, 1.0f / 20.0f, "shake", Application::sprite_path + "Miscealaneous/finger_shake.png"));
-   data.push_back(TextureData(6, 1.0f / 20.0f, "point", Application::sprite_path + "Miscealaneous/finger_point.png"));
+   // // Insantiate animations
+   animations.emplace("shake", new Animation(992.0f, 136.0f, 124.0f, 68.0f, 68.0f / 136.0f, 8, 1.0f / 20.0f));
+   animations.emplace("point", new Animation(992.0f, 136.0f, 124.0f, 68.0f, 0.0f, 6, 1.0f / 20.0f));
 
-   // Load resources
-   success = RenderingEngine::get_instance().LoadResources(this, data);
+   // // Load resources
+   RenderingEngine::get_instance().LoadResources(this, animations);
+
+   // std::vector<TextureData> data;
+   // data.push_back(TextureData(8, 1.0f / 20.0f, "shake", Application::sprite_path + "Miscealaneous/finger_shake.png"));
+   // data.push_back(TextureData(6, 1.0f / 20.0f, "point", Application::sprite_path + "Miscealaneous/finger_point.png"));
+
+   // // Load resources
+   // success = RenderingEngine::get_instance().LoadResources(this, data);
 
    // // Load finger point
    // textures.emplace("point", Texture());

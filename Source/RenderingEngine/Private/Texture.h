@@ -17,8 +17,10 @@
 #include "Source/ObjectManager/Private/Timer.h"
 
 #include <string>
+#include <vector>
 
 class Element;
+class Animation;
 
 class Texture {
    public:
@@ -34,6 +36,10 @@ class Texture {
       /****** OPENGL *********/
       // Overloaded opengl Render function
       void Render(float x, float y, GLFloatRect *clip = NULL, GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
+      void Render(float x, float y, GLfloat rotate = 0.0f, Animation *clip = NULL, glm::vec3 color = glm::vec3(1.0f));
+      
+      // Animate function
+      void Animate(Animation *anim, int reset = 0, int max = 0, int start = 0);
       /***********************/
 
       // Rect for sprite
@@ -105,13 +111,8 @@ class Texture {
 
       // Destructor
       ~Texture();
-   
-   private:
-      // Image position
-      int x;
-      int y;
 
-   protected:
+   // protected:
       // Initialize and Free vertex buffer object
       void init_VAO();
       void Free_VBO();
@@ -142,6 +143,12 @@ class Texture {
 
       // VAO
       unsigned int VAO_ID;
+         
+   private:
+      // Image position
+      int x;
+      int y;
+
 };
 
 class TextureData {
@@ -164,25 +171,44 @@ class TextureData {
 /* Holds relevant vertex data for rendering */
 struct FrameData {
    /* Texture width and height */
-   GLfloat tex_width;
-   GLfloat tex_height;
+   GLfloat normal_width;
+   GLfloat normal_height;
 
    /* Texture coordinates */
-   GLfloat s;
+   GLfloat l;
+   GLfloat r;
+   GLfloat b;
    GLfloat t;
 };
 
 /* Animations data */
 class Animation {
-   /* Default constructor does not do anything (for now) */
-   Animation() {}
+   public:
+      /* Default constructor does not do anything (for now) */
+      Animation(GLfloat image_width, GLfloat image_height, GLfloat texture_width, GLfloat texture_height, GLfloat offset, int num_of_frames, float fps);
 
-   /* Half width and height for vertext */
-   GLfloat half_width;
-   GLfloat half_height;
+      /* Image width */
+      GLfloat image_width;
+      GLfloat image_height;
 
-   /* Animation data for the frame */
-   FrameData frame;
+      /* Texture width */
+      GLfloat texture_width;
+      GLfloat texture_height;
+
+      /* Half width and height for vertext */
+      GLfloat half_width;
+      GLfloat half_height;
+
+      /* FRAME INFORMATION */
+      int num_of_frames;
+      int curr_frame;
+      int max_frame;
+      float last_frame;
+      float fps;
+      bool completed;
+
+      /* Animation data for the frame */
+      std::vector<FrameData> frames;
 };
 
 #endif /* Texture_h */

@@ -216,7 +216,7 @@ void Level::update() {
    background_.draw();
 
    // Render the platforms
-   platform_texture_.Render(0.f, 0.f);
+   // platform_texture_.Render(0.f, 0.f);
 
    // Render platforms
    for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {

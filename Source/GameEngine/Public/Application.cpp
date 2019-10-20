@@ -933,6 +933,7 @@ void Finger::update() {
    }
 
    // Render
+   // cout << texture.GetTextureWidth() << " " << texture.GetTextureHeight() << endl;
    texture.Render(get_tex_x(), get_tex_y(), 0.0f, GetAnimationFromTexture());
 }
 
@@ -944,6 +945,7 @@ bool Finger::LoadMedia() {
    // Load the file
    std::string finger_path = Application::sprite_path + "Menu/finger_master_sheet.png";
    success = texture.LoadFromFile(finger_path.c_str(), true);
+   // test_texture = RenderingEngine::get_instance().LoadTexture("finger_sheet", finger_path.c_str());
 
    // cout << texture.texture_ID << " " << texture.pixel_format << " " << texture.image_width << " " << texture.image_height << " " << texture.VBO_ID << " " << texture.IBO_ID << " " << texture.VAO_ID << endl;
 

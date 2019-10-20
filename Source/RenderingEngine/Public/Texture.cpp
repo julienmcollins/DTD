@@ -31,7 +31,7 @@ Texture::Texture(Element *element, int max_frame, float fps_val) : clips_(NULL),
 // Loads textures from files
 bool Texture::LoadFromFile(const GLchar *file, GLboolean alpha) {
     // Free preexisting textures
-    Free();
+    // Free();
     
     // Load image at specified path
     SDL_Surface* loadedSurface = IMG_Load(file);
@@ -46,42 +46,29 @@ bool Texture::LoadFromFile(const GLchar *file, GLboolean alpha) {
     if (loadedSurface == NULL) {
         printf("Unable to load image %s! SDL_image Error: %s\n", file, IMG_GetError());
         return false;
-    } else {
-        // Init VAO
-        init_VAO();
-
-        // Generate the texture
-        glGenTextures(1, &texture_ID);
-        glBindTexture(GL_TEXTURE_2D, texture_ID);
-
-        // Set parameters
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-        
-        // Set format
-        pixel_format = GL_RGB;
-        if (loadedSurface->format->BytesPerPixel == 4) {
-            pixel_format = GL_RGBA;
-        }
-
-        // Store pixels
-        pixels_32 = loadedSurface->pixels;
-
-        // Generate tex image
-        glTexImage2D(GL_TEXTURE_2D, 0, pixel_format, loadedSurface->w, loadedSurface->h, 0, pixel_format, GL_UNSIGNED_BYTE, loadedSurface->pixels);
-
-        // Unbind texture
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        // Check error
-        GLenum error = glGetError();
-        if (error != GL_NO_ERROR) {
-            // cout << "Error loading texture from " << loadedSurface->pixels << " pixels! " << gluErrorString(error) << endl;
-            // return false;
-        }
     }
+
+    // Init VAO
+    init_VAO();
+
+    // Generate the texture
+    glGenTextures(1, &texture_ID);
+    glBindTexture(GL_TEXTURE_2D, texture_ID);
+
+    // Set parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+    // Store pixels
+    pixels_32 = loadedSurface->pixels;
+
+    // Generate tex image
+    glTexImage2D(GL_TEXTURE_2D, 0, internal_format, loadedSurface->w, loadedSurface->h, 0, image_format, GL_UNSIGNED_BYTE, loadedSurface->pixels);
+
+    // Unbind texture
+    glBindTexture(GL_TEXTURE_2D, 0);
     
     return true;
 }

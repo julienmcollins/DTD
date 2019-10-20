@@ -351,7 +351,7 @@ class Finger : public Element {
       virtual bool LoadMedia();
 
       // TESTING THISE FEATURE
-      Texture test_texture;
+      Texture *test_texture;
 
       // TESTING THESE FEATURE
       Animation *GetAnimationFromTexture();

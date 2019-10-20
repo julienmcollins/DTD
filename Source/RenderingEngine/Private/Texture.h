@@ -125,6 +125,8 @@ class Texture {
 
       // Pixel format
       unsigned int pixel_format;
+      unsigned int internal_format;
+      unsigned int image_format;
 
       // Texture width and height
       unsigned int texture_width;

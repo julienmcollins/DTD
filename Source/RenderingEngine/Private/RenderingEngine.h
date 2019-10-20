@@ -39,8 +39,14 @@ class RenderingEngine {
         /* Load the actual image for the element */
         void LoadImage(Element *element, int frame_num, float fps, std::string name, std::string file, bool &success, int rows = 1);
 
+        /* Load textures and return texture functions */
+        // Texture *LoadTexture(std::string name, const GLchar *file, GLboolean alpha = true);
+        // Texture LoadTextureFromFile(const GLchar *file, GLboolean alpha = true);
+        // Texture *GetTextureReference(std::string name);
+
         /* Keep track of shaders used */
         std::unordered_map<std::string, ShaderProgram> shaders;
+        // std::unordered_map<std::string, Texture> textures;
 
     private:
         /* Private constructor blocks any object from being made */

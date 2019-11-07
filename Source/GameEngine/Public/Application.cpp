@@ -247,22 +247,22 @@ bool Application::LoadMedia() {
    /********* MENU BACKGROUNDS **********/
    s = sprite_path + "Menu/menu_background_sheet.png";
    menu_background_.sprite_sheet = RenderingEngine::get_instance().LoadTexture("menu_background_sheet", s.c_str());
-   menu_background_.sprite_sheet->animations.emplace("forest", new Animation(5760.0f, 2160.0f, 1920.0f, 1080.0f, 0.0f, 3, 1.0f / 4.0f));
-   menu_background_.sprite_sheet->animations.emplace("cloud", new Animation(5760.0f, 2160.0f, 1920.0f, 1080.0f, 1080.0f / 2160.0f, 3, 1.0f / 4.0f));
+   menu_background_.sprite_sheet->animations.emplace("forest", new Animation(menu_background_.sprite_sheet, 1920.0f, 1080.0f, 0.0f, 3, 1.0f / 4.0f));
+   menu_background_.sprite_sheet->animations.emplace("cloud", new Animation(menu_background_.sprite_sheet, 1920.0f, 1080.0f, 1080.0f, 3, 1.0f / 4.0f));
    RenderingEngine::get_instance().LoadResources(&menu_background_);
 
    /************* TITLES **************/
    s = sprite_path + "Menu/menu_title_sheet.png";
    menu_title_.sprite_sheet = RenderingEngine::get_instance().LoadTexture("menu_title_sheet", s.c_str());
-   menu_title_.sprite_sheet->animations.emplace("title", new Animation(1938.0f, 1217.0f, 646.0f, 513.0f, 704.0f / 1217.0f, 3, 1.0f / 4.0f));
-   menu_title_.sprite_sheet->animations.emplace("menu", new Animation(1938.0f, 1217.0f, 323.0f, 372.0f, 332.0f / 1217.0f, 3, 1.0f / 4.0f));
-   menu_title_.sprite_sheet->animations.emplace("world", new Animation(1938.0f, 1217.0f, 193.0f, 332.0f, 0.0f, 3, 1.0f / 4.0f));
+   menu_title_.sprite_sheet->animations.emplace("title", new Animation(menu_title_.sprite_sheet, 646.0f, 513.0f, 704.0f, 3, 1.0f / 4.0f));
+   menu_title_.sprite_sheet->animations.emplace("menu", new Animation(menu_title_.sprite_sheet, 323.0f, 372.0f, 332.0f, 3, 1.0f / 4.0f));
+   menu_title_.sprite_sheet->animations.emplace("world", new Animation(menu_title_.sprite_sheet, 193.0f, 332.0f, 0.0f, 3, 1.0f / 4.0f));
    RenderingEngine::get_instance().LoadResources(&menu_title_);
 
    /************ GAMEOVER **************/
    s = sprite_path + "Miscealaneous/gameover.png";
    gameover_screen_.sprite_sheet = RenderingEngine::get_instance().LoadTexture("gameover", s.c_str());
-   gameover_screen_.sprite_sheet->animations.emplace("gameover", new Animation(5760.0f, 1080.0f, 1920.0f, 1080.0f, 0.0f, 3, 1.0f / 3.0f));
+   gameover_screen_.sprite_sheet->animations.emplace("gameover", new Animation(gameover_screen_.sprite_sheet, 1920.0f, 1080.0f, 0.0f, 3, 1.0f / 3.0f));
    RenderingEngine::get_instance().LoadResources(&gameover_screen_);
       
    // Return state
@@ -753,17 +753,6 @@ Application::~Application() {
 Finger::Finger() : 
    Element(700, 665, 67, 124), finger_state(SHAKE), updating(true) {}
 
-// Get texture
-Texture *Finger::get_texture() {
-   if (finger_state == SHAKE) {
-      return textures["shake"];
-   }
-   
-   if (finger_state == POINT) {
-      return textures["point"];
-   }
-}
-
 Animation *Finger::GetAnimationFromState() {
    if (finger_state == SHAKE) {
       return sprite_sheet->GetAnimationFromTexture("shake");
@@ -797,8 +786,8 @@ bool Finger::LoadMedia() {
    sprite_sheet = RenderingEngine::get_instance().LoadTexture("finger_sheet", finger_path.c_str());
 
    // Insantiate animations
-   sprite_sheet->animations.emplace("shake", new Animation(992.0f, 136.0f, 124.0f, 68.0f, 68.0f / 136.0f, 8, 1.0f / 20.0f));
-   sprite_sheet->animations.emplace("point", new Animation(992.0f, 136.0f, 124.0f, 68.0f, 0.0f, 6, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("shake", new Animation(sprite_sheet, 124.0f, 68.0f, 68.0f, 8, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("point", new Animation(sprite_sheet, 124.0f, 68.0f, 0.0f, 6, 1.0f / 20.0f));
 
    // Load resources
    RenderingEngine::get_instance().LoadResources(this);

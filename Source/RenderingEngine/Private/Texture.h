@@ -41,10 +41,14 @@ class Texture {
       
       // Animate function
       void Animate(Animation *anim, int reset = 0, int max = 0, int start = 0);
-      
+
       // Retrieve specific animations
       Animation *GetAnimationFromTexture(std::string name);
       std::unordered_map<std::string, Animation *> animations;
+
+      // Variables for texture width and height
+      GLfloat image_width;
+      GLfloat image_height;
       /***********************/
 
       // Rect for sprite
@@ -78,14 +82,6 @@ class Texture {
       }
       int GetImageHeight() const {
          return image_height;
-      }
-
-      // Get texture dimensions
-      int GetTextureWidth() const {
-         return texture_width;
-      }
-      int GetTextureHeight() const {
-         return texture_height;
       }
 
       // Set image positions
@@ -129,20 +125,8 @@ class Texture {
       void *pixels_32;
 
       // Pixel format
-      unsigned int pixel_format;
       unsigned int internal_format;
       unsigned int image_format;
-
-      // Texture width and height
-      unsigned int texture_width;
-      unsigned int texture_height;
-
-      // Image width and height
-      unsigned int image_width;
-      unsigned int image_height;
-
-      // Tex rect
-      GLTexRect tex_dimensions;
 
       // Vertex and indices
       unsigned int VBO_ID;
@@ -192,11 +176,10 @@ struct FrameData {
 class Animation {
    public:
       /* Default constructor does not do anything (for now) */
-      Animation(GLfloat image_width, GLfloat image_height, GLfloat texture_width, GLfloat texture_height, GLfloat offset, int num_of_frames, float fps);
+      Animation(Texture *texture, GLfloat texture_width, GLfloat texture_height, GLfloat offset, int num_of_frames, float fps);
 
-      /* Image width */
-      GLfloat image_width;
-      GLfloat image_height;
+      /* Texture reference */
+      Texture *parent;
 
       /* Texture width */
       GLfloat texture_width;
@@ -210,6 +193,8 @@ class Animation {
       int num_of_frames;
       int curr_frame;
       int max_frame;
+      int reset_frame;
+      int stop_frame;
       float last_frame;
       float fps;
       bool completed;

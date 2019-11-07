@@ -147,6 +147,11 @@ int Projectile::get_damage() const {
    return damage_;
 }
 
+bool Projectile::LoadMedia() {
+   std::string proj_path = Application::sprite_path + "Projectiles/projectile_master_sheet.png";
+   sprite_sheet = RenderingEngine::get_instance().LoadTexture("projectile_master_sheet", proj_path.c_str());
+}
+
 // Destructor
 Projectile::~Projectile() {}
 

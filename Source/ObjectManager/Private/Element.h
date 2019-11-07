@@ -131,7 +131,7 @@ class Element {
       Texture *sprite_sheet;
 
       virtual Animation *GetAnimationFromState() {};
-      Animation *GetAnimationByName(std::string name);
+      Animation *GetAnimationByName(std::string name, Texture *tex = nullptr);
       /*******************************/
 
       // virtual load media

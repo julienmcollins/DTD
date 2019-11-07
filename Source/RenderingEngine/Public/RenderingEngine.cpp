@@ -38,9 +38,10 @@ bool RenderingEngine::LoadResources(Element *element, std::vector<TextureData> t
    return success;
 }
 
-void RenderingEngine::LoadResources(Element *element) {
+void RenderingEngine::LoadResources(Element *element, Texture *tex) {
    // Loop through and load
-   for (std::unordered_map<std::string, Animation *>::iterator it = element->sprite_sheet->animations.begin(); it != element->sprite_sheet->animations.end(); ++it) {
+   Texture *temp = (tex) ? tex : element->sprite_sheet;
+   for (std::unordered_map<std::string, Animation *>::iterator it = temp->animations.begin(); it != temp->animations.end(); ++it) {
       int i = 0;
       for (auto &frame : it->second->frames) {
          if (i == it->second->num_of_frames) {
@@ -73,10 +74,10 @@ void RenderingEngine::LoadImage(Element *element, int frame_num, float fps, std:
             if (k == frame_num) {
                break;
             }
-            temp[k].x = (float) (j * tex->GetTextureWidth()) / (float) tex->GetImageWidth();
-            temp[k].y = (float) (i * tex->GetTextureHeight()) / (float) tex->GetImageHeight();
-            temp[k].w = (float) tex->GetTextureWidth() / (float) tex->GetImageWidth();
-            temp[k].h = (float) tex->GetTextureHeight() / (float) tex->GetImageHeight();
+            // temp[k].x = (float) (j * tex->GetTextureWidth()) / (float) tex->GetImageWidth();
+            // temp[k].y = (float) (i * tex->GetTextureHeight()) / (float) tex->GetImageHeight();
+            // temp[k].w = (float) tex->GetTextureWidth() / (float) tex->GetImageWidth();
+            // temp[k].h = (float) tex->GetTextureHeight() / (float) tex->GetImageHeight();
             k++;
          }
          if (k == frame_num) {

@@ -80,6 +80,9 @@ class Projectile : public Object {
       // doNothing function
       //virtual void doNothing();
 
+      // Load master sprite sheet
+      virtual bool LoadMedia();
+
       // Set contact listener
       virtual void start_contact(Element *element) {
          alive = false;

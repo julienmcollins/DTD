@@ -218,6 +218,13 @@ class Player : public Entity {
       // Shooting flag
       bool shooting;
 
+      /******** OPENGL ***********/
+      virtual Animation *GetAnimationFromState();
+
+      
+      // Sheet for arms
+      Texture *arm_sheet;
+      /***************************/
       // Number for random idle anim
       int rand_idle;
       Texture *curr_idle_texture;

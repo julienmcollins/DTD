@@ -48,9 +48,6 @@ class Finger : public Element {
       // Constructor
       Finger();
 
-      // Get texture
-      virtual Texture *get_texture();
-
       // Update function
       virtual void update();
 

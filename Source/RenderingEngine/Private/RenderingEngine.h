@@ -34,7 +34,7 @@ class RenderingEngine {
 
         /* Load resources for elements */
         bool LoadResources(Element *element, std::vector<TextureData> texture_data);
-        void LoadResources(Element *element);
+        void LoadResources(Element *element, Texture *tex = nullptr);
 
         /* Load the actual image for the element */
         void LoadImage(Element *element, int frame_num, float fps, std::string name, std::string file, bool &success, int rows = 1);

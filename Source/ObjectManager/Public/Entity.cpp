@@ -357,6 +357,59 @@ Player::Player() :
    immunity_timer_.start();
 }
 
+Animation *Player::GetAnimationFromState() {
+   // Return run or stop texture (aka running texture)
+   if (player_state_ == RUN || player_state_ == STOP) {
+      return GetAnimationByName("running");
+   }
+
+   // Return jump texture
+   if (player_state_ == JUMP) {
+      return GetAnimationByName("jump");
+   }
+
+   // Return run and jump texture
+   if (player_state_ == RUN_AND_JUMP) {
+      return GetAnimationByName("running_jump");
+   }
+
+   // Return double jump
+   if (player_state_ == DOUBLE_JUMP) {
+      return GetAnimationByName("double_jump");
+   }
+
+   // Return push texture
+   if (player_state_ == PUSH) {
+      return GetAnimationByName("push");
+   }
+
+   // Return jump and push texture
+   if (player_state_ == JUMP_AND_PUSH) {
+      return GetAnimationByName("jump_push");
+   }
+
+   // Return balance
+   if (player_state_ == BALANCE) {
+      return GetAnimationByName("balance");
+   }
+
+   // Death
+   if (player_state_ == DEATH) {
+      return GetAnimationByName("death");
+   }
+
+   // Check which idle is being used and return it
+   if (rand_idle <= 98) {
+      return GetAnimationByName("tap");
+   }
+   if (rand_idle == 99) {
+      return GetAnimationByName("look");
+   }
+   if (rand_idle == 100) {
+      return GetAnimationByName("kick");
+   }
+}
+
 // Get texture based on state
 Texture *Player::get_texture() {
    // Return run or stop texture (aka running texture)
@@ -469,11 +522,11 @@ void Player::process_input(const Uint8 *key_state) {
       shooting = true;
 
       // Create eraser
-      if (textures["arm_throw"]->completed_) {
+      if (GetAnimationByName("arm_throw", arm_sheet)->completed) {
          TextureData normal = {0, 0.0f, "", ""};
          TextureData hit = {0, 0.0f, "", ""};
          CreateProjectile(38, -12, 41, 1, 10, 0.0f, 0.0f, normal, hit);
-         textures["arm_throw"]->completed_ = false;
+         GetAnimationByName("arm_throw", arm_sheet)->completed = false;
       }
    }
 }
@@ -510,31 +563,25 @@ void Player::update(bool freeze) {
    // Render arm if idle, Render shooting if not
    if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != BALANCE && player_state_ != DEATH) {
       if (!shooting) {
-         // if (get_player_state() == RUN) {
-         //    textures["running_arm"].Render(get_tex_x() + get_width() +
-         //       arm_delta_x, get_tex_y() + arm_delta_y,
-         //       textures["running_arm"].curr_clip_, 0.0,
-         //       &textures["running_arm"].center_, textures["running_arm"].flip_);
-         // } else if (get_player_state() == DOUBLE_JUMP) {
-         //    textures["double_jump_arm"].Render(get_tex_x() + get_width() +
-         //       arm_delta_x, get_tex_y() + arm_delta_y, textures["double_jump_arm"].curr_clip_, 0.0,
-         //       &textures["double_jump_arm"].center_, textures["double_jump_arm"].flip_);
-         // } else {
-         //    //std::cout << textures["idle_arm"].max_frame_ << std::endl;
-         //    textures["idle_arm"].Render(get_tex_x() + get_width() + 
-         //       arm_delta_x, get_tex_y() + arm_delta_y, textures["idle_arm"].curr_clip_, 0.0, 
-         //       &textures["idle_arm"].center_, textures["idle_arm"].flip_);
-         // }
+         std::string arm_type;
+         if (get_player_state() == RUN) {
+            arm_type = "running_arm";
+         } else if (get_player_state() == DOUBLE_JUMP) {
+            arm_type = "double_jump_arm";
+         } else {
+            arm_type = "idle_arm";
+         }
+         arm_sheet->Render(get_anim_x() + get_width() + arm_delta_x, 
+            get_anim_y() + arm_delta_y, 0.0f, GetAnimationByName(arm_type, arm_sheet));
       } else {
-         // textures["arm_throw"].Render(get_tex_x() + get_width() + 
-         //    arm_delta_shoot_x, get_tex_y() + arm_delta_shoot_y, 
-         //    textures["arm_throw"].curr_clip_, 0.0, 
-         //    &textures["arm_throw"].center_, textures["arm_throw"].flip_);
+         arm_sheet->Render(get_anim_x() + get_width() + arm_delta_x,
+            get_anim_y() + arm_delta_shoot_y, 0.0f, GetAnimationByName("arm_throw", arm_sheet));
       }
    }
 
    // Render player
-   Render(playertexture);
+   // Render(playertexture);
+   sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
 }
 
 // Adjust delta function
@@ -608,8 +655,9 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
          textures["arm_throw"]->last_frame = 0.0f;
       }
       Element::animate(textures["eraser"]);
+      // sprite_sheet->Animate(GetAnimationByName("eraser"));
    } else {
-      Element::animate(textures["idle_arm"], 0);
+      arm_sheet->Animate(GetAnimationByName("idle_arm", arm_sheet));
    }
 
    // Choose animation based on what state player is in
@@ -632,34 +680,34 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
 
       // Choose based on random number
       if (rand_idle <= 98) {
-         Element::animate(textures["tap"]);
+         sprite_sheet->Animate(GetAnimationByName("tap"));
       }
       if (rand_idle == 99) {
-         Element::animate(textures["look"]);
+         sprite_sheet->Animate(GetAnimationByName("look"));
       }
       if (rand_idle == 100) {
-         Element::animate(textures["kick"]);
+         sprite_sheet->Animate(GetAnimationByName("kick"));
       }
    } else if (player_state_ == RUN && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
-      Element::animate(textures["running"]);
-      Element::animate(textures["running_arm"]);
+      sprite_sheet->Animate(GetAnimationByName("running"));
+      arm_sheet->Animate(GetAnimationByName("running_arm", arm_sheet));
    } else if (player_state_ == STOP && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
-      Element::animate(textures["running"], 20);
+      sprite_sheet->Animate(GetAnimationByName("running"), 20);
    } else if (player_state_ == JUMP) {
-      Element::animate(textures["jump"], textures["jump"]->reset_frame, textures["jump"]->stop_frame);
+      sprite_sheet->Animate(GetAnimationByName("jump"), GetAnimationByName("jump")->reset_frame, GetAnimationByName("jump")->stop_frame);
    } else if (player_state_ == RUN_AND_JUMP) {
-      Element::animate(textures["running_jump"], textures["running_jump"]->reset_frame, textures["running_jump"]->stop_frame);
+      sprite_sheet->Animate(GetAnimationByName("running_jump"), GetAnimationByName("running_jump")->reset_frame, GetAnimationByName("running_jump")->stop_frame);
    } else if (player_state_ == DOUBLE_JUMP) {
-      Element::animate(textures["double_jump"], textures["double_jump"]->reset_frame, textures["double_jump"]->stop_frame);
-      Element::animate(textures["double_jump_arm"], textures["double_jump_arm"]->reset_frame, textures["double_jump_arm"]->stop_frame);
+      sprite_sheet->Animate(GetAnimationByName("double_jump"), GetAnimationByName("double_jump")->reset_frame, GetAnimationByName("double_jump")->stop_frame);
+      arm_sheet->Animate(GetAnimationByName("double_jump_arm", arm_sheet), GetAnimationByName("double_jump_arm", arm_sheet)->reset_frame, GetAnimationByName("double_jump_arm", arm_sheet)->stop_frame);
    } else if (player_state_ == PUSH) {
-      Element::animate(textures["push"]);
+      sprite_sheet->Animate(GetAnimationByName("push"));
    } else if (player_state_ == JUMP_AND_PUSH) {
-      Element::animate(textures["jump_push"]);
+      sprite_sheet->Animate(GetAnimationByName("jump_push"));
    } else if (player_state_ == BALANCE) {
-      Element::animate(textures["balance"]);
+      sprite_sheet->Animate(GetAnimationByName("balance"));
    } else if (player_state_ == DEATH) {
-      Element::animate(textures["death"], textures["death"]->reset_frame, textures["death"]->stop_frame);
+      sprite_sheet->Animate(GetAnimationByName("death"), GetAnimationByName("death")->reset_frame, GetAnimationByName("death")->stop_frame);
    }
 }
 
@@ -756,13 +804,13 @@ void Player::move() {
          body->SetLinearVelocity({0.0f, body->GetLinearVelocity().y});
          shift_ = true;
       }
-      if (textures["death"]->frame_ >= 20) {
+      if (GetAnimationByName("death")->curr_frame >= 20) {
          if (((float) Application::get_instance().death_timer_.getTicks() / 1000.0f) >= 3.0f) {
             alive = false;
             Application::get_instance().death_timer_.stop();
          }
-         textures["death"]->reset_frame = 19;
-         textures["death"]->stop_frame = 19;
+         GetAnimationByName("death")->reset_frame = 19;
+         GetAnimationByName("death")->stop_frame = 19;
       }
       return;
    }
@@ -786,9 +834,9 @@ void Player::move() {
 
    // Reset frames
    if (player_state_ != DOUBLE_JUMP) {
-      textures["double_jump_arm"]->reset_frame = 0;
+      GetAnimationByName("double_jump_arm", arm_sheet)->reset_frame = 0;
    } else {
-      textures["double_jump_arm"]->reset_frame = textures["double_jump_arm"]->max_frame_;
+      GetAnimationByName("double_jump_arm", arm_sheet)->reset_frame = GetAnimationByName("double_jump_arm", arm_sheet)->max_frame;
    }
 
    // Check for changing directions on second jump
@@ -808,8 +856,7 @@ void Player::move() {
    // If not running or running and jumping, then set linear velocity to 0
    if (player_state_ != RUN) {
       // Reset running arm
-      textures["running_arm"]->frame_ = textures["running"]->frame_;
-
+      GetAnimationByName("running_arm", arm_sheet)->curr_frame = GetAnimationByName("running")->curr_frame;
       if (player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DOUBLE_JUMP) {
          b2Vec2 vel = {0, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
@@ -884,12 +931,12 @@ void Player::move() {
             // Set state
             if (player_state_ == RUN) {
                //player_state_ = RUN_AND_JUMP;
-               textures["running_jump"]->reset_frame = 14;
-               textures["running_jump"]->stop_frame = 14;
+               GetAnimationByName("running_jump")->reset_frame = 14;
+               GetAnimationByName("running_jump")->stop_frame = 14;
             } else {
                //player_state_ = JUMP;
-               textures["jump"]->reset_frame = textures["jump"]->max_frame_;
-               textures["jump"]->stop_frame = textures["jump"]->max_frame_;
+               GetAnimationByName("jump")->reset_frame = GetAnimationByName("jump")->max_frame;
+               GetAnimationByName("jump")->stop_frame = GetAnimationByName("jump")->max_frame;
             }
 
             // Apply an impulse
@@ -902,12 +949,12 @@ void Player::move() {
             // Set state
             if (player_state_ == RUN) {
                //player_state_ = RUN_AND_JUMP;
-               textures["running_jump"]->reset_frame = 14;
-               textures["running_jump"]->stop_frame = 14;
+               GetAnimationByName("running_jump")->reset_frame = 14;
+               GetAnimationByName("running_jump")->stop_frame = 14;
             } else {
                //player_state_ = JUMP;
-               textures["double_jump"]->reset_frame = textures["double_jump"]->max_frame_;
-               textures["double_jump"]->stop_frame = textures["double_jump"]->max_frame_;
+               GetAnimationByName("double_jump")->reset_frame = GetAnimationByName("double_jump")->max_frame;
+               GetAnimationByName("double_jump")->stop_frame = GetAnimationByName("double_jump")->max_frame;
             }
 
             // Set y velocity to 0
@@ -968,24 +1015,34 @@ bool Player::LoadMedia() {
    data.push_back(TextureData(8, 1.0f / 20.0f, "jump_push", media_path + "jump_push.png"));
    data.push_back(TextureData(19, 1.0f / 20.0f, "balance", media_path + "balance.png"));
    data.push_back(TextureData(20, 1.0f / 20.0f, "death", media_path + "death.png"));
-
-   // Instantiate sprite sheet
-   std::string player_path = media_path + "player_master_sheet.png";
-   sprite_sheet = RenderingEngine::get_instance().LoadTexture("player_master_sheet", player_path.c_str());
-   sprite_sheet->animations.emplace("jump_push", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 0.0f, 8, 1.0f / 20.0f));
-   sprite_sheet->animations.emplace("double_jump", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 104.0f / 2394.0f, 11, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("tap", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 208.0f / 2394.0f, 12, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("running", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 312.0f / 2394.0f, 15, 1.0f / 30.0f));
-   sprite_sheet->animations.emplace("jump", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 416.0f / 2394.0f, 15, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("running_jump", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 520.0f / 2394.0f, 15, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("push", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 624.0f / 2394.0f, 16, 1.0f / 20.0f));
-   sprite_sheet->animations.emplace("kick", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 728.0f / 2394.0f, 17, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("look", new Animation(2394.0f, 1144.0f, 59.0f, 104.0f, 832.0f / 2394.0f, 20, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("death", new Animation(2394.0f, 1144.0f, 105.0f, 104.0f, 936.0f / 2394.0f, 20, 1.0f / 20.0f));
-   sprite_sheet->animations.emplace("balance", new Animation(2394.0f, 1144.0f, 89.0f, 104.0f, 1040.0f / 1144.0f, 19, 1.0f / 20.0f));
-
+   
    // Load the resources
    success = RenderingEngine::get_instance().LoadResources(this, data);
+
+   // Instantiate sprite sheet for main player body
+   std::string player_path = media_path + "player_master_sheet.png";
+   sprite_sheet = RenderingEngine::get_instance().LoadTexture("player_master_sheet", player_path.c_str());
+   sprite_sheet->animations.emplace("jump_push", new Animation(sprite_sheet, 59.0f, 104.0f, 0.0f, 8, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("double_jump", new Animation(sprite_sheet, 59.0f, 104.0f, 104.0f, 11, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("tap", new Animation(sprite_sheet, 59.0f, 104.0f, 209.0f, 12, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("running", new Animation(sprite_sheet, 59.0f, 104.0f, 312.0f, 15, 1.0f / 30.0f));
+   sprite_sheet->animations.emplace("jump", new Animation(sprite_sheet, 59.0f, 104.0f, 416.0f, 15, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("running_jump", new Animation(sprite_sheet, 59.0f, 104.0f, 520.0f, 15, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("push", new Animation(sprite_sheet, 59.0f, 104.0f, 624.0f, 16, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("kick", new Animation(sprite_sheet, 59.0f, 104.0f, 728.0f, 17, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("look", new Animation(sprite_sheet, 59.0f, 104.0f, 832.0f, 20, 1.0f / 24.0f));
+   sprite_sheet->animations.emplace("death", new Animation(sprite_sheet, 105.0f, 104.0f, 936.0f, 20, 1.0f / 20.0f));
+   sprite_sheet->animations.emplace("balance", new Animation(sprite_sheet, 89.0f, 104.0f, 1040.0f, 19, 1.0f / 20.0f));
+   RenderingEngine::get_instance().LoadResources(this);
+
+   // Instantiate sprite sheet for arms
+   std::string arm_path = media_path + "arm_master_sheet.png";
+   arm_sheet = RenderingEngine::get_instance().LoadTexture("arm_master_sheet", arm_path.c_str());
+   arm_sheet->animations.emplace("idle_arm", new Animation(arm_sheet, 10.0f, 27.0f, 0.0f, 1, 1.0f / 30.0f));
+   arm_sheet->animations.emplace("double_jump_arm", new Animation(arm_sheet, 9.0f, 27.0f, 27.0f, 8, 1.0f / 24.0f));
+   arm_sheet->animations.emplace("running_arm", new Animation(arm_sheet, 9.0f, 27.0f, 54.0f, 15, 1.0f / 30.0f));
+   arm_sheet->animations.emplace("arm_throw", new Animation(arm_sheet, 44.0f, 33.0f, 81.0f, 9, 1.0f / 20.0f));
+   RenderingEngine::get_instance().LoadResources(this, arm_sheet);
 
    // Set current idle texture to tap
    curr_idle_texture = textures["tap"];

@@ -117,7 +117,7 @@ bool Level::LoadMedia_() {
       success = false;
    } else {
       // Automatically calculate the number of sprites
-      int num_clips = background_.texture.GetTextureWidth() / 1920;
+      int num_clips = 0; //background_.texture.GetTextureWidth() / 1920;
 
       // Set the clips
       background_.texture.clips_ = new GLFloatRect[num_clips];

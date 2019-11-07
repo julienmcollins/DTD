@@ -133,9 +133,7 @@ void Element::add_y(int add) {
       y_pos_ += add;
    } else {
       float addy = (float) (add / 100.0f);
-      std::cout << "pos y before = " << body->GetPosition().y << std::endl;
       body->SetTransform(b2Vec2(body->GetPosition().x, body->GetPosition().y - addy), body->GetAngle());
-      std::cout << "pos y after = " << body->GetPosition().y << std::endl;
    }
 }
 
@@ -150,7 +148,7 @@ void Element::set_height(int new_height) {
 
 float Element::get_height() const {
    if (height_ == 0)
-      return texture.GetTextureHeight();
+      return 0.0f;
    else
       return height_;
 }
@@ -162,14 +160,13 @@ void Element::set_width(int new_width) {
 
 float Element::get_width() const {
    if (width_ == 0)
-      return texture.GetTextureWidth();
+      return 0.0f;
    else
       return width_;
 }
 
 float Element::get_anim_x() {
    if (body) {
-      std::cout << GetAnimationFromState()->texture_width << " " << GetAnimationFromState()->texture_height << std::endl;
       x_pos_ = (100.0f * body->GetPosition().x) - (GetAnimationFromState()->texture_width / 2.0f);
       return x_pos_;
    } else {
@@ -186,8 +183,9 @@ float Element::get_anim_y() {
    }
 }
 
-Animation *Element::GetAnimationByName(std::string name) {
-   return sprite_sheet->animations[name];
+Animation *Element::GetAnimationByName(std::string name, Texture *tex) {
+   Texture *temp = (tex) ? tex : sprite_sheet;
+   return temp->animations[name];
 }
 
 // Load media does nothing

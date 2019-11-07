@@ -1,6 +1,5 @@
 dtd
 *.dll
 *.a
-Makefile
 .vscode
 .gitignore

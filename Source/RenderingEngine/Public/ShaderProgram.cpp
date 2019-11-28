@@ -1,5 +1,7 @@
 #include "Source/RenderingEngine/Private/ShaderProgram.h"
 
+#include "Source/GameEngine/Private/Application.h"
+
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -17,14 +19,15 @@ ShaderProgram::ShaderProgram() {
 // Delete the program
 ShaderProgram::~ShaderProgram() {
     // Free the program
+    std::cout << "Deleting program\n";
     glDeleteProgram(program_ID);
 }
 
 // Bind the shaders to the program
-ShaderProgram &ShaderProgram::Use() {
-    // Use the shader
-    glUseProgram(program_ID);
-	return *this;
+ShaderProgram *ShaderProgram::Use() {
+   // Use the shader
+   glUseProgram(program_ID);
+	return this;
 }
 
 void ShaderProgram::GetShaderFromFile(const GLchar *vertex_shader_file, const GLchar *frag_shader_file, const GLchar *geo_shader_file) {
@@ -74,7 +77,10 @@ void ShaderProgram::GetShaderFromFile(const GLchar *vertex_shader_file, const GL
 }
 
 void ShaderProgram::LoadShaderProgram(const GLchar *vertex_source, const GLchar *frag_source, const GLchar *geo_source) {
-	// Define shaders
+	// Set use program to 0?
+   glUseProgram(0);
+
+   // Define shaders
 	GLuint vertex, frag, geo;
 
 	// Load the vertex shader
@@ -168,9 +174,9 @@ void ShaderProgram::SetVector4f(const GLchar *name, const glm::vec4 &value, GLbo
 }
 void ShaderProgram::SetMatrix4(const GLchar *name, const glm::mat4 &matrix, GLboolean useShader)
 {
-    if (useShader)
-        this->Use();
-    glUniformMatrix4fv(glGetUniformLocation(program_ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
+   if (useShader)
+      this->Use();
+   glUniformMatrix4fv(glGetUniformLocation(program_ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 void ShaderProgram::CheckCompileErrors(GLuint object, std::string type)

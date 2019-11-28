@@ -1,6 +1,7 @@
 #include "Source/GameEngine/Private/Level.h"
 #include "Source/GameEngine/Private/Application.h"
 
+#include "Source/RenderingEngine/Private/RenderingEngine.h"
 #include "Source/RenderingEngine/Private/Texture.h"
 
 #include "Source/ObjectManager/Private/Entity.h"
@@ -24,7 +25,7 @@ using namespace std;
 // Constructor will do all of the setting up essentially
 Level::Level(string file, Application::FOREST level) : 
    num_of_enemies_(0), num_of_platforms_(0), completed(false), level(level), 
-   background_(0, 0, 1080, 1920), level_completed_(false) {
+   background(0, 0, 0, 0), platforms(0, 0, 0, 0), level_completed_(false) {
 
    // Read from a file based on a specific format
    ifstream input;
@@ -50,7 +51,7 @@ Level::Level(string file, Application::FOREST level) :
       input >> name >> x >> y;
 
       // Compensate for fullscreen vs windowed
-      y += 55;
+      // y += 55;
 
       // Spawn enemies accordingly
       if (name == "Fecreez") {
@@ -80,7 +81,7 @@ Level::Level(string file, Application::FOREST level) :
       int x, y, height, width;
       input >> width >> height >> x >> y;
       x += width / 2;
-      y += (height / 2);
+      y += height / 2;
       platforms_.push_back(new Platform(x, y, height, width));
       platforms_[i]->setup();
    }
@@ -95,14 +96,14 @@ Level::Level(string file, Application::FOREST level) :
    // Now, load the media and quit if false
    if (LoadMedia_() == false) {
       cerr << "Failed to load level media" << endl;
-      Application::get_instance().set_quit();
+      Application::GetInstance().set_quit();
    }
 
    // Set player's location
    int x, y;
    input >> x >> y;
-   Application::get_instance().get_player()->set_x(x);
-   Application::get_instance().get_player()->set_y(y);
+   Application::GetInstance().get_player()->set_x(x);
+   Application::GetInstance().get_player()->set_y(y);
 }
 
 // Load media function, private
@@ -110,47 +111,35 @@ bool Level::LoadMedia_() {
    // Flag for quit
    bool success = true;
 
-   // Get background
-   std::string dir = dir_ + "background.png";
-   if (!background_.texture.LoadFromFile(dir.c_str(), true)) {
-      cerr << "Failed to load background.png" << endl;
-      success = false;
-   } else {
-      // Automatically calculate the number of sprites
-      int num_clips = 0; //background_.texture.GetTextureWidth() / 1920;
+   // Get the level backgrounds
+   std::string dir = Application::GetInstance().sprite_path + "Menu/forest_background_sheet.png";
+   background.sprite_sheet = RenderingEngine::GetInstance().LoadTexture("forest_background_sheet", dir.c_str());
+   background.animations.emplace("forest_background_1", new Animation(background.sprite_sheet, "forest_background_1", 1920.0f, 1080.0f, 0.0f, 2, 1.0f / 3.0f));
+   background.animations.emplace("forest_background_2", new Animation(background.sprite_sheet, "forest_background_2", 1920.0f, 1080.0f, 1080.0f, 2, 1.0f / 3.0f));
+   background.animations.emplace("forest_background_3", new Animation(background.sprite_sheet, "forest_background_3", 1920.0f, 1080.0f, 2160.0f, 2, 1.0f / 3.0f));
+   background.animations.emplace("forest_background_4", new Animation(background.sprite_sheet, "forest_background_4", 1920.0f, 1080.0f, 3240.0f, 2, 1.0f / 3.0f));
+   background.animations.emplace("forest_background_5", new Animation(background.sprite_sheet, "forest_background_5", 1920.0f, 1080.0f, 4320.0f, 2, 1.0f / 3.0f));
+   background.animations.emplace("forest_background_6", new Animation(background.sprite_sheet, "forest_background_6", 1920.0f, 1080.0f, 5400.0f, 2, 1.0f / 3.0f));
+   background.animations.emplace("forest_background_7", new Animation(background.sprite_sheet, "forest_background_7", 1920.0f, 1080.0f, 6480.0f, 2, 1.0f / 3.0f));
+   background.animations.emplace("forest_background_8", new Animation(background.sprite_sheet, "forest_background_8", 1920.0f, 1080.0f, 7560.0f, 2, 1.0f / 3.0f));
+   background.animations.emplace("forest_background_9", new Animation(background.sprite_sheet, "forest_background_9", 1920.0f, 1080.0f, 8640.0f, 2, 1.0f / 3.0f));
+   background.animations.emplace("forest_background_10", new Animation(background.sprite_sheet, "forest_background_10", 1920.0f, 1080.0f, 9720.0f, 2, 1.0f / 3.0f));
+   RenderingEngine::GetInstance().LoadResources(&background);
 
-      // Set the clips
-      background_.texture.clips_ = new GLFloatRect[num_clips];
-      GLFloatRect *temp = background_.texture.clips_;
-
-      // Calc sprite
-      for (int i = 0; i < num_clips; i++) {
-         temp[i].x = i * 1920;
-         temp[i].y = 0;
-         temp[i].w = 1920;
-         temp[i].h = 1080;
-      }
-
-      // Set background location
-      background_.texture.set_x(0);
-      background_.texture.set_y(0);
-
-      // Set fps and stuff
-      background_.texture.fps = 1.0f / 3.0f;
-      background_.texture.max_frame_ = num_clips - 1;
-      background_.texture.curr_clip_ = &temp[0];
-   }
-
-   // Get platforms texture
-   dir = dir_ + "platforms.png";
-   if (!platform_texture_.LoadFromFile(dir.c_str(), true)) {
-      cerr << "Failed to load platforms.png" << endl;
-      success = false;
-   } else {
-      // Set platforms location
-      platform_texture_.set_x(0);
-      platform_texture_.set_y(0);
-   }
+   // Get the platform backgrounds
+   dir = Application::GetInstance().sprite_path + "Menu/forest_platform_sheet.png";
+   platforms.sprite_sheet = RenderingEngine::GetInstance().LoadTexture("forest_platform_sheet", dir.c_str());
+   platforms.animations.emplace("forest_platform_1", new Animation(platforms.sprite_sheet, "forest_platform_1", 1920.0f, 1080.0f, 0.0f, 1, 1.0f / 1.0f));
+   platforms.animations.emplace("forest_platform_2", new Animation(platforms.sprite_sheet, "forest_platform_2", 1920.0f, 1080.0f, 1080.0f, 1, 1.0f / 1.0f));
+   platforms.animations.emplace("forest_platform_3", new Animation(platforms.sprite_sheet, "forest_platform_3", 1920.0f, 1080.0f, 2160.0f, 1, 1.0f / 1.0f));
+   platforms.animations.emplace("forest_platform_4", new Animation(platforms.sprite_sheet, "forest_platform_4", 1920.0f, 1080.0f, 3240.0f, 1, 1.0f / 1.0f));
+   platforms.animations.emplace("forest_platform_5", new Animation(platforms.sprite_sheet, "forest_platform_5", 1920.0f, 1080.0f, 4320.0f, 1, 1.0f / 1.0f));
+   platforms.animations.emplace("forest_platform_6", new Animation(platforms.sprite_sheet, "forest_platform_6", 1920.0f, 1080.0f, 5400.0f, 1, 1.0f / 1.0f));
+   platforms.animations.emplace("forest_platform_7", new Animation(platforms.sprite_sheet, "forest_platform_7", 1920.0f, 1080.0f, 6480.0f, 1, 1.0f / 1.0f));
+   platforms.animations.emplace("forest_platform_8", new Animation(platforms.sprite_sheet, "forest_platform_8", 1920.0f, 1080.0f, 7560.0f, 1, 1.0f / 1.0f));
+   platforms.animations.emplace("forest_platform_9", new Animation(platforms.sprite_sheet, "forest_platform_9", 1920.0f, 1080.0f, 8640.0f, 1, 1.0f / 1.0f));
+   platforms.animations.emplace("forest_platform_10", new Animation(platforms.sprite_sheet, "forest_platform_10", 1920.0f, 1080.0f, 9720.0f, 1, 1.0f / 1.0f));
+   RenderingEngine::GetInstance().LoadResources(&platforms);
 
    // Return success
    return success;
@@ -168,9 +157,9 @@ void Level::update() {
       }
 
       //std::cout << "Level::update() - level = " << level << std::endl;
-      if ((level < Application::FOREST6 || level == Application::FOREST9) && Application::get_instance().get_player()->get_x() >= 1890) {
+      if ((level < Application::FOREST6 || level == Application::FOREST9) && Application::GetInstance().get_player()->get_x() >= 1890) {
          completed = true;
-      } else if (level >= Application::FOREST6 && Application::get_instance().get_player()->get_y() <= -100) {
+      } else if (level >= Application::FOREST6 && Application::GetInstance().get_player()->get_y() <= -100) {
          completed = true;
       }
    }
@@ -189,9 +178,9 @@ void Level::update() {
          std::vector<Enemy *>::iterator destroy_it = find(enemies_.begin(), enemies_.end(), *it);
          if (destroy_it != enemies_.end()) {
             enemies_.erase(destroy_it);
-            if ((*it)->is_marked_for_destroy()) {
-               delete *it;
-            }
+            // if ((*it)->is_marked_for_destroy()) {
+            //    delete *it;
+            // }
             it = enemies_marked_for_death_.erase(it);
          } else {
             std::cerr << "Level::update() - enemy marked for death not found in level!\n";
@@ -213,10 +202,13 @@ void Level::update() {
    // TODO: Keep track of projectiles
 
    // Render the background
-   background_.draw();
+   std::string bg = "forest_background_" + std::to_string(static_cast<int>(level));
+   background.sprite_sheet->Animate(background.GetAnimationByName(bg));
+   background.sprite_sheet->Render(0.0f, 0.0f, 0.0f, background.GetAnimationByName(bg));
 
    // Render the platforms
-   // platform_texture_.Render(0.f, 0.f);
+   std::string pf = "forest_platform_" + std::to_string(static_cast<int>(level));
+   platforms.sprite_sheet->Render(0.0f, 0.0f, 0.0f, platforms.GetAnimationByName(pf));
 
    // Render platforms
    for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {
@@ -252,10 +244,6 @@ void Level::destroy_enemy(Enemy *enemy_to_delete) {
 
 // Level destructor will just delete everything related to the level
 Level::~Level() {
-   // Free textures for background
-   background_.texture.Free();
-   platform_texture_.Free();
-
    // Delete platforms
    for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {
       if (*it) {

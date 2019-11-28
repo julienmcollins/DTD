@@ -18,23 +18,23 @@ class RenderingEngine {
     public:
         /* Singleton instancing of this object 
            avoids making everything static */
-        static RenderingEngine& get_instance() {
+        static RenderingEngine& GetInstance() {
             static RenderingEngine instance;
             return instance;
         }
 
         /* Load the screen settings */
-        void LoadApplicationPerspective(glm::mat4 projection);
+        void LoadApplicationPerspective(std::string name, glm::mat4 projection);
 
         /* Load the shader */
         void LoadShader(std::string name);
 
         /* Get the shader by name */
-        ShaderProgram GetShader(std::string name);
+        ShaderProgram *GetShaderReference(std::string name);
 
         /* Load resources for elements */
         bool LoadResources(Element *element, std::vector<TextureData> texture_data);
-        void LoadResources(Element *element, Texture *tex = nullptr);
+        void LoadResources(Element *element);
 
         /* Load the actual image for the element */
         void LoadImage(Element *element, int frame_num, float fps, std::string name, std::string file, bool &success, int rows = 1);

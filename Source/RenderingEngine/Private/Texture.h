@@ -42,13 +42,9 @@ class Texture {
       // Animate function
       void Animate(Animation *anim, int reset = 0, int max = 0, int start = 0);
 
-      // Retrieve specific animations
-      Animation *GetAnimationFromTexture(std::string name);
-      std::unordered_map<std::string, Animation *> animations;
-
       // Variables for texture width and height
-      GLfloat image_width;
-      GLfloat image_height;
+      GLdouble image_width;
+      GLdouble image_height;
       /***********************/
 
       // Rect for sprite
@@ -107,9 +103,6 @@ class Texture {
       // Element referring to the texture
       Element *element_;
    
-      // Assignement operator
-      // Texture &operator= (const Texture &src);
-
       // Destructor
       ~Texture();
 
@@ -162,32 +155,38 @@ class TextureData {
 /* Holds relevant vertex data for rendering */
 struct FrameData {
    /* Texture width and height */
-   GLfloat normal_width;
-   GLfloat normal_height;
+   GLdouble normal_width;
+   GLdouble normal_height;
 
    /* Texture coordinates */
-   GLfloat l;
-   GLfloat r;
-   GLfloat b;
-   GLfloat t;
+   GLdouble l;
+   GLdouble r;
+   GLdouble b;
+   GLdouble t;
 };
 
 /* Animations data */
 class Animation {
    public:
       /* Default constructor does not do anything (for now) */
-      Animation(Texture *texture, GLfloat texture_width, GLfloat texture_height, GLfloat offset, int num_of_frames, float fps);
+      Animation(Texture *texture, std::string name, GLdouble texture_width, GLdouble texture_height, GLdouble offset, int num_of_frames, float fps);
+
+      /* Function to flip animation */
+      void flipAnimation();
 
       /* Texture reference */
       Texture *parent;
 
+      /* Animation name */
+      std::string name;
+
       /* Texture width */
-      GLfloat texture_width;
-      GLfloat texture_height;
+      GLdouble texture_width;
+      GLdouble texture_height;
 
       /* Half width and height for vertext */
-      GLfloat half_width;
-      GLfloat half_height;
+      GLdouble half_width;
+      GLdouble half_height;
 
       /* FRAME INFORMATION */
       int num_of_frames;
@@ -198,6 +197,7 @@ class Animation {
       float last_frame;
       float fps;
       bool completed;
+      bool flipped;
 
       /* FPS TIMER */
       Timer fps_timer;

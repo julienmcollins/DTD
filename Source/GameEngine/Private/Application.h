@@ -73,7 +73,7 @@ class Finger : public Element {
 class Application {
    public:
       // Get instance
-      static Application& get_instance() {
+      static Application& GetInstance() {
          static Application instance;
          return instance;
       }

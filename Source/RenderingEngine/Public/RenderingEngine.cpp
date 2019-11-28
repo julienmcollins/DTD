@@ -11,18 +11,23 @@
 #include <string>
 #include <iostream>
 
-void RenderingEngine::LoadApplicationPerspective(glm::mat4 projection) {
-   GetShader("texture_shader").Use().SetInteger("image", 0);
-   GetShader("texture_shader").SetMatrix4("projection", projection);
+void RenderingEngine::LoadApplicationPerspective(std::string name, glm::mat4 projection) {
+   GetShaderReference(name)->Use()->SetInteger("image", 0);
+   GetShaderReference(name)->SetMatrix4("projection", projection);
 }
 
 void RenderingEngine::LoadShader(std::string name) {
-   shaders.emplace(name, ShaderProgram());
-   shaders[name].GetShaderFromFile("Shader/texture_shader.vs", "Shader/texture_shader.fs", nullptr);
+   std::string vs_path = "Shader/" + name + ".vs";
+   std::string fs_path = "Shader/" + name + ".fs";
+   shaders[name] = ShaderProgram();
+   shaders[name].GetShaderFromFile(vs_path.c_str(), fs_path.c_str(), nullptr);
 }
 
-ShaderProgram RenderingEngine::GetShader(std::string name) {
-   return shaders[name];
+ShaderProgram *RenderingEngine::GetShaderReference(std::string name) {
+   if (shaders.find(name) != shaders.end()) {
+      return &shaders[name];
+   }
+   return nullptr;
 }
 
 bool RenderingEngine::LoadResources(Element *element, std::vector<TextureData> texture_data) {
@@ -38,10 +43,9 @@ bool RenderingEngine::LoadResources(Element *element, std::vector<TextureData> t
    return success;
 }
 
-void RenderingEngine::LoadResources(Element *element, Texture *tex) {
+void RenderingEngine::LoadResources(Element *element) {
    // Loop through and load
-   Texture *temp = (tex) ? tex : element->sprite_sheet;
-   for (std::unordered_map<std::string, Animation *>::iterator it = temp->animations.begin(); it != temp->animations.end(); ++it) {
+   for (std::unordered_map<std::string, Animation *>::iterator it = element->animations.begin(); it != element->animations.end(); ++it) {
       int i = 0;
       for (auto &frame : it->second->frames) {
          if (i == it->second->num_of_frames) {
@@ -91,8 +95,10 @@ void RenderingEngine::LoadImage(Element *element, int frame_num, float fps, std:
 }
 
 Texture *RenderingEngine::LoadTexture(std::string name, const GLchar *file, GLboolean alpha) {
-   // textures[name] = LoadTextureFromFile(file, alpha);
-   textures.emplace(name, LoadTextureFromFile(file, alpha));
+   // Check if exists
+   if (textures.find(name) == textures.end()) {
+      textures[name] = LoadTextureFromFile(file, alpha);
+   }
    return &textures[name];
 }
 
@@ -117,5 +123,8 @@ Texture RenderingEngine::LoadTextureFromFile(const GLchar *file, GLboolean alpha
 }
 
 Texture *RenderingEngine::GetTextureReference(std::string name) {
-   return &textures[name];
+   if (textures.find(name) != textures.end()) {
+      return &textures[name];
+   }
+   return nullptr;
 }

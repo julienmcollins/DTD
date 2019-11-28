@@ -7,7 +7,7 @@
 // class BasicShaderProgram : public ShaderProgram {
 //     public:
 //         // Get instance
-//         static BasicShaderProgram& get_instance() {
+//         static BasicShaderProgram& GetInstance() {
 //             static BasicShaderProgram instance;
 //             return instance;
 //         }

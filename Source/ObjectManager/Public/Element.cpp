@@ -10,7 +10,8 @@
 // Constructor for element
 Element::Element(int x, int y, int height, int width) :
    alive(true), texture(this), body(NULL), flag_(false), element_shape(), 
-   in_contact_down(false), in_contact_left(false), in_contact_right(false) {
+   in_contact_down(false), in_contact_left(false), in_contact_right(false),
+   texture_flipped(false) {
 
    // Set x and y
    x_pos_ = x;
@@ -38,7 +39,7 @@ void Element::set_tex_x(int new_x) {
    if (!body) {
       x_pos_ = new_x;
    } else {
-      float nbx = (float) ((new_x + (get_width() / 2.0f)) / 100.0f);
+      float nbx = (float) ((new_x + (GetAnimationFromState()->texture_width / 2.0f)) / 100.0f);
       body->SetTransform(b2Vec2(nbx, body->GetPosition().y), body->GetAngle());
    }
 }
@@ -85,7 +86,7 @@ void Element::sub_tex_x(int sub) {
    if (!body) {
       x_pos_ -= sub;
    } else {
-      float subx = (float) ((sub + (get_width() / 2.0f)) / 100.0f);
+      float subx = (float) ((sub + (GetAnimationFromState()->texture_width / 2.0f)) / 100.0f);
       body->SetTransform(b2Vec2(body->GetPosition().x - subx, body->GetPosition().y), body->GetAngle());
    }
 }
@@ -183,9 +184,22 @@ float Element::get_anim_y() {
    }
 }
 
-Animation *Element::GetAnimationByName(std::string name, Texture *tex) {
-   Texture *temp = (tex) ? tex : sprite_sheet;
-   return temp->animations[name];
+Animation *Element::GetAnimationByName(std::string name) {
+   return animations[name];
+}
+
+void Element::flipAllAnimations() {
+   // Iterate through map and flip all animations
+   for (std::unordered_map<std::string, Animation *>::iterator it = animations.begin(); it != animations.end(); ++it) {
+      it->second->flipAnimation();
+   }
+
+   // Set all animations flipped to true
+   texture_flipped = true;
+}
+
+bool Element::textureFlipped() {
+   return texture_flipped;
 }
 
 // Load media does nothing
@@ -194,20 +208,20 @@ bool Element::LoadMedia() {
 }
 
 // Setup box2d
-void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
+void Element::SetHitbox(int x, int y, SHAPE_TYPE type, int group) {
    // If dynamic is set, set body to dynamic
    if (element_shape.dynamic) {
       body_def.type = b2_dynamicBody;
    }
 
    // Set initial position and set fixed rotation
-   float x_temp = float(x) * Application::get_instance().to_meters_;
-   float y_temp = -float(y) * Application::get_instance().to_meters_;
+   float x_temp = float(x) * Application::GetInstance().to_meters_;
+   float y_temp = -float(y) * Application::GetInstance().to_meters_;
    body_def.position.Set(x_temp, y_temp);
    body_def.fixedRotation = true;
 
    // Attach body to world
-   body = Application::get_instance().world_.CreateBody(&body_def);
+   body = Application::GetInstance().world_.CreateBody(&body_def);
 
    // Set box dimensions
    if (type == SQUARE) {
@@ -215,8 +229,8 @@ void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
       int width = element_shape.shape_type.square.width;
       int t_h = (height == 0) ? get_height() : height;
       int t_w = (width == 0) ? get_width() : width;
-      float width_box = (t_w / 2.0f) * Application::get_instance().to_meters_ - 0.02f;
-      float height_box = (t_h / 2.0f) * Application::get_instance().to_meters_ - 0.02f;
+      float width_box = (t_w / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;
+      float height_box = (t_h / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;
       box.SetAsBox(width_box, height_box, element_shape.center, element_shape.shape_type.square.angle);
       fixture_def.shape = &box;
    } else if (type == CIRCLE) {
@@ -229,22 +243,17 @@ void Element::set_hitbox(int x, int y, SHAPE_TYPE type, int group) {
    fixture_def.density = element_shape.density;
    fixture_def.friction = 1.8f;
    fixture_def.userData = this;
+   fixture_def.filter.categoryBits = CAT_ENEMY;
+   fixture_def.filter.maskBits = CAT_PLAYER | CAT_PROJECTILE | CAT_PLATFORM | CAT_ENEMY | CAT_SENSOR;
    body->CreateFixture(&fixture_def);
 
    // Set user data so it can react
    body->SetUserData(this);
 
-   // Set filter
-   b2Filter filter;
-   filter.groupIndex = 0;
-   filter.categoryBits = CAT_ENEMY;
-   filter.maskBits = CAT_ENEMY | CAT_PROJECTILE | CAT_PLATFORM | CAT_PLAYER;
-   body->GetFixtureList()->SetFilterData(filter);
-
    // Run the load media function
    if (LoadMedia() == false) {
       std::cout << "Quit in here! " << this->type() << std::endl;
-      Application::get_instance().set_quit();
+      Application::GetInstance().set_quit();
    }
 }
 
@@ -252,7 +261,7 @@ void Element::create_hitbox(float x, float y) {
    body_def.type = b2_dynamicBody;
    body_def.position.Set(x, y);
    body_def.fixedRotation = true;
-   body = Application::get_instance().world_.CreateBody(&body_def);
+   body = Application::GetInstance().world_.CreateBody(&body_def);
 }
 
 void Element::set_collision(uint16 collision_types, b2Fixture *fixture) {
@@ -365,7 +374,7 @@ void Element::update(bool freeze) {
 // Destructor
 Element::~Element() {
    if (body) {
-      Application::get_instance().world_.DestroyBody(body);
+      Application::GetInstance().world_.DestroyBody(body);
       body = nullptr;
    }
 
@@ -402,7 +411,7 @@ void Sensor::initialize(float width, float height, float center_x, float center_
 }
 
 void Sensor::activate_sensor() {
-   filter.maskBits = CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE;
+   filter.maskBits = CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY;
    fixture_->SetFilterData(filter);
 }
 
@@ -442,7 +451,7 @@ void BodyPart::initialize(float width, float height, float center_x, float cente
    if (!is_fixture_) {
       body_def.position.Set(x, y);
       body_def.fixedRotation = true;
-      body = Application::get_instance().world_.CreateBody(&body_def);
+      body = Application::GetInstance().world_.CreateBody(&body_def);
    }
 
    box.SetAsBox(width / 200.0f, height / 200.0f, b2Vec2(0.0f, 0.0f), 0.0f);

@@ -16,7 +16,7 @@ class ShaderProgram {
         GLuint program_ID;
 
         /* Use the shader */
-        ShaderProgram &Use();
+        ShaderProgram *Use();
 
         /* Load's the shader program with the vertex and frag shaders */
         void GetShaderFromFile(const GLchar *vertex_shader_file, const GLchar *frag_shader_file, const GLchar *geo_shader_file);

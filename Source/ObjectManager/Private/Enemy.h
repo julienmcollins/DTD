@@ -12,6 +12,8 @@
 
 #include "Source/RenderingEngine/Private/Texture.h"
 
+#include "Source/MathStructures/Private/Coordinates.h"
+
 class Enemy : public Entity {
    public:
       // Construct the enemy
@@ -30,9 +32,9 @@ class Enemy : public Entity {
       };
 
       // Update function and get texture
-      virtual void update(bool freeze = false);      
-      virtual Texture *get_texture();
-
+      virtual void update(bool freeze = false);   
+      virtual Animation *GetAnimationFromState();
+   
       // Static string
       static const std::string media_path;
 
@@ -58,9 +60,8 @@ class Enemy : public Entity {
       virtual bool within_bounds();
 
       // Create projectile function
-      virtual Projectile* CreateProjectile(int delta_x_r, int delta_x_l, int delta_y, 
-            bool owner, bool damage, float force_x, float force_y,
-            const TextureData &nornal, const TextureData &hit);
+      virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
+            bool owner, bool damage, float force_x, float force_y);
 
       // Destructotr
       virtual ~Enemy() = 0;
@@ -95,7 +96,7 @@ class Fecreez : public Enemy {
       virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0);
 
       // Contact listener
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
 
       // Get type
       virtual std::string type() {
@@ -116,13 +117,14 @@ class Arm : public Enemy {
       Arm(int x, int y, int height, int width, Rosea *rosea);
 
       // Callback function will set enemy's state to HURT
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
 
       // Define abstract functions
       virtual void move() {}
-      virtual Texture *get_texture() {
-         return NULL;
-      }
+      virtual Animation *GetAnimationFromState();
+
+      // Static position
+      std::unordered_map<std::string, Space2D> static_positions;
    private:
       // Rosea parent class
       Rosea *rosea_;
@@ -142,10 +144,10 @@ class Rosea : public Enemy {
       virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
 
       // Get texture for rosea
-      virtual Texture *get_texture();
+      virtual Animation *GetAnimationFromState();
 
       // Get contact
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
 
       // Get type
       virtual std::string type() {
@@ -168,6 +170,12 @@ class Rosea : public Enemy {
 
       // Element for the arms attacking
       Arm arms_attack;
+
+      // Texture for arms
+      Texture *arm_sheet;
+
+      // Model for the arm
+      glm::mat4 arm_model;
 
       // Counter for hurt
       int hurt_counter_;
@@ -199,10 +207,10 @@ class Mosquibler : public Enemy {
       virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
 
       // Get texture for rosea
-      virtual Texture *get_texture();
+      virtual Animation *GetAnimationFromState();
 
       // Get contact
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
       virtual void end_contact(Element *element = NULL);
 
       // Get type
@@ -227,7 +235,7 @@ class Fruig : public Enemy {
       virtual void animate(Texture *tex, int reset, int max, int start);
 
       // Get contact
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
 
       // Get type
       virtual std::string type() {
@@ -239,10 +247,10 @@ class Fruig : public Enemy {
 class FleetSensor : public Sensor {
    public:
       // Constructor
-      FleetSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y);
+      FleetSensor(float width, float height, Entity *entity, CONTACT contact_type, float center_x, float center_y);
 
       // Contact functions
-      virtual void start_contact(Element *element);
+      virtual void StartContact(Element *element);
       virtual void end_contact(Element *element);
 };
 
@@ -259,7 +267,7 @@ class Fleet : public Enemy {
       virtual void animate(Texture *tex, int reset, int max, int start);
 
       // Get contact function
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
 
       // Get type
       virtual std::string type() {
@@ -282,7 +290,7 @@ class Mosqueenbler : public Enemy {
       virtual void animate(Texture *tex, int reset, int max, int start);
 
       // Get contact function
-      //virtual void start_contact(Element *element = NULL);
+      //virtual void StartContact(Element *element = NULL);
 
       // Set is enemy false
       virtual bool is_enemy() {
@@ -314,7 +322,7 @@ class MosquiblerEgg : public Enemy {
       virtual void animate(Texture *tex, int reset, int max, int start);
 
       // Start contact function
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
 
       // Wormored type
       virtual std::string type() {
@@ -329,7 +337,7 @@ class WormoredSensor : public Sensor {
       WormoredSensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y);
 
       // Contact functions
-      virtual void start_contact(Element *element);
+      virtual void StartContact(Element *element);
       virtual void end_contact(Element *element) {};
 
       // State type

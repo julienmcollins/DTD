@@ -57,7 +57,7 @@ class Platform : public Object {
       //virtual void doNothing();
 
       // Collision listener
-      virtual void start_contact(Element *element) {}
+      virtual void StartContact(Element *element) {}
 
       // Get type
       virtual std::string type() {
@@ -72,21 +72,20 @@ class Platform : public Object {
 class Projectile : public Object {
    public:
       // Constructor
-      Projectile(int x, int y, bool owner, int damage, 
-            float force_x, float force_y,
-            const TextureData &normal, const TextureData &hit,
-            Entity *entity);
+      Projectile(std::string name, int x, int y, float width, float height, bool owner, int damage, 
+            float force_x, float force_y, Entity *entity);
 
       // doNothing function
       //virtual void doNothing();
+
+      // Get animation by state
+      virtual Animation *GetAnimationFromState();
 
       // Load master sprite sheet
       virtual bool LoadMedia();
 
       // Set contact listener
-      virtual void start_contact(Element *element) {
-         alive = false;
-      }
+      virtual void StartContact(Element *element);
 
       // End contact listener
       virtual void end_contact() {
@@ -101,6 +100,9 @@ class Projectile : public Object {
 
       // Get damage amount
       int get_damage() const;
+
+      // Get name of projectile
+      std::string name;
 
       // Shot direction
       int shot_dir;
@@ -119,43 +121,6 @@ class Projectile : public Object {
 
       // Damage amount
       int damage_;
-
-      // Frame counts
-      TextureData normal_;
-      TextureData hit_;
-};
-
-class Eraser : public Projectile {
-   public:
-      // Constructor
-      Eraser(int x, int y, const TextureData &normal, const TextureData &hit,
-         Entity *entity);
-      
-      // Start contact function
-      virtual void start_contact(Element *element);
-
-      // Load images
-      virtual bool LoadMedia();
-};
-
-class EnemyProjectile : public Projectile {
-   public:
-      // Constructor
-      EnemyProjectile(int x, int y, int damage,
-         float force_x, float force_y,
-         const TextureData &normal, const TextureData &hit,
-         Entity *entity);
-
-      // Start contact function
-      virtual void start_contact(Element *element);
-
-      // Load images
-      virtual bool LoadMedia();
-
-      // Change type
-      virtual std::string type() {
-         return "EnemyProjectile";
-      }
 };
 
 #endif

@@ -16,6 +16,7 @@
 
 #include "SOIL.h"
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
@@ -41,50 +42,50 @@ Texture::Texture(Element *element, int max_frame, float fps_val) : clips_(NULL),
 
 // Loads textures from filesSDL_image Error: %s\n
 bool Texture::LoadFromFile(const GLchar *file, GLboolean alpha) {
-    // Free preexisting textures
-    Free();
-    
-    // Load image at specified path
-    // SDL_Surface* loadedSurface = IMG_Load(file);
+   // Free preexisting textures
+   Free();
+   
+   // Load image at specified path
+   // SDL_Surface* loadedSurface = IMG_Load(file);
 
-    internal_format = GL_RGBA;
-    image_format = GL_RGBA;
-    int width, height;
-    unsigned char *image = SOIL_load_image(file, &width, &height, 0, image_format == GL_RGBA ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
+   internal_format = GL_RGBA;
+   image_format = GL_RGBA;
+   int width, height;
+   unsigned char *image = SOIL_load_image(file, &width, &height, 0, image_format == GL_RGBA ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
 
-    // Set width and height
-    image_width = width;
-    image_height = height;
+   // Set width and height
+   image_width = width;
+   image_height = height;
 
-    // Check loaded surface
-    if (!image) {
-        printf("Unable to load image %s!\n", file);
-        return false;
-    }
+   // Check loaded surface
+   if (!image) {
+      printf("Unable to load image %s!\n", file);
+      return false;
+   }
 
-    // Init VAO
-    init_VAO();
+   // Init VAO
+   init_VAO();
 
-    // Generate the texture
-    glGenTextures(1, &texture_ID);
-    glBindTexture(GL_TEXTURE_2D, texture_ID);
+   // Generate the texture
+   glGenTextures(1, &texture_ID);
+   glBindTexture(GL_TEXTURE_2D, texture_ID);
 
-    // Set parameters
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+   // Set parameters
+   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
-    // Store pixels
-    pixels_32 = image;
+   // Store pixels
+   pixels_32 = image;
 
-    // Generate tex image
-    glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, image_format, GL_UNSIGNED_BYTE, image);
+   // Generate tex image
+   glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, image_format, GL_UNSIGNED_BYTE, image);
 
-    // Unbind texture
-    glBindTexture(GL_TEXTURE_2D, 0);
-    
-    return true;
+   // Unbind texture
+   glBindTexture(GL_TEXTURE_2D, 0);
+   
+   return true;
 }
 
 // Free textures
@@ -112,7 +113,7 @@ void Texture::init_VAO() {
     if (VBO_ID == 0) {
         // Vertex data
         // GLTexturedVertex2D vData[ 4 ];
-        float vertices[] = {
+        double vertices[] = {
             // positions  // texture coords
             1.0f,  1.0f,  1.0f, 1.0f, // top right
             1.0f, -1.0f,  1.0f, 0.0f, // bottom right
@@ -143,11 +144,11 @@ void Texture::init_VAO() {
         glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW );
 
         // Position attribute
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 2, GL_DOUBLE, GL_FALSE, 4 * sizeof(double), (void*)0);
         glEnableVertexAttribArray(0);
         
         // Color attribute
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+        glVertexAttribPointer(1, 2, GL_DOUBLE, GL_FALSE, 4 * sizeof(double), (void*)(2 * sizeof(double)));
         glEnableVertexAttribArray(1);
 
         // Disable
@@ -168,7 +169,7 @@ void Texture::Free_VBO() {
 void Texture::Render(float x, float y, GLFloatRect *clip, GLfloat rotate, glm::vec3 color) {
     // if (texture_ID != 0) {
     //     // Use shader
-    //     ShaderProgram shader = RenderingEngine::get_instance().GetShader("texture_shader").Use();
+    //     ShaderProgram shader = RenderingEngine::GetInstance().GetShader("texture_shader").Use();
 
     //     // Set top right and bottom textures
     //     float left, right, bottom, top;
@@ -233,65 +234,68 @@ void Texture::Render(float x, float y, GLFloatRect *clip, GLfloat rotate, glm::v
 }
 
 void Texture::Render(float x, float y, GLfloat rotate, Animation *clip, glm::vec3 color) {
-    if (texture_ID != 0) {
-        // Use shader
-        ShaderProgram shader = RenderingEngine::get_instance().GetShader("texture_shader").Use();
+   // std::cout << texture_ID << std::endl;
+   if (texture_ID != 0) {
+      // Use shader
+      ShaderProgram *shader = RenderingEngine::GetInstance().GetShaderReference("texture_shader")->Use();
 
-        // If clip doesn't exist, render entire texture
-        float h_w, h_h;
-        float l, r, b, t;
-        if (!clip) {
-            h_w = image_width / 2.0f;
-            h_h = image_height / 2.0f;
-            l = 0.0f;
-            r = 1.0f;
-            b = 0.0f;
-            t = 1.0f;
-        } else {
-            h_w = clip->half_width;
-            h_h = clip->half_height;
-            l = clip->frames[clip->curr_frame].l;
-            r = clip->frames[clip->curr_frame].r;
-            b = clip->frames[clip->curr_frame].b;
-            t = clip->frames[clip->curr_frame].t;
-        }
+      // If clip doesn't exist, render entire texture
+      GLdouble h_w, h_h;
+      GLdouble l, r, b, t;
+      if (!clip) {
+         h_w = image_width / 2.0f;
+         h_h = image_height / 2.0f;
+         l = 0.0f;
+         r = 1.0f;
+         b = 0.0f;
+         t = 1.0f;
+      } else {
+         h_w = clip->half_width;
+         h_h = clip->half_height;
+         l = clip->frames[clip->curr_frame].l;
+         r = clip->frames[clip->curr_frame].r;
+         b = clip->frames[clip->curr_frame].b;
+         t = clip->frames[clip->curr_frame].t;
+      }
 
-        // Initialize vertices 
-        float vertices[] = {
-            // positions  // texture coords
-           -h_w, -h_h,    l, b, // bottom left
-            h_w, -h_h,    r, b, // bottom right
-            h_w,  h_h,    r, t, // bottom left
-           -h_w,  h_h,    l, t  // top left
-        };
+      // Initialize vertices 
+      double vertices[] = {
+         // positions  // texture coords
+         -h_w, -h_h,   l, b, // bottom left
+          h_w, -h_h,   r, b, // bottom right
+          h_w,  h_h,   r, t, // bottom left
+         -h_w,  h_h,   l, t  // top left
+      };
 
-        // Transform it
-        glm::mat4 model = glm::mat4(1.0f);
-        if (clip) {
+      // Transform it
+      glm::mat4 model = glm::mat4(1.0f);
+      if (clip) {
             model = glm::translate(model, glm::vec3(x + clip->half_width, y + clip->half_height, 0.0f));
-        } else {
-            model = glm::translate(model, glm::vec3(x + image_width / 2.0f, y + image_height / 2.0f, 0.0f));
-        }
+            rotate = rotate * (M_PI / 180.0f);
+            model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f));
+      } else {
+            model = glm::translate(model, glm::vec3(x + image_width / 2.0, y + image_height / 2.0, 0.0));
+      }
 
-        // Set transforms and color
-        shader.SetMatrix4("model", model);
-        shader.SetVector3f("color", color);
-        
-        // Activate texture
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture_ID);
+      // Set transforms and color
+      shader->SetMatrix4("model", model);
+      shader->SetVector3f("color", color);
+      
+      // Activate texture
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, texture_ID);
 
-        // Draw
-        glBindVertexArray(VAO_ID);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
-        // Unbind everything
-        glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
+      // Draw
+      glBindVertexArray(VAO_ID);
+      glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);
+      glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+      
+      // Unbind everything
+      glBindVertexArray(0);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glBindTexture(GL_TEXTURE_2D, 0);
+   }
 }
 
 void Texture::Animate(Animation *anim, int reset, int max, int start) {
@@ -299,10 +303,14 @@ void Texture::Animate(Animation *anim, int reset, int max, int start) {
     int temp_max = (max == 0) ? anim->max_frame : max;
     int temp_start = (start == 0) ? 0 : start;
 
+    // Method for going back to first frame...
+    if (max == -1) temp_max = 0;
+    if (start == -1) temp_start = 0;
+
     // Set next frame based on fps
     anim->last_frame += anim->fps_timer.getDeltaTime() / 1000.0f;
     if (anim->last_frame > anim->fps) {
-        if (anim->curr_frame == temp_max) {
+        if (anim->curr_frame >= temp_max) {
             anim->curr_frame = reset;
             anim->completed = true;
             anim->last_frame = 0.0f;
@@ -325,26 +333,6 @@ int Texture::get_y() const {
     return y;
 }
 
-// Texture &Texture::operator=(const Texture &src) {
-//    // Set dimensions equal to image dimension
-//    image_width = src.image_width;
-//    image_height = src.image_height;
-
-//    // Add a bunch of other missing variables
-//    max_frame_ = src.max_frame_;
-//    clips_ = new GLFloatRect[max_frame_ + 1];
-//    for (int i = 0; i < max_frame_ + 1; i++) {
-//       clips_[i] = src.clips_[i];
-//    }
-   
-//    // Return
-//    return (*this);
-// }
-
-Animation *Texture::GetAnimationFromTexture(std::string name) {
-   return animations[name];
-}
-
 // Destructor calls Free
 Texture::~Texture() {
    //Free();
@@ -356,13 +344,13 @@ TextureData::TextureData(int num_of_frames, float fps, std::string name, std::st
 TextureData::TextureData(int width, int height, int num_of_frames) :
     width(width), height(height), num_of_frames(num_of_frames) {}
 
-Animation::Animation(Texture *texture, GLfloat texture_width, GLfloat texture_height, GLfloat offset, int num_of_frames, float fps) :
-    parent(texture),
+Animation::Animation(Texture *texture, std::string name, GLdouble texture_width, GLdouble texture_height, GLdouble offset, int num_of_frames, float fps) :
+    parent(texture), name(name),
     texture_width(texture_width), texture_height(texture_height),
-    half_width(texture_width / 2.0f), half_height(texture_height / 2.0f),
+    half_width(texture_width / 2.0), half_height(texture_height / 2.0),
     num_of_frames(num_of_frames), curr_frame(0), max_frame(num_of_frames - 1),
     reset_frame(0), stop_frame(0),
-    last_frame(0.0f), fps(fps), completed(false) {
+    last_frame(0.0f), fps(fps), completed(false), flipped(false) {
 
     // Set normal width and height
     for (int i = 0; i < num_of_frames; i++) {
@@ -381,4 +369,14 @@ Animation::Animation(Texture *texture, GLfloat texture_width, GLfloat texture_he
 
     // Start fps timer
     fps_timer.start();
+}
+
+void Animation::flipAnimation() {
+   // Iterate through frames vector to flip l and r
+   for (std::vector<FrameData>::iterator it = frames.begin(); it != frames.end(); ++it) {
+      std::swap(it->l, it->r);
+   }
+
+   // Set flipped to true
+   flipped = true;
 }

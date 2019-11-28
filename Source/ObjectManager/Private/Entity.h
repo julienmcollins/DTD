@@ -31,9 +31,6 @@ class Entity : public Element {
         virtual void move() = 0;
         virtual void update(bool freeze = false);
 
-        // Texture and SDL stuff
-        virtual Texture *get_texture() = 0;
-
         // Health
         int health;
 
@@ -50,11 +47,8 @@ class Entity : public Element {
         }
 
         // Create projectile (might need to add an entity pointer just in case)
-        virtual Projectile* CreateProjectile(int delta_x_r, int delta_x_l, int delta_y, 
-               bool owner, bool damage,
-               float force_x, float force_y,
-               const TextureData &normal, const TextureData &hit);
-
+        virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
+               bool owner, bool damage, float force_x, float force_y);
 
          // Dumb flag for now, find a better way later
          bool shift_;
@@ -81,7 +75,7 @@ class Hitmarker : public Element {
       // Update function
       virtual void update(bool freeze = false);
       virtual void animate();
-      virtual Texture *get_texture();
+      virtual Animation *GetAnimationFromState();
 
       // State
       STATE state;
@@ -93,7 +87,7 @@ class PlayerHead : public BodyPart {
       PlayerHead(Player *player, float x_rel, float y_rel);
       
       // Start contact function
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
       virtual void end_contact(Element *element = NULL);
 
       virtual std::string type() {
@@ -110,7 +104,7 @@ class PlayerArm : public BodyPart {
       PlayerArm(Player *player, float x_rel, float y_rel, int width, int height, std::string type);
 
       // Start contact function
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
       virtual void end_contact(Element *element = NULL);
 
       virtual std::string type() {
@@ -130,7 +124,7 @@ class PlayerHand : public BodyPart {
       PlayerHand(Player *player, float x_rel, float y_rel, std::string type);
 
       // Start contact function
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
       virtual void end_contact(Element *element = NULL);
 
       virtual std::string type() {
@@ -150,7 +144,7 @@ class PlayerLeg : public BodyPart {
       PlayerLeg(Player *player, float x_rel, float y_rel, int width, int height, std::string type);
 
       // Start contact function
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
       virtual void end_contact(Element *element = NULL);
 
       virtual std::string type() {
@@ -219,18 +213,17 @@ class Player : public Entity {
       bool shooting;
 
       /******** OPENGL ***********/
+      // Get animation from state...
       virtual Animation *GetAnimationFromState();
-
+      
+      // Number for random idle anim
+      int rand_idle;
+      Animation *curr_idle_animation;
       
       // Sheet for arms
       Texture *arm_sheet;
+      Texture *projectile_sheet;
       /***************************/
-      // Number for random idle anim
-      int rand_idle;
-      Texture *curr_idle_texture;
-
-      // Function to get the proper texture based on the state
-      virtual Texture *get_texture();
 
       // Arm delta displacement
       int arm_delta_x;
@@ -251,17 +244,17 @@ class Player : public Entity {
       void change_player_state();
 
       // Update function now done in player
-      void process_input(const Uint8 *key_state);
+      void ProcessInput(const Uint8 *key_state);
       virtual void update(bool freeze = false);
       virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
       virtual void move();
 
       // Contact listener
-      virtual void start_contact(Element *element = NULL);
+      virtual void StartContact(Element *element = NULL);
       virtual void end_contact(Element *element = NULL);
 
       // Damage function
-      void take_damage(int damage);
+      void TakeDamage(int damage);
 
       // Get type
       virtual std::string type() {
@@ -275,9 +268,8 @@ class Player : public Entity {
       static const std::string media_path;
 
       // Create projectile
-      virtual Projectile* CreateProjectile(int delta_x_r, int delta_x_l, int delta_y, 
-            bool owner, bool damage, float force_x, float force_y,
-            const TextureData &normal, const TextureData &hit);
+      virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
+            bool owner, bool damage, float force_x, float force_y);
 
       // Hitmarkers
       std::vector<Hitmarker *> hit_markers;
@@ -306,6 +298,10 @@ class Player : public Entity {
       // Immunity timer
       Timer immunity_timer_;
       float immunity_duration_;
+
+      // Projectile pointer
+      Projectile *eraser;
+      int num_of_projectiles;
 };
 
 #endif

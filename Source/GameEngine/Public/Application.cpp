@@ -38,6 +38,72 @@ const std::string Application::audio_path = "Media/Audio/";
 
 using namespace std;
 
+void drawLines() {
+   float i = 0.025f;
+   float j = 0.03f;
+   float vertices[] = {
+      -i, 0.0f, i,  0.0f,
+       0.0f, j, 0.0f, -j
+   };
+   unsigned int VBO, VAO;
+   glGenVertexArrays(1, &VAO);
+   glGenBuffers(1, &VBO);
+   // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+   glBindVertexArray(VAO);
+
+   glBindBuffer(GL_ARRAY_BUFFER, VBO);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+   glEnableVertexAttribArray(0);
+
+   // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+   glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+   // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+   // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+   glBindVertexArray(0);
+
+   RenderingEngine::GetInstance().GetShaderReference("color")->Use()->SetVector3f("color", glm::vec3(1.0f, 0.0f, 0.0f));
+   glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+   glDrawArrays(GL_LINES, 0, 8);
+}
+
+void drawTriangle() {
+   float i = 0.5f * (1920.0f / 2.0f);
+   float j = 0.5f * (1080.0f / 2.0f);
+   float vertices[] = {
+      -i, -j, // left  
+       i, -j,  // right 
+       0.0f, j  // top   
+   }; 
+
+   unsigned int VBO, VAO;
+   glGenVertexArrays(1, &VAO);
+   glGenBuffers(1, &VBO);
+   // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+   glBindVertexArray(VAO);
+
+   glBindBuffer(GL_ARRAY_BUFFER, VBO);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+   glEnableVertexAttribArray(0);
+
+   // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+   glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+   // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+   // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+   glBindVertexArray(0);
+
+   ShaderProgram *shader = RenderingEngine::GetInstance().GetShaderReference("basic_color")->Use();
+   glm::mat4 model = glm::mat4(1.0f);
+   shader->SetMatrix4("model", model);
+   glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+   glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
    SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), pause(-1), main_window(NULL), 
@@ -89,11 +155,18 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 // Initialize OpenGL
 bool Application::InitOpenGL() {
    // Load shaders, and viewport
-   RenderingEngine::get_instance().LoadShader("texture_shader");
-
-   // Load perspective matrix
    glm::mat4 projection = glm::ortho(0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, -1.0f, 1.0f);
-   RenderingEngine::get_instance().LoadApplicationPerspective(projection);
+
+   // Load texture shader
+   RenderingEngine::GetInstance().LoadShader("texture_shader");
+   RenderingEngine::GetInstance().LoadApplicationPerspective("texture_shader", projection);
+
+   // Load basic shader
+   RenderingEngine::GetInstance().LoadShader("color");
+
+   // Load basic perspective
+   RenderingEngine::GetInstance().LoadShader("basic_color");
+   RenderingEngine::GetInstance().GetShaderReference("basic_color")->Use()->SetMatrix4("projection", projection);
 
    // Blending?
    glEnable(GL_TEXTURE_2D);
@@ -118,9 +191,9 @@ bool Application::Init() {
       success = false;
    } else {
       //Use OpenGL 3.3 core
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+      SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
       SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
       SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
@@ -174,65 +247,65 @@ bool Application::Init() {
 }
 
 void printProgramLog(unsigned int program) {
-	//Make sure name is shader
-	if( glIsProgram( program ) )
-	{
-		//Program log length
-		int infoLogLength = 0;
-		int maxLength = infoLogLength;
-		
-		//Get info string length
-		glGetProgramiv( program, GL_INFO_LOG_LENGTH, &maxLength );
-		
-		//Allocate string
-		char* infoLog = new char[ maxLength ];
-		
-		//Get info log
-		glGetProgramInfoLog( program, maxLength, &infoLogLength, infoLog );
-		if( infoLogLength > 0 )
-		{
-			//Print Log
-			printf( "%s\n", infoLog );
-		}
-		
-		//Deallocate string
-		delete[] infoLog;
-	}
-	else
-	{
-		printf( "Name %d is not a program\n", program );
-	}
+   //Make sure name is shader
+   if( glIsProgram( program ) )
+   {
+      //Program log length
+      int infoLogLength = 0;
+      int maxLength = infoLogLength;
+      
+      //Get info string length
+      glGetProgramiv( program, GL_INFO_LOG_LENGTH, &maxLength );
+      
+      //Allocate string
+      char* infoLog = new char[ maxLength ];
+      
+      //Get info log
+      glGetProgramInfoLog( program, maxLength, &infoLogLength, infoLog );
+      if( infoLogLength > 0 )
+      {
+         //Print Log
+         printf( "%s\n", infoLog );
+      }
+      
+      //Deallocate string
+      delete[] infoLog;
+   }
+   else
+   {
+      printf( "Name %d is not a program\n", program );
+   }
 }
 
 void printShaderLog(unsigned int shader) {
-	//Make sure name is shader
-	if( glIsShader( shader ) )
-	{
-		//Shader log length
-		int infoLogLength = 0;
-		int maxLength = infoLogLength;
-		
-		//Get info string length
-		glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &maxLength );
-		
-		//Allocate string
-		char* infoLog = new char[ maxLength ];
-		
-		//Get info log
-		glGetShaderInfoLog( shader, maxLength, &infoLogLength, infoLog );
-		if( infoLogLength > 0 )
-		{
-			//Print Log
-			printf( "%s\n", infoLog );
-		}
+   //Make sure name is shader
+   if( glIsShader( shader ) )
+   {
+      //Shader log length
+      int infoLogLength = 0;
+      int maxLength = infoLogLength;
+      
+      //Get info string length
+      glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &maxLength );
+      
+      //Allocate string
+      char* infoLog = new char[ maxLength ];
+      
+      //Get info log
+      glGetShaderInfoLog( shader, maxLength, &infoLogLength, infoLog );
+      if( infoLogLength > 0 )
+      {
+         //Print Log
+         printf( "%s\n", infoLog );
+      }
 
-		//Deallocate string
-		delete[] infoLog;
-	}
-	else
-	{
-		printf( "Name %d is not a shader\n", shader );
-	}
+      //Deallocate string
+      delete[] infoLog;
+   }
+   else
+   {
+      printf( "Name %d is not a shader\n", shader );
+   }
 }
 
 // Loads images and other media
@@ -246,24 +319,24 @@ bool Application::LoadMedia() {
 
    /********* MENU BACKGROUNDS **********/
    s = sprite_path + "Menu/menu_background_sheet.png";
-   menu_background_.sprite_sheet = RenderingEngine::get_instance().LoadTexture("menu_background_sheet", s.c_str());
-   menu_background_.sprite_sheet->animations.emplace("forest", new Animation(menu_background_.sprite_sheet, 1920.0f, 1080.0f, 0.0f, 3, 1.0f / 4.0f));
-   menu_background_.sprite_sheet->animations.emplace("cloud", new Animation(menu_background_.sprite_sheet, 1920.0f, 1080.0f, 1080.0f, 3, 1.0f / 4.0f));
-   RenderingEngine::get_instance().LoadResources(&menu_background_);
+   menu_background_.sprite_sheet = RenderingEngine::GetInstance().LoadTexture("menu_background_sheet", s.c_str());
+   menu_background_.animations.emplace("forest", new Animation(menu_background_.sprite_sheet, "forest", 1920.0f, 1080.0f, 0.0f, 3, 1.0f / 4.0f));
+   menu_background_.animations.emplace("cloud", new Animation(menu_background_.sprite_sheet, "cloud", 1920.0f, 1080.0f, 1080.0f, 3, 1.0f / 4.0f));
+   RenderingEngine::GetInstance().LoadResources(&menu_background_);
 
    /************* TITLES **************/
    s = sprite_path + "Menu/menu_title_sheet.png";
-   menu_title_.sprite_sheet = RenderingEngine::get_instance().LoadTexture("menu_title_sheet", s.c_str());
-   menu_title_.sprite_sheet->animations.emplace("title", new Animation(menu_title_.sprite_sheet, 646.0f, 513.0f, 704.0f, 3, 1.0f / 4.0f));
-   menu_title_.sprite_sheet->animations.emplace("menu", new Animation(menu_title_.sprite_sheet, 323.0f, 372.0f, 332.0f, 3, 1.0f / 4.0f));
-   menu_title_.sprite_sheet->animations.emplace("world", new Animation(menu_title_.sprite_sheet, 193.0f, 332.0f, 0.0f, 3, 1.0f / 4.0f));
-   RenderingEngine::get_instance().LoadResources(&menu_title_);
+   menu_title_.sprite_sheet = RenderingEngine::GetInstance().LoadTexture("menu_title_sheet", s.c_str());
+   menu_title_.animations.emplace("title", new Animation(menu_title_.sprite_sheet, "title", 646.0f, 513.0f, 704.0f, 3, 1.0f / 4.0f));
+   menu_title_.animations.emplace("menu", new Animation(menu_title_.sprite_sheet, "menu", 323.0f, 372.0f, 332.0f, 3, 1.0f / 4.0f));
+   menu_title_.animations.emplace("world", new Animation(menu_title_.sprite_sheet, "world", 193.0f, 332.0f, 0.0f, 3, 1.0f / 4.0f));
+   RenderingEngine::GetInstance().LoadResources(&menu_title_);
 
    /************ GAMEOVER **************/
    s = sprite_path + "Miscealaneous/gameover.png";
-   gameover_screen_.sprite_sheet = RenderingEngine::get_instance().LoadTexture("gameover", s.c_str());
-   gameover_screen_.sprite_sheet->animations.emplace("gameover", new Animation(gameover_screen_.sprite_sheet, 1920.0f, 1080.0f, 0.0f, 3, 1.0f / 3.0f));
-   RenderingEngine::get_instance().LoadResources(&gameover_screen_);
+   gameover_screen_.sprite_sheet = RenderingEngine::GetInstance().LoadTexture("gameover", s.c_str());
+   gameover_screen_.animations.emplace("gameover", new Animation(gameover_screen_.sprite_sheet, "gameover", 1920.0f, 1080.0f, 0.0f, 3, 1.0f / 3.0f));
+   RenderingEngine::GetInstance().LoadResources(&gameover_screen_);
       
    // Return state
    return success;
@@ -429,7 +502,7 @@ void Application::gameover_screen() {
 }
 
 // MAIN SCREEN FUNCTION
-void Application::main_screen() {
+void Application::main_screen() {   
    // Setup menu
    if (menu_flag) {
       setup_menu();
@@ -562,19 +635,6 @@ void Application::main_screen() {
          }
       }
    }
-   // DEBUG DRAW
-   // world_.DrawDebugData();
-
-   // for (int i = 0; i < 15; i++) {
-   //    GLFloatRect m;
-   //    m.w = r[i].w;
-   //    m.h = r[i].h;
-   //    m.x = r[i].x;
-   //    m.y = r[i].y - m.h;
-
-   //    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-   //    SDL_RenderDrawRect(renderer, &m);
-   // }
 }
 
 // UPDATE PROJECTILES
@@ -585,7 +645,6 @@ void Application::update_projectiles() {
       if (*it) {
          // Check if it's alive or not
          if (!(*it)->is_alive()) {
-            //std::cout << "IN here" << std::endl;
             delete (*it);
             it = projectiles_.erase(it);
          } else {
@@ -610,19 +669,6 @@ void Application::playground() {
       game_flag_ = PLAY;
    }
 
-   // // Update world timer
-   // world_.Step(timeStep_, velocityIterations_, positionIterations_);
-   // world_.ClearForces();
-
-   // // Start cap timer
-   // capTimer.start();
-      
-   // // Calculate and correct fps
-   // float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
-   // if( avgFPS > 2000000 ) {
-   //    avgFPS = 0;
-   // }
-
    // Get current keyboard states
    current_key_states_ = SDL_GetKeyboardState(NULL);
 
@@ -641,17 +687,12 @@ void Application::playground() {
    // Do this as the last thing (testing)
    level->update();
    /***************************************/
-   
+
    // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
    update_projectiles();
       
-   //std::cout << player << std::endl;
-
    // Update player
    if (player->is_alive()) {
-      // Process player inputs
-      //player->process_input(current_key_states_);
-
       // Update player
       player->update();
 
@@ -681,34 +722,79 @@ void Application::playground() {
       menu_flag = true;
    }
 
+   /*
    // DEBUG DRAW
-   // world_.DrawDebugData();
+   world_.DrawDebugData();
 
-   // for (int i = 0; i < 15; i++) {
-   //    GLFloatRect m;
-   //    m.w = r[i].w;
-   //    m.h = r[i].h;
-   //    m.x = r[i].x;
-   //    m.y = r[i].y - m.h;
+   // Static variables for these particular shapes
+   static GLuint debug_vbo = 0;
+   static GLuint debug_ibo = 0;
+   static GLuint debug_vao = 0;
+   float debug_vertices[] = {
+      // positionscoords
+      1.0f,  1.0f, 1.0f, 1.0f, // top right
+      1.0f, -1.0f, 1.0f, 0.0f, // bottom right
+     -1.0f, -1.0f, 0.0f, 0.0f, // bottom left
+     -1.0f,  1.0f, 0.0f, 1.0f  // top left
+   };
+   GLuint debug_indices[] = {
+      3, 1, 2,
+      3, 0, 1
+   };
 
-   //    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-   //    SDL_RenderDrawRect(renderer, &m);
-   // }
+   glGenVertexArrays(1, &debug_vao);
+   glGenBuffers(1, &debug_vbo);
+   glGenBuffers(1, &debug_ibo);
+   glBindVertexArray(debug_vao);
+   glBindBuffer(GL_ARRAY_BUFFER, debug_vbo);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(debug_vertices), debug_vertices, GL_DYNAMIC_DRAW);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, debug_ibo);
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(debug_indices), debug_indices, GL_DYNAMIC_DRAW);
+   
+   // Position attribute
+   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+   glEnableVertexAttribArray(0);
 
-   // SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-   // SDL_RenderDrawLine(renderer, 1300, 454, 1500, 454);
-   // SDL_RenderDrawLine(renderer, 1400, 354, 1400, 554);
+   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+   glEnableVertexAttribArray(1);
 
-   // // Update the screen
-   // SDL_RenderPresent(renderer);
-   // ++countedFrames;
+   // Disable
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
+   glBindVertexArray(0);
 
-   // // If frame finished early
-   // int frameTicks = capTimer.getTicks();
-   // if (frameTicks < SCREEN_TICKS_PER_FRAME) {
-   //    // Wait remaining time
-   //    SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
-   // }
+   std::cout << debug_vbo << " " << debug_ibo << " " << debug_vao << std::endl;
+
+   for (int i = 0; i < 15; i++) {
+      GLFloatRect m;
+      m.w = r[i].w;
+      m.h = r[i].h;
+      m.x = r[i].x;
+      m.y = r[i].y - m.h;
+
+      std::cout << m.w << " " << m.h << " " << m.x << " " << m.y << std::endl;
+
+      ShaderProgram shader = RenderingEngine::GetInstance().GetShader("basic_color").Use();
+      std::cout << shader.program_ID << std::endl;
+      float vertices[] = {
+        -m.w, -m.h, 1.0f, 1.0f,
+         m.w, -m.h, 1.0f, 0.0f,
+         m.w,  m.h, 0.0f, 0.0f,
+        -m.w,  m.h, 0.0f, 1.0f,
+      };
+      glm::mat4 model = glm::mat4(1.0f);
+      model = glm::translate(model, glm::vec3(m.x + m.w / 2.0f, m.y + m.h / 2.0f, 0.0f));
+      shader.SetMatrix4("model", model);
+      shader.SetVector3f("color", glm::vec3(1.0f, 0.0f, 0.0f));
+      glBindVertexArray(debug_vao);
+      glBindBuffer(GL_ARRAY_BUFFER, debug_vbo);
+      glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+      glBindVertexArray(0);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+   }
+   */
+
+   drawLines();
 }
 
 // Get the height
@@ -755,11 +841,11 @@ Finger::Finger() :
 
 Animation *Finger::GetAnimationFromState() {
    if (finger_state == SHAKE) {
-      return sprite_sheet->GetAnimationFromTexture("shake");
+      return GetAnimationByName("shake");
    }
    
    if (finger_state == POINT) {
-      return sprite_sheet->GetAnimationFromTexture("point");
+      return GetAnimationByName("point");
    }
 }
 
@@ -767,9 +853,9 @@ Animation *Finger::GetAnimationFromState() {
 void Finger::update() {
    // Animate based on state
    if (finger_state == SHAKE) {
-      sprite_sheet->Animate(sprite_sheet->GetAnimationFromTexture("shake"));
+      sprite_sheet->Animate(GetAnimationByName("shake"));
    } else if (finger_state == POINT) {
-      sprite_sheet->Animate(sprite_sheet->GetAnimationFromTexture("point"));
+      sprite_sheet->Animate(GetAnimationByName("point"));
    }
 
    // Render
@@ -783,14 +869,14 @@ bool Finger::LoadMedia() {
 
    // Load the file
    std::string finger_path = Application::sprite_path + "Menu/finger_master_sheet.png";
-   sprite_sheet = RenderingEngine::get_instance().LoadTexture("finger_sheet", finger_path.c_str());
+   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("finger_sheet", finger_path.c_str());
 
    // Insantiate animations
-   sprite_sheet->animations.emplace("shake", new Animation(sprite_sheet, 124.0f, 68.0f, 68.0f, 8, 1.0f / 20.0f));
-   sprite_sheet->animations.emplace("point", new Animation(sprite_sheet, 124.0f, 68.0f, 0.0f, 6, 1.0f / 20.0f));
+   animations.emplace("shake", new Animation(sprite_sheet, "shake", 124.0f, 68.0f, 68.0f, 8, 1.0f / 20.0f));
+   animations.emplace("point", new Animation(sprite_sheet, "point", 124.0f, 68.0f, 0.0f, 6, 1.0f / 20.0f));
 
    // Load resources
-   RenderingEngine::get_instance().LoadResources(this);
+   RenderingEngine::GetInstance().LoadResources(this);
 
    // Return success flag
    return success;

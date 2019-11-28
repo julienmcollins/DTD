@@ -7,18 +7,12 @@
 void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
 {
    GLFloatRect poly;
-   // std::cout << "vertices[0].x = " << vertices[0].x << std::endl;
-   // std::cout << "vertices[1].x = " << vertices[1].x << std::endl;
-   // std::cout << "vertices[2].x = " << vertices[2].x << std::endl;
-   // std::cout << "vertices[3].x = " << vertices[3].x << std::endl;
-   poly.x = vertices[0].x * 100.0f + 10;
-   poly.y = -vertices[0].y * 100.0f - 10;
-   poly.w = ((vertices[0].x - vertices[1].x) > 0 ? (vertices[0].x - vertices[1].x) * 100.0f : (vertices[1].x - vertices[0].x) * 100.0f) - 20;
-   poly.h = ((vertices[0].y - vertices[3].y) > 0 ? (vertices[0].y - vertices[3].y) * 100.0f : (vertices[3].y - vertices[0].y) * 100.0f) - 20;
-   //std::cout << "poly.w = " << poly.w << std::endl;
-   //std::cout << "poly.h = " << poly.h << std::endl;
-   Application::get_instance().r[Application::get_instance().test++] = poly;
-   if (Application::get_instance().test >= 15) Application::get_instance().test = 0;
+   poly.x = vertices[0].x * 100.0f;
+   poly.y = -vertices[0].y * 100.0f;
+   poly.w = ((vertices[0].x - vertices[1].x) > 0 ? (vertices[0].x - vertices[1].x) * 100.0f : (vertices[1].x - vertices[0].x) * 100.0f);
+   poly.h = ((vertices[0].y - vertices[3].y) > 0 ? (vertices[0].y - vertices[3].y) * 100.0f : (vertices[3].y - vertices[0].y) * 100.0f);
+   Application::GetInstance().r[Application::GetInstance().test++] = poly;
+   if (Application::GetInstance().test >= 15) Application::GetInstance().test = 0;
 }
 
 void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)

@@ -38,20 +38,19 @@ int Entity::get_dir() const {
 }
 
 // Create projectile
-Projectile* Entity::CreateProjectile(int delta_x_r, int delta_x_l, int delta_y,
-     bool owner, bool damage, 
-     float force_x, float force_y,
-     const TextureData &normal, const TextureData &hit) {
+Projectile* Entity::CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y,
+     bool owner, bool damage, float force_x, float force_y) {
+   
    // First, create a new projectile
    Projectile *proj;
 
    // Create based on direction
    if (entity_direction == RIGHT) {
-      proj = new Projectile(get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-            owner, damage, force_x, force_y, normal, hit, this);
+      proj = new Projectile("none", get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
+            0.0f, 0.0f, owner, damage, force_x, force_y, this);
    } else {
-      proj = new Projectile(get_tex_x() + delta_x_l, get_tex_y() + delta_y, owner,
-            damage, force_x, force_y, normal, hit, this);
+      proj = new Projectile("none", get_tex_x() + delta_x_l, get_tex_y() + delta_y, owner,
+            0.0f, 0.0f, damage, force_x, force_y, this);
    }
 
    // Set shot direction
@@ -81,7 +80,7 @@ PlayerHead::PlayerHead(Player *player, float x_rel, float y_rel) :
    Sensor::initialize(width, height, x, y, CAT_PLAYER);
 }
 
-void PlayerHead::start_contact(Element *element) {
+void PlayerHead::StartContact(Element *element) {
    // Dynamic cast owner to player
    Player *player = dynamic_cast<Player *>(owner_);
 
@@ -89,8 +88,8 @@ void PlayerHead::start_contact(Element *element) {
    if (element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          player->contacts_[Player::HEAD] = 1;
-      } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
-         player->take_damage(10);
+      } else if (element->type() == "Projectile" || !element->is_enemy()) {
+         player->TakeDamage(10);
       }
    }
 }
@@ -116,7 +115,7 @@ PlayerArm::PlayerArm(Player *player, float x_rel, float y_rel, int width, int he
    Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
 }
 
-void PlayerArm::start_contact(Element *element) {
+void PlayerArm::StartContact(Element *element) {
    // Dynamic cast owner to player
    Player *player = dynamic_cast<Player *>(owner_);
 
@@ -125,13 +124,13 @@ void PlayerArm::start_contact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftArm") {
             player->contacts_[Player::LEFT_ARM] = 1;
-            //std::cout << "PlayerArm::start_contact() - left arm in contact\n";
+            //std::cout << "PlayerArm::StartContact() - left arm in contact\n";
          } else {
             player->contacts_[Player::RIGHT_ARM] = 1;
-            //std::cout << "PlayerArm::start_contact() - right arm in contact\n";
+            //std::cout << "PlayerArm::StartContact() - right arm in contact\n";
          }
-      } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
-         player->take_damage(10);
+      } else if (element->type() == "Projectile" || !element->is_enemy()) {
+         player->TakeDamage(10);
       }
    }
 }
@@ -145,10 +144,10 @@ void PlayerArm::end_contact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftArm") {
             player->contacts_[Player::LEFT_ARM] = 0;
-            //std::cout << "PlayerArm::start_contact() - lost contact left arm\n";
+            //std::cout << "PlayerArm::StartContact() - lost contact left arm\n";
          } else {
             player->contacts_[Player::RIGHT_ARM] = 0;
-            //std::cout << "PlayerArm::start_contact() - lost contact right arm\n";
+            //std::cout << "PlayerArm::StartContact() - lost contact right arm\n";
          }
       }
    }
@@ -163,7 +162,7 @@ PlayerHand::PlayerHand(Player *player, float x_rel, float y_rel, std::string typ
    Sensor::initialize(get_width() / 200.0f, get_height() / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
 }
 
-void PlayerHand::start_contact(Element *element) {
+void PlayerHand::StartContact(Element *element) {
    // Dynamic cast owner to player
    Player *player = dynamic_cast<Player *>(owner_);
 
@@ -172,12 +171,12 @@ void PlayerHand::start_contact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftHand") {
             player->contacts_[Player::LEFT_HAND] = 1;
-            std::cout << "PlayerHand::start_contact() - in contact with left hand\n";
+            std::cout << "PlayerHand::StartContact() - in contact with left hand\n";
          } else {
             player->contacts_[Player::RIGHT_HAND] = 1;
          }
-      } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
-         player->take_damage(10);
+      } else if (element->type() == "Projectile" || !element->is_enemy()) {
+         player->TakeDamage(10);
       }
    }
 }
@@ -208,7 +207,7 @@ PlayerLeg::PlayerLeg(Player *player, float x_rel, float y_rel, int width, int he
    Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
 }
 
-void PlayerLeg::start_contact(Element *element) {
+void PlayerLeg::StartContact(Element *element) {
    // Dynamic cast owner to player
    Player *player = dynamic_cast<Player *>(owner_);
 
@@ -217,21 +216,21 @@ void PlayerLeg::start_contact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftLeg") {
             player->contacts_[Player::LEFT_LEG] = 1;
-            //std::cout << "PlayerLeg::start_contact() - in contact left leg\n";
+            // std::cout << "PlayerLeg::StartContact() - in contact left leg: " << element->type() << std::endl;
          } else {
             player->contacts_[Player::RIGHT_LEG] = 1;
-            //std::cout << "PlayerLeg::start_contact() - in contact right leg\n";
+            // std::cout << "PlayerLeg::StartContact() - in contact right leg: " << element->type() << std::endl;
          }
          owner_->has_jumped_ = 0;
-         owner_->textures["jump"]->reset_frame = 0;
-         owner_->textures["jump"]->frame_ = 0;
-         owner_->textures["double_jump"]->reset_frame = 0;
-         owner_->textures["double_jump"]->frame_ = 0;
-         owner_->textures["running_jump"]->reset_frame = 0;
-         owner_->textures["running_jump"]->frame_ = 0;
+         owner_->GetAnimationByName("jump")->reset_frame = 0;
+         owner_->GetAnimationByName("jump")->curr_frame = 0;
+         owner_->GetAnimationByName("double_jump")->reset_frame = 0;
+         owner_->GetAnimationByName("double_jump")->curr_frame = 0;
+         owner_->GetAnimationByName("running_jump")->reset_frame = 0;
+         owner_->GetAnimationByName("running_jump")->curr_frame = 0;
       }
-   } else if (element->type() == "EnemyProjectile" || !element->is_enemy()) {
-      player->take_damage(10);
+   } else if (element->type() == "Projectile" || !element->is_enemy()) {
+      player->TakeDamage(10);
    }
 }
 
@@ -265,7 +264,7 @@ Player::Player() :
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
    immunity_duration_(0.5f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
-   lock_dir_right(false), lock_dir_up(false), rand_idle(0) {
+   lock_dir_right(false), lock_dir_up(false), rand_idle(0), eraser(nullptr), num_of_projectiles(0) {
 
    // Set entity direction
    entity_direction = RIGHT;
@@ -275,26 +274,20 @@ Player::Player() :
    body_def.type = b2_dynamicBody;
 
    // Set initial position and set fixed rotation
-   float x = 600.0f * Application::get_instance().to_meters_;
-   float y = -412.5f * Application::get_instance().to_meters_;
+   float x = 600.0f * Application::GetInstance().to_meters_;
+   float y = -412.5f * Application::GetInstance().to_meters_;
    body_def.position.Set(x, y);
    body_def.fixedRotation = true;
 
    // Attach body to world
-   body = Application::get_instance().world_.CreateBody(&body_def);
+   body = Application::GetInstance().world_.CreateBody(&body_def);
 
    // Set box dimensions
-   float width = (get_width() / 2.0f) * Application::get_instance().to_meters_ - 0.02f;// - 0.11f;
-   float height = (get_height() / 2.0f) * Application::get_instance().to_meters_ - 0.02f;// - 0.11f;
-   //printf("width = %d, height = %d\n", get_width(), get_height());
-   const b2Vec2 center = {(PC_OFF_X - get_width()) / 2.0f * Application::get_instance().to_meters_, 
-                          PC_OFF_Y * Application::get_instance().to_meters_};
+   float width = (get_width() / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
+   float height = (get_height() / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
+   const b2Vec2 center = {(PC_OFF_X - get_width()) / 2.0f * Application::GetInstance().to_meters_, 
+                          PC_OFF_Y * Application::GetInstance().to_meters_};
    box.SetAsBox(width, height, center, 0.0f);
-
-   // TODO: ADD FIXTURES TO THIS AS SENSORS
-   //left_sensor_ = new PlayerSensor(0.4f, 0.0f, this, CONTACT_LEFT, -0.05f);
-   //right_sensor_ = new PlayerSensor(0.4f, 0.0f, this, CONTACT_RIGHT, 0.30f);
-   //bottom_sensor = new PlayerSensor(0.0f, 0.15f, this, CONTACT_DOWN, 0.125f, -0.5f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -410,67 +403,13 @@ Animation *Player::GetAnimationFromState() {
    }
 }
 
-// Get texture based on state
-Texture *Player::get_texture() {
-   // Return run or stop texture (aka running texture)
-   if (player_state_ == RUN || player_state_ == STOP) {
-      return textures["running"];
-   }
-
-   // Return jump texture
-   if (player_state_ == JUMP) {
-      return textures["jump"];
-   }
-
-   // Return run and jump texture
-   if (player_state_ == RUN_AND_JUMP) {
-      return textures["running_jump"];
-   }
-
-   // Return double jump
-   if (player_state_ == DOUBLE_JUMP) {
-      return textures["double_jump"];
-   }
-
-   // Return push texture
-   if (player_state_ == PUSH) {
-      return textures["push"];
-   }
-
-   // Return jump and push texture
-   if (player_state_ == JUMP_AND_PUSH) {
-      return textures["jump_push"];
-   }
-
-   // Return balance
-   if (player_state_ == BALANCE) {
-      return textures["balance"];
-   }
-
-   // Death
-   if (player_state_ == DEATH) {
-      return textures["death"];
-   }
-
-   // Check which idle is being used and return it
-   if (rand_idle <= 98) {
-      return textures["tap"];
-   }
-   if (rand_idle == 99) {
-      return textures["look"];
-   }
-   if (rand_idle == 100) {
-      return textures["kick"];
-   }
-}
-
 // Get player state
 Player::STATE Player::get_player_state() {
    return player_state_;
 }
 
 // Process keyboard input
-void Player::process_input(const Uint8 *key_state) {  
+void Player::ProcessInput(const Uint8 *key_state) {  
    // Set previous direction
    prev_entity_dir = entity_direction;
 
@@ -518,33 +457,22 @@ void Player::process_input(const Uint8 *key_state) {
 
    // Process space key
    if (key_state[SDL_SCANCODE_SPACE]) {
-      // Set shooting to true
       shooting = true;
-
-      // Create eraser
-      if (GetAnimationByName("arm_throw", arm_sheet)->completed) {
-         TextureData normal = {0, 0.0f, "", ""};
-         TextureData hit = {0, 0.0f, "", ""};
-         CreateProjectile(38, -12, 41, 1, 10, 0.0f, 0.0f, normal, hit);
-         GetAnimationByName("arm_throw", arm_sheet)->completed = false;
+   } else {
+      if (GetAnimationByName("arm_throw")->completed) {
+         shooting = false;
       }
    }
 }
 
 // Update function
 void Player::update(bool freeze) {
-   //std::cout << "State: " << player_state_ << " (0: STAND, 1: RUN, 2: JUMP, 3: DOUBLE_JUMP, 4: STOP, 5: RUN_AND_JUMP, 6: PUSH)" << std::endl;
-   //std::cout << "X = " << body->GetLinearVelocity().x << " Y = " << body->GetLinearVelocity().y << std::endl;
-   //std::cout << in_contact_down << std::endl;
-   //std::cout << "x_pos = " << get_x() << " y_pos = " << get_y() << std::endl;
-   //std::cout << "Key = " << key << std::endl;
-
    // Apply artificial force of gravity
    const b2Vec2 sim_grav = {0.0f, SIM_GRAV};
    body->ApplyForceToCenter(sim_grav, true);
 
    // Process key inputs
-   process_input(Application::get_instance().current_key_states_);
+   ProcessInput(Application::GetInstance().current_key_states_);
 
    // Animate the function
    animate();
@@ -556,9 +484,6 @@ void Player::update(bool freeze) {
 
    // Adjust deltas first
    adjust_deltas();
-
-   // Render player
-   Texture *playertexture = get_texture();
 
    // Render arm if idle, Render shooting if not
    if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != BALANCE && player_state_ != DEATH) {
@@ -572,10 +497,10 @@ void Player::update(bool freeze) {
             arm_type = "idle_arm";
          }
          arm_sheet->Render(get_anim_x() + get_width() + arm_delta_x, 
-            get_anim_y() + arm_delta_y, 0.0f, GetAnimationByName(arm_type, arm_sheet));
+            get_anim_y() + arm_delta_y, 0.0f, GetAnimationByName(arm_type));
       } else {
-         arm_sheet->Render(get_anim_x() + get_width() + arm_delta_x,
-            get_anim_y() + arm_delta_shoot_y, 0.0f, GetAnimationByName("arm_throw", arm_sheet));
+         arm_sheet->Render(get_anim_x() + get_width() + arm_delta_shoot_x,
+            get_anim_y() + arm_delta_shoot_y, 0.0f, GetAnimationByName("arm_throw"));
       }
    }
 
@@ -588,13 +513,13 @@ void Player::update(bool freeze) {
 void Player::adjust_deltas() {
    if (player_state_ == STAND) {
       if (entity_direction == RIGHT) {
-         arm_delta_x = -3;
-         arm_delta_y = 47;
+         arm_delta_x = -4;
+         arm_delta_y = 44;
          arm_delta_shoot_x = -3;
          arm_delta_shoot_y = 39;
       } else {
          arm_delta_x = -20;
-         arm_delta_y = 47;
+         arm_delta_y = 44;
          arm_delta_shoot_x = -57;
          arm_delta_shoot_y = 39;
       }
@@ -642,39 +567,27 @@ void Player::adjust_deltas() {
 void Player::animate(Texture *tex, int reset, int max, int start) {
    // Shooting animation
    if (shooting) {
-      textures["arm_throw"]->last_frame += 
-      (textures["arm_throw"]->fps_timer.getDeltaTime() / 1000.0f);
-      if (textures["arm_throw"]->last_frame > Application::get_instance().animation_update_time_) {
-         if (textures["arm_throw"]->frame_ > 6) {
-            textures["arm_throw"]->frame_ = 0;
-            shooting = false;
-            textures["arm_throw"]->completed_ = true;
-         }
-         textures["arm_throw"]->curr_clip_ = &textures["arm_throw"]->clips_[textures["arm_throw"]->frame_];
-         ++textures["arm_throw"]->frame_;
-         textures["arm_throw"]->last_frame = 0.0f;
-      }
-      Element::animate(textures["eraser"]);
-      // sprite_sheet->Animate(GetAnimationByName("eraser"));
+      arm_sheet->Animate(GetAnimationByName("arm_throw"));
    } else {
-      arm_sheet->Animate(GetAnimationByName("idle_arm", arm_sheet));
+      arm_sheet->Animate(GetAnimationByName("idle_arm"));
    }
 
    // Choose animation based on what state player is in
    if (player_state_ == STAND) {
       // Choose a random number if at least one of the animations is complete
-      if (curr_idle_texture->frame_ > curr_idle_texture->max_frame_) {
+      // std::cout << curr_idle_animation->curr_frame << " " << curr_idle_animation->max_frame << std::endl;
+      if (curr_idle_animation->curr_frame >= curr_idle_animation->max_frame) {
          rand_idle = rand() % 100 + 1;
 
          // Set curr_idle_texture
          if (rand_idle <= 98) {
-            curr_idle_texture = textures["tap"];
+            curr_idle_animation = GetAnimationByName("tap");
          }
          if (rand_idle == 99) {
-            curr_idle_texture = textures["look"];
+            curr_idle_animation = GetAnimationByName("look");
          }
          if (rand_idle == 100) {
-            curr_idle_texture = textures["kick"];
+            curr_idle_animation = GetAnimationByName("kick");
          }
       }
 
@@ -690,16 +603,16 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
       }
    } else if (player_state_ == RUN && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
       sprite_sheet->Animate(GetAnimationByName("running"));
-      arm_sheet->Animate(GetAnimationByName("running_arm", arm_sheet));
+      arm_sheet->Animate(GetAnimationByName("running_arm"));
    } else if (player_state_ == STOP && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
-      sprite_sheet->Animate(GetAnimationByName("running"), 20);
+      sprite_sheet->Animate(GetAnimationByName("running"));
    } else if (player_state_ == JUMP) {
       sprite_sheet->Animate(GetAnimationByName("jump"), GetAnimationByName("jump")->reset_frame, GetAnimationByName("jump")->stop_frame);
    } else if (player_state_ == RUN_AND_JUMP) {
       sprite_sheet->Animate(GetAnimationByName("running_jump"), GetAnimationByName("running_jump")->reset_frame, GetAnimationByName("running_jump")->stop_frame);
    } else if (player_state_ == DOUBLE_JUMP) {
       sprite_sheet->Animate(GetAnimationByName("double_jump"), GetAnimationByName("double_jump")->reset_frame, GetAnimationByName("double_jump")->stop_frame);
-      arm_sheet->Animate(GetAnimationByName("double_jump_arm", arm_sheet), GetAnimationByName("double_jump_arm", arm_sheet)->reset_frame, GetAnimationByName("double_jump_arm", arm_sheet)->stop_frame);
+      arm_sheet->Animate(GetAnimationByName("double_jump_arm"), GetAnimationByName("double_jump_arm")->reset_frame, GetAnimationByName("double_jump_arm")->stop_frame);
    } else if (player_state_ == PUSH) {
       sprite_sheet->Animate(GetAnimationByName("push"));
    } else if (player_state_ == JUMP_AND_PUSH) {
@@ -720,9 +633,9 @@ void Player::change_player_state() {
    float vel_y = body->GetLinearVelocity().y;
    
    // Key touches
-   bool right = Application::get_instance().current_key_states_[SDL_SCANCODE_RIGHT];
-   bool left = Application::get_instance().current_key_states_[SDL_SCANCODE_LEFT];
-   bool up = Application::get_instance().current_key_states_[SDL_SCANCODE_UP];
+   bool right = Application::GetInstance().current_key_states_[SDL_SCANCODE_RIGHT];
+   bool left = Application::GetInstance().current_key_states_[SDL_SCANCODE_LEFT];
+   bool up = Application::GetInstance().current_key_states_[SDL_SCANCODE_UP];
 
    // Special push state
    if (contacts_[LEFT_ARM] || contacts_[RIGHT_ARM]) {
@@ -805,9 +718,9 @@ void Player::move() {
          shift_ = true;
       }
       if (GetAnimationByName("death")->curr_frame >= 20) {
-         if (((float) Application::get_instance().death_timer_.getTicks() / 1000.0f) >= 3.0f) {
+         if (((float) Application::GetInstance().death_timer_.getTicks() / 1000.0f) >= 3.0f) {
             alive = false;
-            Application::get_instance().death_timer_.stop();
+            Application::GetInstance().death_timer_.stop();
          }
          GetAnimationByName("death")->reset_frame = 19;
          GetAnimationByName("death")->stop_frame = 19;
@@ -832,11 +745,23 @@ void Player::move() {
       right_deactivated_ = false;
    }
 
+   // Check if shooting
+   if (shooting) {
+      if (GetAnimationByName("arm_throw")->curr_frame > 5) {
+         num_of_projectiles++;
+         if (num_of_projectiles == 1) {
+            CreateProjectile("player_projectile", 21.0f, 12.0f, 38, -12, 41, 1, 10, 0.0f, 0.0f);
+         }
+      } else {
+         num_of_projectiles = 0;
+      }
+   }
+
    // Reset frames
    if (player_state_ != DOUBLE_JUMP) {
-      GetAnimationByName("double_jump_arm", arm_sheet)->reset_frame = 0;
+      GetAnimationByName("double_jump_arm")->reset_frame = 0;
    } else {
-      GetAnimationByName("double_jump_arm", arm_sheet)->reset_frame = GetAnimationByName("double_jump_arm", arm_sheet)->max_frame;
+      GetAnimationByName("double_jump_arm")->reset_frame = GetAnimationByName("double_jump_arm")->max_frame;
    }
 
    // Check for changing directions on second jump
@@ -856,7 +781,7 @@ void Player::move() {
    // If not running or running and jumping, then set linear velocity to 0
    if (player_state_ != RUN) {
       // Reset running arm
-      GetAnimationByName("running_arm", arm_sheet)->curr_frame = GetAnimationByName("running")->curr_frame;
+      GetAnimationByName("running_arm")->curr_frame = GetAnimationByName("running")->curr_frame;
       if (player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DOUBLE_JUMP) {
          b2Vec2 vel = {0, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
@@ -870,11 +795,9 @@ void Player::move() {
       contacts_[RIGHT_ARM] = 0;
 
       // Check for flag
-      if (entity_direction == LEFT) {
-         for (auto i = textures.begin(); i != textures.end(); i++) {
-            i->second->has_flipped_ = true;
-            // i->second.flip_ = SDL_FLIP_HORIZONTAL;
-         }
+      if (!textureFlipped()) {
+         flipAllAnimations();
+         texture_flipped = true;
       }
 
       // Check for midair
@@ -900,11 +823,9 @@ void Player::move() {
       contacts_[LEFT_ARM] = 0;
       
       // Check for flag
-      if (entity_direction == RIGHT) {
-         for (auto i = textures.begin(); i != textures.end(); i++) {
-            i->second->has_flipped_ = false;
-            // i->second.flip_ = SDL_FLIP_NONE;
-         }
+      if (textureFlipped()) {
+         flipAllAnimations();
+         texture_flipped = false;
       }
 
       // Set to jump and run if not on the ground
@@ -928,13 +849,10 @@ void Player::move() {
    if (key == KEY_UP) {
       if (has_jumped_ < 2) {
          if (has_jumped_ == 0) {
-            // Set state
             if (player_state_ == RUN) {
-               //player_state_ = RUN_AND_JUMP;
                GetAnimationByName("running_jump")->reset_frame = 14;
                GetAnimationByName("running_jump")->stop_frame = 14;
             } else {
-               //player_state_ = JUMP;
                GetAnimationByName("jump")->reset_frame = GetAnimationByName("jump")->max_frame;
                GetAnimationByName("jump")->stop_frame = GetAnimationByName("jump")->max_frame;
             }
@@ -946,13 +864,10 @@ void Player::move() {
             // Set the flags
             ++has_jumped_;
          } else {
-            // Set state
             if (player_state_ == RUN) {
-               //player_state_ = RUN_AND_JUMP;
                GetAnimationByName("running_jump")->reset_frame = 14;
                GetAnimationByName("running_jump")->stop_frame = 14;
             } else {
-               //player_state_ = JUMP;
                GetAnimationByName("double_jump")->reset_frame = GetAnimationByName("double_jump")->max_frame;
                GetAnimationByName("double_jump")->stop_frame = GetAnimationByName("double_jump")->max_frame;
             }
@@ -982,9 +897,9 @@ void Player::move() {
 }
 
 // Start contact function
-void Player::start_contact(Element *element) {
+void Player::StartContact(Element *element) {
    if (element && (element->type() == "Projectile" || (element->is_enemy()))) {
-      take_damage(10);
+      TakeDamage(10);
    }
 }
 
@@ -998,73 +913,51 @@ bool Player::LoadMedia() {
    // Temp flag
    bool success = true;
 
-   // Vector for images
-   std::vector<TextureData> data;
-   data.push_back(TextureData(17, 1.0f / 24.0f, "kick", media_path + "idle_kick_no_arm.png"));
-   data.push_back(TextureData(12, 1.0f / 24.0f, "tap", media_path + "idle_tap_no_arm.png"));
-   data.push_back(TextureData(20, 1.0f / 24.0f, "look", media_path + "idle_look_no_arm.png"));
-   data.push_back(TextureData(15, 1.0f / 24.0f, "jump", media_path + "idle_jump_no_arm.png"));
-   data.push_back(TextureData(15, 1.0f / 30.0f, "running", media_path + "running_no_arm.png"));
-   data.push_back(TextureData(11, 1.0f / 24.0f, "double_jump", media_path + "double_jump.png"));
-   data.push_back(TextureData(15, 1.0f / 24.0f, "running_jump", media_path + "running_jump_no_arm.png"));
-   data.push_back(TextureData(5, 1.0f / 20.0f, "idle_arm", media_path + "idle_arm.png"));
-   data.push_back(TextureData(9, 1.0f / 20.0f, "arm_throw", media_path + "arm_throw.png"));
-   data.push_back(TextureData(15, 1.0f / 30.0f, "running_arm", media_path + "running_arm.png"));
-   data.push_back(TextureData(8, 1.0f / 24.0f, "double_jump_arm", media_path + "double_jump_arm.png"));
-   data.push_back(TextureData(16, 1.0f / 20.0f, "push", media_path + "push.png"));
-   data.push_back(TextureData(8, 1.0f / 20.0f, "jump_push", media_path + "jump_push.png"));
-   data.push_back(TextureData(19, 1.0f / 20.0f, "balance", media_path + "balance.png"));
-   data.push_back(TextureData(20, 1.0f / 20.0f, "death", media_path + "death.png"));
-   
-   // Load the resources
-   success = RenderingEngine::get_instance().LoadResources(this, data);
-
    // Instantiate sprite sheet for main player body
    std::string player_path = media_path + "player_master_sheet.png";
-   sprite_sheet = RenderingEngine::get_instance().LoadTexture("player_master_sheet", player_path.c_str());
-   sprite_sheet->animations.emplace("jump_push", new Animation(sprite_sheet, 59.0f, 104.0f, 0.0f, 8, 1.0f / 20.0f));
-   sprite_sheet->animations.emplace("double_jump", new Animation(sprite_sheet, 59.0f, 104.0f, 104.0f, 11, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("tap", new Animation(sprite_sheet, 59.0f, 104.0f, 209.0f, 12, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("running", new Animation(sprite_sheet, 59.0f, 104.0f, 312.0f, 15, 1.0f / 30.0f));
-   sprite_sheet->animations.emplace("jump", new Animation(sprite_sheet, 59.0f, 104.0f, 416.0f, 15, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("running_jump", new Animation(sprite_sheet, 59.0f, 104.0f, 520.0f, 15, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("push", new Animation(sprite_sheet, 59.0f, 104.0f, 624.0f, 16, 1.0f / 20.0f));
-   sprite_sheet->animations.emplace("kick", new Animation(sprite_sheet, 59.0f, 104.0f, 728.0f, 17, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("look", new Animation(sprite_sheet, 59.0f, 104.0f, 832.0f, 20, 1.0f / 24.0f));
-   sprite_sheet->animations.emplace("death", new Animation(sprite_sheet, 105.0f, 104.0f, 936.0f, 20, 1.0f / 20.0f));
-   sprite_sheet->animations.emplace("balance", new Animation(sprite_sheet, 89.0f, 104.0f, 1040.0f, 19, 1.0f / 20.0f));
-   RenderingEngine::get_instance().LoadResources(this);
+   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("player_master_sheet", player_path.c_str());
+   animations.emplace("jump_push", new Animation(sprite_sheet, "jump_push", 61.0, 106.0, 0.0, 8, 1.0 / 20.0));
+   animations.emplace("double_jump", new Animation(sprite_sheet, "double_jump", 61.0, 106.0, 106.0, 11, 1.0 / 24.0));
+   animations.emplace("tap", new Animation(sprite_sheet, "tap", 61.0, 106.0, 212.0, 12, 1.0 / 24.0));
+   animations.emplace("running", new Animation(sprite_sheet, "running", 61.0, 106.0, 318.0, 15, 1.0 / 30.0));
+   animations.emplace("jump", new Animation(sprite_sheet, "jump", 61.0, 106.0, 424.0, 15, 1.0 / 24.0));
+   animations.emplace("running_jump", new Animation(sprite_sheet, "running_jump", 61.0, 106.0, 530.0, 15, 1.0 / 24.0));
+   animations.emplace("push", new Animation(sprite_sheet, "push", 61.0, 106.0, 636.0, 16, 1.0 / 20.0));
+   animations.emplace("kick", new Animation(sprite_sheet, "kick", 61.0, 106.0, 742.0, 17, 1.0 / 24.0));
+   animations.emplace("look", new Animation(sprite_sheet, "look", 61.0, 106.0, 848.0, 20, 1.0 / 24.0));
+   animations.emplace("death", new Animation(sprite_sheet, "death", 107.0, 106.0, 954.0, 20, 1.0 / 20.0));
+   animations.emplace("balance", new Animation(sprite_sheet, "balance", 128.0, 106.0, 1060.0, 19, 1.0 / 20.0));
 
    // Instantiate sprite sheet for arms
    std::string arm_path = media_path + "arm_master_sheet.png";
-   arm_sheet = RenderingEngine::get_instance().LoadTexture("arm_master_sheet", arm_path.c_str());
-   arm_sheet->animations.emplace("idle_arm", new Animation(arm_sheet, 10.0f, 27.0f, 0.0f, 1, 1.0f / 30.0f));
-   arm_sheet->animations.emplace("double_jump_arm", new Animation(arm_sheet, 9.0f, 27.0f, 27.0f, 8, 1.0f / 24.0f));
-   arm_sheet->animations.emplace("running_arm", new Animation(arm_sheet, 9.0f, 27.0f, 54.0f, 15, 1.0f / 30.0f));
-   arm_sheet->animations.emplace("arm_throw", new Animation(arm_sheet, 44.0f, 33.0f, 81.0f, 9, 1.0f / 20.0f));
-   RenderingEngine::get_instance().LoadResources(this, arm_sheet);
+   arm_sheet = RenderingEngine::GetInstance().LoadTexture("arm_master_sheet", arm_path.c_str());
+   animations.emplace("idle_arm", new Animation(arm_sheet, "idle_arm", 10.0, 27.0, 0.0, 1, 1.0 / 30.0));
+   animations.emplace("double_jump_arm", new Animation(arm_sheet, "double_jump_arm", 9.0, 27.0, 27.0, 8, 1.0 / 24.0));
+   animations.emplace("running_arm", new Animation(arm_sheet, "running_arm", 9.0, 27.0, 54.0, 15, 1.0 / 30.0));
+   animations.emplace("arm_throw", new Animation(arm_sheet, "arm_throw", 44.0, 33.0, 81.0, 9, 1.0 / 20.0));
+   RenderingEngine::GetInstance().LoadResources(this);
 
    // Set current idle texture to tap
-   curr_idle_texture = textures["tap"];
+   curr_idle_animation = GetAnimationByName("tap");
 
    // Return success
    return success;
 }
 
 // Create projectile
-Projectile* Player::CreateProjectile(int delta_x_r, int delta_x_l, int delta_y,
-     bool owner, bool damage, 
-     float force_x, float force_y,
-     const TextureData &normal, const TextureData &hit) {
+Projectile* Player::CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y,
+     bool owner, bool damage, float force_x, float force_y) {
+
    // First, create a new projectile
    Projectile *proj;
 
    // Create based on direction
    if (entity_direction == RIGHT) {
-      proj = new Eraser(get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-            normal, hit, this);
+      proj = new Projectile(name, get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
+            width, height, 1, 10, 10.4f, 0.0f, this);
    } else {
-      proj = new Eraser(get_tex_x() + delta_x_l, get_tex_y() + delta_y, normal, hit, this);
+      proj = new Projectile(name, get_tex_x() + delta_x_l, get_tex_y() + delta_y,
+            width, height, 1, 10, 10.4f, 0.0f, this);
    }
 
    // Set shot direction
@@ -1075,7 +968,7 @@ Projectile* Player::CreateProjectile(int delta_x_r, int delta_x_l, int delta_y,
 }
 
 // Take damage function
-void Player::take_damage(int damage) {
+void Player::TakeDamage(int damage) {
    // Now check that a certain threshold has been reached
    float delta = (float) immunity_timer_.getDeltaTime() / 1000.0f;
    if (delta > immunity_duration_) {
@@ -1090,7 +983,7 @@ void Player::take_damage(int damage) {
       health -= damage;
       if (health == 0) {
          player_state_ = DEATH;
-         Application::get_instance().death_timer_.start();
+         Application::GetInstance().death_timer_.start();
       }
    }
 }
@@ -1117,11 +1010,11 @@ Hitmarker::Hitmarker(int x, int y) :
 bool Hitmarker::LoadMedia() {
    bool success = true;
 
-   // Load data
-   std::vector<TextureData> data;
-   data.push_back(TextureData(21, 1.0 / 20.0f, "alive", Player::media_path + "hp_idle.png"));
-   data.push_back(TextureData(19, 1.0 / 20.0f, "dead", Player::media_path + "hp_hit.png"));
-   success = RenderingEngine::get_instance().LoadResources(this, data);
+   std::string hitmarker = Application::GetInstance().sprite_path + "Player/hitmarker_master_sheet.png";
+   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("hitmarker_master_sheet", hitmarker.c_str());
+   animations.emplace("alive", new Animation(sprite_sheet, "alive", 76.0f, 103.0f, 0.0f, 21, 1.0f / 20.0f));
+   animations.emplace("dead", new Animation(sprite_sheet, "dead", 76.0f, 103.0f, 103.0f, 19, 1.0f / 20.0f));
+   RenderingEngine::GetInstance().LoadResources(this);
 
    // Return success
    return success;
@@ -1130,19 +1023,19 @@ bool Hitmarker::LoadMedia() {
 // Animate
 void Hitmarker::animate() {
    if (state == ALIVE) {
-      Element::animate(textures["alive"]);
+      sprite_sheet->Animate(GetAnimationFromState());
    } else if (state == DEAD) {
-      Element::animate(textures["dead"], 18);
+      sprite_sheet->Animate(GetAnimationFromState(), 18);
    }
 }
 
 // Get texture
-Texture *Hitmarker::get_texture() {
+Animation *Hitmarker::GetAnimationFromState() {
    if (state == ALIVE) {
-      return textures["alive"];
+      return GetAnimationByName("alive");
    }
    if (state == DEAD) {
-      return textures["dead"];
+      return GetAnimationByName("dead");
    }
 }
 
@@ -1150,6 +1043,5 @@ Texture *Hitmarker::get_texture() {
 void Hitmarker::update(bool freeze) {
    // Animate and Render
    animate();
-   Texture *tex = get_texture();
-   Render(tex);
+   sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
 }

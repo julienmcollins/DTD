@@ -15,6 +15,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 // Prototype
 class Enemy;
@@ -42,6 +43,15 @@ class Level {
          return level_completed_;
       }
 
+      /*******************************************/
+      // Textures for background and platforms
+      Element background;
+      Element platforms;
+
+      // Animation map
+      std::unordered_map<std::string, Animation *> animations;
+      /*******************************************/
+
       // Level number
       Application::FOREST level;
 
@@ -55,12 +65,6 @@ class Level {
 
       // enemies to kill
       int num_of_kills_;
-
-      // Background element place holder
-      Element background_;
-
-      // Platform texture
-      Texture platform_texture_;
 
       // Vector for the enemies
       std::vector<Enemy *> enemies_;

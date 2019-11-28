@@ -130,15 +130,28 @@ class Element {
       // Texture reference
       Texture *sprite_sheet;
 
+      // Each element has it's own animations (previously textures)
+      std::unordered_map<std::string, Animation *> animations;
+
+      /* Retrieve animation */
       virtual Animation *GetAnimationFromState() {};
-      Animation *GetAnimationByName(std::string name, Texture *tex = nullptr);
+      Animation *GetAnimationByName(std::string name);
+
+      /* Flip all animations of a texture */
+      void flipAllAnimations();
+
+      // Flag fo all animations flipped
+      bool texture_flipped;
+
+      /* Check if all animations have been flipped */
+      bool textureFlipped();
       /*******************************/
 
       // virtual load media
       virtual bool LoadMedia();
 
       // Set and add hitboxes
-      void set_hitbox(int x, int y, SHAPE_TYPE type = SQUARE, int group = -1);
+      void SetHitbox(int x, int y, SHAPE_TYPE type = SQUARE, int group = -1);
       void create_hitbox(float x, float y);
 
       // Check to see if it's still alive
@@ -188,7 +201,7 @@ class Element {
       }
 
       // Start and end contact
-      virtual void start_contact(Element *element = NULL) {}
+      virtual void StartContact(Element *element = NULL) {}
       virtual void end_contact(Element *element = NULL) {}
 
       // Contact flag
@@ -232,7 +245,7 @@ class Sensor : public Element {
       virtual void initialize(float width, float height, float center_x, float center_y, uint16 category = CAT_SENSOR);
 
       // Start contact function
-      virtual void start_contact(Element *element = NULL) {};
+      virtual void StartContact(Element *element = NULL) {};
       virtual void end_contact(Element *element = NULL) {};
 
       // Activation and deactivation of sensor
@@ -279,7 +292,7 @@ class BodyPart : public Sensor {
       }
 
       // Start contact function
-      virtual void start_contact(Element *element = NULL) {};
+      virtual void StartContact(Element *element = NULL) {};
       virtual void end_contact(Element *element = NULL) {};
 
       // Return type

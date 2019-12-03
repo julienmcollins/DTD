@@ -77,8 +77,8 @@ void Enemy::update(bool freeze) {
 
    // Render player
    if (anim) {
-      std::cout << get_x() << " " << get_y() << std::endl;
-      sprite_sheet->Render(get_x(), get_y(), 0.0f, anim);
+      // std::cout << get_x() << " " << get_y() << std::endl;
+      sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, anim);
    }
 }
 
@@ -140,7 +140,7 @@ bool Fecreez::LoadMedia() {
    RenderingEngine::GetInstance().LoadResources(this);
 
    // Start flipped
-   flipAllAnimations();
+   FlipAllAnimations();
 
    // Return success
    return success;
@@ -172,19 +172,18 @@ void Fecreez::move() {
 
    // Turn fecreez
    if (enemy_state_ == TURN) {
-      if (GetAnimationByName("turn")->completed) {
+      if (AnimationCompleted("turn")) {
          if (entity_direction == RIGHT) {
-            if (textureFlipped()) {
-               flipAllAnimations();
+            if (TextureFlipped()) {
+               FlipAllAnimations();
                texture_flipped = false;
             }
          } else if (entity_direction == LEFT) {
-            if (!textureFlipped()) {
-               flipAllAnimations();
+            if (!TextureFlipped()) {
+               FlipAllAnimations();
                texture_flipped = true;
             }
          }
-         GetAnimationByName("turn")->completed = false;
          enemy_state_ = IDLE;
       }
    }
@@ -195,9 +194,8 @@ void Fecreez::move() {
       && enemy_state_ != TURN && enemy_state_ != DEATH) {
       if (shoot_timer_ >= 100) {
          enemy_state_ = ATTACK;
-      } else if (shoot_timer_ < 100 && GetAnimationByName("attack")->completed) {
+      } else if (shoot_timer_ < 100 && AnimationCompleted("attack")) {
          enemy_state_ = IDLE;
-         GetAnimationByName("attack")->completed = false;
       }
       ++shoot_timer_;
    } else if (enemy_state_ != TURN && enemy_state_ != DEATH && enemy_state_ != ATTACK) {
@@ -211,9 +209,8 @@ void Fecreez::move() {
          tmp->body->SetGravityScale(0);
          shoot_timer_ = 0;
       }
-      if (GetAnimationByName("attack")->completed) {
+      if (AnimationCompleted("attack")) {
          enemy_state_ = IDLE;
-         GetAnimationByName("attack")->completed = false;
       }
    }
 
@@ -648,20 +645,18 @@ void Mosquibler::move() {
       body->SetLinearVelocity(impulse);
 
       // Complete texture
-      if (GetAnimationByName("turn")->completed) {
+      if (AnimationCompleted("turn")) {
          if (entity_direction == RIGHT) {
-            if (!textureFlipped()) {
-               flipAllAnimations();
+            if (!TextureFlipped()) {
+               FlipAllAnimations();
                texture_flipped = true;
             }
          } else if (entity_direction == LEFT) {
-            if (textureFlipped()) {
-               flipAllAnimations();
+            if (TextureFlipped()) {
+               FlipAllAnimations();
                texture_flipped = false;
             }
          }
-         GetAnimationByName("turn")->completed = false;
-         GetAnimationByName("turn")->curr_frame = 0;
          enemy_state_ = IDLE;
       }
    }
@@ -682,7 +677,7 @@ void Mosquibler::move() {
 
    // In state hurt
    if (enemy_state_ == HURT) {
-      if (GetAnimationByName("hit")->curr_frame > 3) {
+      if (AnimationCompleted("hit")) {
          enemy_state_ = FALL;
       }
    }
@@ -921,7 +916,7 @@ Fleet::Fleet(int x, int y) :
    enemy_state_ = IDLE;
 
    // Flip animations to start
-   flipAllAnimations();
+   FlipAllAnimations();
    texture_flipped = false;
 }
 
@@ -963,15 +958,15 @@ void Fleet::move() {
       // Check for turn state
       if (enemy_state_ == TURN) {
          // Complete texture
-         if (GetAnimationByName("turn")->completed) {
+         if (AnimationCompleted("turn")) {
             if (entity_direction == RIGHT) {
-               if (textureFlipped()) {
-                  flipAllAnimations();
+               if (TextureFlipped()) {
+                  FlipAllAnimations();
                   texture_flipped = false;
                }
             } else if (entity_direction == LEFT) {
-               if (!textureFlipped()) {
-                  flipAllAnimations();
+               if (!TextureFlipped()) {
+                  FlipAllAnimations();
                   texture_flipped = true;
                }
             }

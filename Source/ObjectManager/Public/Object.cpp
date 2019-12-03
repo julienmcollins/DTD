@@ -99,7 +99,7 @@ Projectile::Projectile(std::string name, int x, int y, float width, float height
       force = {force_x, force_y};
    } else {
       force = {-force_x, force_y};
-      flipAllAnimations();
+      FlipAllAnimations();
       texture_flipped = true;
    }
    body->ApplyForce(force, body->GetPosition(), true);

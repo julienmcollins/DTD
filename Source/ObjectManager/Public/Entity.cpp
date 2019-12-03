@@ -795,8 +795,8 @@ void Player::move() {
       contacts_[RIGHT_ARM] = 0;
 
       // Check for flag
-      if (!textureFlipped()) {
-         flipAllAnimations();
+      if (!TextureFlipped()) {
+         FlipAllAnimations();
          texture_flipped = true;
       }
 
@@ -823,8 +823,8 @@ void Player::move() {
       contacts_[LEFT_ARM] = 0;
       
       // Check for flag
-      if (textureFlipped()) {
-         flipAllAnimations();
+      if (TextureFlipped()) {
+         FlipAllAnimations();
          texture_flipped = false;
       }
 

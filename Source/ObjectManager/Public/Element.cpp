@@ -188,7 +188,7 @@ Animation *Element::GetAnimationByName(std::string name) {
    return animations[name];
 }
 
-void Element::flipAllAnimations() {
+void Element::FlipAllAnimations() {
    // Iterate through map and flip all animations
    for (std::unordered_map<std::string, Animation *>::iterator it = animations.begin(); it != animations.end(); ++it) {
       it->second->flipAnimation();
@@ -198,8 +198,19 @@ void Element::flipAllAnimations() {
    texture_flipped = true;
 }
 
-bool Element::textureFlipped() {
+bool Element::TextureFlipped() {
    return texture_flipped;
+}
+
+bool Element::AnimationCompleted(std::string name) {
+   if (GetAnimationByName(name)->curr_frame > (GetAnimationByName(name)->max_frame - 1)) {
+      // Reset animation
+      GetAnimationByName(name)->completed = false;
+      GetAnimationByName(name)->curr_frame = 0;
+      return true;
+   } else {
+      return false;
+   }
 }
 
 // Load media does nothing

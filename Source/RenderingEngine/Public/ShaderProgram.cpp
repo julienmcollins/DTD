@@ -18,9 +18,9 @@ ShaderProgram::ShaderProgram() {
 
 // Delete the program
 ShaderProgram::~ShaderProgram() {
-    // Free the program
-    std::cout << "Deleting program\n";
-    glDeleteProgram(program_ID);
+   // Free the program
+   //  std::cout << "Deleting program\n";
+   glDeleteProgram(program_ID);
 }
 
 // Bind the shaders to the program

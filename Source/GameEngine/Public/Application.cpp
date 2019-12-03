@@ -603,7 +603,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = FOREST1;
+         level_flag_ = FOREST6;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;

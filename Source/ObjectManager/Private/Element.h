@@ -138,13 +138,16 @@ class Element {
       Animation *GetAnimationByName(std::string name);
 
       /* Flip all animations of a texture */
-      void flipAllAnimations();
+      void FlipAllAnimations();
 
       // Flag fo all animations flipped
       bool texture_flipped;
 
       /* Check if all animations have been flipped */
-      bool textureFlipped();
+      bool TextureFlipped();
+
+      /* Returns whether the animation is completed */
+      bool AnimationCompleted(std::string name);
       /*******************************/
 
       // virtual load media

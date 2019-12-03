@@ -51,7 +51,7 @@ Level::Level(string file, Application::FOREST level) :
       input >> name >> x >> y;
 
       // Compensate for fullscreen vs windowed
-      // y += 55;
+      y += 55;
 
       // Spawn enemies accordingly
       if (name == "Fecreez") {

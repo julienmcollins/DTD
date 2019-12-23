@@ -44,7 +44,7 @@ typedef struct Shape {
 class Element {
    public:
       // Constructor
-      Element(int x, int y, int height, int width);
+      Element(int x, int y, int width, int height);
 
       // Setters
       void set_x(int new_x);
@@ -150,6 +150,10 @@ class Element {
       bool AnimationCompleted(std::string name);
       /*******************************/
 
+      /*********** MATRIX STUFF *******************/
+      glm::mat4 element_model;
+      /********************************************/
+
       // virtual load media
       virtual bool LoadMedia();
 
@@ -205,7 +209,7 @@ class Element {
 
       // Start and end contact
       virtual void StartContact(Element *element = NULL) {}
-      virtual void end_contact(Element *element = NULL) {}
+      virtual void EndContact(Element *element = NULL) {}
 
       // Contact flag
       // TODO: change in contact to in contact left and right
@@ -249,7 +253,7 @@ class Sensor : public Element {
 
       // Start contact function
       virtual void StartContact(Element *element = NULL) {};
-      virtual void end_contact(Element *element = NULL) {};
+      virtual void EndContact(Element *element = NULL) {};
 
       // Activation and deactivation of sensor
       virtual void activate_sensor();
@@ -296,7 +300,7 @@ class BodyPart : public Sensor {
 
       // Start contact function
       virtual void StartContact(Element *element = NULL) {};
-      virtual void end_contact(Element *element = NULL) {};
+      virtual void EndContact(Element *element = NULL) {};
 
       // Return type
       virtual std::string type() {

@@ -18,12 +18,14 @@
 #include <iostream>
 #include <Box2D/Box2D.h>
 
+#include <glm/gtx/string_cast.hpp>
+
 const std::string Enemy::media_path = Application::sprite_path + "/Enemies/";
 
 /********************* ENEMY IMPLEMENTATIONS ******************/
 
-Enemy::Enemy(int x, int y, int height, int width) :
-   Entity(x, y, height, width), enemy_state_(IDLE), shoot_timer_(101) {
+Enemy::Enemy(int x, int y, int width, int height) :
+   Entity(x, y, width, height), enemy_state_(IDLE), shoot_timer_(101) {
 
    // Set
    start_death_ = 0;
@@ -113,7 +115,7 @@ Enemy::~Enemy() {}
 
 /************** FECREEZ IMPLEMENTATIONS ********************/
 Fecreez::Fecreez(int x, int y) :
-   Enemy(x, y, 92, 82) {
+   Enemy(x, y, 82, 92) {
 
    // Set the hitboxes
    SetHitbox(x, y);
@@ -251,19 +253,21 @@ Fecreez::~Fecreez() {
 /********************* ARM **************************/
 //////////////////////////////////////////////////////
 
-Arm::Arm(int x, int y, int height, int width, Rosea *rosea) :
-   Enemy(x, y, height, width), rosea_(rosea) {}
+Arm::Arm(std::string name, int x, int y, int width, int height, Rosea *rosea) :
+   Enemy(x, y, width, height), rosea_(rosea), name_(name) {}
 
 Animation *Arm::GetAnimationFromState() {
-   if (enemy_state_ == IDLE) {
-      return GetAnimationByName("arms_idle");
+   if (name_ == "still") {
+      if (rosea_->get_enemy_state() == IDLE) {
+         return GetAnimationByName("idle");
+      }
+
+      if (rosea_->get_enemy_state() == HURT) {
+         return GetAnimationByName("hurt");
+      }
    }
 
-   if (enemy_state_ == HURT) {
-      return GetAnimationByName("arms_hurt");
-   }
-
-   if (enemy_state_ == ATTACK) {
+   if (name_ == "attack") {
       return GetAnimationByName("attack");
    }
 }
@@ -285,8 +289,8 @@ void Arm::StartContact(Element *element) {
 
 Rosea::Rosea(int x, int y, float angle) :
    Enemy(x, y, 144, 189), 
-   arms_still(x - 46, y - 118, 78, 122, this),
-   arms_attack(x + 5, y - 230, 387, 122, this), 
+   arms_still("still", x - 46, y - 118, 122, 78, this),
+   arms_attack("attack", x + 5, y - 230, 122, 387, this), 
    hurt_counter_(0), arm_state_(0), in_bounds_(false), angle_(angle),
    arm_heights_({{0, y - 110}, {1, y - 250}, {2, y - 325}, {3, y - 395}, 
          {4, y - 425}, {5, y - 425}, {6, y - 425}, 
@@ -297,32 +301,34 @@ Rosea::Rosea(int x, int y, float angle) :
          {7, x - 80}, {8, x - 80}, {9, x - 180}, {10, x - 270}, {11, x - 380}, 
          {12, x - 400}, {13, x - 425}, {14, x - 425}, {15, x - 425}}) {
 
+   // TODO: Need to convert these to absolute values so that i can use them without using their relation
+   // This means taking off the x - part...
+   // TODO: Need to rework element set x, y bullshit to reflect use of transform models
+
    // Set anchors
    anchor_x = x;
    anchor_y = y;
    element_shape.shape_type.square.angle = angle;
 
+   // Set element model
+   element_model = glm::translate(element_model, glm::vec3(x, y, 0.0f));
+
    // Set enemy state
    enemy_state_ = IDLE;
 
+   // Set hitbox for rosea body
+   SetHitbox(x, y);
+   arms_attack.SetHitbox(arms_attack.get_tex_x(), arms_attack.get_tex_y());
+   arms_still.SetHitbox(arms_still.get_tex_x() + 61, arms_still.get_tex_y() + 42);
+
    // Special state for 0 angle
-   // if (angle == 0.0f) {
-      // Set hitbox for rosea body
-      SetHitbox(x, y);
+   if (angle == 0.0f) {
+      // Construct a matrix that will essentially rotate with the entire object
+      arm_model = glm::translate(element_model, glm::vec3(0.0f, GetAnimationFromState()->half_height + arms_still.GetAnimationFromState()->half_height, 0.0f));
 
-      arms_attack.SetHitbox(arms_attack.get_tex_x(), arms_attack.get_tex_y());
-      arms_still.SetHitbox(arms_still.get_tex_x() + 61, arms_still.get_tex_y() + 42);
-
-      // TODO: get separate elements for the arms (ie new elements and set is as dynamic body)
-      // Set texture location
-      // arms_attack.GetAnimationByName("attack")->set_x(arms_attack.get_tex_x());
-      // arms_attack.GetAnimationByName("attack")->set_y(arms_attack.get_tex_y());
-      arms_attack.static_positions["attack"].x = arms_attack.get_tex_x() + 5;
-      arms_attack.static_positions["attack"].y = arms_attack.get_tex_y();
-
-      // Set initial arm postion
-      arms_attack.set_tex_y(arm_heights_[0]);
-   // }
+      // Set attack model (TODO: Change this to arms_attack.element_model)
+      attack_model = glm::translate(element_model, glm::vec3(0.0f, GetAnimationFromState()->half_height + arms_attack.GetAnimationFromState()->half_height - 35.0f, 0.0f));
+   }
    
    // Set arm model to be normal you know?
    arm_model = glm::mat4(1.0f);
@@ -330,48 +336,19 @@ Rosea::Rosea(int x, int y, float angle) :
    // Need to change arm position if rotated
    if (angle == 90.0f) {
       // Construct a matrix that will essentially rotate with the entire object
-      arm_model = glm::translate(arm_model, glm::vec3(get_anim_x() - (arms_still.get_anim_x() + arms_still.GetAnimationFromState()->half_width), get_anim_y() - (arms_still.get_anim_y() + arms_still.GetAnimationFromState()->half_height), 0.0f));
+      arm_model = glm::translate(element_model, glm::vec3(GetAnimationFromState()->half_width - 19.0f, 10.0f, 0.0f));
+      arms_still.body->SetTransform(arms_still.body->GetPosition(), M_PI / 2.0f);
 
-      // // Set arms still height, width, x and y
-      // arms_still.set_width(78);
-      // arms_still.set_height(112);
-      // arms_still.set_y(y + 50);
-      // arms_still.set_x(x + 47);
-
-      // // Set height and width
-      // arms_attack.set_width(387);
-      // arms_attack.set_height(122);
-      // arms_attack.set_tex_y(y + 37);
-      // arms_attack.set_tex_x(x + 310);
-
-      // // arms_attack.GetAnimationByName("attack")->set_x(arms_attack.get_x());
-      // // arms_attack.GetAnimationByName("attack")->set_y(arms_attack.get_y());
-      // arms_attack.static_positions["attack"].x = arms_attack.get_x();
-      // arms_attack.static_positions["attack"].y = arms_attack.get_y();
-
-      // // arms_still.GetAnimationByName("arms_idle")->set_x(arms_still.get_x());
-      // // arms_still.GetAnimationByName("arms_idle")->set_y(arms_still.get_y());
-      // arms_still.static_positions["arms_idle"].x = arms_still.get_x();
-      // arms_still.static_positions["arms_idle"].y = arms_still.get_y();
-
-      // // arms_still.GetAnimationByName("arms_hurt")->set_x(arms_still.get_x());
-      // // arms_still.GetAnimationByName("arms_hurt")->set_y(arms_still.get_y());
-      // arms_still.static_positions["arms_hurt"].x = arms_still.get_x();
-      // arms_still.static_positions["arms_hurt"].y = arms_still.get_y();
-
-      // arms_attack.SetHitbox(arms_attack.get_tex_x(), arms_attack.get_tex_y());
-      // arms_still.SetHitbox(arms_still.get_tex_x() - 70, arms_still.get_tex_y() + 60);
-
-      // arms_attack.set_tex_y(y + 40);
-      // arms_attack.set_tex_x(arm_widths_[0]);
-      
-      // // Set texture angle
-      // // GetAnimationByName("idle")->angle = angle;
-      // // GetAnimationByName("hurt")->angle = angle;
-      // // arms_still.GetAnimationByName("arms_idle")->angle = angle;
-      // // arms_still.GetAnimationByName("arms_hurt")->angle = angle;
-      // // arms_attack.GetAnimationByName("attack")->angle = angle;
+      // Set attack model (TODO: Change this to arms_attack.element_model)
+      attack_model = glm::translate(element_model, glm::vec3(GetAnimationFromState()->half_height + arms_attack.GetAnimationFromState()->half_height - 35.0f, 10.0f, 0.0f));
+      arms_attack.body->SetTransform(arms_attack.body->GetPosition(), M_PI / 2.0f);
    }
+
+   // Set hitbox to match locations
+   arms_still.set_x(arm_model[3][0]);
+   arms_still.set_y(arm_model[3][1]);
+   arms_attack.set_x(0);
+   arms_attack.set_y(attack_model[3][1]);
 
    // Set health
    health = 100;
@@ -391,8 +368,8 @@ bool Rosea::LoadMedia() {
 
    std::string arm_path = media_path + "Rosea/rosea_arm_master_sheet.png";
    arm_sheet = RenderingEngine::GetInstance().LoadTexture("rosea_arm_master_sheet", arm_path.c_str());
-   arms_still.animations.emplace("arms_idle", new Animation(arm_sheet, "arms_idle", 112.0, 78.0, 0.0, 15, 1.0 / 20.0));
-   arms_still.animations.emplace("arms_hurt", new Animation(arm_sheet, "arms_hurt", 112.0, 78.0, 78.0, 15, 1.0 / 20.0));
+   arms_still.animations.emplace("idle", new Animation(arm_sheet, "idle", 112.0, 78.0, 0.0, 15, 1.0 / 20.0));
+   arms_still.animations.emplace("hurt", new Animation(arm_sheet, "hurt", 112.0, 78.0, 78.0, 15, 1.0 / 20.0));
    arms_attack.animations.emplace("attack", new Animation(arm_sheet, "attack", 122.0, 387.0, 156.0, 15, 1.0 / 20.0));
    RenderingEngine::GetInstance().LoadResources(&arms_still);
    RenderingEngine::GetInstance().LoadResources(&arms_attack);
@@ -416,30 +393,28 @@ void Rosea::update(bool freeze) {
    if (enemy_state_ == IDLE) {
       arms_still.set_state(IDLE);
       if (angle_ == 0.0f) {
-         arm_sheet->Render(arms_still.get_anim_x(), arms_still.get_anim_y(), 0.0f, arms_still.GetAnimationByName("arms_idle"));
+         arm_sheet->Render(arms_still.get_anim_x(), arms_still.get_anim_y(), 0.0f, arms_still.GetAnimationByName("idle"));
       } else {
-         // arms_still.texture_render(arms_still.GetAnimationByName("arms_idle"));
-         arm_sheet->Render(arms_still.static_positions["arms_idle"].x, arms_still.static_positions["arms_idle"].y, 0.0f, arms_still.GetAnimationByName("arms_idle"));
+         // std::cout << glm::to_string(arm_model) << std::endl;
+         arm_sheet->Render(arm_model, angle_, arms_still.GetAnimationByName("idle"));
       }
    } else if (enemy_state_ == HURT) {
       arms_still.set_state(HURT);
       if (angle_ == 0.0f) {
-         // arms_still.Render(arms_still.GetAnimationByName("arms_hurt"));
-         arm_sheet->Render(arms_still.get_anim_x(), arms_still.get_anim_y(), 0.0f, arms_still.GetAnimationByName("arms_hurt"));
+         arm_sheet->Render(arms_still.get_anim_x(), arms_still.get_anim_y(), 0.0f, arms_still.GetAnimationByName("hurt"));
       } else {
-         // arms_still.texture_render(arms_still.GetAnimationByName("arms_hurt"));
+         arm_sheet->Render(arm_model, angle_, arms_still.GetAnimationByName("hurt"));
       }
    } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       arms_attack.set_state(ATTACK);
-      // arms_attack.texture_render(arms_attack.GetAnimationByName("attack"));
-      arm_sheet->Render(arms_attack.static_positions["attack"].x, arms_attack.static_positions["attack"].y, 0.0f, arms_attack.GetAnimationByName("attack"));
+      arm_sheet->Render(attack_model, angle_, arms_attack.GetAnimationByName("attack"));
    }
 
    // Render enemy
    if (angle_ == 0.0f) {
       sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, enemytexture);
    } else {
-      sprite_sheet->Render(anchor_x, anchor_y, angle_, enemytexture);
+      sprite_sheet->Render(element_model, angle_, enemytexture);
    }
 }
 
@@ -449,34 +424,31 @@ void Rosea::move() {
    if (enemy_state_ == HURT) {
       // Set arm height to 0
       if (angle_ == 0.0f) {
-         arms_attack.set_tex_y(arm_heights_[0]);
+         arms_attack.set_y(arm_heights_[0]);
       } else {
-         arms_attack.set_tex_x(arm_widths_[0]);
+         arms_attack.set_x(arm_widths_[0]);
       }
 
       // Increment hurt counter
-      ++hurt_counter_;
+      // ++hurt_counter_;
 
       // Check for expiration
-      if (hurt_counter_ >= 50 && arms_still.GetAnimationByName("arms_hurt")->completed) {
+      if (/*hurt_counter_ >= 50 && */arms_still.AnimationCompleted("hurt")) {
          enemy_state_ = IDLE;
-         hurt_counter_ = 0;
-         arms_still.GetAnimationByName("arms_hurt")->completed = false;
+         // hurt_counter_ = 0;
       }
    } else if (enemy_state_ == RETREAT) {
       if (angle_ == 0.0f) {
-         arms_attack.set_tex_y(arm_heights_[arms_attack.GetAnimationByName("attack")->curr_frame]);
+         arms_attack.set_y(arm_heights_[arms_attack.GetAnimationByName("attack")->curr_frame]);
       } else {
-         arms_attack.set_tex_x(arm_widths_[arms_attack.GetAnimationByName("attack")->curr_frame]);
+         arms_attack.set_x(arm_widths_[arms_attack.GetAnimationByName("attack")->curr_frame]);
       }
-      if (arms_attack.GetAnimationByName("attack")->curr_frame > 14) {
+      if (arms_attack.AnimationCompleted("attack")) {
          enemy_state_ = IDLE;
-         arms_attack.GetAnimationByName("attack")->curr_frame = 0;
-         arms_attack.GetAnimationByName("attack")->completed = false;
          if (angle_ == 0.0f) {
-            arms_attack.set_tex_y(arm_heights_[14]);
+            arms_attack.set_y(arm_heights_[14]);
          } else {
-            arms_attack.set_tex_x(arm_widths_[14]);
+            arms_attack.set_x(arms_attack.get_x() - attack_model[3][0]);
          }
       }
    }
@@ -502,9 +474,9 @@ void Rosea::move() {
 
          // Sets hitbox to position of arm
          if (angle_ == 0.0f) {
-            arms_attack.set_tex_y(arm_heights_[temp]);
+            arms_attack.set_y(arm_heights_[temp]);
          } else {
-            arms_attack.set_tex_x(arm_widths_[temp]);
+            arms_attack.set_x(attack_model[3][0]);
          }
       } else {
          // Check to make sure enemy is done attacking
@@ -521,13 +493,13 @@ void Rosea::move() {
 void Rosea::animate(Texture *tex, int reset, int max, int start) {
    // Animate based on different states
    if (enemy_state_ == IDLE) {
-      sprite_sheet->Animate(arms_still.GetAnimationByName("arms_idle"));
+      sprite_sheet->Animate(arms_still.GetAnimationByName("idle"));
       sprite_sheet->Animate(GetAnimationByName("idle"));
    } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       sprite_sheet->Animate(arms_attack.GetAnimationByName("attack"), arm_state_, arm_state_);
       sprite_sheet->Animate(GetAnimationByName("idle"));
    } else if (enemy_state_ == HURT) {
-      sprite_sheet->Animate(arms_still.GetAnimationByName("arms_hurt"));
+      sprite_sheet->Animate(arms_still.GetAnimationByName("hurt"));
       sprite_sheet->Animate(GetAnimationByName("hurt"));
    }
 }
@@ -581,7 +553,7 @@ Rosea::~Rosea() {}
 /////////////////////////////////////////////////////
 
 Mosquibler::Mosquibler(int x, int y) :
-   Enemy(x, y, 89, 109) {
+   Enemy(x, y, 107, 81) {
 
    // Set element shape stuff
    element_shape.dynamic = true;
@@ -689,6 +661,10 @@ void Mosquibler::move() {
       start_death_ = 16;
       end_death_ = 16;
    }
+
+   if (enemy_state_ == DEATH) {
+      body->SetLinearVelocity({0.0f, body->GetLinearVelocity().y});
+   }
 }
 
 // Animate function
@@ -753,7 +729,7 @@ void Mosquibler::StartContact(Element *element) {
    }
 }
 
-void Mosquibler::end_contact(Element *element) {
+void Mosquibler::EndContact(Element *element) {
    if (element) {
       if (element->type() == "Platform") {
          in_contact_down = false;
@@ -770,7 +746,7 @@ Mosquibler::~Mosquibler() {}
 
 // Constructor
 Fruig::Fruig(int x, int y) :
-   Enemy(x, y, 140, 79) {
+   Enemy(x, y, 79, 140) {
 
    // Set hitbox
    SetHitbox(x, y);
@@ -871,6 +847,7 @@ void FleetSensor::StartContact(Element *element) {
    if (element) {
       if (element->type() == "Platform") {
          owner_->in_contact = true;
+         owner_->body->SetLinearVelocity({0.0f, owner_->body->GetLinearVelocity().y});
       } else if (element->type() == "Fleet") {
          owner_->body->ApplyLinearImpulseToCenter(b2Vec2(0.5f, 0.0f), true);
          owner_->in_contact = true;
@@ -878,7 +855,7 @@ void FleetSensor::StartContact(Element *element) {
    }
 }
 
-void FleetSensor::end_contact(Element *element) {
+void FleetSensor::EndContact(Element *element) {
    if (element) {
       if (element->type() == "Platform") {
          owner_->in_contact = false;
@@ -894,7 +871,7 @@ void FleetSensor::end_contact(Element *element) {
 
 // Constructor
 Fleet::Fleet(int x, int y) :
-   Enemy(x, y, 25, 49) {
+   Enemy(x, y, 49, 25) {
    
    // Set shape
    element_shape.center = {0.0f, -0.08f};
@@ -1028,7 +1005,7 @@ void Fleet::StartContact(Element *element) {
 ////////////////////////////////////////////////
 
 Mosqueenbler::Mosqueenbler(int x, int y) :
-   Enemy(x, y, 134, 246), spawn_num_of_egg_(1) {
+   Enemy(x, y, 246, 134), spawn_num_of_egg_(1) {
 
    // Set element shape stuff
    element_shape.dynamic = true;
@@ -1069,9 +1046,9 @@ bool Mosqueenbler::LoadMedia() {
 
    // Load data
    std::string path = media_path + "Mosqueenbler/mosqueenbler_master_sheet.png";
-   RenderingEngine::GetInstance().LoadTexture("mosqueenbler_master_sheet", path.c_str());
-   animations.emplace("idle", new Animation(sprite_sheet, "idle", 246.0, 134.0, 0.0, 12, 1.0 / 20.0));
-   animations.emplace("attack", new Animation(sprite_sheet, "attack", 246.0, 134.0, 134.0, 12, 1.0 / 20.0));
+   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("mosqueenbler_master_sheet", path.c_str());
+   animations.emplace("idle", new Animation(sprite_sheet, "idle", 248.0, 136.0, 0.0, 12, 1.0 / 20.0));
+   animations.emplace("attack", new Animation(sprite_sheet, "attack", 248.0, 136.0, 134.0, 12, 1.0 / 20.0));
    RenderingEngine::GetInstance().LoadResources(this);
 
    // Return if success
@@ -1120,7 +1097,7 @@ void Mosqueenbler::animate(Texture *tex, int reset, int max, int start) {
 
 // Constructor
 MosquiblerEgg::MosquiblerEgg(int x, int y) :
-   Enemy(x, y, 42, 28) {
+   Enemy(x, y, 28, 42) {
 
    // Set hitbox
    element_shape.dynamic = true;
@@ -1134,13 +1111,13 @@ MosquiblerEgg::MosquiblerEgg(int x, int y) :
 bool MosquiblerEgg::LoadMedia() {
    bool success = true;
 
-   // Instantiate data
-   std::vector<TextureData> data;
-   data.push_back(TextureData(6, 1.0f / 20.0f, "idle", media_path + "Mosqueenbler/egg_idle.png"));
-   data.push_back(TextureData(7, 1.0f / 20.0f, "attack", media_path + "Mosqueenbler/egg_break.png"));
+   // // Instantiate data
+   // std::vector<TextureData> data;
+   // data.push_back(TextureData(6, 1.0f / 20.0f, "idle", media_path + "Mosqueenbler/egg_idle.png"));
+   // data.push_back(TextureData(7, 1.0f / 20.0f, "attack", media_path + "Mosqueenbler/egg_break.png"));
 
-   // Load resources
-   success = RenderingEngine::GetInstance().LoadResources(this, data);
+   // // Load resources
+   // success = RenderingEngine::GetInstance().LoadResources(this, data);
 
    return success;
 }
@@ -1192,7 +1169,7 @@ void WormoredSensor::StartContact(Element *element) {
 
 // Constructor for Wormored
 Wormored::Wormored(int x, int y) :
-   Enemy(x, y, 418, 796),
+   Enemy(x, y, 796, 418),
    body_1_heights_({{0, 0}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, 2}, {6, 2},
                   {7, 2}, {8, 2}}),
    body_2_heights_({{2, 0}, {3, -1}, {4, -1}, {5, -2}, {6, -2}, {7, 1}, {8, 1}, {9, 1}, {10, 1}, {11, 2}}),
@@ -1250,15 +1227,15 @@ Wormored::Wormored(int x, int y) :
 bool Wormored::LoadMedia() {
    bool success = true;
 
-   // Instantiate data
-   std::vector<TextureData> data;
-   data.push_back(TextureData(21, 1.0f / 24.0f, "idle", media_path + "Wormored/idle.png"));
-   data.push_back(TextureData(29, 1.0f / 24.0f, "turn", media_path + "Wormored/turn.png"));
-   data.push_back(TextureData(22, 1.0f / 24.0f, "attack", media_path + "Wormored/attack.png"));
-   data.push_back(TextureData(28, 1.0f / 24.0f, "excrete", media_path + "Wormored/excrete.png"));
+   // // Instantiate data
+   // std::vector<TextureData> data;
+   // data.push_back(TextureData(21, 1.0f / 24.0f, "idle", media_path + "Wormored/idle.png"));
+   // data.push_back(TextureData(29, 1.0f / 24.0f, "turn", media_path + "Wormored/turn.png"));
+   // data.push_back(TextureData(22, 1.0f / 24.0f, "attack", media_path + "Wormored/attack.png"));
+   // data.push_back(TextureData(28, 1.0f / 24.0f, "excrete", media_path + "Wormored/excrete.png"));
 
-   // Load resources
-   success = RenderingEngine::GetInstance().LoadResources(this, data);
+   // // Load resources
+   // success = RenderingEngine::GetInstance().LoadResources(this, data);
 
    return success;
 }

@@ -165,75 +165,7 @@ void Texture::Free_VBO() {
     }
 }
 
-// Render OpenGL type textures
-void Texture::Render(float x, float y, GLFloatRect *clip, GLfloat rotate, glm::vec3 color) {
-    // if (texture_ID != 0) {
-    //     // Use shader
-    //     ShaderProgram shader = RenderingEngine::GetInstance().GetShader("texture_shader").Use();
-
-    //     // Set top right and bottom textures
-    //     float left, right, bottom, top;
-
-    //     // Check if clip exists
-    //     if (clip) {
-    //         left = clip->x;
-    //         right = clip->x + clip->w;
-    //         bottom = clip->y;
-    //         top = clip->y + clip->h;
-    //     } else {
-    //         left = 0.0f;
-    //         right = 1.0f;
-    //         bottom = 0.0f;
-    //         top = 1.0f;
-    //     }
-
-    //     // std::cout << left << " " << right << " " << top << " " << bottom << std::endl;
-
-    //     float w, h;
-    //     w = (float) texture_width / 2.0f;
-    //     h = (float) texture_height / 2.0f;
-
-    //     // std::cout << w << " " << h << std::endl;
-    //     // std::cout << texture_ID << std::endl;
-
-    //     // Initialize vertices 
-    //     float vertices[] = {
-    //         // positions  // texture coords
-    //         w,  h,        right, top, // top right
-    //         w, -h,        right, bottom, // bottom right
-    //        -w, -h,        left, bottom, // bottom left
-    //        -w,  h,        left, top  // top left
-    //     };
-
-    //     // Transform it
-    //     glm::mat4 model = glm::mat4(1.0f);
-    //     model = glm::translate(model, glm::vec3(x + texture_width / 2, y + texture_height / 2, 0.0f));
-    //     // model = glm::scale(model, glm::vec3(1, 1, 1.0f));
-
-    //     // Set transforms and color
-    //     shader.SetMatrix4("model", model);
-    //     shader.SetVector3f("color", color);
-        
-    //     // Activate texture
-    //     glActiveTexture(GL_TEXTURE0);
-    //     glBindTexture(GL_TEXTURE_2D, texture_ID);
-    //     // if (clip) glTexSubImage2D(GL_TEXTURE_2D, 0, clip->x, clip->y, clip->w, clip->h, GL_RGBA, GL_UNSIGNED_BYTE, pixels_32);
-    //     // else glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texture_width, texture_height, GL_RGBA, GL_UNSIGNED_BYTE, pixels_32);
-
-    //     // Draw
-    //     glBindVertexArray(VAO_ID);
-    //     glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);
-    //     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-    //     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
-    //     // Unbind everything
-    //     glBindVertexArray(0);
-    //     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    //     glBindTexture(GL_TEXTURE_2D, 0);
-    // }
-}
-
-void Texture::Render(float x, float y, GLfloat rotate, Animation *clip, glm::vec3 color) {
+void Texture::Render(float x, float y, GLfloat rotate, Animation *clip, glm::vec3 color, glm::mat4 m) {
    // std::cout << texture_ID << std::endl;
    if (texture_ID != 0) {
       // Use shader
@@ -270,12 +202,76 @@ void Texture::Render(float x, float y, GLfloat rotate, Animation *clip, glm::vec
       // Transform it
       glm::mat4 model = glm::mat4(1.0f);
       if (clip) {
-            model = glm::translate(model, glm::vec3(x + clip->half_width, y + clip->half_height, 0.0f));
+            if (m != glm::mat4(1.0f)) {
+               model = m;
+            } else {
+               model = glm::translate(model, glm::vec3(x + clip->half_width, y + clip->half_height, 0.0f));
+            }
             rotate = rotate * (M_PI / 180.0f);
             model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f));
       } else {
             model = glm::translate(model, glm::vec3(x + image_width / 2.0, y + image_height / 2.0, 0.0));
       }
+
+      // Set transforms and color
+      shader->SetMatrix4("model", model);
+      shader->SetVector3f("color", color);
+      
+      // Activate texture
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, texture_ID);
+
+      // Draw
+      glBindVertexArray(VAO_ID);
+      glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);
+      glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+      
+      // Unbind everything
+      glBindVertexArray(0);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glBindTexture(GL_TEXTURE_2D, 0);
+   }
+}
+
+void Texture::Render(glm::mat4 m, GLfloat rotate, Animation *clip, glm::vec3 color) {
+   // std::cout << texture_ID << std::endl;
+   if (texture_ID != 0) {
+      // Use shader
+      ShaderProgram *shader = RenderingEngine::GetInstance().GetShaderReference("texture_shader")->Use();
+
+      // If clip doesn't exist, render entire texture
+      GLdouble h_w, h_h;
+      GLdouble l, r, b, t;
+      if (!clip) {
+         h_w = image_width / 2.0f;
+         h_h = image_height / 2.0f;
+         l = 0.0f;
+         r = 1.0f;
+         b = 0.0f;
+         t = 1.0f;
+      } else {
+         h_w = clip->half_width;
+         h_h = clip->half_height;
+         l = clip->frames[clip->curr_frame].l;
+         r = clip->frames[clip->curr_frame].r;
+         b = clip->frames[clip->curr_frame].b;
+         t = clip->frames[clip->curr_frame].t;
+      }
+
+      // Initialize vertices 
+      double vertices[] = {
+         // positions  // texture coords
+         -h_w, -h_h,   l, b, // bottom left
+          h_w, -h_h,   r, b, // bottom right
+          h_w,  h_h,   r, t, // bottom left
+         -h_w,  h_h,   l, t  // top left
+      };
+
+      // Transform it
+      glm::mat4 model = m;
+      rotate = rotate * (M_PI / 180.0f);
+      model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f));
 
       // Set transforms and color
       shader->SetMatrix4("model", model);
@@ -337,12 +333,6 @@ int Texture::get_y() const {
 Texture::~Texture() {
    //Free();
 }
-
-TextureData::TextureData(int num_of_frames, float fps, std::string name, std::string path) :
-    num_of_frames(num_of_frames), fps(fps), name(name), path(path) {}
-
-TextureData::TextureData(int width, int height, int num_of_frames) :
-    width(width), height(height), num_of_frames(num_of_frames) {}
 
 Animation::Animation(Texture *texture, std::string name, GLdouble texture_width, GLdouble texture_height, GLdouble offset, int num_of_frames, float fps) :
     parent(texture), name(name),

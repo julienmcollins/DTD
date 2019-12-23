@@ -12,14 +12,14 @@
 /******************** Object Implementations **********************/
 
 // Constructor
-Object::Object(int x, int y, int height, int width, Entity* owner) :
-   Element(x, y, height, width), owning_entity(owner), shift(false) {}
+Object::Object(int x, int y, int width, int height, Entity* owner) :
+   Element(x, y, width, height), owning_entity(owner), shift(false) {}
 
 /***************** Platform Implementations *************************/
 
 // Constructor
-Platform::Platform(int x, int y, int height, int width) :
-   Object(x, y, height, width, NULL) {
+Platform::Platform(int x, int y, int width, int height) :
+   Object(x, y, width, height, NULL) {
 
    // Set position
    float x_pos = x * Application::GetInstance().to_meters_;

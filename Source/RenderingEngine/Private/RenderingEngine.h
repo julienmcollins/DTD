@@ -33,11 +33,7 @@ class RenderingEngine {
         ShaderProgram *GetShaderReference(std::string name);
 
         /* Load resources for elements */
-        bool LoadResources(Element *element, std::vector<TextureData> texture_data);
         void LoadResources(Element *element);
-
-        /* Load the actual image for the element */
-        void LoadImage(Element *element, int frame_num, float fps, std::string name, std::string file, bool &success, int rows = 1);
 
         /* Load textures and return texture functions */
         Texture *LoadTexture(std::string name, const GLchar *file, GLboolean alpha = true);

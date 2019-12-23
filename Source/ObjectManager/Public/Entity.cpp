@@ -21,8 +21,8 @@ const std::string Player::media_path = Application::sprite_path + "Player/";
 /*************************** ENTITY IMPLEMENTATIONS ******************************/
 
 // Entity constructor which will provide basic establishment for all entities
-Entity::Entity(int x_pos, int y_pos, double height, double width) : 
-   Element(x_pos, y_pos, height, width),
+Entity::Entity(int x_pos, int y_pos, double width, double height) : 
+   Element(x_pos, y_pos, width, height),
    has_jumped_(0), health(0), shift_(false), entity_direction(NEUTRAL),
    prev_entity_dir(NEUTRAL) {
 }
@@ -94,7 +94,7 @@ void PlayerHead::StartContact(Element *element) {
    }
 }
 
-void PlayerHead::end_contact(Element *element) {
+void PlayerHead::EndContact(Element *element) {
    // Dynamic cast owner to player
    Player *player = dynamic_cast<Player *>(owner_);
 
@@ -135,7 +135,7 @@ void PlayerArm::StartContact(Element *element) {
    }
 }
 
-void PlayerArm::end_contact(Element *element) {
+void PlayerArm::EndContact(Element *element) {
    // Dynamic cast owner to player
    Player *player = dynamic_cast<Player *>(owner_);
 
@@ -181,7 +181,7 @@ void PlayerHand::StartContact(Element *element) {
    }
 }
 
-void PlayerHand::end_contact(Element *element) {
+void PlayerHand::EndContact(Element *element) {
    // Dynamic cast owner to player
    Player *player = dynamic_cast<Player *>(owner_);
 
@@ -190,7 +190,7 @@ void PlayerHand::end_contact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftHand") {
             player->contacts_[Player::LEFT_HAND] = 0;
-            std::cout << "PlayerHand::end_contact() - lost contact with left hand\n";
+            std::cout << "PlayerHand::EndContact() - lost contact with left hand\n";
          } else {
             player->contacts_[Player::RIGHT_HAND] = 0;
          }
@@ -234,7 +234,7 @@ void PlayerLeg::StartContact(Element *element) {
    }
 }
 
-void PlayerLeg::end_contact(Element *element) {
+void PlayerLeg::EndContact(Element *element) {
    // Dynamic cast owner to player
    Player *player = dynamic_cast<Player *>(owner_);
 
@@ -243,10 +243,10 @@ void PlayerLeg::end_contact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftLeg") {
             player->contacts_[Player::LEFT_LEG] = 0;
-            //std::cout << "PlayerLeg::end_contact() - lost contact left leg\n";
+            //std::cout << "PlayerLeg::EndContact() - lost contact left leg\n";
          } else {
             player->contacts_[Player::RIGHT_LEG] = 0;
-            //std::cout << "PlayerLeg::end_contact() - lost contact right leg\n";
+            //std::cout << "PlayerLeg::EndContact() - lost contact right leg\n";
          }
       }
    }
@@ -260,7 +260,7 @@ void PlayerLeg::end_contact(Element *element) {
 Player::Player() : 
    // The new sprite is going to be 37 wide (the character itself)
    // TODO: Load in new smaller sprite sheet
-   Entity(960, 412, 104, 37), player_state_(STAND),
+   Entity(960, 412, 37, 104), player_state_(STAND),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
    immunity_duration_(0.5f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
@@ -904,7 +904,7 @@ void Player::StartContact(Element *element) {
 }
 
 // End contact function (does nothing for now)
-void Player::end_contact(Element *element) {
+void Player::EndContact(Element *element) {
    return;
 }
 

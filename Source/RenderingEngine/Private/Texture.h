@@ -36,8 +36,8 @@ class Texture {
 
       /****** OPENGL *********/
       // Overloaded opengl Render function
-      void Render(float x, float y, GLFloatRect *clip = NULL, GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
-      void Render(float x, float y, GLfloat rotate = 0.0f, Animation *clip = NULL, glm::vec3 color = glm::vec3(1.0f));
+      void Render(float x, float y, GLfloat rotate = 0.0f, Animation *clip = NULL, glm::vec3 color = glm::vec3(1.0f), glm::mat4 m = glm::mat4(1.0f));
+      void Render(glm::mat4 m, GLfloat rotate = 0.0f, Animation *clip = NULL, glm::vec3 color = glm::vec3(1.0f));
       
       // Animate function
       void Animate(Animation *anim, int reset = 0, int max = 0, int start = 0);
@@ -133,23 +133,6 @@ class Texture {
       int x;
       int y;
 
-};
-
-class TextureData {
-   public:
-      // Constructors
-      TextureData(int num_of_frames, float fps, std::string name, std::string path);
-      TextureData(int width, int height, int num_of_frames);
-
-      // Data associated to texture
-      int width;
-      int height;
-      int frame_width;
-      int frame_height;
-      int num_of_frames;
-      float fps;
-      std::string name;
-      std::string path;
 };
 
 /* Holds relevant vertex data for rendering */

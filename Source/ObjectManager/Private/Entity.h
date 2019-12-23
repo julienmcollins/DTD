@@ -22,7 +22,7 @@ class Player;
 class Entity : public Element {
     public:
         // Constructor
-        Entity(int x_pos, int y_pos, double height, double width);
+        Entity(int x_pos, int y_pos, double width, double height);
 
         // Flags
         int has_jumped_;
@@ -88,7 +88,7 @@ class PlayerHead : public BodyPart {
       
       // Start contact function
       virtual void StartContact(Element *element = NULL);
-      virtual void end_contact(Element *element = NULL);
+      virtual void EndContact(Element *element = NULL);
 
       virtual std::string type() {
          return "Player";
@@ -105,7 +105,7 @@ class PlayerArm : public BodyPart {
 
       // Start contact function
       virtual void StartContact(Element *element = NULL);
-      virtual void end_contact(Element *element = NULL);
+      virtual void EndContact(Element *element = NULL);
 
       virtual std::string type() {
          return "Player";
@@ -125,7 +125,7 @@ class PlayerHand : public BodyPart {
 
       // Start contact function
       virtual void StartContact(Element *element = NULL);
-      virtual void end_contact(Element *element = NULL);
+      virtual void EndContact(Element *element = NULL);
 
       virtual std::string type() {
          return "Player";
@@ -145,7 +145,7 @@ class PlayerLeg : public BodyPart {
 
       // Start contact function
       virtual void StartContact(Element *element = NULL);
-      virtual void end_contact(Element *element = NULL);
+      virtual void EndContact(Element *element = NULL);
 
       virtual std::string type() {
          return "Player";
@@ -251,7 +251,7 @@ class Player : public Entity {
 
       // Contact listener
       virtual void StartContact(Element *element = NULL);
-      virtual void end_contact(Element *element = NULL);
+      virtual void EndContact(Element *element = NULL);
 
       // Damage function
       void TakeDamage(int damage);

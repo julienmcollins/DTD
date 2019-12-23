@@ -15,7 +15,7 @@ class Entity;
 class Object : public Element {
    public:
       // Constructor
-      Object(int x, int y, int height, int width, Entity* owner);
+      Object(int x, int y, int width, int height, Entity* owner);
 
       // Might need to add a function that gets texture
       
@@ -48,7 +48,7 @@ class Object : public Element {
 class Platform : public Object {
    public:
       // Constructor
-      Platform(int x, int y, int height, int width);
+      Platform(int x, int y, int width, int height);
 
       // Setup function for the stuff
       void setup();
@@ -88,7 +88,7 @@ class Projectile : public Object {
       virtual void StartContact(Element *element);
 
       // End contact listener
-      virtual void end_contact() {
+      virtual void EndContact() {
          alive = false;
       }
 

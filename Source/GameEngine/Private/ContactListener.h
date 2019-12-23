@@ -34,8 +34,8 @@ class ContactListener : public b2ContactListener {
             Element *element2 = static_cast<Element*>( bodyBUserData );
 
             // End contacts
-            element1->end_contact(element2);
-            element2->end_contact(element1);
+            element1->EndContact(element2);
+            element2->EndContact(element1);
          }
       }
 };

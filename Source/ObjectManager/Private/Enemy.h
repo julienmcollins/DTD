@@ -17,7 +17,7 @@
 class Enemy : public Entity {
    public:
       // Construct the enemy
-      Enemy(int x, int y, int height, int width);
+      Enemy(int x, int y, int width, int height);
       
       // Different enemy states
       enum STATE {
@@ -114,7 +114,7 @@ class Rosea;
 class Arm : public Enemy {
    public:
       // Constructor for arm
-      Arm(int x, int y, int height, int width, Rosea *rosea);
+      Arm(std::string name, int x, int y, int width, int height, Rosea *rosea);
 
       // Callback function will set enemy's state to HURT
       virtual void StartContact(Element *element = NULL);
@@ -128,6 +128,9 @@ class Arm : public Enemy {
    private:
       // Rosea parent class
       Rosea *rosea_;
+
+      // Name of arm
+      std::string name_;
 };
 
 class Rosea : public Enemy {
@@ -176,6 +179,7 @@ class Rosea : public Enemy {
 
       // Model for the arm
       glm::mat4 arm_model;
+      glm::mat4 attack_model;
 
       // Counter for hurt
       int hurt_counter_;
@@ -211,7 +215,7 @@ class Mosquibler : public Enemy {
 
       // Get contact
       virtual void StartContact(Element *element = NULL);
-      virtual void end_contact(Element *element = NULL);
+      virtual void EndContact(Element *element = NULL);
 
       // Get type
       virtual std::string type() {
@@ -251,7 +255,7 @@ class FleetSensor : public Sensor {
 
       // Contact functions
       virtual void StartContact(Element *element);
-      virtual void end_contact(Element *element);
+      virtual void EndContact(Element *element);
 };
 
 class Fleet : public Enemy {
@@ -338,7 +342,7 @@ class WormoredSensor : public Sensor {
 
       // Contact functions
       virtual void StartContact(Element *element);
-      virtual void end_contact(Element *element) {};
+      virtual void EndContact(Element *element) {};
 
       // State type
       virtual std::string type() {

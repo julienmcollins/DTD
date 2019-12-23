@@ -8,7 +8,7 @@
 #include "Source/RenderingEngine/Private/Texture.h"
 
 // Constructor for element
-Element::Element(int x, int y, int height, int width) :
+Element::Element(int x, int y, int width, int height) :
    alive(true), texture(this), body(NULL), flag_(false), element_shape(), 
    in_contact_down(false), in_contact_left(false), in_contact_right(false),
    texture_flipped(false) {
@@ -20,6 +20,9 @@ Element::Element(int x, int y, int height, int width) :
    // Set height and width
    height_ = height;
    width_ = width;
+
+   // Set model
+   element_model = glm::mat4(1.0f);
 
    // Start fps timer
    //fps_timer.start();
@@ -185,7 +188,10 @@ float Element::get_anim_y() {
 }
 
 Animation *Element::GetAnimationByName(std::string name) {
-   return animations[name];
+   if (animations.find(name) != animations.end()) {
+      return animations[name];
+   }
+   return nullptr;
 }
 
 void Element::FlipAllAnimations() {
@@ -310,7 +316,7 @@ bool Element::is_alive() {
 
 // Render solely based on texture
 void Element::texture_render(Texture *texture) {
-   texture->Render(texture->get_x(), texture->get_y(), texture->curr_clip_);
+   // texture->Render(texture->get_x(), texture->get_y(), texture->curr_clip_);
 }
 
 // Render function
@@ -318,7 +324,7 @@ void Element::Render(Texture *texture, int x, int y) {
    // Render based on texture
    int t_x = x == 0 ? get_tex_x() : x;
    int t_y = y == 0 ? get_tex_y() : y;
-   texture->Render(t_x, t_y, texture->curr_clip_);
+   // texture->Render(t_x, t_y, texture->curr_clip_);
 }
 
 // Move function (does nothing)
@@ -359,10 +365,10 @@ void Element::draw(Texture *tex, int reset) {
    animate(tex, reset);
 
    // Render
-   if (tex)
-      tex->Render(tex->get_x(), tex->get_y(), tex->curr_clip_);
-   else
-      texture.Render(texture.get_x(), texture.get_y(), texture.curr_clip_);
+   // if (tex)
+   //    tex->Render(tex->get_x(), tex->get_y(), tex->curr_clip_);
+   // else
+   //    texture.Render(texture.get_x(), texture.get_y(), texture.curr_clip_);
 }
 
 // get texture

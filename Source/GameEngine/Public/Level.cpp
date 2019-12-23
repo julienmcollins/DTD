@@ -82,14 +82,14 @@ Level::Level(string file, Application::FOREST level) :
       input >> width >> height >> x >> y;
       x += width / 2;
       y += height / 2;
-      platforms_.push_back(new Platform(x, y, height, width));
+      platforms_.push_back(new Platform(x, y, width, height));
       platforms_[i]->setup();
    }
 
    // Add invisible walls
-   platforms_.push_back(new Platform(-10, 540, 1080, 10));
+   platforms_.push_back(new Platform(-10, 540, 10, 1080));
    platforms_.back()->setup();
-   platforms_.push_back(new Platform(1930, 540, 1080, 10));
+   platforms_.push_back(new Platform(1930, 540, 10, 1080));
    platforms_.back()->setup();
    num_of_platforms_ += 2;
 

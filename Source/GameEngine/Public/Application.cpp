@@ -365,11 +365,11 @@ void Application::setup_menu() {
    player->set_y(782);
 
    // Setup platform
-   menu_platform_ = new Platform(960, 925, 10, 1920);
+   menu_platform_ = new Platform(960, 925, 1920, 10);
    menu_platform_->setup();
 
    // Setup invisible wall
-   invisible_wall_ = new Platform(0, 1055, 1000, 10);
+   invisible_wall_ = new Platform(0, 1055, 10, 1000);
    invisible_wall_->setup();
 
    // Load and play music
@@ -603,7 +603,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = FOREST6;
+         level_flag_ = FOREST8;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -618,15 +618,14 @@ void Application::main_screen() {
    // Check enter key state
    if (finger_ && finger_->finger_state == Finger::POINT) {
       if (finger_->get_y() == START) {
-         if (finger_->GetAnimationByName("point")->completed) {
+         if (finger_->AnimationCompleted("point")) {
             menu_screen_ = SECOND;
             finger_->finger_state = Finger::SHAKE;
             finger_->set_y(WORLD1);
             finger_->set_x(720);
-            finger_->GetAnimationByName("point")->completed = false;
          }
       } else if (finger_->get_y() == WORLD1) {
-         if (finger_->GetAnimationByName("point")->completed) {
+         if (finger_->AnimationCompleted("point")) {
             // Set to final menu screen
             menu_screen_ = THIRD;
 

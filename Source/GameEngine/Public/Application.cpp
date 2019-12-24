@@ -104,6 +104,80 @@ void drawTriangle() {
    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
+void drawHitBoxes(GLFloatRect *r) {
+   // Set to wireframe
+   glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+   // Static variables for these particular shapes
+   static GLuint debug_vbo = 0;
+   static GLuint debug_ibo = 0;
+   static GLuint debug_vao = 0;
+   float debug_vertices[] = {
+      // positionscoords
+      1.0f,  1.0f,
+      1.0f, -1.0f,
+     -1.0f, -1.0f,
+     -1.0f,  1.0f
+   };
+   GLuint debug_indices[] = {
+      3, 1, 2,
+      3, 0, 1
+   };
+
+   glGenVertexArrays(1, &debug_vao);
+   glGenBuffers(1, &debug_vbo);
+   glGenBuffers(1, &debug_ibo);
+   glBindVertexArray(debug_vao);
+   glBindBuffer(GL_ARRAY_BUFFER, debug_vbo);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(debug_vertices), debug_vertices, GL_DYNAMIC_DRAW);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, debug_ibo);
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(debug_indices), debug_indices, GL_DYNAMIC_DRAW);
+   
+   // Position attribute
+   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+   glEnableVertexAttribArray(0);
+
+   // glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+   // glEnableVertexAttribArray(1);
+
+   // Disable
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
+   glBindVertexArray(0);
+
+   // std::cout << debug_vbo << " " << debug_ibo << " " << debug_vao << std::endl;
+
+   for (int i = 0; i < 15; i++) {
+      GLFloatRect m;
+      m.w = r[i].w / 1.920f;
+      m.h = r[i].h / 1.080f;
+      m.x = r[i].x;
+      m.y = (r[i].y - m.h);
+
+      // std::cout << m.w << " " << m.h << " " << m.x << " " << m.y << std::endl;
+
+      ShaderProgram *shader = RenderingEngine::GetInstance().GetShaderReference("hitbox")->Use();
+      float vertices[] = {
+        -m.w, -m.h,
+         m.w, -m.h,
+         m.w,  m.h,
+        -m.w,  m.h
+      };
+      glm::mat4 model = glm::mat4(1.0f);
+      model = glm::translate(model, glm::vec3(m.x + m.w / 2.0f, m.y + m.h / 2.0f, 0.0f));
+      shader->SetMatrix4("model", model);
+      shader->SetVector3f("color", glm::vec3(1.0f, 0.0f, 0.0f));
+      glBindVertexArray(debug_vao);
+      glBindBuffer(GL_ARRAY_BUFFER, debug_vbo);
+      glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+      glBindVertexArray(0);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+   }
+
+   // Set to normal
+   glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+}
+
 // Constructs application
 Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f), 
    SCREEN_FPS(60), SCREEN_TICKS_PER_FRAME(1000 / SCREEN_FPS), pause(-1), main_window(NULL), 
@@ -165,8 +239,8 @@ bool Application::InitOpenGL() {
    RenderingEngine::GetInstance().LoadShader("color");
 
    // Load basic perspective
-   RenderingEngine::GetInstance().LoadShader("basic_color");
-   RenderingEngine::GetInstance().GetShaderReference("basic_color")->Use()->SetMatrix4("projection", projection);
+   RenderingEngine::GetInstance().LoadShader("hitbox");
+   RenderingEngine::GetInstance().GetShaderReference("hitbox")->Use()->SetMatrix4("projection", projection);
 
    // Blending?
    glEnable(GL_TEXTURE_2D);
@@ -603,7 +677,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = FOREST8;
+         level_flag_ = FOREST4;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -634,6 +708,8 @@ void Application::main_screen() {
          }
       }
    }
+   // world_.DrawDebugData();
+   // drawHitBoxes(r);
 }
 
 // UPDATE PROJECTILES
@@ -724,73 +800,6 @@ void Application::playground() {
    /*
    // DEBUG DRAW
    world_.DrawDebugData();
-
-   // Static variables for these particular shapes
-   static GLuint debug_vbo = 0;
-   static GLuint debug_ibo = 0;
-   static GLuint debug_vao = 0;
-   float debug_vertices[] = {
-      // positionscoords
-      1.0f,  1.0f, 1.0f, 1.0f, // top right
-      1.0f, -1.0f, 1.0f, 0.0f, // bottom right
-     -1.0f, -1.0f, 0.0f, 0.0f, // bottom left
-     -1.0f,  1.0f, 0.0f, 1.0f  // top left
-   };
-   GLuint debug_indices[] = {
-      3, 1, 2,
-      3, 0, 1
-   };
-
-   glGenVertexArrays(1, &debug_vao);
-   glGenBuffers(1, &debug_vbo);
-   glGenBuffers(1, &debug_ibo);
-   glBindVertexArray(debug_vao);
-   glBindBuffer(GL_ARRAY_BUFFER, debug_vbo);
-   glBufferData(GL_ARRAY_BUFFER, sizeof(debug_vertices), debug_vertices, GL_DYNAMIC_DRAW);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, debug_ibo);
-   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(debug_indices), debug_indices, GL_DYNAMIC_DRAW);
-   
-   // Position attribute
-   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-   glEnableVertexAttribArray(0);
-
-   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-   glEnableVertexAttribArray(1);
-
-   // Disable
-   glBindBuffer(GL_ARRAY_BUFFER, 0);
-   glBindVertexArray(0);
-
-   std::cout << debug_vbo << " " << debug_ibo << " " << debug_vao << std::endl;
-
-   for (int i = 0; i < 15; i++) {
-      GLFloatRect m;
-      m.w = r[i].w;
-      m.h = r[i].h;
-      m.x = r[i].x;
-      m.y = r[i].y - m.h;
-
-      std::cout << m.w << " " << m.h << " " << m.x << " " << m.y << std::endl;
-
-      ShaderProgram shader = RenderingEngine::GetInstance().GetShader("basic_color").Use();
-      std::cout << shader.program_ID << std::endl;
-      float vertices[] = {
-        -m.w, -m.h, 1.0f, 1.0f,
-         m.w, -m.h, 1.0f, 0.0f,
-         m.w,  m.h, 0.0f, 0.0f,
-        -m.w,  m.h, 0.0f, 1.0f,
-      };
-      glm::mat4 model = glm::mat4(1.0f);
-      model = glm::translate(model, glm::vec3(m.x + m.w / 2.0f, m.y + m.h / 2.0f, 0.0f));
-      shader.SetMatrix4("model", model);
-      shader.SetVector3f("color", glm::vec3(1.0f, 0.0f, 0.0f));
-      glBindVertexArray(debug_vao);
-      glBindBuffer(GL_ARRAY_BUFFER, debug_vbo);
-      glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-      glBindVertexArray(0);
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
-   }
    */
 
    drawLines();

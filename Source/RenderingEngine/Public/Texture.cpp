@@ -216,7 +216,7 @@ void Texture::Render(float x, float y, GLfloat rotate, Animation *clip, glm::vec
       // Set transforms and color
       shader->SetMatrix4("model", model);
       shader->SetVector3f("color", color);
-      
+
       // Activate texture
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, texture_ID);
@@ -276,7 +276,7 @@ void Texture::Render(glm::mat4 m, GLfloat rotate, Animation *clip, glm::vec3 col
       // Set transforms and color
       shader->SetMatrix4("model", model);
       shader->SetVector3f("color", color);
-      
+
       // Activate texture
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, texture_ID);

@@ -320,18 +320,21 @@ Rosea::Rosea(int x, int y, float angle) :
    SetHitbox(x, y);
    arms_attack.SetHitbox(arms_attack.get_tex_x(), arms_attack.get_tex_y());
    arms_still.SetHitbox(arms_still.get_tex_x() + 61, arms_still.get_tex_y() + 42);
+   
+   // Set arm model to be normal you know?
+   arm_model = glm::mat4(1.0f);
+   attack_model = glm::mat4(1.0f);
 
    // Special state for 0 angle
    if (angle == 0.0f) {
       // Construct a matrix that will essentially rotate with the entire object
-      arm_model = glm::translate(element_model, glm::vec3(0.0f, GetAnimationFromState()->half_height + arms_still.GetAnimationFromState()->half_height, 0.0f));
+      arm_model = glm::translate(element_model, glm::vec3(10.0f, -(GetAnimationFromState()->half_height), 0.0f));
 
       // Set attack model (TODO: Change this to arms_attack.element_model)
-      attack_model = glm::translate(element_model, glm::vec3(0.0f, GetAnimationFromState()->half_height + arms_attack.GetAnimationFromState()->half_height - 35.0f, 0.0f));
+      attack_model = glm::translate(element_model, glm::vec3(10.0f, -(GetAnimationFromState()->half_height + arms_attack.GetAnimationFromState()->half_height - 35.0f), 0.0f));
+      arms_attack.set_x(attack_model[3][0]);
+      arms_attack.set_y(0);
    }
-   
-   // Set arm model to be normal you know?
-   arm_model = glm::mat4(1.0f);
 
    // Need to change arm position if rotated
    if (angle == 90.0f) {
@@ -342,13 +345,16 @@ Rosea::Rosea(int x, int y, float angle) :
       // Set attack model (TODO: Change this to arms_attack.element_model)
       attack_model = glm::translate(element_model, glm::vec3(GetAnimationFromState()->half_height + arms_attack.GetAnimationFromState()->half_height - 35.0f, 10.0f, 0.0f));
       arms_attack.body->SetTransform(arms_attack.body->GetPosition(), M_PI / 2.0f);
+      arms_attack.set_x(0);
+      arms_attack.set_y(attack_model[3][1]);
+
+      // Rotate main body
+      body->SetTransform(body->GetPosition(), M_PI / 2.0f);
    }
 
    // Set hitbox to match locations
    arms_still.set_x(arm_model[3][0]);
    arms_still.set_y(arm_model[3][1]);
-   arms_attack.set_x(0);
-   arms_attack.set_y(attack_model[3][1]);
 
    // Set health
    health = 100;
@@ -392,30 +398,33 @@ void Rosea::update(bool freeze) {
    // Render arms
    if (enemy_state_ == IDLE) {
       arms_still.set_state(IDLE);
-      if (angle_ == 0.0f) {
-         arm_sheet->Render(arms_still.get_anim_x(), arms_still.get_anim_y(), 0.0f, arms_still.GetAnimationByName("idle"));
-      } else {
-         // std::cout << glm::to_string(arm_model) << std::endl;
-         arm_sheet->Render(arm_model, angle_, arms_still.GetAnimationByName("idle"));
-      }
+      // if (angle_ == 0.0f) {
+      //    arm_sheet->Render(arms_still.get_anim_x(), arms_still.get_anim_y(), 0.0f, arms_still.GetAnimationByName("idle"));
+      // } else {
+      //    // std::cout << glm::to_string(arm_model) << std::endl;
+      //    arm_sheet->Render(arm_model, angle_, arms_still.GetAnimationByName("idle"));
+      // }
+      arm_sheet->Render(arm_model, angle_, arms_still.GetAnimationByName("idle"));
    } else if (enemy_state_ == HURT) {
       arms_still.set_state(HURT);
-      if (angle_ == 0.0f) {
-         arm_sheet->Render(arms_still.get_anim_x(), arms_still.get_anim_y(), 0.0f, arms_still.GetAnimationByName("hurt"));
-      } else {
-         arm_sheet->Render(arm_model, angle_, arms_still.GetAnimationByName("hurt"));
-      }
+      // if (angle_ == 0.0f) {
+      //    arm_sheet->Render(arms_still.get_anim_x(), arms_still.get_anim_y(), 0.0f, arms_still.GetAnimationByName("hurt"));
+      // } else {
+      //    arm_sheet->Render(arm_model, angle_, arms_still.GetAnimationByName("hurt"));
+      // }
+      arm_sheet->Render(arm_model, angle_, arms_still.GetAnimationByName("hurt"));
    } else if (enemy_state_ == ATTACK || enemy_state_ == RETREAT) {
       arms_attack.set_state(ATTACK);
       arm_sheet->Render(attack_model, angle_, arms_attack.GetAnimationByName("attack"));
    }
 
    // Render enemy
-   if (angle_ == 0.0f) {
-      sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, enemytexture);
-   } else {
-      sprite_sheet->Render(element_model, angle_, enemytexture);
-   }
+   // if (angle_ == 0.0f) {
+   //    sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, enemytexture);
+   // } else {
+   //    sprite_sheet->Render(element_model, angle_, enemytexture);
+   // }
+   sprite_sheet->Render(element_model, angle_, enemytexture);
 }
 
 // Rosea move
@@ -424,7 +433,7 @@ void Rosea::move() {
    if (enemy_state_ == HURT) {
       // Set arm height to 0
       if (angle_ == 0.0f) {
-         arms_attack.set_y(arm_heights_[0]);
+         arms_attack.set_y(arms_attack.get_y() + attack_model[3][1]);
       } else {
          arms_attack.set_x(arm_widths_[0]);
       }
@@ -446,7 +455,7 @@ void Rosea::move() {
       if (arms_attack.AnimationCompleted("attack")) {
          enemy_state_ = IDLE;
          if (angle_ == 0.0f) {
-            arms_attack.set_y(arm_heights_[14]);
+            arms_attack.set_y(arms_attack.get_y() - attack_model[3][1]);
          } else {
             arms_attack.set_x(arms_attack.get_x() - attack_model[3][0]);
          }
@@ -474,7 +483,7 @@ void Rosea::move() {
 
          // Sets hitbox to position of arm
          if (angle_ == 0.0f) {
-            arms_attack.set_y(arm_heights_[temp]);
+            arms_attack.set_y(attack_model[3][1]);
          } else {
             arms_attack.set_x(attack_model[3][0]);
          }

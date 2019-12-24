@@ -77,7 +77,7 @@ PlayerHead::PlayerHead(Player *player, float x_rel, float y_rel) :
    float height = get_height() / 200.0f;
    float x = get_x() / 100.0f;
    float y = get_y() / 100.0f;
-   Sensor::initialize(width, height, x, y, CAT_PLAYER);
+   Sensor::initialize(width, height, x, y, CAT_PLAYER, true);
 }
 
 void PlayerHead::StartContact(Element *element) {
@@ -112,7 +112,7 @@ PlayerArm::PlayerArm(Player *player, float x_rel, float y_rel, int width, int he
    BodyPart(player, x_rel, y_rel, width, height), type_(type) {
 
    // Initialize the body part
-   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
+   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER, true);
 }
 
 void PlayerArm::StartContact(Element *element) {
@@ -124,10 +124,10 @@ void PlayerArm::StartContact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftArm") {
             player->contacts_[Player::LEFT_ARM] = 1;
-            //std::cout << "PlayerArm::StartContact() - left arm in contact\n";
+            std::cout << "PlayerArm::StartContact() - left arm in contact\n";
          } else {
             player->contacts_[Player::RIGHT_ARM] = 1;
-            //std::cout << "PlayerArm::StartContact() - right arm in contact\n";
+            std::cout << "PlayerArm::StartContact() - right arm in contact\n";
          }
       } else if (element->type() == "Projectile" || !element->is_enemy()) {
          player->TakeDamage(10);
@@ -144,10 +144,10 @@ void PlayerArm::EndContact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftArm") {
             player->contacts_[Player::LEFT_ARM] = 0;
-            //std::cout << "PlayerArm::StartContact() - lost contact left arm\n";
+            std::cout << "PlayerArm::StartContact() - lost contact left arm\n";
          } else {
             player->contacts_[Player::RIGHT_ARM] = 0;
-            //std::cout << "PlayerArm::StartContact() - lost contact right arm\n";
+            std::cout << "PlayerArm::StartContact() - lost contact right arm\n";
          }
       }
    }
@@ -159,7 +159,7 @@ PlayerHand::PlayerHand(Player *player, float x_rel, float y_rel, std::string typ
    BodyPart(player, x_rel, y_rel, 7, 6), type_(type) {
 
    // Initialize the body part
-   Sensor::initialize(get_width() / 200.0f, get_height() / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
+   Sensor::initialize(get_width() / 200.0f, get_height() / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER, true);
 }
 
 void PlayerHand::StartContact(Element *element) {
@@ -204,7 +204,7 @@ PlayerLeg::PlayerLeg(Player *player, float x_rel, float y_rel, int width, int he
    BodyPart(player, x_rel, y_rel, width, height), type_(type) {
 
    // Initialize the body part
-   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER);
+   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER, true);
 }
 
 void PlayerLeg::StartContact(Element *element) {
@@ -243,10 +243,10 @@ void PlayerLeg::EndContact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftLeg") {
             player->contacts_[Player::LEFT_LEG] = 0;
-            //std::cout << "PlayerLeg::EndContact() - lost contact left leg\n";
+            // std::cout << "PlayerLeg::EndContact() - lost contact left leg\n";
          } else {
             player->contacts_[Player::RIGHT_LEG] = 0;
-            //std::cout << "PlayerLeg::EndContact() - lost contact right leg\n";
+            // std::cout << "PlayerLeg::EndContact() - lost contact right leg\n";
          }
       }
    }
@@ -279,6 +279,9 @@ Player::Player() :
    body_def.position.Set(x, y);
    body_def.fixedRotation = true;
 
+   // Set transform
+   element_model = glm::translate(element_model, glm::vec3(x, y, 0.0f));
+
    // Attach body to world
    body = Application::GetInstance().world_.CreateBody(&body_def);
 
@@ -287,7 +290,7 @@ Player::Player() :
    float height = (get_height() / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
    const b2Vec2 center = {(PC_OFF_X - get_width()) / 2.0f * Application::GetInstance().to_meters_, 
                           PC_OFF_Y * Application::GetInstance().to_meters_};
-   box.SetAsBox(width, height, center, 0.0f);
+   box.SetAsBox(width, height, {0.0f, 0.0f}, 0.0f);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
@@ -296,38 +299,35 @@ Player::Player() :
    fixture_def.userData = this;
    body->CreateFixture(&fixture_def);
 
-   // Set user data
-   //body->SetUserData(this);
-
    // Set sensors to non interactive with da enemy
    b2Filter filter;
-   filter.categoryBits = 0;
-   filter.maskBits = 0;
+   filter.categoryBits = CAT_PLAYER;
+   filter.maskBits = CAT_PLATFORM | CAT_PROJECTILE | CAT_ENEMY | CAT_BOSS;
    b2Fixture *fixture_list = body->GetFixtureList();
    fixture_list->SetFilterData(filter);
 
    // ADD BODY PARTS FOR LEFT BODY
-   player_body_right_.push_back(new PlayerHead(this, 11.5f, 26));
-   player_body_right_.push_back(new PlayerArm(this, 3.5, -7, 6, 22, "PlayerLeftArm"));
-   player_body_right_.push_back(new PlayerArm(this, 19.5, -7, 6, 22, "PlayerRightArm"));
-   // player_body_right_.push_back(new PlayerHand(this, 6, -41, "PlayerLeftHand"));
-   // player_body_right_.push_back(new PlayerHand(this, 17, -41, "PlayerRightHand"));
-   player_body_right_.push_back(new PlayerLeg(this, 5.5, -33, 6, 34, "PlayerLeftLeg"));
-   player_body_right_.push_back(new PlayerLeg(this, 18.5, -33, 6, 34, "PlayerRightLeg"));
+   // player_body_right_.push_back(new PlayerHead(this, 11.5f, 26));
+   // player_body_right_.push_back(new PlayerArm(this, 3.5, -7, 6, 22, "PlayerLeftArm"));
+   // player_body_right_.push_back(new PlayerArm(this, 19.5, -7, 6, 22, "PlayerRightArm"));
+   // // player_body_right_.push_back(new PlayerHand(this, 6, -41, "PlayerLeftHand"));
+   // // player_body_right_.push_back(new PlayerHand(this, 17, -41, "PlayerRightHand"));
+   // player_body_right_.push_back(new PlayerLeg(this, 5.5, -33, 6, 34, "PlayerLeftLeg"));
+   // player_body_right_.push_back(new PlayerLeg(this, 18.5, -33, 6, 34, "PlayerRightLeg"));
 
    // ADD BODY PARTS FOR RIGHT BODY
-   player_body_left_.push_back(new PlayerHead(this, 11.5f, 26));
-   player_body_left_.push_back(new PlayerArm(this, 3.5, -7, 6, 22, "PlayerLeftArm"));
+   // player_body_left_.push_back(new PlayerHead(this, 11.5f, 26));
+   player_body_left_.push_back(new PlayerArm(this, -19.5, -7, 6, 22, "PlayerLeftArm"));
    player_body_left_.push_back(new PlayerArm(this, 19.5, -7, 6, 22, "PlayerRightArm"));
    // player_body_left_.push_back(new PlayerHand(this, 6, -41, "PlayerLeftHand"));
    // player_body_left_.push_back(new PlayerHand(this, 17, -41, "PlayerRightHand"));
-   player_body_left_.push_back(new PlayerLeg(this, 5.5, -33, 6, 34, "PlayerLeftLeg"));
-   player_body_left_.push_back(new PlayerLeg(this, 18.5, -33, 6, 34, "PlayerRightLeg"));
+   player_body_left_.push_back(new PlayerLeg(this, -10.5, -33, 3, 34, "PlayerLeftLeg"));
+   player_body_left_.push_back(new PlayerLeg(this, 10.5, -33, 3, 34, "PlayerRightLeg"));
 
    // Deactivate the left
-   for (int i = 0; i < player_body_left_.size(); i++) {
-      player_body_left_[i]->Sensor::deactivate_sensor();
-   }
+   // for (int i = 0; i < player_body_left_.size(); i++) {
+   //    player_body_left_[i]->Sensor::deactivate_sensor();
+   // }
 
    // Set health. TODO: set health in a better way
    health = 300;
@@ -505,7 +505,6 @@ void Player::update(bool freeze) {
    }
 
    // Render player
-   // Render(playertexture);
    sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
 }
 
@@ -729,21 +728,21 @@ void Player::move() {
    }
 
    // Deactivate and activate bodies
-   if (entity_direction == LEFT && !right_deactivated_) {
-      for (int i = 0; i < player_body_left_.size(); i++) {
-         player_body_right_[i]->Sensor::deactivate_sensor();
-         player_body_left_[i]->Sensor::activate_sensor();
-      }
-      right_deactivated_ = true;
-      left_deactivated_ = false;
-   } else if (entity_direction == RIGHT && !left_deactivated_) {
-      for (int i = 0; i < player_body_right_.size(); i++) {
-         player_body_left_[i]->Sensor::deactivate_sensor();
-         player_body_right_[i]->Sensor::activate_sensor();
-      }
-      left_deactivated_ = true;
-      right_deactivated_ = false;
-   }
+   // if (entity_direction == LEFT && !right_deactivated_) {
+   //    for (int i = 0; i < player_body_left_.size(); i++) {
+   //       player_body_right_[i]->Sensor::deactivate_sensor();
+   //       player_body_left_[i]->Sensor::activate_sensor();
+   //    }
+   //    right_deactivated_ = true;
+   //    left_deactivated_ = false;
+   // } else if (entity_direction == RIGHT && !left_deactivated_) {
+   //    for (int i = 0; i < player_body_right_.size(); i++) {
+   //       player_body_left_[i]->Sensor::deactivate_sensor();
+   //       player_body_right_[i]->Sensor::activate_sensor();
+   //    }
+   //    left_deactivated_ = true;
+   //    right_deactivated_ = false;
+   // }
 
    // Check if shooting
    if (shooting) {

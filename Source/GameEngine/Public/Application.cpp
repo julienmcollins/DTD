@@ -383,7 +383,6 @@ void printShaderLog(unsigned int shader) {
 }
 
 // Loads images and other media
-// TODO: Move LoadMedia function to constructor of each object --> like level
 bool Application::LoadMedia() {
    // Start success = true 
    bool success = true;
@@ -790,6 +789,7 @@ void Application::playground() {
          level_flag_ = static_cast<FOREST>(inc + 1);
       }
    } else {
+      std::cout << "Going to gameover\n";
       app_flag_ = GAMEOVER_SCREEN;
       delete player;
       delete level;

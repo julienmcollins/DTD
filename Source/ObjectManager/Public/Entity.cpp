@@ -85,7 +85,7 @@ void PlayerHead::StartContact(Element *element) {
    Player *player = dynamic_cast<Player *>(owner_);
 
    // Set contacts of player
-   if (element) {
+   if (element && player) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          player->contacts_[Player::HEAD] = 1;
       } else if (element->type() == "Projectile" || !element->is_enemy()) {
@@ -99,7 +99,7 @@ void PlayerHead::EndContact(Element *element) {
    Player *player = dynamic_cast<Player *>(owner_);
 
    // Set contacts of player
-   if (element) {
+   if (element && player) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          player->contacts_[Player::HEAD] = 0;
       }
@@ -120,7 +120,7 @@ void PlayerArm::StartContact(Element *element) {
    Player *player = dynamic_cast<Player *>(owner_);
 
    // Set contacts of player
-   if (element) {
+   if (element && player) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftArm") {
             player->contacts_[Player::LEFT_ARM] = 1;
@@ -140,7 +140,7 @@ void PlayerArm::EndContact(Element *element) {
    Player *player = dynamic_cast<Player *>(owner_);
 
    // Set contacts of player
-   if (element) {
+   if (element && player) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftArm") {
             player->contacts_[Player::LEFT_ARM] = 0;
@@ -167,7 +167,7 @@ void PlayerHand::StartContact(Element *element) {
    Player *player = dynamic_cast<Player *>(owner_);
 
    // Set contacts of player
-   if (element) {
+   if (element && player) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftHand") {
             player->contacts_[Player::LEFT_HAND] = 1;
@@ -186,7 +186,7 @@ void PlayerHand::EndContact(Element *element) {
    Player *player = dynamic_cast<Player *>(owner_);
 
    // Set contacts of player
-   if (element) {
+   if (element && player) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftHand") {
             player->contacts_[Player::LEFT_HAND] = 0;
@@ -212,7 +212,7 @@ void PlayerLeg::StartContact(Element *element) {
    Player *player = dynamic_cast<Player *>(owner_);
 
    // Set contacts of player
-   if (element) {
+   if (element && player) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftLeg") {
             player->contacts_[Player::LEFT_LEG] = 1;
@@ -228,9 +228,9 @@ void PlayerLeg::StartContact(Element *element) {
          owner_->GetAnimationByName("double_jump")->curr_frame = 0;
          owner_->GetAnimationByName("running_jump")->reset_frame = 0;
          owner_->GetAnimationByName("running_jump")->curr_frame = 0;
+      } else if (element->type() == "Projectile" || !element->is_enemy()) {
+         player->TakeDamage(10);
       }
-   } else if (element->type() == "Projectile" || !element->is_enemy()) {
-      player->TakeDamage(10);
    }
 }
 
@@ -239,7 +239,7 @@ void PlayerLeg::EndContact(Element *element) {
    Player *player = dynamic_cast<Player *>(owner_);
 
    // Set contacts of player
-   if (element) {
+   if (element && player) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftLeg") {
             player->contacts_[Player::LEFT_LEG] = 0;
@@ -297,7 +297,7 @@ Player::Player() :
    fixture_def.density = 1.0f;
    fixture_def.friction = 0.0f;
    fixture_def.userData = this;
-   body->CreateFixture(&fixture_def);
+   main_fixture = body->CreateFixture(&fixture_def);
 
    // Set sensors to non interactive with da enemy
    b2Filter filter;
@@ -330,7 +330,7 @@ Player::Player() :
    // }
 
    // Set health. TODO: set health in a better way
-   health = 300;
+   health = 30;
 
    // TEMPORARY SOLUTION
    //textures["arm_throw"]->completed_ = true;
@@ -619,7 +619,7 @@ void Player::animate(Texture *tex, int reset, int max, int start) {
    } else if (player_state_ == BALANCE) {
       sprite_sheet->Animate(GetAnimationByName("balance"));
    } else if (player_state_ == DEATH) {
-      sprite_sheet->Animate(GetAnimationByName("death"), GetAnimationByName("death")->reset_frame, GetAnimationByName("death")->stop_frame);
+      sprite_sheet->Animate(GetAnimationByName("death"), 19, 19);
    }
 }
 
@@ -716,14 +716,18 @@ void Player::move() {
          body->SetLinearVelocity({0.0f, body->GetLinearVelocity().y});
          shift_ = true;
       }
-      if (GetAnimationByName("death")->curr_frame >= 20) {
+      if (GetAnimationByName("death")->curr_frame >= 19) {
          if (((float) Application::GetInstance().death_timer_.getTicks() / 1000.0f) >= 3.0f) {
+            std::cout << "In death\n";
             alive = false;
             Application::GetInstance().death_timer_.stop();
          }
-         GetAnimationByName("death")->reset_frame = 19;
-         GetAnimationByName("death")->stop_frame = 19;
+         // GetAnimationByName("death")->reset_frame = 19;
+         // GetAnimationByName("death")->stop_frame = 19;
       }
+
+      // Set collision to only platform
+      set_collision(CAT_PLATFORM, main_fixture);
       return;
    }
 

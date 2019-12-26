@@ -325,6 +325,8 @@ Rosea::Rosea(int x, int y, float angle) :
    arm_model = glm::mat4(1.0f);
    attack_model = glm::mat4(1.0f);
 
+   // TODO: translate should be based on sin and cos of angles given
+
    // Special state for 0 angle
    if (angle == 0.0f) {
       // Construct a matrix that will essentially rotate with the entire object
@@ -547,7 +549,7 @@ bool Rosea::within_bounds() {
    } else {
       if (Application::GetInstance().get_player()->get_y() >= (get_y() - 250) 
          && Application::GetInstance().get_player()->get_y() <= (get_y() + 250)
-         && Application::GetInstance().get_player()->get_x() <= (get_x() + 400)) {
+         && Application::GetInstance().get_player()->get_x() <= (get_x() + 500)) {
          return true;
       }
    }
@@ -1120,13 +1122,11 @@ MosquiblerEgg::MosquiblerEgg(int x, int y) :
 bool MosquiblerEgg::LoadMedia() {
    bool success = true;
 
-   // // Instantiate data
-   // std::vector<TextureData> data;
-   // data.push_back(TextureData(6, 1.0f / 20.0f, "idle", media_path + "Mosqueenbler/egg_idle.png"));
-   // data.push_back(TextureData(7, 1.0f / 20.0f, "attack", media_path + "Mosqueenbler/egg_break.png"));
-
-   // // Load resources
-   // success = RenderingEngine::GetInstance().LoadResources(this, data);
+   std::string path = media_path + "Mosqueenbler/mosqueenbler_egg_master_sheet.png";
+   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("mosqueenbler_egg_master_sheet", path.c_str());
+   animations.emplace("idle", new Animation(sprite_sheet, "idle", 94.0, 61.0, 0, 6, 1.0 / 20.0));
+   animations.emplace("idle", new Animation(sprite_sheet, "attack", 94.0, 61.0, 61.0, 7, 1.0 / 20.0));
+   RenderingEngine::GetInstance().LoadResources(this);
 
    return success;
 }

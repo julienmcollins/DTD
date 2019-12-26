@@ -295,28 +295,28 @@ void Texture::Render(glm::mat4 m, GLfloat rotate, Animation *clip, glm::vec3 col
 }
 
 void Texture::Animate(Animation *anim, int reset, int max, int start) {
-    // Define standards
-    int temp_max = (max == 0) ? anim->max_frame : max;
-    int temp_start = (start == 0) ? 0 : start;
+   // Define standards
+   int temp_max = (max == 0) ? anim->max_frame : max;
+   int temp_start = (start == 0) ? 0 : start;
 
-    // Method for going back to first frame...
-    if (max == -1) temp_max = 0;
-    if (start == -1) temp_start = 0;
+   // Method for going back to first frame...
+   if (max == -1) temp_max = 0;
+   if (start == -1) temp_start = 0;
 
-    // Set next frame based on fps
-    anim->last_frame += anim->fps_timer.getDeltaTime() / 1000.0f;
-    if (anim->last_frame > anim->fps) {
-        if (anim->curr_frame >= temp_max) {
-            anim->curr_frame = reset;
-            anim->completed = true;
-            anim->last_frame = 0.0f;
-            return;
-        } else if (anim->curr_frame <= reset + 1) {
-            anim->completed = false;
-        }
-        ++anim->curr_frame;
-        anim->last_frame = 0.0f;
-    }
+   // Set next frame based on fps
+   anim->last_frame += anim->fps_timer.getDeltaTime() / 1000.0f;
+   if (anim->last_frame > anim->fps) {
+      if (anim->curr_frame >= temp_max) {
+         anim->curr_frame = reset;
+         anim->completed = true;
+         anim->last_frame = 0.0f;
+         return;
+      } else if (anim->curr_frame <= reset + 1) {
+         anim->completed = false;
+      }
+      ++anim->curr_frame;
+      anim->last_frame = 0.0f;
+   }
 }
 
 // Get x position

@@ -93,6 +93,7 @@ class Element {
       b2PolygonShape box;
       b2CircleShape circle;
       b2FixtureDef fixture_def;
+      b2Fixture *main_fixture;
 
       enum COLLISIONS {
          CAT_PLAYER = 0x0001,
@@ -212,7 +213,6 @@ class Element {
       virtual void EndContact(Element *element = NULL) {}
 
       // Contact flag
-      // TODO: change in contact to in contact left and right
       bool in_contact;
       bool in_contact_left;
       bool in_contact_right;

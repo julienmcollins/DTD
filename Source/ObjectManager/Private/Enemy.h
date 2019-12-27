@@ -32,7 +32,7 @@ class Enemy : public Entity {
       };
 
       // Update function and get texture
-      virtual void update(bool freeze = false);   
+      virtual void Update(bool freeze = false);   
       virtual Animation *GetAnimationFromState();
    
       // Static string
@@ -92,8 +92,8 @@ class Fecreez : public Enemy {
       virtual bool LoadMedia();
 
       // Update, move and animate functions
-      virtual void move();
-      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0);
+      virtual void Move();
+      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0);
 
       // Contact listener
       virtual void StartContact(Element *element = NULL);
@@ -120,7 +120,7 @@ class Arm : public Enemy {
       virtual void StartContact(Element *element = NULL);
 
       // Define abstract functions
-      virtual void move() {}
+      virtual void Move() {}
       virtual Animation *GetAnimationFromState();
 
       // Static position
@@ -142,9 +142,9 @@ class Rosea : public Enemy {
       virtual bool LoadMedia();
 
       // Update, move and animate functions
-      virtual void update(bool freeze = false);
-      virtual void move();
-      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
+      virtual void Update(bool freeze = false);
+      virtual void Move();
+      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
 
       // Get texture for rosea
       virtual Animation *GetAnimationFromState();
@@ -207,8 +207,8 @@ class Mosquibler : public Enemy {
       virtual bool LoadMedia();
 
       // Update, move and animate functions
-      virtual void move();
-      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
+      virtual void Move();
+      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
 
       // Get texture for rosea
       virtual Animation *GetAnimationFromState();
@@ -235,8 +235,8 @@ class Fruig : public Enemy {
       virtual bool LoadMedia();
 
       // Update, move and animate functions
-      virtual void move();
-      virtual void animate(Texture *tex, int reset, int max, int start);
+      virtual void Move();
+      virtual void Animate(Texture *tex, int reset, int max, int start);
 
       // Get contact
       virtual void StartContact(Element *element = NULL);
@@ -267,8 +267,8 @@ class Fleet : public Enemy {
       virtual bool LoadMedia();
 
       // Move and animate functions
-      virtual void move();
-      virtual void animate(Texture *tex, int reset, int max, int start);
+      virtual void Move();
+      virtual void Animate(Texture *tex, int reset, int max, int start);
 
       // Get contact function
       virtual void StartContact(Element *element = NULL);
@@ -290,8 +290,8 @@ class Mosqueenbler : public Enemy {
       virtual bool LoadMedia();
 
       // Move and animate functions
-      virtual void move();
-      virtual void animate(Texture *tex, int reset, int max, int start);
+      virtual void Move();
+      virtual void Animate(Texture *tex, int reset, int max, int start);
 
       // Get contact function
       //virtual void StartContact(Element *element = NULL);
@@ -322,8 +322,8 @@ class MosquiblerEgg : public Enemy {
       virtual bool LoadMedia();
 
       // Move and animate functions
-      virtual void move();
-      virtual void animate(Texture *tex, int reset, int max, int start);
+      virtual void Move();
+      virtual void Animate(Texture *tex, int reset, int max, int start);
 
       // Start contact function
       virtual void StartContact(Element *element = NULL);
@@ -359,8 +359,8 @@ class Wormored : public Enemy {
       virtual bool LoadMedia();
 
       // Move and animate functions
-      virtual void move();
-      virtual void animate(Texture *tex, int reset, int max, int start);
+      virtual void Move();
+      virtual void Animate(Texture *tex, int reset, int max, int start);
       virtual Texture *get_texture();
 
       // Wormored type

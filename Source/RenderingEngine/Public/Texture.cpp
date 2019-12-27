@@ -17,6 +17,7 @@
 #include "SOIL.h"
 #include <iostream>
 #include <math.h>
+#include <glm/gtx/string_cast.hpp>
 
 using namespace std;
 

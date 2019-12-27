@@ -28,8 +28,8 @@ class Entity : public Element {
         int has_jumped_;
 
         // Movement and updating
-        virtual void move() = 0;
-        virtual void update(bool freeze = false);
+        virtual void Move() = 0;
+        virtual void Update(bool freeze = false);
 
         // Health
         int health;
@@ -73,8 +73,8 @@ class Hitmarker : public Element {
       virtual bool LoadMedia();
 
       // Update function
-      virtual void update(bool freeze = false);
-      virtual void animate();
+      virtual void Update(bool freeze = false);
+      virtual void Animate();
       virtual Animation *GetAnimationFromState();
 
       // State
@@ -245,9 +245,9 @@ class Player : public Entity {
 
       // Update function now done in player
       void ProcessInput(const Uint8 *key_state);
-      virtual void update(bool freeze = false);
-      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
-      virtual void move();
+      virtual void Update(bool freeze = false);
+      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
+      virtual void Move();
 
       // Contact listener
       virtual void StartContact(Element *element = NULL);

@@ -146,8 +146,8 @@ bool Level::LoadMedia_() {
 }
 
 // Update function will Render the stuff itself
-void Level::update() {
-   //std::cout << "Level::update() - num_of_kills_ = " << num_of_kills_ << std::endl;
+void Level::Update() {
+   //std::cout << "Level::Update() - num_of_kills_ = " << num_of_kills_ << std::endl;
    // Only complete levels when number of enemies is 0
    if (num_of_kills_ == 0 && !completed) {
       // Delete the right wall
@@ -156,7 +156,7 @@ void Level::update() {
          platforms_.back() = nullptr;
       }
 
-      //std::cout << "Level::update() - level = " << level << std::endl;
+      //std::cout << "Level::Update() - level = " << level << std::endl;
       if ((level < Application::FOREST6 || level == Application::FOREST9) && Application::GetInstance().get_player()->get_x() >= 1890) {
          completed = true;
       } else if (level >= Application::FOREST6 && Application::GetInstance().get_player()->get_y() <= -100) {
@@ -183,7 +183,7 @@ void Level::update() {
             // }
             it = enemies_marked_for_death_.erase(it);
          } else {
-            std::cerr << "Level::update() - enemy marked for death not found in level!\n";
+            std::cerr << "Level::Update() - enemy marked for death not found in level!\n";
             ++it;
          }
       }
@@ -213,14 +213,14 @@ void Level::update() {
    // Render platforms
    for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {
       if (*it) {
-         (*it)->update();
+         (*it)->Update();
       }
    }
 
    // Render enemies
    for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end();) {
       if (*it) {
-         (*it)->update();
+         (*it)->Update();
          ++it;
       } else {
          it = enemies_.erase(it);

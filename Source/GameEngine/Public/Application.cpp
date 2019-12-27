@@ -454,7 +454,7 @@ void Application::setup_menu() {
 }
 
 // Updates the screen
-void Application::update() {
+void Application::Update() {
    // Game loop
    while (!quit) {
       // Clear screen at every instance
@@ -653,30 +653,30 @@ void Application::main_screen() {
       menu_title_.sprite_sheet->Render(800.0f, 650.0f, 0.0f, menu_title_.GetAnimationByName("menu"));
 
       // Animate player
-      player->update(true);
+      player->Update(true);
 
       // Update finger
-      finger_->update();
+      finger_->Update();
    } else if (menu_screen_ == SECOND) {
       // Animate world items
       menu_title_.sprite_sheet->Animate(menu_title_.GetAnimationByName("world"));
       menu_title_.sprite_sheet->Render(850.0f, 650.0f, 0.0f, menu_title_.GetAnimationByName("world"));
 
       // Animate player
-      player->update(true);
+      player->Update(true);
 
       // Update finger
-      finger_->update();
+      finger_->Update();
    } else if (menu_screen_ == THIRD) {
       // Animate final background
       // Update player for real (and projectiles)
-      player->update();
+      player->Update();
       update_projectiles();
 
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = FOREST4;
+         level_flag_ = FOREST7;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -723,7 +723,7 @@ void Application::update_projectiles() {
             it = projectiles_.erase(it);
          } else {
             //std::cout << "NO, in here" << std::endl;
-            (*it)->update();
+            (*it)->Update();
             ++it;
          }
       } else {
@@ -759,7 +759,7 @@ void Application::playground() {
 
    /******** UPDATE THE LEVEL *************/
    // Do this as the last thing (testing)
-   level->update();
+   level->Update();
    /***************************************/
 
    // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
@@ -768,11 +768,11 @@ void Application::playground() {
    // Update player
    if (player->is_alive()) {
       // Update player
-      player->update();
+      player->Update();
 
       // Render the hit markers
       for (int i = 0; i < player->hit_markers.size(); i++) {
-         player->hit_markers[i]->update();
+         player->hit_markers[i]->Update();
       }
 
       // Check for completed level and that player as walked to the edge of the screen
@@ -789,7 +789,6 @@ void Application::playground() {
          level_flag_ = static_cast<FOREST>(inc + 1);
       }
    } else {
-      std::cout << "Going to gameover\n";
       app_flag_ = GAMEOVER_SCREEN;
       delete player;
       delete level;
@@ -858,7 +857,7 @@ Animation *Finger::GetAnimationFromState() {
 }
 
 // Update function
-void Finger::update() {
+void Finger::Update() {
    // Animate based on state
    if (finger_state == SHAKE) {
       sprite_sheet->Animate(GetAnimationByName("shake"));

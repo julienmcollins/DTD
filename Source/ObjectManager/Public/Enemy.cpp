@@ -67,12 +67,12 @@ Projectile* Enemy::CreateProjectile(std::string name, float width, float height,
 }
 
 // Update function
-void Enemy::update(bool freeze) {
+void Enemy::Update(bool freeze) {
    // Move first
-   move();
+   Move();
 
    // The animate
-   animate();
+   Animate();
 
    // Render enemy
    Animation *anim = GetAnimationFromState();
@@ -148,7 +148,7 @@ bool Fecreez::LoadMedia() {
    return success;
 }
 
-void Fecreez::move() {
+void Fecreez::Move() {
    // Overall check to see if it's alive
    if (enemy_state_ == DEATH) {
       // TODO: find better solution
@@ -217,7 +217,7 @@ void Fecreez::move() {
    }
 
    // Update frames
-   animate();
+   Animate();
 }
 
 // Start contact function
@@ -227,13 +227,13 @@ void Fecreez::StartContact(Element *element) {
       if (health <= 0) {
          //alive = false;
          enemy_state_ = DEATH;
-         set_collision(CAT_PLATFORM);
+         SetCollision(CAT_PLATFORM);
       }
    }
 }
 
 // Animate function
-void Fecreez::animate(Texture *tex, int reset, int max) {
+void Fecreez::Animate(Texture *tex, int reset, int max) {
    // Animate based on different states
    if (enemy_state_ == IDLE) {
       sprite_sheet->Animate(GetAnimationByName("idle"));
@@ -387,12 +387,12 @@ bool Rosea::LoadMedia() {
 }
 
 // Rosea update
-void Rosea::update(bool freeze) {
+void Rosea::Update(bool freeze) {
    // Move first
-   move();
+   Move();
 
    // The animate
-   animate();
+   Animate();
 
    // Render enemy
    Animation *enemytexture = GetAnimationFromState();
@@ -430,7 +430,7 @@ void Rosea::update(bool freeze) {
 }
 
 // Rosea move
-void Rosea::move() {
+void Rosea::Move() {
    // Check for enemy_state_ hurt
    if (enemy_state_ == HURT) {
       // Set arm height to 0
@@ -501,7 +501,7 @@ void Rosea::move() {
 }
 
 // Rosea animate
-void Rosea::animate(Texture *tex, int reset, int max, int start) {
+void Rosea::Animate(Texture *tex, int reset, int max, int start) {
    // Animate based on different states
    if (enemy_state_ == IDLE) {
       sprite_sheet->Animate(arms_still.GetAnimationByName("idle"));
@@ -602,7 +602,7 @@ bool Mosquibler::LoadMedia() {
 }
 
 // Move function
-void Mosquibler::move() {
+void Mosquibler::Move() {
    // Check to see what direction the enemy should be facing
    if (enemy_state_ != DEATH && enemy_state_ != HURT && enemy_state_ != FALL) {
       if (Application::GetInstance().get_player()->get_x() <= get_x() && entity_direction == RIGHT) {
@@ -667,7 +667,7 @@ void Mosquibler::move() {
 
    // Set to dead
    if (in_contact_down && (enemy_state_ == HURT || enemy_state_ == FALL || enemy_state_ == DEATH)) {
-      // std::cout << "Mosquibler::move() - dead\n";
+      // std::cout << "Mosquibler::Move() - dead\n";
       enemy_state_ = DEATH;
       start_death_ = 16;
       end_death_ = 16;
@@ -679,7 +679,7 @@ void Mosquibler::move() {
 }
 
 // Animate function
-void Mosquibler::animate(Texture *tex, int reset, int max, int start) {
+void Mosquibler::Animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
       sprite_sheet->Animate(GetAnimationByName("fly"));
    } else if (enemy_state_ == TURN) {
@@ -726,7 +726,7 @@ void Mosquibler::StartContact(Element *element) {
    if (element) {
       if ((element->type() == "Player" || element->type() == "Projectile") && enemy_state_ != DEATH) {
          // std::cout << "Mosquibler::StartContact() - hit by player\n";
-         set_collision(CAT_PLATFORM);
+         SetCollision(CAT_PLATFORM);
          enemy_state_ = HURT;
       }
 
@@ -787,7 +787,7 @@ bool Fruig::LoadMedia() {
 }
 
 // Mpve function
-void Fruig::move() {
+void Fruig::Move() {
    // Check death state first
    if (enemy_state_ == DEATH) {
       // Set enemy to dead
@@ -820,7 +820,7 @@ void Fruig::move() {
 }
 
 // Animate function
-void Fruig::animate(Texture *tex, int reset, int max, int start) {
+void Fruig::Animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
       sprite_sheet->Animate(GetAnimationByName("idle"));
    } else if (enemy_state_ == DEATH) {
@@ -834,7 +834,7 @@ void Fruig::StartContact(Element *element) {
       health -= 10;
       if (health == 0) {
          enemy_state_ = DEATH;
-         set_collision(CAT_PLATFORM);
+         SetCollision(CAT_PLATFORM);
          start_death_ = 14;
          end_death_ = 19;
       }
@@ -925,7 +925,7 @@ bool Fleet::LoadMedia() {
 }
 
 // Move function
-void Fleet::move() {
+void Fleet::Move() {
    if (alive) {
       if (enemy_state_ == DEATH) {
          if (in_contact) {
@@ -986,7 +986,7 @@ void Fleet::move() {
 }
 
 // Animate function
-void Fleet::animate(Texture *tex, int reset, int max, int start) {
+void Fleet::Animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
       sprite_sheet->Animate(GetAnimationByName("idle"), GetAnimationByName("idle")->reset_frame, GetAnimationByName("idle")->stop_frame);
    } else if (enemy_state_ == TURN) {
@@ -1004,7 +1004,7 @@ void Fleet::StartContact(Element *element) {
          enemy_state_ = DEATH;
          b2Fixture *fixture_list = body->GetFixtureList();
          while (fixture_list) {
-            set_collision(CAT_PLATFORM, fixture_list);
+            SetCollision(CAT_PLATFORM, fixture_list);
             fixture_list = fixture_list->GetNext();
          }
       }
@@ -1067,7 +1067,7 @@ bool Mosqueenbler::LoadMedia() {
 }
 
 // Move function
-void Mosqueenbler::move() {
+void Mosqueenbler::Move() {
    // Allow it to float
    float y = 1 * cos(movement_timer_.getTicks() / 1000.0f) + 0.197f;
    body->SetLinearVelocity({0.0f, y});
@@ -1094,7 +1094,7 @@ void Mosqueenbler::move() {
 }
 
 // Animate function
-void Mosqueenbler::animate(Texture *tex, int reset, int max, int start) {
+void Mosqueenbler::Animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
       sprite_sheet->Animate(GetAnimationByName("idle"));
    } else if (enemy_state_ == ATTACK) {
@@ -1132,7 +1132,7 @@ bool MosquiblerEgg::LoadMedia() {
 }
 
 // MosquiblerEgg move function
-void MosquiblerEgg::move() {
+void MosquiblerEgg::Move() {
    if (enemy_state_ == ATTACK) {
       if (GetAnimationByName("attack")->completed) {
          Application::GetInstance().get_level()->add_enemy(new Mosquibler(get_x(), get_y()));
@@ -1142,7 +1142,7 @@ void MosquiblerEgg::move() {
 }
 
 // Animate
-void MosquiblerEgg::animate(Texture *tex, int reset, int max, int start) {
+void MosquiblerEgg::Animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
       sprite_sheet->Animate(GetAnimationByName("idle"));
    } else if (enemy_state_ == ATTACK) {
@@ -1154,7 +1154,7 @@ void MosquiblerEgg::animate(Texture *tex, int reset, int max, int start) {
 void MosquiblerEgg::StartContact(Element *element) {
    if (element->type() == "Platform") {
       enemy_state_ = ATTACK;
-      set_collision(CAT_PLATFORM);
+      SetCollision(CAT_PLATFORM);
    }
 }
 
@@ -1249,7 +1249,7 @@ bool Wormored::LoadMedia() {
    return success;
 }
 
-void Wormored::move() {
+void Wormored::Move() {
    if (enemy_state_ != DEATH && enemy_state_ != ATTACK && enemy_state_ != EXCRETE) {
       if (Application::GetInstance().get_player()->get_x() < (get_x() - get_width() / 2) && entity_direction == RIGHT) {
          entity_direction = LEFT;
@@ -1285,24 +1285,24 @@ void Wormored::move() {
                std::cout << "curr_frame = " << curr_frame << std::endl;
                std::cout << "offset = " << body_1_heights_[curr_frame] << std::endl;
                std::cout << "get_y() before = " << left_facing_sensors_[0]->get_y() << std::endl;
-               left_facing_sensors_[0]->update(0, body_1_heights_[curr_frame]);
+               left_facing_sensors_[0]->Update(0, body_1_heights_[curr_frame]);
                left_facing_sensors_[0]->set_y(left_facing_sensors_[0]->get_y() + body_1_heights_[curr_frame]);
                std::cout << "get_y() after = " << left_facing_sensors_[0]->get_y() << std::endl;
             }
             if (curr_frame > 1 && curr_frame < 12) {
-               //left_facing_sensors_[1]->update(0, body_2_heights_[curr_frame]);
+               //left_facing_sensors_[1]->Update(0, body_2_heights_[curr_frame]);
             }
             if (curr_frame > 4 && curr_frame < 15) {
-               //left_facing_sensors_[2]->update(0, body_3_heights_[curr_frame]);
+               //left_facing_sensors_[2]->Update(0, body_3_heights_[curr_frame]);
             }
             if (curr_frame > 6 && curr_frame < 18) {
-               //left_facing_sensors_[3]->update(0, body_4_heights_[curr_frame]);
+               //left_facing_sensors_[3]->Update(0, body_4_heights_[curr_frame]);
             }
             if (curr_frame > 9 && curr_frame < 20) {
-               //left_facing_sensors_[4]->update(0, body_5_heights_[curr_frame]);
+               //left_facing_sensors_[4]->Update(0, body_5_heights_[curr_frame]);
             }
             if (curr_frame > 11 && curr_frame < 21) {
-               //left_facing_sensors_[5]->update(0, body_6_heights_[curr_frame]);
+               //left_facing_sensors_[5]->Update(0, body_6_heights_[curr_frame]);
             }
          //}
       } else if (entity_direction == RIGHT) {
@@ -1327,7 +1327,7 @@ void Wormored::move() {
    }
 }
 
-void Wormored::animate(Texture *tex, int reset, int max, int start) {
+void Wormored::Animate(Texture *tex, int reset, int max, int start) {
    if (enemy_state_ == IDLE) {
       sprite_sheet->Animate(GetAnimationByName("idle"));
    } else if (enemy_state_ == TURN) {

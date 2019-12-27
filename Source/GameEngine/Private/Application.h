@@ -49,7 +49,7 @@ class Finger : public Element {
       Finger();
 
       // Update function
-      virtual void update();
+      virtual void Update();
 
       // FINGER STATE
       enum FINGER_STATE {
@@ -89,7 +89,7 @@ class Application {
       static const std::string audio_path;
    
       // Update the application
-      void update();
+      void Update();
       void update_projectiles();
 
       /*********** SDL WINDOW STUFF ***************/

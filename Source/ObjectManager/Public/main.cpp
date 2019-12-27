@@ -18,7 +18,7 @@ int main(int argc, char * argv[]) {
         printf("Failed to load media!\n");
     } else {
         //Apply the image
-        Application::GetInstance().update();
+        Application::GetInstance().Update();
     }
     
     return 0;

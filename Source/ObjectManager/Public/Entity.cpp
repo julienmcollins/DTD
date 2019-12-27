@@ -28,8 +28,8 @@ Entity::Entity(int x_pos, int y_pos, double width, double height) :
 }
 
 // Update function for all entities. For now all it does is call move
-void Entity::update(bool freeze) {
-   move();
+void Entity::Update(bool freeze) {
+   Move();
 }
 
 // Get direction
@@ -466,7 +466,7 @@ void Player::ProcessInput(const Uint8 *key_state) {
 }
 
 // Update function
-void Player::update(bool freeze) {
+void Player::Update(bool freeze) {
    // Apply artificial force of gravity
    const b2Vec2 sim_grav = {0.0f, SIM_GRAV};
    body->ApplyForceToCenter(sim_grav, true);
@@ -475,11 +475,11 @@ void Player::update(bool freeze) {
    ProcessInput(Application::GetInstance().current_key_states_);
 
    // Animate the function
-   animate();
+   Animate();
 
    // Update player if not frozen
    if (!freeze) {
-      move();
+      Move();
    }
 
    // Adjust deltas first
@@ -563,7 +563,7 @@ void Player::adjust_deltas() {
 }
 
 // Animate based on state
-void Player::animate(Texture *tex, int reset, int max, int start) {
+void Player::Animate(Texture *tex, int reset, int max, int start) {
    // Shooting animation
    if (shooting) {
       arm_sheet->Animate(GetAnimationByName("arm_throw"));
@@ -707,12 +707,11 @@ void Player::change_player_state() {
 }
 
 // Movement logic of the player. Done through keyboard.
-void Player::move() {
+void Player::Move() {
    // Death 
    if (player_state_ == DEATH) {
       // TODO: FIX DEATH CLIPPING THROUGH PLATFORM
       if (!shift_) {
-         sub_x(10);
          body->SetLinearVelocity({0.0f, body->GetLinearVelocity().y});
          shift_ = true;
       }
@@ -727,7 +726,7 @@ void Player::move() {
       }
 
       // Set collision to only platform
-      set_collision(CAT_PLATFORM, main_fixture);
+      SetCollision(CAT_PLATFORM, main_fixture);
       return;
    }
 
@@ -1024,7 +1023,7 @@ bool Hitmarker::LoadMedia() {
 }
 
 // Animate
-void Hitmarker::animate() {
+void Hitmarker::Animate() {
    if (state == ALIVE) {
       sprite_sheet->Animate(GetAnimationFromState());
    } else if (state == DEAD) {
@@ -1043,8 +1042,8 @@ Animation *Hitmarker::GetAnimationFromState() {
 }
 
 // Update function
-void Hitmarker::update(bool freeze) {
+void Hitmarker::Update(bool freeze) {
    // Animate and Render
-   animate();
+   Animate();
    sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
 }

@@ -28,21 +28,54 @@ Element::Element(int x, int y, int width, int height) :
    //fps_timer.start();
 }
 
+/********** SET AND GET HITBOX AND MODEL ***************/
+
+void Element::set_hitbox_x(float x) {
+   element_hitbox[3][0] = x / 100.0f;
+   if (body) {
+      body->SetTransform(b2Vec2(element_hitbox[3][0], element_hitbox[3][1]), hitbox_angle);
+   }
+}
+
+void Element::set_hitbox_y(float y) {
+   element_hitbox[3][1] = y / 100.0f;
+   if (body) {
+      body->SetTransform(b2Vec2(element_hitbox[3][0], element_hitbox[3][1]), hitbox_angle);
+   }
+}
+
+void Element::set_model_x(float x) {
+   element_model[3][0] = x;
+}
+
+void Element::set_model_y(float y) {
+   element_model[3][1] = y;
+}
+
+float Element::get_hitbox_x() {
+   return element_hitbox[3][0];
+}
+
+float Element::get_hitbox_y() {
+   return element_hitbox[3][1];
+}
+
+float Element::get_model_x() {
+   return element_model[3][0];
+}
+
+float Element::get_model_y() {
+   return element_model[3][1];
+}
+
+/*******************************************************/
+
 // Set and get x
 void Element::set_x(int new_x) {
    if (!body) {
       x_pos_ = new_x;
    } else {
       float nbx = (float) (new_x / 100.0f);
-      body->SetTransform(b2Vec2(nbx, body->GetPosition().y), body->GetAngle());
-   }
-}
-
-void Element::set_tex_x(int new_x) {
-   if (!body) {
-      x_pos_ = new_x;
-   } else {
-      float nbx = (float) ((new_x + (GetAnimationFromState()->texture_width / 2.0f)) / 100.0f);
       body->SetTransform(b2Vec2(nbx, body->GetPosition().y), body->GetAngle());
    }
 }
@@ -65,26 +98,6 @@ float Element::get_tex_x() {
    }
 }
 
-// Add and sub x
-void Element::add_x(int add) {
-   if (!body) {
-      x_pos_ += add;
-   } else {
-      float addx = (float) (add / 100.0f);
-      //std::cout << "pos y before = " << body->GetPosition().y << std::endl;
-      body->SetTransform(b2Vec2(body->GetPosition().x, body->GetPosition().y + addx), body->GetAngle());
-      //std::cout << "pos y after = " << body->GetPosition().y << std::endl;
-   }}
-
-void Element::sub_x(int sub) {
-   if (!body) {
-      x_pos_ -= sub;
-   } else {
-      float subx = (float) (sub / 100.0f);
-      body->SetTransform(b2Vec2(body->GetPosition().x - subx, body->GetPosition().y), body->GetAngle());
-   }
-}
-
 void Element::sub_tex_x(int sub) {
    if (!body) {
       x_pos_ -= sub;
@@ -100,15 +113,6 @@ void Element::set_y(int new_y) {
       y_pos_ = new_y;
    } else {
       float nby = (float) -(new_y / 100.0f);
-      body->SetTransform(b2Vec2(body->GetPosition().x, nby), body->GetAngle());
-   }
-}
-
-void Element::set_tex_y(int new_y) {
-   if (!body) {
-      y_pos_ = new_y;
-   } else {
-      float nby = (float) -((new_y + (get_height() / 2.0f)) / 100.0f);
       body->SetTransform(b2Vec2(body->GetPosition().x, nby), body->GetAngle());
    }
 }
@@ -131,35 +135,11 @@ float Element::get_tex_y() {
    }
 }
 
-// Add and sub y
-void Element::add_y(int add) {
-   if (!body) {
-      y_pos_ += add;
-   } else {
-      float addy = (float) (add / 100.0f);
-      body->SetTransform(b2Vec2(body->GetPosition().x, body->GetPosition().y - addy), body->GetAngle());
-   }
-}
-
-void Element::sub_y(int sub) {
-    y_pos_ -= sub;
-}
-
-// Set and get height
-void Element::set_height(int new_height) {
-    height_ = new_height;
-}
-
 float Element::get_height() const {
    if (height_ == 0)
       return 0.0f;
    else
       return height_;
-}
-
-// Set and get width
-void Element::set_width(int new_width) {
-    width_ = new_width;
 }
 
 float Element::get_width() const {
@@ -281,7 +261,7 @@ void Element::create_hitbox(float x, float y) {
    body = Application::GetInstance().world_.CreateBody(&body_def);
 }
 
-void Element::set_collision(uint16 collision_types, b2Fixture *fixture) {
+void Element::SetCollision(uint16 collision_types, b2Fixture *fixture) {
    b2Filter filter;
    filter.categoryBits = body->GetFixtureList()->GetFilterData().categoryBits;
    filter.maskBits = collision_types;
@@ -328,10 +308,10 @@ void Element::Render(Texture *texture, int x, int y) {
 }
 
 // Move function (does nothing)
-void Element::move() {}
+void Element::Move() {}
 
 // Animate function
-void Element::animate(Texture *tex, int reset, int max, int start) {
+void Element::Animate(Texture *tex, int reset, int max, int start) {
    // Tmp pointer
    Texture *curr;
    if (tex) {
@@ -359,31 +339,13 @@ void Element::animate(Texture *tex, int reset, int max, int start) {
    }
 }
 
-// Draw function for immediate drawing
-void Element::draw(Texture *tex, int reset) {
-   // Call animate function
-   animate(tex, reset);
-
-   // Render
-   // if (tex)
-   //    tex->Render(tex->get_x(), tex->get_y(), tex->curr_clip_);
-   // else
-   //    texture.Render(texture.get_x(), texture.get_y(), texture.curr_clip_);
-}
-
 // get texture
 Texture *Element::get_texture() {
    return &texture;
 }
 
-// Get current clip
-GLFloatRect *Element::get_curr_clip() {
-   Texture *tmp = get_texture();
-   return tmp->curr_clip_;
-}
-
 // Update function for basic stuff just calls Render
-void Element::update(bool freeze) {
+void Element::Update(bool freeze) {
    // Simply Render the texture
    // texture.Render(get_tex_x(), get_tex_y());
 }
@@ -494,15 +456,6 @@ void BodyPart::initialize(float width, float height, float center_x, float cente
    fixture_->SetFilterData(filter);
 }
 
-void BodyPart::update(int x_offset, int y_offset) {
+void BodyPart::Update(int x_offset, int y_offset) {
    set_x(owner_->get_x() + x_rel + x_offset);
-   // set_y(owner_->get_y() + y_rel + y_offset);
-   // set_y(get_y() + y_offset);
-
-   //add_x(x_offset);
-   // std::cout << "y_offset = " << y_offset << std::endl;
-   // std::cout << "get_y() before = " << get_y() << std::endl;
-   //add_y(y_offset);
-   // std::cout << "get_y() after = " << get_y() << std::endl;
-   //std::cout << "res = " << owner_->get_y() + y_rel + y_offset << std::endl;
 }

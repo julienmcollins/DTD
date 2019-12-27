@@ -93,7 +93,7 @@ class Projectile : public Object {
       }
 
       // Update functions will just animate them
-      virtual void update();
+      virtual void Update();
 
       // Get owner
       bool get_owner() const;

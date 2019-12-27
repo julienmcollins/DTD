@@ -115,7 +115,7 @@ Projectile::Projectile(std::string name, int x, int y, float width, float height
 }
 
 // Update function
-void Projectile::update() {
+void Projectile::Update() {
    // Check the status
    if (object_state_ == ALIVE) {
       // Get normal animation and animate it

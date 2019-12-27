@@ -46,13 +46,24 @@ class Element {
       // Constructor
       Element(int x, int y, int width, int height);
 
+      /********** SETTERS AND GETTERS FOR MODEL AND HITBOX *******/
+      void set_hitbox_x(float x);
+      void set_hitbox_y(float y);
+      void set_model_x(float x);
+      void set_model_y(float y);
+
+      float get_hitbox_x();
+      float get_hitbox_y();
+      float get_model_x();
+      float get_model_y();
+
+      float get_height() const;
+      float get_width() const;
+      /***********************************************************/
+
       // Setters
       void set_x(int new_x);
       void set_y(int new_y);
-      void set_tex_x(int new_x);
-      void set_tex_y(int new_y);
-      void set_height(int new_height);
-      void set_width(int new_width);
 
       // Getters
       float get_x();
@@ -61,15 +72,9 @@ class Element {
       float get_tex_y();
       float get_anim_x();
       float get_anim_y();
-      float get_height() const;
-      float get_width() const;
 
       // Adders
-      void add_x(int add);
-      void sub_x(int sub);
       void sub_tex_x(int sub);
-      void add_y(int add);
-      void sub_y(int add);
 
       // Enum for directions
       enum DIRS {
@@ -112,7 +117,7 @@ class Element {
       };
 
       // Set collisions
-      void set_collision(uint16 collision_types, b2Fixture *fixture = nullptr);
+      void SetCollision(uint16 collision_types, b2Fixture *fixture = nullptr);
 
       /*******************************/
 
@@ -153,6 +158,10 @@ class Element {
 
       /*********** MATRIX STUFF *******************/
       glm::mat4 element_model;
+      glm::mat4 element_hitbox;
+
+      float model_angle;
+      float hitbox_angle;
       /********************************************/
 
       // virtual load media
@@ -171,16 +180,12 @@ class Element {
       void Render(Texture *texture, int x = 0, int y = 0);
 
       // Update function for all elements
-      virtual void move();
-      virtual void animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
-      virtual void update(bool freeze = false);
-
-      // Draw function if immediate drawing is desired
-      void draw(Texture *tex = NULL, int reset = 0);
+      virtual void Move();
+      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
+      virtual void Update(bool freeze = false);
 
       // Texture related stuff
       virtual Texture *get_texture();
-      GLFloatRect *get_curr_clip();
 
       // Texture for each element
       Texture texture;
@@ -201,11 +206,6 @@ class Element {
       // Check if marked for destroy
       bool is_marked_for_destroy() const {
          return mark_for_immediate_destroy_;
-      }
-
-      // Apply force
-      void apply_force(const b2Vec2 force) {
-         body->ApplyForceToCenter(force, true);
       }
 
       // Start and end contact
@@ -235,10 +235,6 @@ class Element {
       // Height and widths
       float height_;
       float width_;
-
-   public:
-      // This section will deal with everything OpenGL related
-      
 };
 
 
@@ -287,8 +283,8 @@ class BodyPart : public Sensor {
       virtual void initialize(float width, float height, float center_x, float center_y, uint16 category = CAT_SENSOR);
 
       // Update function only takes the offsetted values
-      virtual void update(bool freeze = false) {};
-      void update(int x_offset = 0, int y_offset = 0);
+      virtual void Update(bool freeze = false) {};
+      void Update(int x_offset = 0, int y_offset = 0);
 
       // Activate and deactivate
       virtual void activate_sensor() {

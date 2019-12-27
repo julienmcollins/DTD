@@ -27,7 +27,7 @@ class Level {
       Level(std::string file, Application::FOREST level);
 
       // Update function for the level, which will Render all of its assets
-      void update();
+      void Update();
 
       // Add an enemy to the level
       void add_enemy(Enemy *new_enemy);

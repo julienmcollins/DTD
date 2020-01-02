@@ -124,10 +124,10 @@ void PlayerArm::StartContact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftArm") {
             player->contacts_[Player::LEFT_ARM] = 1;
-            std::cout << "PlayerArm::StartContact() - left arm in contact\n";
+            // std::cout << "PlayerArm::StartContact() - left arm in contact\n";
          } else {
             player->contacts_[Player::RIGHT_ARM] = 1;
-            std::cout << "PlayerArm::StartContact() - right arm in contact\n";
+            // std::cout << "PlayerArm::StartContact() - right arm in contact\n";
          }
       } else if (element->type() == "Projectile" || !element->is_enemy()) {
          player->TakeDamage(10);
@@ -144,10 +144,10 @@ void PlayerArm::EndContact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftArm") {
             player->contacts_[Player::LEFT_ARM] = 0;
-            std::cout << "PlayerArm::StartContact() - lost contact left arm\n";
+            // std::cout << "PlayerArm::StartContact() - lost contact left arm\n";
          } else {
             player->contacts_[Player::RIGHT_ARM] = 0;
-            std::cout << "PlayerArm::StartContact() - lost contact right arm\n";
+            // std::cout << "PlayerArm::StartContact() - lost contact right arm\n";
          }
       }
    }
@@ -171,7 +171,7 @@ void PlayerHand::StartContact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftHand") {
             player->contacts_[Player::LEFT_HAND] = 1;
-            std::cout << "PlayerHand::StartContact() - in contact with left hand\n";
+            // std::cout << "PlayerHand::StartContact() - in contact with left hand\n";
          } else {
             player->contacts_[Player::RIGHT_HAND] = 1;
          }
@@ -190,7 +190,7 @@ void PlayerHand::EndContact(Element *element) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
          if (sub_type() == "PlayerLeftHand") {
             player->contacts_[Player::LEFT_HAND] = 0;
-            std::cout << "PlayerHand::EndContact() - lost contact with left hand\n";
+            // std::cout << "PlayerHand::EndContact() - lost contact with left hand\n";
          } else {
             player->contacts_[Player::RIGHT_HAND] = 0;
          }
@@ -749,7 +749,7 @@ void Player::Move() {
 
    // Check if shooting
    if (shooting) {
-      if (GetAnimationByName("arm_throw")->curr_frame > 5) {
+      if (GetAnimationByName("arm_throw")->curr_frame > 0) {
          num_of_projectiles++;
          if (num_of_projectiles == 1) {
             CreateProjectile("player_projectile", 21.0f, 12.0f, 38, -12, 41, 1, 10, 0.0f, 0.0f);
@@ -956,10 +956,10 @@ Projectile* Player::CreateProjectile(std::string name, float width, float height
    // Create based on direction
    if (entity_direction == RIGHT) {
       proj = new Projectile(name, get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-            width, height, 1, 10, 10.4f, 0.0f, this);
+            width, height, 1, 10, 15.4f, 0.0f, this);
    } else {
       proj = new Projectile(name, get_tex_x() + delta_x_l, get_tex_y() + delta_y,
-            width, height, 1, 10, 10.4f, 0.0f, this);
+            width, height, 1, 10, 15.4f, 0.0f, this);
    }
 
    // Set shot direction

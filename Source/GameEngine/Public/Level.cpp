@@ -211,11 +211,11 @@ void Level::Update() {
    platforms.sprite_sheet->Render(0.0f, 0.0f, 0.0f, platforms.GetAnimationByName(pf));
 
    // Render platforms
-   for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {
-      if (*it) {
-         (*it)->Update();
-      }
-   }
+   // for (vector<Platform *>::iterator it = platforms_.begin(); it != platforms_.end(); ++it) {
+   //    if (*it) {
+   //       (*it)->Update();
+   //    }
+   // }
 
    // Render enemies
    for (vector<Enemy *>::iterator it = enemies_.begin(); it != enemies_.end();) {

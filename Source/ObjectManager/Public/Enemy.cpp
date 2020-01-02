@@ -207,7 +207,7 @@ void Fecreez::Move() {
    // attack
    if (enemy_state_ == ATTACK) {
       if (GetAnimationByName("attack")->curr_frame > 4 && shoot_timer_ >= 100) {
-         Projectile *tmp = CreateProjectile("fecreez_projectile", 24.0f, 15.0f, 15, -10, 70, 0, 10, 10.0f, 0.0f);
+         Projectile *tmp = CreateProjectile("fecreez_projectile", 22.0f, 15.0f, 17, -12, 70, 0, 10, 15.0f, 0.0f);
          tmp->body->SetGravityScale(0);
          shoot_timer_ = 0;
       }
@@ -309,9 +309,6 @@ Rosea::Rosea(int x, int y, float angle) :
    anchor_x = x;
    anchor_y = y;
    element_shape.shape_type.square.angle = angle;
-
-   // Set element model
-   element_model = glm::translate(element_model, glm::vec3(x, y, 0.0f));
 
    // Set enemy state
    enemy_state_ = IDLE;

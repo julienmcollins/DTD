@@ -34,8 +34,8 @@ void Platform::setup() {
    body = Application::GetInstance().world_.CreateBody(&body_def);
 
    // Set box
-   float box_x = (get_width() / 2.0f) * Application::GetInstance().to_meters_ - 0.01f;
-   float box_y = (get_height() / 2.0f) * Application::GetInstance().to_meters_ - 0.01f;
+   float box_x = (get_width() / 2.0f) * Application::GetInstance().to_meters_;
+   float box_y = (get_height() / 2.0f) * Application::GetInstance().to_meters_;
    box.SetAsBox(box_x, box_y);
 
    // Create fixture
@@ -61,10 +61,15 @@ Platform::~Platform() {
 Projectile::Projectile(std::string name, int x, int y, float width, float height,
       bool owner, int damage, float force_x, float force_y, Entity *entity) :
    Object(x, y, 0.0f, 0.0f, entity), 
-   owner_(owner), damage_(damage), name(name) {
+   owner_(owner), damage_(damage), normal_hit_diff_x_(0.0f), normal_hit_diff_y_(0.0f), name(name) {
 
    // Load the media
    LoadMedia();
+
+   // Calculate difference
+   // TODO: Find a better way to fix difference between normal and hit projectiles
+   normal_hit_diff_x_ = GetAnimationByName(name + "_hit")->half_width - GetAnimationByName(name + "_normal")->half_width;
+   normal_hit_diff_y_ = GetAnimationByName(name + "_hit")->half_height - GetAnimationByName(name + "_normal")->half_height;
 
    // Set body type
    body_def.type = b2_dynamicBody;
@@ -80,8 +85,8 @@ Projectile::Projectile(std::string name, int x, int y, float width, float height
    body = Application::GetInstance().world_.CreateBody(&body_def);
 
    // Set box dimensions
-   float width_dim = (width / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
-   float height_dim = (height / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
+   float width_dim = (width / 2.0f) * Application::GetInstance().to_meters_;
+   float height_dim = (height / 2.0f) * Application::GetInstance().to_meters_;
    box.SetAsBox(width_dim, height_dim);
 
    // Set various fixture definitions and create fixture
@@ -122,7 +127,6 @@ void Projectile::Update() {
       sprite_sheet->Animate(GetAnimationFromState());
 
       // Render
-      // std::cout << "Life " << get_anim_x() << " " << get_anim_y() << std::endl;
       sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
    } else if (object_state_ == DEAD) {
       if (GetAnimationFromState()->curr_frame >= GetAnimationFromState()->max_frame) {
@@ -134,8 +138,7 @@ void Projectile::Update() {
       sprite_sheet->Animate(GetAnimationFromState());
 
       // Render
-      // std::cout << "Death " << get_anim_x() << " " << get_anim_y() << std::endl;
-      sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
+      sprite_sheet->Render(get_hitbox_x() + normal_hit_diff_x_, get_hitbox_y() + normal_hit_diff_y_, 0.0f, GetAnimationFromState(), true);
    }
 }
 
@@ -165,16 +168,12 @@ bool Projectile::LoadMedia() {
    sprite_sheet = RenderingEngine::GetInstance().LoadTexture("projectile_master_sheet", proj_path.c_str());
 
    /* Load specific projectiles */
-   if (name == "player_projectile") { // Load eraser
-      animations.emplace("player_projectile_normal", new Animation(sprite_sheet, "player_projectile_normal", 22.0f, 12.0f, 0.0f, 3, 1.0f / 20.0f));
-      animations.emplace("player_projectile_hit", new Animation(sprite_sheet, "player_projectile_hit", 21.0f, 12.0f, 12.0f, 4, 1.0f / 20.0f));
-   } else if (name == "fecreez_projectile") { // Load fecreez projectile
-      animations.emplace("fecreez_projectile_normal", new Animation(sprite_sheet, "fecreez_projectile_normal", 24.0f, 15.0f, 24.0f, 8, 1.0f / 20.0f));
-      animations.emplace("fecreez_projectile_hit", new Animation(sprite_sheet, "fecreez_projectile_hit", 24.0f, 15.0f, 39.0f, 8, 1.0f / 20.0f));
-   } else if (name == "fruig_projectile") { // Load fruig projectile
-      animations.emplace("fruig_projectile_normal", new Animation(sprite_sheet, "fruig_projectile_normal", 10.0f, 9.0f, 54.0f, 5, 1.0f / 20.0f));
-      animations.emplace("fruig_projectile_hit", new Animation(sprite_sheet, "fruig_projectile_hit", 65.0f, 9.0f, 63.0f, 9, 1.0f / 20.0f));
-   }
+   animations.emplace("player_projectile_normal", new Animation(sprite_sheet, "player_projectile_normal", 24.0f, 14.0f, 0.0f, 3, 1.0f / 20.0f));
+   animations.emplace("player_projectile_hit", new Animation(sprite_sheet, "player_projectile_hit", 24.0f, 14.0f, 14.0f, 4, 1.0f / 20.0f));
+   animations.emplace("fecreez_projectile_normal", new Animation(sprite_sheet, "fecreez_projectile_normal", 26.0f, 17.0f, 28.0f, 8, 1.0f / 20.0f));
+   animations.emplace("fecreez_projectile_hit", new Animation(sprite_sheet, "fecreez_projectile_hit", 26.0f, 17.0f, 45.0f, 8, 1.0f / 20.0f));
+   animations.emplace("fruig_projectile_normal", new Animation(sprite_sheet, "fruig_projectile_normal", 12.0f, 11.0f, 62.0f, 5, 1.0f / 20.0f));
+   animations.emplace("fruig_projectile_hit", new Animation(sprite_sheet, "fruig_projectile_hit", 67.0f, 11.0f, 73.0f, 9, 1.0f / 20.0f));
 
    // Load animations
    RenderingEngine::GetInstance().LoadResources(this);

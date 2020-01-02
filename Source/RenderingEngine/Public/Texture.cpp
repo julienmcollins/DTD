@@ -166,7 +166,7 @@ void Texture::Free_VBO() {
     }
 }
 
-void Texture::Render(float x, float y, GLfloat rotate, Animation *clip, glm::vec3 color, glm::mat4 m) {
+void Texture::Render(float x, float y, GLfloat rotate, Animation *clip,  bool render_from_center, glm::vec3 color) {
    // std::cout << texture_ID << std::endl;
    if (texture_ID != 0) {
       // Use shader
@@ -203,15 +203,13 @@ void Texture::Render(float x, float y, GLfloat rotate, Animation *clip, glm::vec
       // Transform it
       glm::mat4 model = glm::mat4(1.0f);
       if (clip) {
-            if (m != glm::mat4(1.0f)) {
-               model = m;
-            } else {
-               model = glm::translate(model, glm::vec3(x + clip->half_width, y + clip->half_height, 0.0f));
-            }
-            rotate = rotate * (M_PI / 180.0f);
-            model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f));
+         float final_x = render_from_center ? x : x + clip->half_width;
+         float final_y = render_from_center ? y : y + clip->half_height;
+         model = glm::translate(model, glm::vec3(final_x, final_y, 0.0f));
+         rotate = rotate * (M_PI / 180.0f);
+         model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f));
       } else {
-            model = glm::translate(model, glm::vec3(x + image_width / 2.0, y + image_height / 2.0, 0.0));
+         model = glm::translate(model, glm::vec3(x + image_width / 2.0, y + image_height / 2.0, 0.0));
       }
 
       // Set transforms and color

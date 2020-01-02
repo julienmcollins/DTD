@@ -121,6 +121,11 @@ class Projectile : public Object {
 
       // Damage amount
       int damage_;
+   
+   private:
+      // Diff between normal and hit widths
+      float normal_hit_diff_x_;
+      float normal_hit_diff_y_;
 };
 
 #endif

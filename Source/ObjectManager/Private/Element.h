@@ -169,14 +169,13 @@ class Element {
 
       // Set and add hitboxes
       void SetHitbox(int x, int y, SHAPE_TYPE type = SQUARE, int group = -1);
-      void create_hitbox(float x, float y);
+      void CreateHitbox(float x, float y);
 
       // Check to see if it's still alive
       virtual bool is_alive();
       bool alive;
 
       // Render function
-      void texture_render(Texture *texture);
       void Render(Texture *texture, int x = 0, int y = 0);
 
       // Update function for all elements

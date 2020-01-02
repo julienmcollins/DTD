@@ -21,11 +21,13 @@ Element::Element(int x, int y, int width, int height) :
    height_ = height;
    width_ = width;
 
-   // Set model
+   // Set model and hitbox
    element_model = glm::mat4(1.0f);
+   element_hitbox = glm::mat4(1.0f);
 
-   // Start fps timer
-   //fps_timer.start();
+   // Set element model and hitbox
+   element_model = glm::translate(element_model, glm::vec3(x, y, 0.0f));
+   element_hitbox = glm::translate(element_hitbox, glm::vec3(x, y, 0.0f));
 }
 
 /********** SET AND GET HITBOX AND MODEL ***************/
@@ -38,7 +40,7 @@ void Element::set_hitbox_x(float x) {
 }
 
 void Element::set_hitbox_y(float y) {
-   element_hitbox[3][1] = y / 100.0f;
+   element_hitbox[3][1] = -(y / 100.0f);
    if (body) {
       body->SetTransform(b2Vec2(element_hitbox[3][0], element_hitbox[3][1]), hitbox_angle);
    }
@@ -53,10 +55,12 @@ void Element::set_model_y(float y) {
 }
 
 float Element::get_hitbox_x() {
+   element_hitbox[3][0] = body->GetPosition().x * 100.0f;
    return element_hitbox[3][0];
 }
 
 float Element::get_hitbox_y() {
+   element_hitbox[3][1] = -(body->GetPosition().y * 100.0f);
    return element_hitbox[3][1];
 }
 
@@ -254,7 +258,7 @@ void Element::SetHitbox(int x, int y, SHAPE_TYPE type, int group) {
    }
 }
 
-void Element::create_hitbox(float x, float y) {
+void Element::CreateHitbox(float x, float y) {
    body_def.type = b2_dynamicBody;
    body_def.position.Set(x, y);
    body_def.fixedRotation = true;
@@ -292,11 +296,6 @@ bool Element::is_alive() {
 
    // Return true otherwise
    return true;
-}
-
-// Render solely based on texture
-void Element::texture_render(Texture *texture) {
-   // texture->Render(texture->get_x(), texture->get_y(), texture->curr_clip_);
 }
 
 // Render function

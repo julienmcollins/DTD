@@ -754,10 +754,13 @@ Mosquibler::~Mosquibler() {}
 
 // Constructor
 Fruig::Fruig(int x, int y) :
-   Enemy(x, y, 79, 140) {
+   Enemy(x, y, 79, 110) {
+
+   // Set center
+   element_shape.center = {0.0f, -0.1f};
 
    // Set hitbox
-   SetHitbox(x, y);
+   SetHitbox(x, y, SQUARE);
 
    // Set health
    health = 10;
@@ -801,7 +804,7 @@ void Fruig::Move() {
    if (enemy_state_ == IDLE) {
       // Let goop fall if it reaches the correct point in the animation.
       if (GetAnimationByName("idle")->curr_frame == 8 && shoot_timer_ > 20) {
-         proj_ = CreateProjectile("fruig_projectile", 10.0f, 9.0f, -30, 0, 170, 10, 10, 0.0f, 0.0f);
+         proj_ = CreateProjectile("fruig_projectile", 10.0f, 9.0f, -30, 0, 130, 10, 10, 0.0f, 0.0f);
          shoot_timer_ = 0;
       }
 

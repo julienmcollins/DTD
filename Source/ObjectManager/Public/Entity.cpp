@@ -956,10 +956,10 @@ Projectile* Player::CreateProjectile(std::string name, float width, float height
    // Create based on direction
    if (entity_direction == RIGHT) {
       proj = new Projectile(name, get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-            width, height, 1, 10, 15.4f, 0.0f, this);
+            width, height, 1, 10, 17.4f, 0.0f, this);
    } else {
       proj = new Projectile(name, get_tex_x() + delta_x_l, get_tex_y() + delta_y,
-            width, height, 1, 10, 15.4f, 0.0f, this);
+            width, height, 1, 10, 17.4f, 0.0f, this);
    }
 
    // Set shot direction

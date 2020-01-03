@@ -6,7 +6,7 @@ OBJS = $(wildcard Source/*/Public/*.cpp)
 
 #CC specifies which compiler we're using
 CC = g++ -I. -I./Source/ObjectManager/ -I./Source/RenderingEngine/ -I./Source/GameEngine/
-CCW32 = i686-w64-mingw32-gcc
+CCW32 = i686-w64-mingw32-gcc -I. -I./Source/ObjectManager/ -I./Source/RenderingEngine/ -I./Source/GameEngine/
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings

@@ -260,7 +260,7 @@ void PlayerLeg::EndContact(Element *element) {
 Player::Player() : 
    // The new sprite is going to be 37 wide (the character itself)
    // TODO: Load in new smaller sprite sheet
-   Entity(960, 412, 37, 104), player_state_(STAND),
+   Entity(960, 412, 31, 104), player_state_(STAND),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
    immunity_duration_(0.5f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
@@ -290,11 +290,11 @@ Player::Player() :
    float height = (get_height() / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
    const b2Vec2 center = {(PC_OFF_X - get_width()) / 2.0f * Application::GetInstance().to_meters_, 
                           PC_OFF_Y * Application::GetInstance().to_meters_};
-   box.SetAsBox(width, height, {0.0f, 0.0f}, 0.0f);
+   box.SetAsBox(width, height);
 
    // Set various fixture definitions and create fixture
    fixture_def.shape = &box;
-   fixture_def.density = 1.0f;
+   fixture_def.density = 1.25f;
    fixture_def.friction = 0.0f;
    fixture_def.userData = this;
    main_fixture = body->CreateFixture(&fixture_def);
@@ -321,8 +321,8 @@ Player::Player() :
    player_body_left_.push_back(new PlayerArm(this, 19.5, -7, 6, 22, "PlayerRightArm"));
    // player_body_left_.push_back(new PlayerHand(this, 6, -41, "PlayerLeftHand"));
    // player_body_left_.push_back(new PlayerHand(this, 17, -41, "PlayerRightHand"));
-   player_body_left_.push_back(new PlayerLeg(this, -10.5, -33, 3, 34, "PlayerLeftLeg"));
-   player_body_left_.push_back(new PlayerLeg(this, 10.5, -33, 3, 34, "PlayerRightLeg"));
+   player_body_left_.push_back(new PlayerLeg(this, -11, -33, 2, 34, "PlayerLeftLeg"));
+   player_body_left_.push_back(new PlayerLeg(this, 11, -33, 2, 34, "PlayerRightLeg"));
 
    // Deactivate the left
    // for (int i = 0; i < player_body_left_.size(); i++) {
@@ -330,7 +330,7 @@ Player::Player() :
    // }
 
    // Set health. TODO: set health in a better way
-   health = 30;
+   health = 3000;
 
    // TEMPORARY SOLUTION
    //textures["arm_throw"]->completed_ = true;
@@ -512,26 +512,26 @@ void Player::Update(bool freeze) {
 void Player::adjust_deltas() {
    if (player_state_ == STAND) {
       if (entity_direction == RIGHT) {
-         arm_delta_x = -4;
+         arm_delta_x = 2;
          arm_delta_y = 44;
-         arm_delta_shoot_x = -3;
+         arm_delta_shoot_x = 3;
          arm_delta_shoot_y = 39;
       } else {
-         arm_delta_x = -20;
+         arm_delta_x = -14;
          arm_delta_y = 44;
-         arm_delta_shoot_x = -57;
+         arm_delta_shoot_x = -51;
          arm_delta_shoot_y = 39;
       }
    } else if (player_state_ == RUN && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
       if (entity_direction == RIGHT) {
-         arm_delta_x = -4;
+         arm_delta_x = 2;
          arm_delta_y = 44;
-         arm_delta_shoot_x = 2;
+         arm_delta_shoot_x = 8;
          arm_delta_shoot_y = 39;
       } else {
-         arm_delta_x = -20;
+         arm_delta_x = -14;
          arm_delta_y = 44;
-         arm_delta_shoot_x = -58;
+         arm_delta_shoot_x = -52;
          arm_delta_shoot_y = 39;
       }
    } else if (player_state_ == STOP && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
@@ -541,22 +541,22 @@ void Player::adjust_deltas() {
          arm_delta_shoot_x = 2;
          arm_delta_shoot_y = 34;
       } else {
-         arm_delta_x = -20;
+         arm_delta_x = -14;
          arm_delta_y = 43;
-         arm_delta_shoot_x = -58;
+         arm_delta_shoot_x = -52;
          arm_delta_shoot_y = 34;
       }
    } else if (player_state_ == RUN_AND_JUMP || player_state_ == JUMP || player_state_ == DOUBLE_JUMP) {
       // Adjust deltas
       if (entity_direction == RIGHT) {
-         arm_delta_x = -3;
+         arm_delta_x = 3;
          arm_delta_y = 43;
-         arm_delta_shoot_x = -2;
+         arm_delta_shoot_x = 4;
          arm_delta_shoot_y = 34;
       } else {
-         arm_delta_x = -20;
+         arm_delta_x = -14;
          arm_delta_y = 43;
-         arm_delta_shoot_x = -57;
+         arm_delta_shoot_x = -51;
          arm_delta_shoot_y = 34;
       }
    }
@@ -659,7 +659,7 @@ void Player::change_player_state() {
    }
 
    // Change state to balance if one leg on and the other one not
-   if ((contacts_[LEFT_LEG] && !contacts_[RIGHT_LEG]) || (!contacts_[LEFT_LEG] && contacts_[RIGHT_LEG])) {
+   if ((contacts_[LEFT_LEG] && !contacts_[RIGHT_LEG] && entity_direction == RIGHT) || (!contacts_[LEFT_LEG] && contacts_[RIGHT_LEG] && entity_direction == LEFT)) {
       player_state_ = BALANCE;
       return;
    }

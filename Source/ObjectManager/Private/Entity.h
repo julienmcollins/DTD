@@ -286,6 +286,9 @@ class Player : public Entity {
       // Previous position of player
       float prev_pos_x_;
       float prev_pos_y_;
+      float next_pos_x_;
+      float next_pos_y_;
+      b2Vec2 pos_vector_;
 
       // Player body parts
       std::vector<BodyPart*> player_body_right_;

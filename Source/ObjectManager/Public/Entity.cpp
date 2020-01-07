@@ -456,7 +456,7 @@ void Player::ProcessInput(const Uint8 *key_state) {
    }
 
    // Process space key
-   if (key_state[SDL_SCANCODE_SPACE]) {
+   if (key_state[SDL_SCANCODE_SPACE] && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != BALANCE) {
       shooting = true;
    } else {
       if (GetAnimationByName("arm_throw")->completed) {

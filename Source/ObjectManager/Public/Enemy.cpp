@@ -275,7 +275,10 @@ Animation *Arm::GetAnimationFromState() {
 // Callback function for arm will set rosea's state to hurt
 void Arm::StartContact(Element *element) {
    if (element->type() == "Player") {
-      Application::GetInstance().get_player()->TakeDamage(10);
+      Player *temp = Application::GetInstance().get_player();
+      temp->TakeDamage(10);
+      float f_y = temp->body->GetLinearVelocity().y < 0 ? -temp->body->GetLinearVelocity().y : temp->body->GetLinearVelocity().y;
+      temp->body->SetLinearVelocity({-temp->body->GetLinearVelocity().x * 1.5f, f_y * 1.5f});
    } else if (element->type() == "Projectile") {
       if (rosea_->get_state() != ATTACK) {
          rosea_->set_state(HURT);
@@ -803,8 +806,8 @@ void Fruig::Move() {
    // Check if state is idle?
    if (enemy_state_ == IDLE) {
       // Let goop fall if it reaches the correct point in the animation.
-      if (GetAnimationByName("idle")->curr_frame == 8 && shoot_timer_ > 20) {
-         proj_ = CreateProjectile("fruig_projectile", 10.0f, 9.0f, -30, 0, 130, 10, 10, 0.0f, 0.0f);
+      if (GetAnimationByName("idle")->curr_frame == 7 && shoot_timer_ > 20) {
+         proj_ = CreateProjectile("fruig_projectile", 10.0f, 9.0f, -37, 0, 130, 10, 10, 0.0f, 0.0f);
          shoot_timer_ = 0;
       }
 
@@ -813,7 +816,7 @@ void Fruig::Move() {
 
       // Check for death of proj
       if (proj_ && !proj_->shift && proj_->get_state() == Object::DEAD) {
-         proj_->sub_tex_x(24);
+         // proj_->sub_tex_x(24);
          proj_->shift = true;
       }
    }

@@ -85,8 +85,8 @@ Projectile::Projectile(std::string name, int x, int y, float width, float height
    body = Application::GetInstance().world_.CreateBody(&body_def);
 
    // Set box dimensions
-   float width_dim = (width / 2.0f) * Application::GetInstance().to_meters_;
-   float height_dim = (height / 2.0f) * Application::GetInstance().to_meters_;
+   float width_dim = ((width - 2.0f) / 2.0f) * Application::GetInstance().to_meters_;
+   float height_dim = ((height - 4.0f) / 2.0f) * Application::GetInstance().to_meters_;
    box.SetAsBox(width_dim, height_dim);
 
    // Set various fixture definitions and create fixture
@@ -127,7 +127,7 @@ void Projectile::Update() {
       sprite_sheet->Animate(GetAnimationFromState());
 
       // Render
-      sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
+      sprite_sheet->Render(get_hitbox_x(), get_hitbox_y(), 0.0f, GetAnimationFromState());
    } else if (object_state_ == DEAD) {
       if (GetAnimationFromState()->curr_frame >= GetAnimationFromState()->max_frame) {
          alive = false;
@@ -138,7 +138,7 @@ void Projectile::Update() {
       sprite_sheet->Animate(GetAnimationFromState());
 
       // Render
-      sprite_sheet->Render(get_hitbox_x() + normal_hit_diff_x_, get_hitbox_y() + normal_hit_diff_y_, 0.0f, GetAnimationFromState(), true);
+      sprite_sheet->Render(get_hitbox_x(), get_hitbox_y(), 0.0f, GetAnimationFromState(), true);
    }
 }
 

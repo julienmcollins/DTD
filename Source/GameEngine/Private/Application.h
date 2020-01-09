@@ -36,6 +36,7 @@
 
 class Level;
 class Enemy;
+class DevelZoom;
 
 // For returning the screen position
 typedef struct {
@@ -344,6 +345,9 @@ class Application {
       std::unordered_map<int, Texture> background;
       /*****************************************************/
    
+      // Zoom
+      DevelZoom *zoom_;
+
       // Quit flag for application
       bool quit;
 

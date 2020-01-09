@@ -11,7 +11,7 @@ DevelZoom::DevelZoom() {
       -1.0f,  1.0f,  0.0f, 1.0f,
       -1.0f, -1.0f,  0.0f, 0.0f,
        1.0f, -1.0f,  1.0f, 0.0f,
- 
+
       -1.0f,  1.0f,  0.0f, 1.0f,
        1.0f, -1.0f,  1.0f, 0.0f,
        1.0f,  1.0f,  1.0f, 1.0f
@@ -22,14 +22,11 @@ DevelZoom::DevelZoom() {
    glGenBuffers(1, &screen_VBO_);
    glBindVertexArray(screen_VAO_);
    glBindBuffer(GL_ARRAY_BUFFER, screen_VBO_);
-   glBufferData(GL_ARRAY_BUFFER, sizeof(screen_vertices), &screen_vertices, GL_DYNAMIC_DRAW);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(screen_vertices), &screen_vertices, GL_STATIC_DRAW);
    glEnableVertexAttribArray(0);
    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) 0);
    glEnableVertexAttribArray(1);
    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) (2 * sizeof(float)));
-
-   // Enable shader stuff
-   RenderingEngine::GetInstance().GetShaderReference("zoom_shader")->Use()->SetInteger("screenTexture", 0);
 
    // Framebuffer config
    glGenFramebuffers(1, &framebuffer_);
@@ -38,7 +35,7 @@ DevelZoom::DevelZoom() {
    // Color attachment
    glGenTextures(1, &texture_color_buffer_);
    glBindTexture(GL_TEXTURE_2D, texture_color_buffer_);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Application::GetInstance().SCREEN_WIDTH, Application::GetInstance().SCREEN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920.0f, 1080.0f, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_color_buffer_, 0);
@@ -50,6 +47,9 @@ DevelZoom::DevelZoom() {
       std::cout << "ERROR: FRAMEBUFFER is not complete\n";
    }
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+   glBindVertexArray(0);
+   glBindTexture(GL_TEXTURE_2D, 0);
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void DevelZoom::SetToFrameBuffer() {

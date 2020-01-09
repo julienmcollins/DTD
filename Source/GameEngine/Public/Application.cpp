@@ -16,6 +16,8 @@
 #include "Source/RenderingEngine/Private/RenderingEngine.h"
 #include "Source/RenderingEngine/Private/Texture.h"
 
+#include "Source/Development/Private/DevelZoom.h"
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
@@ -221,6 +223,8 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 
    // Set contact listener
    world_.SetContactListener(&contact_listener_);
+
+   zoom_ = new DevelZoom();
 
    // Start counting frames per second
    fpsTimer.Start();

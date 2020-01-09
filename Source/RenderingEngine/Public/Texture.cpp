@@ -38,7 +38,7 @@ Texture::Texture(Element *element, int max_frame, float fps_val) : clips_(NULL),
     image_format = GL_RGBA;
 
     // Start timer
-    fps_timer.start();
+    fps_timer.Start();
 }
 
 // Loads textures from filesSDL_image Error: %s\n
@@ -110,52 +110,52 @@ void Texture::Free() {
 }
 
 void Texture::init_VAO() {
-    // If texture is loaded and VBO does not already exist
-    if (VBO_ID == 0) {
-        // Vertex data
-        // GLTexturedVertex2D vData[ 4 ];
-        double vertices[] = {
-            // positions  // texture coords
-            1.0f,  1.0f,  1.0f, 1.0f, // top right
-            1.0f, -1.0f,  1.0f, 0.0f, // bottom right
-           -1.0f, -1.0f,  0.0f, 0.0f, // bottom left
-           -1.0f,  1.0f,  0.0f, 1.0f  // top left
-        };
+   // If texture is loaded and VBO does not already exist
+   if (VBO_ID == 0) {
+      // Vertex data
+      // GLTexturedVertex2D vData[ 4 ];
+      double vertices[] = {
+         // positions  // texture coords
+         1.0,  1.0,  1.0, 1.0, // top right
+         1.0, -1.0,  1.0, 0.0, // bottom right
+        -1.0, -1.0,  0.0, 0.0, // bottom left
+        -1.0,  1.0,  0.0, 1.0  // top left
+      };
 
-        // Indices
-        GLuint indices[] = {
-            3, 1, 2, // First triangle
-            3, 0, 1  // Second triangle
-        };
+      // Indices
+      GLuint indices[] = {
+         3, 1, 2, // First triangle
+         3, 0, 1  // Second triangle
+      };
 
-        // Generate buffers
-        glGenVertexArrays(1, &VAO_ID);
-        glGenBuffers( 1, &VBO_ID );
-        glGenBuffers( 1, &IBO_ID );
+      // Generate buffers
+      glGenVertexArrays(1, &VAO_ID);
+      glGenBuffers( 1, &VBO_ID );
+      glGenBuffers( 1, &IBO_ID );
 
-        // Bind vertex array
-        glBindVertexArray(VAO_ID);
+      // Bind vertex array
+      glBindVertexArray(VAO_ID);
 
-        // Create VBO
-        glBindBuffer( GL_ARRAY_BUFFER, VBO_ID );
-        glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW );
+      // Create VBO
+      glBindBuffer( GL_ARRAY_BUFFER, VBO_ID );
+      glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW );
 
-        // Create IBO
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO_ID );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW );
+      // Create IBO
+      glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, IBO_ID );
+      glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW );
 
-        // Position attribute
-        glVertexAttribPointer(0, 2, GL_DOUBLE, GL_FALSE, 4 * sizeof(double), (void*)0);
-        glEnableVertexAttribArray(0);
-        
-        // Color attribute
-        glVertexAttribPointer(1, 2, GL_DOUBLE, GL_FALSE, 4 * sizeof(double), (void*)(2 * sizeof(double)));
-        glEnableVertexAttribArray(1);
+      // Position attribute
+      glVertexAttribPointer(0, 2, GL_DOUBLE, GL_FALSE, 4 * sizeof(double), (void*)0);
+      glEnableVertexAttribArray(0);
+      
+      // Color attribute
+      glVertexAttribPointer(1, 2, GL_DOUBLE, GL_FALSE, 4 * sizeof(double), (void*)(2 * sizeof(double)));
+      glEnableVertexAttribArray(1);
 
-        // Disable
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-    }
+      // Disable
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glBindVertexArray(0);
+   }
 }
 
 void Texture::Free_VBO() {
@@ -357,7 +357,7 @@ Animation::Animation(Texture *texture, std::string name, GLdouble texture_width,
     }
 
     // Start fps timer
-    fps_timer.start();
+    fps_timer.Start();
 }
 
 void Animation::flipAnimation() {

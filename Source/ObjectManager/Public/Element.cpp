@@ -370,7 +370,7 @@ Element::~Element() {
 Sensor::Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y, float density, bool set_as_body) :
    Element(center_x, center_y, height, width), sensor_contact(contact_type), owner_(entity), density_(density) {}
 
-void Sensor::initialize(float width, float height, float center_x, float center_y, uint16 category, bool is_sensor) {
+void Sensor::initialize(float width, float height, float center_x, float center_y, uint16 category, uint16 mask, bool is_sensor) {
    // Create box shape
    box.SetAsBox(width, height, {center_x, center_y}, 0.0f);
 
@@ -383,7 +383,7 @@ void Sensor::initialize(float width, float height, float center_x, float center_
 
    // Set filter
    filter.categoryBits = category;
-   filter.maskBits = CAT_PLATFORM; //| CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY | CAT_BOSS;
+   filter.maskBits = mask; //| CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY | CAT_BOSS;
    fixture_def.filter = filter;
 
    // Attach fixture

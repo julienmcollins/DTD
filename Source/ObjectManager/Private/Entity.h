@@ -302,6 +302,10 @@ class Player : public Entity {
       Timer immunity_timer_;
       float immunity_duration_;
 
+      // Edge timer
+      Timer edge_timer_;
+      float edge_duration_;
+
       // Projectile pointer
       Projectile *eraser;
       int num_of_projectiles;

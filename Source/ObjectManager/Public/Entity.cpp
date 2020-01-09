@@ -77,7 +77,7 @@ PlayerHead::PlayerHead(Player *player, float x_rel, float y_rel) :
    float height = get_height() / 200.0f;
    float x = get_x() / 100.0f;
    float y = get_y() / 100.0f;
-   Sensor::initialize(width, height, x, y, CAT_PLAYER, true);
+   Sensor::initialize(width, height, x, y, CAT_PLAYER, CAT_PLATFORM, true);
 }
 
 void PlayerHead::StartContact(Element *element) {
@@ -112,7 +112,7 @@ PlayerArm::PlayerArm(Player *player, float x_rel, float y_rel, int width, int he
    BodyPart(player, x_rel, y_rel, width, height), type_(type) {
 
    // Initialize the body part
-   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER, true);
+   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER, CAT_PLATFORM, true);
 }
 
 void PlayerArm::StartContact(Element *element) {
@@ -159,7 +159,7 @@ PlayerHand::PlayerHand(Player *player, float x_rel, float y_rel, std::string typ
    BodyPart(player, x_rel, y_rel, 7, 6), type_(type) {
 
    // Initialize the body part
-   Sensor::initialize(get_width() / 200.0f, get_height() / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER, true);
+   Sensor::initialize(get_width() / 200.0f, get_height() / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER, CAT_PLATFORM, true);
 }
 
 void PlayerHand::StartContact(Element *element) {
@@ -204,7 +204,7 @@ PlayerLeg::PlayerLeg(Player *player, float x_rel, float y_rel, int width, int he
    BodyPart(player, x_rel, y_rel, width, height), type_(type) {
 
    // Initialize the body part
-   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER, true);
+   Sensor::initialize(width / 200.0f, height / 200.0f, x_rel / 100.0f, y_rel / 100.0f, CAT_PLAYER, CAT_PLATFORM, true);
 }
 
 void PlayerLeg::StartContact(Element *element) {
@@ -263,7 +263,7 @@ Player::Player() :
    Entity(960, 412, 31, 104), player_state_(STAND),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
-   immunity_duration_(0.5f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
+   immunity_duration_(1.0f), edge_duration_(0.05f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
    lock_dir_right(false), lock_dir_up(false), rand_idle(0), eraser(nullptr), num_of_projectiles(0) {
 
    // Set entity direction
@@ -347,7 +347,7 @@ Player::Player() :
    }
 
    // Start the immunity timer
-   immunity_timer_.start();
+   immunity_timer_.Start();
 }
 
 Animation *Player::GetAnimationFromState() {
@@ -660,8 +660,15 @@ void Player::change_player_state() {
 
    // Change state to balance if one leg on and the other one not
    if ((contacts_[LEFT_LEG] && !contacts_[RIGHT_LEG] && entity_direction == RIGHT) || (!contacts_[LEFT_LEG] && contacts_[RIGHT_LEG] && entity_direction == LEFT)) {
-      player_state_ = BALANCE;
+      edge_timer_.Start();
+      if (edge_timer_.GetTicks() / (double) CLOCKS_PER_SEC > edge_duration_) {
+         player_state_ = BALANCE;
+      } else {
+         player_state_ = STAND;
+      }
       return;
+   } else {
+      edge_timer_.Stop();
    }
 
    // Special stand state
@@ -716,36 +723,17 @@ void Player::Move() {
          shift_ = true;
       }
       if (GetAnimationByName("death")->curr_frame >= 19) {
-         if (((float) Application::GetInstance().death_timer_.getTicks() / 1000.0f) >= 3.0f) {
+         if (((float) Application::GetInstance().death_timer_.GetTicks() / 1000.0f) >= 3.0f) {
             std::cout << "In death\n";
             alive = false;
-            Application::GetInstance().death_timer_.stop();
+            Application::GetInstance().death_timer_.Stop();
          }
-         // GetAnimationByName("death")->reset_frame = 19;
-         // GetAnimationByName("death")->stop_frame = 19;
       }
 
       // Set collision to only platform
       SetCollision(CAT_PLATFORM, main_fixture);
       return;
    }
-
-   // Deactivate and activate bodies
-   // if (entity_direction == LEFT && !right_deactivated_) {
-   //    for (int i = 0; i < player_body_left_.size(); i++) {
-   //       player_body_right_[i]->Sensor::deactivate_sensor();
-   //       player_body_left_[i]->Sensor::activate_sensor();
-   //    }
-   //    right_deactivated_ = true;
-   //    left_deactivated_ = false;
-   // } else if (entity_direction == RIGHT && !left_deactivated_) {
-   //    for (int i = 0; i < player_body_right_.size(); i++) {
-   //       player_body_left_[i]->Sensor::deactivate_sensor();
-   //       player_body_right_[i]->Sensor::activate_sensor();
-   //    }
-   //    left_deactivated_ = true;
-   //    right_deactivated_ = false;
-   // }
 
    // Check if shooting
    if (shooting) {
@@ -956,10 +944,10 @@ Projectile* Player::CreateProjectile(std::string name, float width, float height
    // Create based on direction
    if (entity_direction == RIGHT) {
       proj = new Projectile(name, get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-            width, height, 1, 10, 17.4f, 0.0f, this);
+            width, height, 1, 10, 10.4f, 0.0f, this);
    } else {
       proj = new Projectile(name, get_tex_x() + delta_x_l, get_tex_y() + delta_y,
-            width, height, 1, 10, 17.4f, 0.0f, this);
+            width, height, 1, 10, 10.4f, 0.0f, this);
    }
 
    // Set shot direction
@@ -985,7 +973,7 @@ void Player::TakeDamage(int damage) {
       health -= damage;
       if (health == 0) {
          player_state_ = DEATH;
-         Application::GetInstance().death_timer_.start();
+         Application::GetInstance().death_timer_.Start();
       }
    }
 }

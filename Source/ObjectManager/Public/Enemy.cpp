@@ -207,7 +207,7 @@ void Fecreez::Move() {
    // attack
    if (enemy_state_ == ATTACK) {
       if (GetAnimationByName("attack")->curr_frame > 4 && shoot_timer_ >= 100) {
-         Projectile *tmp = CreateProjectile("fecreez_projectile", 22.0f, 15.0f, 17, -12, 70, 0, 10, 15.0f, 0.0f);
+         Projectile *tmp = CreateProjectile("fecreez_projectile", 22.0f, 15.0f, 17, -12, 70, 0, 10, 10.0f, 0.0f);
          tmp->body->SetGravityScale(0);
          shoot_timer_ = 0;
       }
@@ -853,7 +853,7 @@ FleetSensor::FleetSensor(float width, float height, Entity *entity, CONTACT cont
    Sensor(height, width, entity, contact_type, center_x, center_y, 1.0f) {
 
    // Initialize
-   initialize(width, height, center_x, center_y);
+   initialize(width, height, center_x, center_y, CAT_SENSOR, CAT_PLATFORM | CAT_PLAYER | CAT_PROJECTILE | CAT_ENEMY | CAT_BOSS);
 }
 
 // Contact functions
@@ -918,9 +918,9 @@ bool Fleet::LoadMedia() {
    // Load master sheet
    std::string path = media_path + "Fleet/fleet_master_sheet.png";
    sprite_sheet = RenderingEngine::GetInstance().LoadTexture("fleet_master_sheet", path.c_str());
-   animations.emplace("idle", new Animation(sprite_sheet, "idle", 63.0, 87.0, 0.0, 11, 1.0 / 20.0));
-   animations.emplace("turn", new Animation(sprite_sheet, "turn", 63.0, 87.0, 88.0, 11, 1.0 / 20.0));
-   animations.emplace("death", new Animation(sprite_sheet, "death", 63.0, 87.0, 174.0, 18, 1.0 / 20.0));
+   animations.emplace("idle", new Animation(sprite_sheet, "idle", 65.0, 89.0, 0.0, 11, 1.0 / 24.0));
+   animations.emplace("turn", new Animation(sprite_sheet, "turn", 65.0, 89.0, 89.0, 11, 1.0 / 24.0));
+   animations.emplace("death", new Animation(sprite_sheet, "death", 65.0, 89.0, 178.0, 18, 1.0 / 24.0));
    RenderingEngine::GetInstance().LoadResources(this);
 
    // Return success
@@ -1048,7 +1048,7 @@ Mosqueenbler::Mosqueenbler(int x, int y) :
    anchor_y = y;
 
    // Start the timer
-   movement_timer_.start();
+   movement_timer_.Start();
 
    // Set shoot timer
    shoot_timer_ = 0;
@@ -1072,7 +1072,7 @@ bool Mosqueenbler::LoadMedia() {
 // Move function
 void Mosqueenbler::Move() {
    // Allow it to float
-   float y = 1 * cos(movement_timer_.getTicks() / 1000.0f) + 0.197f;
+   float y = 1 * cos(movement_timer_.GetTicks() / 1000.0f) + 0.197f;
    body->SetLinearVelocity({0.0f, y});
 
    // Spawn enemies

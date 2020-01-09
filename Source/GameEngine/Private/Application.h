@@ -92,6 +92,9 @@ class Application {
       void Update();
       void update_projectiles();
 
+      // Draw everything
+      void Draw();
+
       /*********** SDL WINDOW STUFF ***************/
 
       // The main window of the application
@@ -204,6 +207,10 @@ class Application {
          level_flag_ = new_level;
       }
 
+      // Screen Dimensions
+      float SCREEN_WIDTH;
+      float SCREEN_HEIGHT;
+
       // Destructrs the application
       ~Application();
    
@@ -214,10 +221,6 @@ class Application {
       //OpenGL context
       SDL_GLContext gl_context_;
       unsigned int gl_program_id_;
-
-      // Screen Dimensions
-      float SCREEN_WIDTH;
-      float SCREEN_HEIGHT;
 
       // Frame rate capping    
       const int SCREEN_FPS;

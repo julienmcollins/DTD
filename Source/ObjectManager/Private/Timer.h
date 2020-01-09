@@ -10,6 +10,7 @@
 #define Timer_h
 
 #include <stdint.h>
+#include <ctime>
 
 class Timer {
     public:
@@ -17,27 +18,30 @@ class Timer {
         Timer();
         
         // Clock actions
-        void start();
-        void stop();
-        void pause();
-        void unpause();
+        void Start();
+        void Stop();
+        void Pause();
+        void Unpause();
+        void Reset();
         
         // Get timer time
-        uint32_t getTicks();
+        clock_t GetTicks();
 
         // Get delta time
         int getDeltaTime();
         
         // Checks timer status
         bool isStarted();
+        bool isStopped();
         bool isPaused();
+        bool isActive();
     
     private:
         // The clock start time
-        uint32_t m_startTicks;
+        clock_t start_ticks_;
     
         // The ticks sstored when the timer was paused
-        uint32_t m_pausedTicks;
+        clock_t paused_ticks_;
 
         // Delta ticks
         int delta_;
@@ -45,8 +49,8 @@ class Timer {
         int last_tick_;
     
         // The timer status
-        bool m_paused;
-        bool m_started;
+        bool is_paused_;
+        bool is_started_;
 };
 
 #endif /* Timer_h */

@@ -223,12 +223,13 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    world_.SetContactListener(&contact_listener_);
 
    // Start counting frames per second
-   fpsTimer.start();
+   fpsTimer.Start();
 }
 
 // Initialize OpenGL
 bool Application::InitOpenGL() {
    // Load shaders, and viewport
+   // TODO: For zoom, create a function that changes this and sets it for the shader
    glm::mat4 projection = glm::ortho(0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, -1.0f, 1.0f);
 
    // Load texture shader
@@ -241,6 +242,10 @@ bool Application::InitOpenGL() {
    // Load basic perspective
    RenderingEngine::GetInstance().LoadShader("hitbox");
    RenderingEngine::GetInstance().GetShaderReference("hitbox")->Use()->SetMatrix4("projection", projection);
+
+   // Screen shader
+   // RenderingEngine::GetInstance().LoadShader("zoom_shader");
+   // RenderingEngine::GetInstance().LoadApplicationPerspective("zoom_shader", projection);
 
    // Blending?
    glEnable(GL_TEXTURE_2D);
@@ -453,6 +458,55 @@ void Application::setup_menu() {
    menu_screen_ = FIRST;
 }
 
+void Application::Draw() {
+
+   /******** UPDATE THE LEVEL *************/
+   // Do this as the last thing (testing)
+   level->Update();
+   /***************************************/
+
+   // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
+   update_projectiles();
+      
+   // Update player
+   if (player->is_alive()) {
+      // Update player
+      player->Update();
+
+      // Render the hit markers
+      for (int i = 0; i < player->hit_markers.size(); i++) {
+         player->hit_markers[i]->Update();
+      }
+
+      // Check for completed level and that player as walked to the edge of the screen
+      if (level->completed) {
+         // Destroy the level
+         delete level;
+         level = nullptr;
+
+         // Change mode to setup
+         game_flag_ = SETUP;
+
+         // Increment level_flag_
+         int inc = static_cast<int>(level_flag_);
+         level_flag_ = static_cast<FOREST>(inc + 1);
+      }
+   } else {
+      app_flag_ = GAMEOVER_SCREEN;
+      delete player;
+      delete level;
+      level = nullptr;
+      menu_flag = true;
+   }
+
+   /*
+   // DEBUG DRAW
+   world_.DrawDebugData();
+   */
+
+   // drawLines();
+}
+
 // Updates the screen
 void Application::Update() {
    // Game loop
@@ -466,10 +520,10 @@ void Application::Update() {
       world_.ClearForces();
 
       // Start cap timer
-      capTimer.start();
+      capTimer.Start();
 
       // Calculate and correct fps
-      float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
+      float avgFPS = countedFrames / ( fpsTimer.GetTicks() / 1000.f );
       if( avgFPS > 2000000 ) {
          avgFPS = 0;
       }
@@ -498,10 +552,10 @@ void Application::Update() {
          }
 
          // Start cap timer
-         capTimer.start();
+         capTimer.Start();
 
          // Calculate and correct fps
-         float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
+         float avgFPS = countedFrames / ( fpsTimer.GetTicks() / 1000.f );
          if( avgFPS > 2000000 ) {
             avgFPS = 0;
          }
@@ -513,7 +567,7 @@ void Application::Update() {
          ++countedFrames;
 
          // If frame finished early
-         int frameTicks = capTimer.getTicks();
+         int frameTicks = capTimer.GetTicks();
          if (frameTicks < SCREEN_TICKS_PER_FRAME) {
             SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
          }
@@ -523,7 +577,7 @@ void Application::Update() {
       ++countedFrames;
 
       // If frame finished early
-      int frameTicks = capTimer.getTicks();
+      int frameTicks = capTimer.GetTicks();
       if (frameTicks < SCREEN_TICKS_PER_FRAME) {
          // Wait remaining time
          SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
@@ -550,10 +604,10 @@ void Application::gameover_screen() {
    }
 
    // Start cap timer
-   capTimer.start();
+   capTimer.Start();
 
    // Calculate and correct fps
-   float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
+   float avgFPS = countedFrames / ( fpsTimer.GetTicks() / 1000.f );
    if( avgFPS > 2000000 ) {
       avgFPS = 0;
    }
@@ -567,7 +621,7 @@ void Application::gameover_screen() {
    ++countedFrames;
 
    // If frame finished early
-   int frameTicks = capTimer.getTicks();
+   int frameTicks = capTimer.GetTicks();
    if (frameTicks < SCREEN_TICKS_PER_FRAME) {
       // Wait remaining time
       SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
@@ -757,51 +811,8 @@ void Application::playground() {
       }
    }
 
-   /******** UPDATE THE LEVEL *************/
-   // Do this as the last thing (testing)
-   level->Update();
-   /***************************************/
-
-   // ITERATE THROUGH THE PROJECTILES AND DRAW THEM
-   update_projectiles();
-      
-   // Update player
-   if (player->is_alive()) {
-      // Update player
-      player->Update();
-
-      // Render the hit markers
-      for (int i = 0; i < player->hit_markers.size(); i++) {
-         player->hit_markers[i]->Update();
-      }
-
-      // Check for completed level and that player as walked to the edge of the screen
-      if (level->completed) {
-         // Destroy the level
-         delete level;
-         level = nullptr;
-
-         // Change mode to setup
-         game_flag_ = SETUP;
-
-         // Increment level_flag_
-         int inc = static_cast<int>(level_flag_);
-         level_flag_ = static_cast<FOREST>(inc + 1);
-      }
-   } else {
-      app_flag_ = GAMEOVER_SCREEN;
-      delete player;
-      delete level;
-      level = nullptr;
-      menu_flag = true;
-   }
-
-   /*
-   // DEBUG DRAW
-   world_.DrawDebugData();
-   */
-
-   drawLines();
+   // Draw everything
+   Draw();
 }
 
 // Get the height
@@ -826,8 +837,8 @@ Application::~Application() {
    SDL_RenderClear(renderer);
    
    // Stop fps timer
-   fpsTimer.stop();
-   capTimer.stop();
+   fpsTimer.Stop();
+   capTimer.Stop();
 
    //Destroy window
    SDL_DestroyRenderer(renderer);

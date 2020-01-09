@@ -244,7 +244,7 @@ class Sensor : public Element {
       Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x = 0.0f, float center_y = 0.0f, float density = 0.0f, bool set_as_body = false);
 
       // Initialize function
-      virtual void initialize(float width, float height, float center_x, float center_y, uint16 category = CAT_SENSOR, bool is_sensor = false);
+      virtual void initialize(float width, float height, float center_x, float center_y, uint16 category = CAT_SENSOR, uint16 mask = CAT_PLATFORM, bool is_sensor = false);
 
       // Start contact function
       virtual void StartContact(Element *element = NULL) {};

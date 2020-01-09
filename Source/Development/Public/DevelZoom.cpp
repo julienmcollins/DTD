@@ -47,15 +47,14 @@ DevelZoom::DevelZoom() {
       std::cout << "ERROR: FRAMEBUFFER is not complete\n";
    }
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-   glBindVertexArray(0);
-   glBindTexture(GL_TEXTURE_2D, 0);
-   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void DevelZoom::SetToFrameBuffer() {
    // Bind frame buffer
    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);
    glEnable(GL_DEPTH_TEST);
+   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void DevelZoom::Render(glm::vec3 color) {
@@ -68,15 +67,16 @@ void DevelZoom::Render(glm::vec3 color) {
    glClear(GL_COLOR_BUFFER_BIT);
 
    // Set the model to be smaller
-   glm::mat4 model = glm::mat4(1.0f);
-   model = glm::scale(model, glm::vec3(0.5f, 0.5f, 1.0f));
+   // glm::mat4 model = glm::mat4(1.0f);
+   // model = glm::scale(model, glm::vec3(0.5f, 0.5f, 1.0f));
 
    // Set shader
-   ShaderProgram *shader = RenderingEngine::GetInstance().GetShaderReference("texture_shader")->Use();
-   shader->SetMatrix4("model", model);
-   shader->SetVector3f("color", color);
+   // ShaderProgram *shader = RenderingEngine::GetInstance().GetShaderReference("texture_shader")->Use();
+   // shader->SetMatrix4("model", model);
+   // shader->SetVector3f("color", color);
 
    // Bind the VAOs
+   RenderingEngine::GetInstance().GetShaderReference("zoom_shader")->Use();
    glBindVertexArray(screen_VAO_);
    glBindTexture(GL_TEXTURE_2D, texture_color_buffer_);
    glDrawArrays(GL_TRIANGLES, 0, 6);

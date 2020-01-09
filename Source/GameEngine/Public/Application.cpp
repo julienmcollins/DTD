@@ -224,6 +224,7 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    // Set contact listener
    world_.SetContactListener(&contact_listener_);
 
+   // Create zoom object
    zoom_ = new DevelZoom();
 
    // Start counting frames per second
@@ -248,7 +249,7 @@ bool Application::InitOpenGL() {
    RenderingEngine::GetInstance().GetShaderReference("hitbox")->Use()->SetMatrix4("projection", projection);
 
    // Screen shader
-   // RenderingEngine::GetInstance().LoadShader("zoom_shader");
+   RenderingEngine::GetInstance().LoadShader("zoom_shader");
    // RenderingEngine::GetInstance().LoadApplicationPerspective("zoom_shader", projection);
 
    // Blending?
@@ -463,7 +464,6 @@ void Application::setup_menu() {
 }
 
 void Application::Draw() {
-
    /******** UPDATE THE LEVEL *************/
    // Do this as the last thing (testing)
    level->Update();
@@ -815,8 +815,12 @@ void Application::playground() {
       }
    }
 
+   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
    // Draw everything
+   zoom_->SetToFrameBuffer();
    Draw();
+   zoom_->Render();
 }
 
 // Get the height

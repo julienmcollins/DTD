@@ -1,7 +1,7 @@
 #ifndef DEVELZOOM_H_
 #define DEVELZOOM_H_
 
-#include "Source/RenderingEngine/Private/Texture.h"
+#include <glm/glm.hpp>
 
 class DevelZoom {
    public:
@@ -18,6 +18,7 @@ class DevelZoom {
       // Screen vars
       unsigned int screen_VAO_;
       unsigned int screen_VBO_;
+      unsigned int screen_IBO_;
 
       // Framebuffer vars
       unsigned int framebuffer_;

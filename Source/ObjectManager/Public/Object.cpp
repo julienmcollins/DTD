@@ -127,7 +127,7 @@ void Projectile::Update() {
       sprite_sheet->Animate(GetAnimationFromState());
 
       // Render
-      sprite_sheet->Render(get_hitbox_x(), get_hitbox_y(), 0.0f, GetAnimationFromState());
+      sprite_sheet->Render(get_hitbox_x(), get_hitbox_y(), 0.0f, GetAnimationFromState(), true);
    } else if (object_state_ == DEAD) {
       if (GetAnimationFromState()->curr_frame >= GetAnimationFromState()->max_frame) {
          alive = false;
@@ -138,7 +138,7 @@ void Projectile::Update() {
       sprite_sheet->Animate(GetAnimationFromState());
 
       // Render
-      sprite_sheet->Render(get_hitbox_x(), get_hitbox_y(), 0.0f, GetAnimationFromState(), true);
+      sprite_sheet->Render(get_hitbox_x(), get_hitbox_y() + normal_hit_diff_y_, 0.0f, GetAnimationFromState(), true);
    }
 }
 
@@ -168,12 +168,12 @@ bool Projectile::LoadMedia() {
    sprite_sheet = RenderingEngine::GetInstance().LoadTexture("projectile_master_sheet", proj_path.c_str());
 
    /* Load specific projectiles */
-   animations.emplace("player_projectile_normal", new Animation(sprite_sheet, "player_projectile_normal", 24.0f, 14.0f, 0.0f, 3, 1.0f / 20.0f));
-   animations.emplace("player_projectile_hit", new Animation(sprite_sheet, "player_projectile_hit", 24.0f, 14.0f, 14.0f, 4, 1.0f / 20.0f));
-   animations.emplace("fecreez_projectile_normal", new Animation(sprite_sheet, "fecreez_projectile_normal", 26.0f, 17.0f, 28.0f, 8, 1.0f / 20.0f));
-   animations.emplace("fecreez_projectile_hit", new Animation(sprite_sheet, "fecreez_projectile_hit", 26.0f, 17.0f, 45.0f, 8, 1.0f / 20.0f));
-   animations.emplace("fruig_projectile_normal", new Animation(sprite_sheet, "fruig_projectile_normal", 12.0f, 11.0f, 62.0f, 5, 1.0f / 20.0f));
-   animations.emplace("fruig_projectile_hit", new Animation(sprite_sheet, "fruig_projectile_hit", 67.0f, 11.0f, 73.0f, 9, 1.0f / 20.0f));
+   animations.emplace("player_projectile_normal", new Animation(sprite_sheet, "player_projectile_normal", 23.0f, 14.0f, 0.0f, 3, 1.0f / 20.0f));
+   animations.emplace("player_projectile_hit", new Animation(sprite_sheet, "player_projectile_hit", 23.0f, 14.0f, 14.0f, 4, 1.0f / 20.0f));
+   animations.emplace("fecreez_projectile_normal", new Animation(sprite_sheet, "fecreez_projectile_normal", 26.0f, 16.0f, 28.0f, 8, 1.0f / 20.0f));
+   animations.emplace("fecreez_projectile_hit", new Animation(sprite_sheet, "fecreez_projectile_hit", 26.0f, 17.0f, 44.0f, 8, 1.0f / 20.0f));
+   animations.emplace("fruig_projectile_normal", new Animation(sprite_sheet, "fruig_projectile_normal", 12.0f, 11.0f, 61.0f, 5, 1.0f / 20.0f));
+   animations.emplace("fruig_projectile_hit", new Animation(sprite_sheet, "fruig_projectile_hit", 67.0f, 11.0f, 72.0f, 9, 1.0f / 20.0f));
 
    // Load animations
    RenderingEngine::GetInstance().LoadResources(this);

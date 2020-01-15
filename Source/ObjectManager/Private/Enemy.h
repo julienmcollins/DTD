@@ -9,6 +9,7 @@
 #include "Source/ObjectManager/Private/Entity.h"
 #include "Source/ObjectManager/Private/Element.h"
 #include "Source/ObjectManager/Private/Timer.h"
+#include "Source/ObjectManager/Private/SDLTimer.h"
 
 #include "Source/RenderingEngine/Private/Texture.h"
 
@@ -307,7 +308,7 @@ class Mosqueenbler : public Enemy {
       }
    private:
       // Timer for his movement
-      Timer movement_timer_;
+      SDLTimer movement_timer_;
 
       // Spawn number of mosquiblers
       int spawn_num_of_egg_;

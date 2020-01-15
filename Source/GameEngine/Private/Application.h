@@ -37,6 +37,7 @@
 class Level;
 class Enemy;
 class DevelZoom;
+class Notebook;
 
 // For returning the screen position
 typedef struct {
@@ -92,6 +93,9 @@ class Application {
       // Update the application
       void Update();
       void update_projectiles();
+
+      // Render cloud layer
+      void RenderCloudLayer();
 
       // Draw everything
       void Draw();
@@ -347,6 +351,17 @@ class Application {
    
       // Zoom
       DevelZoom *zoom_;
+
+      /***** NOTEBOOK *************/
+      Element notebook_background_;
+      Notebook *notebook_;
+
+      /***** CLOUD LAYER **********/
+      Element cloud_layer_;
+      float cloud_pos_;
+      Timer cloud_timer_;
+      float cloud_last_frame_;
+      float cloud_fps_;
 
       // Quit flag for application
       bool quit;

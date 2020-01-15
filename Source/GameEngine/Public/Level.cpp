@@ -25,7 +25,7 @@ using namespace std;
 // Constructor will do all of the setting up essentially
 Level::Level(string file, Application::FOREST level) : 
    num_of_enemies_(0), num_of_platforms_(0), completed(false), level(level), 
-   background(0, 0, 0, 0), platforms(0, 0, 0, 0), level_completed_(false) {
+   background(0, 0, 0, 0), platforms(0, 0, 0, 0), fills(0, 0, 0, 0), level_completed_(false) {
 
    // Read from a file based on a specific format
    ifstream input;
@@ -126,6 +126,21 @@ bool Level::LoadMedia_() {
    background.animations.emplace("forest_background_10", new Animation(background.sprite_sheet, "forest_background_10", 1920.0f, 1080.0f, 9720.0f, 2, 1.0f / 3.0f));
    RenderingEngine::GetInstance().LoadResources(&background);
 
+   // Get fills
+   dir = Application::GetInstance().sprite_path + "Menu/forest_fill.png";
+   fills.sprite_sheet = RenderingEngine::GetInstance().LoadTexture("forest_fill_sheet", dir.c_str());
+   fills.animations.emplace("forest_fill_1", new Animation(fills.sprite_sheet, "forest_fill_1", 1920.0f, 1080.0f, 0.0f, 2, 1.0f / 3.0f));
+   fills.animations.emplace("forest_fill_2", new Animation(fills.sprite_sheet, "forest_fill_2", 1920.0f, 1080.0f, 1080.0f, 2, 1.0f / 3.0f));
+   fills.animations.emplace("forest_fill_3", new Animation(fills.sprite_sheet, "forest_fill_3", 1920.0f, 1080.0f, 2160.0f, 2, 1.0f / 3.0f));
+   fills.animations.emplace("forest_fill_4", new Animation(fills.sprite_sheet, "forest_fill_4", 1920.0f, 1080.0f, 3240.0f, 2, 1.0f / 3.0f));
+   fills.animations.emplace("forest_fill_5", new Animation(fills.sprite_sheet, "forest_fill_5", 1920.0f, 1080.0f, 4320.0f, 2, 1.0f / 3.0f));
+   fills.animations.emplace("forest_fill_6", new Animation(fills.sprite_sheet, "forest_fill_6", 1920.0f, 1080.0f, 5400.0f, 2, 1.0f / 3.0f));
+   fills.animations.emplace("forest_fill_7", new Animation(fills.sprite_sheet, "forest_fill_7", 1920.0f, 1080.0f, 6480.0f, 2, 1.0f / 3.0f));
+   fills.animations.emplace("forest_fill_8", new Animation(fills.sprite_sheet, "forest_fill_8", 1920.0f, 1080.0f, 7560.0f, 2, 1.0f / 3.0f));
+   fills.animations.emplace("forest_fill_9", new Animation(fills.sprite_sheet, "forest_fill_9", 1920.0f, 1080.0f, 8640.0f, 2, 1.0f / 3.0f));
+   fills.animations.emplace("forest_fill_10", new Animation(fills.sprite_sheet, "forest_fill_10", 1920.0f, 1080.0f, 9720.0f, 2, 1.0f / 3.0f));
+   RenderingEngine::GetInstance().LoadResources(&fills);
+
    // Get the platform backgrounds
    dir = Application::GetInstance().sprite_path + "Menu/forest_platform_sheet.png";
    platforms.sprite_sheet = RenderingEngine::GetInstance().LoadTexture("forest_platform_sheet", dir.c_str());
@@ -200,6 +215,11 @@ void Level::Update() {
    }
 
    // TODO: Keep track of projectiles
+
+   // Render the fills
+   std::string fs = "forest_fill_" + std::to_string(static_cast<int>(level));
+   fills.sprite_sheet->Animate(fills.GetAnimationByName(fs));
+   fills.sprite_sheet->Render(0.0f, 0.0f, 0.0f, fills.GetAnimationByName(fs));
 
    // Render the background
    std::string bg = "forest_background_" + std::to_string(static_cast<int>(level));

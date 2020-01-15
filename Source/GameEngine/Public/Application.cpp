@@ -8,6 +8,7 @@
 
 #include "Source/GameEngine/Private/Application.h"
 #include "Source/GameEngine/Private/Level.h"
+#include "Source/GameEngine/Private/Notebook.h"
 
 #include "Source/ObjectManager/Private/Entity.h"
 #include "Source/ObjectManager/Private/Global.h"
@@ -29,6 +30,8 @@
 #include <iostream>
 #include <cmath>
 #include <tuple>
+
+#define DEVELOPER_MODE 0
 
 //Shader loading utility programs
 void printProgramLog( unsigned int program );
@@ -194,8 +197,10 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    menu_background_(0, 0, 1080, 1920),
    menu_title_(640, 70, 513, 646),
    ruler_(200, 722, 200, 50),
-   gameover_screen_(0, 0, 1080, 1920),
-   thanks_screen_(0, 0, 1080, 1920) {
+   gameover_screen_(0, 0, 1920, 1080),
+   thanks_screen_(0, 0, 1920, 1080),
+   notebook_background_(0, 0, 1920, 1080),
+   cloud_layer_(0, 0, 5760, 1080) {
     
    //Initialize SDL
    if (!Init()) {
@@ -226,6 +231,15 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 
    // Create zoom object
    zoom_ = new DevelZoom();
+
+   // Create notebook
+   notebook_ = new Notebook();
+
+   // Timer for cloud drift
+   cloud_pos_ = 0.0f;
+   cloud_last_frame_ = 0.0f;
+   cloud_fps_ = 1.0f / 10.0f;
+   cloud_timer_.Start();
 
    // Start counting frames per second
    fpsTimer.Start();
@@ -421,6 +435,18 @@ bool Application::LoadMedia() {
    gameover_screen_.animations.emplace("gameover", new Animation(gameover_screen_.sprite_sheet, "gameover", 1920.0f, 1080.0f, 0.0f, 3, 1.0f / 3.0f));
    RenderingEngine::GetInstance().LoadResources(&gameover_screen_);
       
+   /************ NOTEBOOK **************/
+   s = sprite_path + "Miscealaneous/notebookwhite.png";
+   notebook_background_.sprite_sheet = RenderingEngine::GetInstance().LoadTexture("notebook", s.c_str());
+   notebook_background_.animations.emplace("notebook", new Animation(notebook_background_.sprite_sheet, "notebook", 1920.0f, 1080.0f, 0.0f, 1, 1.0f / 3.0f));
+   RenderingEngine::GetInstance().LoadResources(&notebook_background_);
+
+   /************* CLOUD LAYER **********/
+   s = sprite_path + "Miscealaneous/clouds.png";
+   cloud_layer_.sprite_sheet = RenderingEngine::GetInstance().LoadTexture("clouds", s.c_str());
+   cloud_layer_.animations.emplace("clouds", new Animation(cloud_layer_.sprite_sheet, "clouds", 7680.0f, 1080.0f, 0.0f, 2, 1.0f / 3.0f));
+   RenderingEngine::GetInstance().LoadResources(&cloud_layer_);
+
    // Return state
    return success;
 }
@@ -632,6 +658,19 @@ void Application::gameover_screen() {
    }
 }
 
+void Application::RenderCloudLayer() {
+   // Increment cloud timer
+   if ((cloud_pos_ / 5.0f) < -7680.0f) {
+      cloud_pos_ = 0.0f;
+   } else {
+      cloud_pos_--;
+   }
+
+   // render based on drift
+   cloud_layer_.sprite_sheet->Animate(cloud_layer_.GetAnimationByName("clouds"));
+   cloud_layer_.sprite_sheet->Render(cloud_pos_ / 5.0f, 0.0f, 0.0f, cloud_layer_.GetAnimationByName("clouds"));
+}
+
 // MAIN SCREEN FUNCTION
 void Application::main_screen() {   
    // Setup menu
@@ -688,6 +727,15 @@ void Application::main_screen() {
       }
    }
 
+   // Render background
+   notebook_background_.sprite_sheet->Render(0.0f, 0.0f, 0.0f, notebook_background_.GetAnimationByName("notebook"));
+
+   // Set framebuffer
+   notebook_->SetToFrameBuffer();
+
+   // Render cloud layer
+   RenderCloudLayer();
+
    /* ANIMATION FOR TITLE SCREEN */
    if (finger_) {
       // std::cout << "Here 1\n";
@@ -734,7 +782,7 @@ void Application::main_screen() {
       // Check to see if player has reached the edge
       if (player->get_x() >= 1890) {
          app_flag_ = PLAYGROUND;
-         level_flag_ = FOREST2;
+         level_flag_ = FOREST1;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -767,6 +815,7 @@ void Application::main_screen() {
    }
    // world_.DrawDebugData();
    // drawHitBoxes(r);
+   notebook_->Render();
 }
 
 // UPDATE PROJECTILES
@@ -815,12 +864,22 @@ void Application::playground() {
       }
    }
 
-   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+   // Render background
+   notebook_background_.sprite_sheet->Render(0.0f, 0.0f, 0.0f, notebook_background_.GetAnimationByName("notebook"));
 
+   // Draw normally
+   notebook_->SetToFrameBuffer();
+   RenderCloudLayer();
+   Draw();
+   notebook_->Render();
+
+#if DEVELOPER_MODE == 1
    // Draw everything
    zoom_->SetToFrameBuffer();
    Draw();
    zoom_->Render();
+#endif
+
 }
 
 // Get the height

@@ -46,6 +46,7 @@ class Level {
       /*******************************************/
       // Textures for background and platforms
       Element background;
+      Element fills;
       Element platforms;
 
       // Animation map

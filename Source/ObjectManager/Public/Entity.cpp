@@ -263,7 +263,7 @@ Player::Player() :
    Entity(960, 412, 31, 104), player_state_(STAND),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
-   immunity_duration_(1.0f), edge_duration_(0.05f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
+   immunity_duration_(1.0f), edge_duration_(0.025f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
    lock_dir_right(false), lock_dir_up(false), rand_idle(0), eraser(nullptr), num_of_projectiles(0) {
 
    // Set entity direction
@@ -635,6 +635,13 @@ void Player::change_player_state() {
    bool right = Application::GetInstance().current_key_states_[SDL_SCANCODE_RIGHT];
    bool left = Application::GetInstance().current_key_states_[SDL_SCANCODE_LEFT];
    bool up = Application::GetInstance().current_key_states_[SDL_SCANCODE_UP];
+
+   /*
+   // Remove velocities if not pressing left or right
+   if ((!left && entity_direction == LEFT) || (!right && entity_direction == RIGHT)) {
+      body->SetLinearVelocity({0.0f, body->GetLinearVelocity().y});
+   }
+   */
 
    // Special push state
    if (contacts_[LEFT_ARM] || contacts_[RIGHT_ARM]) {

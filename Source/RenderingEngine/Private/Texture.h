@@ -152,7 +152,7 @@ struct FrameData {
 class Animation {
    public:
       /* Default constructor does not do anything (for now) */
-      Animation(Texture *texture, std::string name, GLdouble texture_width, GLdouble texture_height, GLdouble offset, int num_of_frames, float fps);
+      Animation(Texture *texture, std::string name, GLdouble texture_width, GLdouble texture_height, GLdouble offset, int num_of_frames, float fps, int rows = 0);
 
       /* Function to flip animation */
       void flipAnimation();
@@ -173,6 +173,8 @@ class Animation {
 
       /* FRAME INFORMATION */
       int num_of_frames;
+      int rows;
+      int columns;
       int curr_frame;
       int max_frame;
       int reset_frame;

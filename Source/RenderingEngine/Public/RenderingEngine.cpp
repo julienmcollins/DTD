@@ -34,13 +34,26 @@ void RenderingEngine::LoadResources(Element *element) {
    // Loop through and load
    for (std::unordered_map<std::string, Animation *>::iterator it = element->animations.begin(); it != element->animations.end(); ++it) {
       int i = 0;
+      int j = 0;
       for (auto &frame : it->second->frames) {
          if (i == it->second->num_of_frames) {
             break;
          }
+
+         // Automatically set the columns
          frame.l = i * frame.normal_width;
          frame.r = (i + 1) * frame.normal_width;
          ++i;
+
+         // Automatically set the rows
+         if (it->second->rows > 1) {
+            int mod = (it->second->num_of_frames + (it->second->rows - 1)) / it->second->rows;
+            frame.b = j * frame.normal_height;
+            frame.t = (j + 1) * frame.normal_height;
+            if (i % mod == 0) {
+               j++;
+            }
+         }
       }
    }
 }

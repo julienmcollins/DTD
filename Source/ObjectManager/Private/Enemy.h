@@ -36,6 +36,9 @@ class Enemy : public Entity {
       virtual void Update(bool freeze = false);   
       virtual Animation *GetAnimationFromState();
    
+      // Turning
+      void Turn();
+
       // Static string
       static const std::string media_path;
 
@@ -360,9 +363,10 @@ class Wormored : public Enemy {
       virtual bool LoadMedia();
 
       // Move and animate functions
+      virtual void Update(bool freeze = false);
       virtual void Move();
-      virtual void Animate(Texture *tex, int reset, int max, int start);
-      virtual Texture *get_texture();
+      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0);
+      virtual Animation *GetAnimationFromState();
 
       // Wormored type
       virtual std::string type() {
@@ -388,6 +392,12 @@ class Wormored : public Enemy {
       // curr and prev frame
       int curr_frame = 0;
       int prev_frame = 0;
+
+      // Texture sheets
+      Texture *idle_sheet;
+      Texture *turn_sheet;
+      Texture *attack_sheet;
+      Texture *excrete_sheet;
 
 };
 

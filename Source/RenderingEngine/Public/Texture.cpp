@@ -154,6 +154,7 @@ void Texture::init_VAO() {
 
       // Disable
       glBindBuffer(GL_ARRAY_BUFFER, 0);
+      // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
       glBindVertexArray(0);
    }
 }
@@ -333,31 +334,38 @@ Texture::~Texture() {
    //Free();
 }
 
-Animation::Animation(Texture *texture, std::string name, GLdouble texture_width, GLdouble texture_height, GLdouble offset, int num_of_frames, float fps) :
-    parent(texture), name(name),
-    texture_width(texture_width), texture_height(texture_height),
-    half_width(texture_width / 2.0), half_height(texture_height / 2.0),
-    num_of_frames(num_of_frames), curr_frame(0), max_frame(num_of_frames - 1),
-    reset_frame(0), stop_frame(0),
-    last_frame(0.0f), fps(fps), completed(false), flipped(false) {
+Animation::Animation(Texture *texture, std::string name, GLdouble texture_width, GLdouble texture_height, GLdouble offset, int num_of_frames, float fps, int rows) :
+   parent(texture), name(name),
+   texture_width(texture_width), texture_height(texture_height),
+   half_width(texture_width / 2.0), half_height(texture_height / 2.0),
+   num_of_frames(num_of_frames), rows(rows), curr_frame(0), max_frame(num_of_frames - 1),
+   reset_frame(0), stop_frame(0),
+   last_frame(0.0f), fps(fps), completed(false), flipped(false) {
 
-    // Set normal width and height
-    for (int i = 0; i < num_of_frames; i++) {
-        // Create new frame
-        frames.push_back(
-            {
-                texture_width / parent->image_width, 
-                texture_height / parent->image_height,
-                0.0f,
-                0.0f,
-                (offset / parent->image_height),
-                (offset / parent->image_height) + (texture_height / parent->image_height)
-            }
-        );
-    }
+   // Set columns if bigger than 1
+   if (rows > 0) {
+      columns = num_of_frames / rows;
+   } else {
+      columns = 0;
+   }
 
-    // Start fps timer
-    fps_timer.Start();
+   // Set normal width and height
+   for (int i = 0; i < num_of_frames; i++) {
+      // Create new frame
+      frames.push_back(
+         {
+               texture_width / parent->image_width, 
+               texture_height / parent->image_height,
+               0.0f,
+               0.0f,
+               (offset / parent->image_height),
+               (offset / parent->image_height) + (texture_height / parent->image_height)
+         }
+      );
+   }
+
+   // Start fps timer
+   fps_timer.Start();
 }
 
 void Animation::flipAnimation() {

@@ -106,6 +106,23 @@ Animation *Enemy::GetAnimationFromState() {
    }
 }
 
+void Enemy::Turn() {
+   if (AnimationCompleted("turn")) {
+      if (entity_direction == RIGHT) {
+         if (!TextureFlipped()) {
+            FlipAllAnimations();
+            texture_flipped = true;
+         }
+      } else if (entity_direction == LEFT) {
+         if (TextureFlipped()) {
+            FlipAllAnimations();
+            texture_flipped = false;
+         }
+      }
+      enemy_state_ = IDLE;
+   }
+}
+
 bool Enemy::within_bounds() {
    return Application::GetInstance().get_player()->get_y() >= get_y() - get_height() &&
             Application::GetInstance().get_player()->get_y() <= get_y() + get_height();
@@ -961,8 +978,6 @@ void Fleet::Move() {
                   texture_flipped = true;
                }
             }
-            GetAnimationByName("turn")->completed = false;
-            GetAnimationByName("turn")->curr_frame = 0;
             enemy_state_ = IDLE;
          }
       }
@@ -1239,17 +1254,37 @@ Wormored::Wormored(int x, int y) :
 bool Wormored::LoadMedia() {
    bool success = true;
 
-   // // Instantiate data
-   // std::vector<TextureData> data;
-   // data.push_back(TextureData(21, 1.0f / 24.0f, "idle", media_path + "Wormored/idle.png"));
-   // data.push_back(TextureData(29, 1.0f / 24.0f, "turn", media_path + "Wormored/turn.png"));
-   // data.push_back(TextureData(22, 1.0f / 24.0f, "attack", media_path + "Wormored/attack.png"));
-   // data.push_back(TextureData(28, 1.0f / 24.0f, "excrete", media_path + "Wormored/excrete.png"));
-
-   // // Load resources
-   // success = RenderingEngine::GetInstance().LoadResources(this, data);
+   std::string path = media_path + "Wormored/idle.png";
+   idle_sheet = RenderingEngine::GetInstance().LoadTexture("wormored_idle_sheet", path.c_str());
+   path = media_path + "Wormored/turn.png";
+   turn_sheet = RenderingEngine::GetInstance().LoadTexture("wormored_turn_sheet", path.c_str());
+   path = media_path + "Wormored/attack.png";
+   attack_sheet = RenderingEngine::GetInstance().LoadTexture("wormored_attack_sheet", path.c_str());
+   path = media_path + "Wormored/excrete.png";
+   excrete_sheet = RenderingEngine::GetInstance().LoadTexture("wormored_excrete_sheet", path.c_str());
+   animations.emplace("idle", new Animation(idle_sheet, "idle", 796.0f, 418.0f, 0.0f, 21, 1 / 24.0f, 2));
+   animations.emplace("turn", new Animation(turn_sheet, "turn", 796.0f, 418.0f, 0.0f, 29, 1.0f / 24.0f, 2));
+   // animations.emplace("attack", new Animation(attack_sheet, "attack", 796.0f, 418.0f, 0.0f, 22, 1.0f / 24.0f, 2));
+   // animations.emplace("excrete", new Animation(excrete_sheet, "excrete", 796.0f, 418.0f, 0.0f, 28, 1.0f / 24.0f, 2));
+   RenderingEngine::GetInstance().LoadResources(this);
 
    return success;
+}
+
+void Wormored::Update(bool freeze) {
+   // Move first
+   Move();
+
+   // The animate
+   Animate();
+
+   // Render enemy
+   Animation *anim = GetAnimationFromState();
+
+   // Render player
+   if (anim) {
+      anim->parent->Render(get_anim_x(), get_anim_y(), 0.0f, anim);
+   }
 }
 
 void Wormored::Move() {
@@ -1285,12 +1320,12 @@ void Wormored::Move() {
          curr_frame = GetAnimationByName("idle")->curr_frame;
          //if (prev_frame != curr_frame) {
             if (curr_frame < 9) {
-               std::cout << "curr_frame = " << curr_frame << std::endl;
-               std::cout << "offset = " << body_1_heights_[curr_frame] << std::endl;
-               std::cout << "get_y() before = " << left_facing_sensors_[0]->get_y() << std::endl;
-               left_facing_sensors_[0]->Update(0, body_1_heights_[curr_frame]);
-               left_facing_sensors_[0]->set_y(left_facing_sensors_[0]->get_y() + body_1_heights_[curr_frame]);
-               std::cout << "get_y() after = " << left_facing_sensors_[0]->get_y() << std::endl;
+               // std::cout << "curr_frame = " << curr_frame << std::endl;
+               // std::cout << "offset = " << body_1_heights_[curr_frame] << std::endl;
+               // std::cout << "get_y() before = " << left_facing_sensors_[0]->get_y() << std::endl;
+               // left_facing_sensors_[0]->Update(0, body_1_heights_[curr_frame]);
+               // left_facing_sensors_[0]->set_y(left_facing_sensors_[0]->get_y() + body_1_heights_[curr_frame]);
+               // std::cout << "get_y() after = " << left_facing_sensors_[0]->get_y() << std::endl;
             }
             if (curr_frame > 1 && curr_frame < 12) {
                //left_facing_sensors_[1]->Update(0, body_2_heights_[curr_frame]);
@@ -1315,44 +1350,33 @@ void Wormored::Move() {
    }
 
    if (enemy_state_ == TURN) {
-      if (GetAnimationByName("turn")->curr_frame > GetAnimationByName("turn")->max_frame - 1) {
-         // if (entity_direction == RIGHT) {
-         //    GetAnimationByName("idle"]->flip_ = SDL_FLIP_HORIZONTAL;
-         //    GetAnimationByName("turn"]->flip_ = SDL_FLIP_HORIZONTAL;
-         // } else if (entity_direction == LEFT) {
-         //    GetAnimationByName("idle"]->flip_ = SDL_FLIP_NONE;
-         //    GetAnimationByName("turn"]->flip_ = SDL_FLIP_NONE;
-         // }
-         GetAnimationByName("turn")->completed = false;
-         GetAnimationByName("turn")->curr_frame = 0;
-         enemy_state_ = IDLE;
-      }
+      Turn();
    }
 }
 
-void Wormored::Animate(Texture *tex, int reset, int max, int start) {
+void Wormored::Animate(Texture *tex, int reset, int max) {
    if (enemy_state_ == IDLE) {
-      sprite_sheet->Animate(GetAnimationByName("idle"));
+      idle_sheet->Animate(GetAnimationByName("idle"));
    } else if (enemy_state_ == TURN) {
-      sprite_sheet->Animate(GetAnimationByName("turn"));
+      turn_sheet->Animate(GetAnimationByName("turn"));
    }
 }
 
-Texture *Wormored::get_texture() {
+Animation *Wormored::GetAnimationFromState() {
    if (enemy_state_ == IDLE) {
-      // return GetAnimationByName("idle"];
+      return GetAnimationByName("idle");
    }
 
    if (enemy_state_ == TURN) {
-      // return GetAnimationByName("turn"];
+      return GetAnimationByName("turn");
    }
 
    if (enemy_state_ == ATTACK) {
-      // return GetAnimationByName("attack"];
+      return GetAnimationByName("attack");
    }
 
    if (enemy_state_ == EXCRETE) {
-      // return GetAnimationByName("excrete"];
+      return GetAnimationByName("excrete");
    }
    return nullptr;
 }

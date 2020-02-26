@@ -1,0 +1,5 @@
+dtd
+*.dll
+*.a
+.vscode
+.gitignore

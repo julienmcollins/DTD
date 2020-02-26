@@ -2,15 +2,15 @@
 .PHONY: clean create all
 
 #OBJS specifies which files to compile as part of the project
-OBJS = $(wildcard Source/*/Public/*.cpp)
+OBJS = $(wildcard Source/GameEngine/*/Public/*.cpp)
 
 #CC specifies which compiler we're using
-CC = g++ -I. -I./Source/ObjectManager/ -I./Source/RenderingEngine/ -I./Source/GameEngine/
-CCW32 = i686-w64-mingw32-gcc -I. -I./Source/ObjectManager/ -I./Source/RenderingEngine/ -I./Source/GameEngine/
+CC = g++ -I. -I./Source/GameEngine/ObjectManager/ -I./Source/GameEngine/RenderingEngine/ -I./Source/GameEngine/Engine/
+CCW32 = i686-w64-mingw32-gcc -I. -I./Source/GameEngine/ObjectManager/ -I./Source/GameEngine/RenderingEngine/ -I./Source/GameEngine/Engine/
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
-COMPILER_FLAGS = -g
+COMPILER_FLAGS = -g -O3
 
 #OpenGL flags
 OPENGL_FLAGS = -lSOIL -lGL -lGLU $(shell pkg-config glew --libs)

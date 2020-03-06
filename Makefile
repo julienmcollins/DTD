@@ -2,11 +2,11 @@
 .PHONY: clean create all
 
 #OBJS specifies which files to compile as part of the project
-OBJS = $(wildcard Source/GameEngine/*/Public/*.cpp)
+OBJS = $(wildcard QuiteGoodMachine/Source/*/Public/*.cpp)
 
 #CC specifies which compiler we're using
-CC = g++ -I. -I./Source/GameEngine/ObjectManager/ -I./Source/GameEngine/RenderingEngine/ -I./Source/GameEngine/Engine/
-CCW32 = i686-w64-mingw32-gcc -I. -I./Source/GameEngine/ObjectManager/ -I./Source/GameEngine/RenderingEngine/ -I./Source/GameEngine/Engine/
+CC = g++ -I. -I./QuiteGoodMachine/Source/ObjectManager/ -I./QuiteGoodMachine/Source/RenderingEngine/ -I./QuiteGoodMachine/Source/GameManager/
+CCW32 = i686-w64-mingw32-gcc -I. -I./QuiteGoodMachine/Source/ObjectManager/ -I./QuiteGoodMachine/Source/RenderingEngine/ -I./QuiteGoodMachine/Source/GameManager/
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings

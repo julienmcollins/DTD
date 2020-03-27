@@ -13,6 +13,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h"
+
 extern SDL_Renderer* renderer;
 extern std::string sprite_path;
 extern std::string player_path;

@@ -781,7 +781,7 @@ void Application::main_screen() {
       if (player->get_x() >= 1890) {
          // Set correct app flags
          app_flag_ = PLAYGROUND;
-         level_flag_ = FORESTBOSS;
+         level_flag_ = FOREST1;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;

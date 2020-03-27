@@ -17,7 +17,7 @@
 
 #define BOUNDED(var) (var > -0.0000001f && var < 0.0000001f)
 
-std::string Player::media_path = sprite_path + "Player/";
+std::string Player::media_path = sprite_path + std::string("Player/");
 
 /*************************** ENTITY IMPLEMENTATIONS ******************************/
 
@@ -917,8 +917,8 @@ bool Player::LoadMedia() {
    bool success = true;
 
    // Instantiate sprite sheet for main player body
-   std::string player_path = media_path + "player_master_sheet.png";
-   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("player_master_sheet", player_path.c_str());
+   std::string p_path = player_path + "player_master_sheet.png";
+   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("player_master_sheet", p_path.c_str());
    animations.emplace("jump_push", new Animation(sprite_sheet, "jump_push", 61.0, 106.0, 0.0, 8, 1.0 / 20.0));
    animations.emplace("double_jump", new Animation(sprite_sheet, "double_jump", 61.0, 106.0, 106.0, 11, 1.0 / 24.0));
    animations.emplace("tap", new Animation(sprite_sheet, "tap", 61.0, 106.0, 212.0, 12, 1.0 / 24.0));
@@ -932,7 +932,7 @@ bool Player::LoadMedia() {
    animations.emplace("balance", new Animation(sprite_sheet, "balance", 128.0, 106.0, 1060.0, 19, 1.0 / 20.0));
 
    // Instantiate sprite sheet for arms
-   std::string arm_path = media_path + "arm_master_sheet.png";
+   std::string arm_path = player_path + "arm_master_sheet.png";
    arm_sheet = RenderingEngine::GetInstance().LoadTexture("arm_master_sheet", arm_path.c_str());
    animations.emplace("idle_arm", new Animation(arm_sheet, "idle_arm", 10.0, 27.0, 0.0, 1, 1.0 / 30.0));
    animations.emplace("double_jump_arm", new Animation(arm_sheet, "double_jump_arm", 9.0, 27.0, 27.0, 8, 1.0 / 24.0));

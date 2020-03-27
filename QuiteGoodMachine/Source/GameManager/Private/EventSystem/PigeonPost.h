@@ -1,18 +1,38 @@
 #ifndef EVENT_H_
 #define EVENT_H_
 
-#include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
-
 #include <string>
 #include <unordered_map>
 #include <list>
+#include <memory>
 
-class PigeonPost {
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
+#include "QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/BirdMaster.h"
+
+class PigeonPost : public PigeonPostInterface {
    public:
       static PigeonPost& GetInstance() {
          static PigeonPost instance;
          return instance;
       }
+
+      /**
+       * Register an object to the Pigeon Post
+       */
+      virtual void Register(const std::shared_ptr<Correspondent>& correspondent);
+
+      /**
+       * Unregister a correspondent as a pigeon post
+       */
+      virtual void Unregister(const std::shared_ptr<Correspondent>& correspondent);
+
+      /**
+       * Sends a correspondence to multiple receivers
+       * 
+       * @param correspondence The correspondence to send
+       */
+      virtual void Send(const Correspondence &correspondence);
 
       // Subscribing function allows elements to subscribe to different events
       // void SubscribeToEvent(Element *element, const Event &event);
@@ -24,12 +44,17 @@ class PigeonPost {
       // Private constructor
       PigeonPost();
 
-      // Private map of lists (subscribers)
-      std::unordered_map<std::string, std::list<Element*>> subscribers_;
+      // Bird master
+      std::unique_ptr<BirdMaster> bird_master_;
 
    public:
       PigeonPost(PigeonPost const&) = delete;
       void operator=(PigeonPost const&) = delete;
+
+      /**
+       * Virtual destructor
+       */
+      virtual ~PigeonPost() {};
 };
 
 #endif

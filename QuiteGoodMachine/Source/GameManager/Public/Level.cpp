@@ -7,6 +7,7 @@
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Object.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h"
+#include "QuiteGoodMachine/Source/ObjectManager/Private/ObjectManager.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

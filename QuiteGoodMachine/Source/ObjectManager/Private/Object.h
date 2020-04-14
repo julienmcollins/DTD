@@ -9,13 +9,16 @@
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h"
+
 class Entity;
+class Animation;
 
 // A parent class because I might add other objects in the future
 class Object : public Element {
    public:
       // Constructor
-      Object(int x, int y, int width, int height, Entity* owner);
+      Object(std::string name, int x, int y, int width, int height, Entity* owner);
 
       // Might need to add a function that gets texture
       
@@ -45,10 +48,11 @@ class Object : public Element {
 };
 
 // Platform class will be a subclass of Object (through inheritance)
-class Platform : public Object {
+class Platform : public Object,
+                 public Correspondent {
    public:
       // Constructor
-      Platform(int x, int y, int width, int height);
+      Platform(std::string name, int x, int y, int width, int height);
 
       // Setup function for the stuff
       void setup();

@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <iostream>
 
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/BirdMaster.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h"
@@ -31,7 +32,7 @@ void BirdMaster::DirectMessage(std::shared_ptr<Correspondence> correspondence) {
    }
 
    // Receive messages
-   for (auto& correspondent : terminators) {
-      correspondent->ReceiveCorrespondence(correspondence);
+   for (auto& c : terminators) {
+      c->ReceiveCorrespondence(correspondence);
    }
 }

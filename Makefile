@@ -366,6 +366,141 @@ QuiteGoodMachine/Source/GameManager/Public/State.cpp.s:
 	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/State.cpp.s
 
+QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.o: QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.o
+
+# target to build an object file
+QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o
+
+QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.i: QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.i
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.i
+
+QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.s: QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.s
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.s
+
+QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.o: QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.o
+
+# target to build an object file
+QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o
+
+QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.i: QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.i
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.i
+
+QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.s: QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.s
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.s
+
+QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.o: QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.o
+
+# target to build an object file
+QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o
+
+QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.i: QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.i
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.i
+
+QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.s: QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.s
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.s
+
+QuiteGoodMachine/Source/GameManager/Public/main.o: QuiteGoodMachine/Source/GameManager/Public/main.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/main.o
+
+# target to build an object file
+QuiteGoodMachine/Source/GameManager/Public/main.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.o
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/main.cpp.o
+
+QuiteGoodMachine/Source/GameManager/Public/main.i: QuiteGoodMachine/Source/GameManager/Public/main.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/main.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/GameManager/Public/main.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.i
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/main.cpp.i
+
+QuiteGoodMachine/Source/GameManager/Public/main.s: QuiteGoodMachine/Source/GameManager/Public/main.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/main.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/GameManager/Public/main.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.s
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/main.cpp.s
+
+QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.o: QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.o
+
+# target to build an object file
+QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o
+.PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o
+
+QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.i: QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i
+.PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i
+
+QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.s: QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.s
+.PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.s
+
 QuiteGoodMachine/Source/ObjectManager/Public/Element.o: QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o
 
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Element.o
@@ -500,114 +635,6 @@ QuiteGoodMachine/Source/ObjectManager/Public/Object.s: QuiteGoodMachine/Source/O
 QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s:
 	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s
-
-QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.o: QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.o
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.o
-
-# target to build an object file
-QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.o
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.o
-
-QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.i: QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.i
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.i
-
-# target to preprocess a source file
-QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.i
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.i
-
-QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.s: QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.s
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.s
-
-# target to generate assembly for a file
-QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.s
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp.s
-
-QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.o: QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.o
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.o
-
-# target to build an object file
-QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.o
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.o
-
-QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.i: QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.i
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.i
-
-# target to preprocess a source file
-QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.i
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.i
-
-QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.s: QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.s
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.s
-
-# target to generate assembly for a file
-QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.s
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp.s
-
-QuiteGoodMachine/Source/ObjectManager/Public/Timer.o: QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.o
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Timer.o
-
-# target to build an object file
-QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.o
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.o
-
-QuiteGoodMachine/Source/ObjectManager/Public/Timer.i: QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.i
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Timer.i
-
-# target to preprocess a source file
-QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.i
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.i
-
-QuiteGoodMachine/Source/ObjectManager/Public/Timer.s: QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.s
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Timer.s
-
-# target to generate assembly for a file
-QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.s
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp.s
-
-QuiteGoodMachine/Source/ObjectManager/Public/main.o: QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.o
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/main.o
-
-# target to build an object file
-QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.o
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.o
-
-QuiteGoodMachine/Source/ObjectManager/Public/main.i: QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.i
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/main.i
-
-# target to preprocess a source file
-QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.i
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.i
-
-QuiteGoodMachine/Source/ObjectManager/Public/main.s: QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.s
-
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/main.s
-
-# target to generate assembly for a file
-QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.s
-.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/main.cpp.s
 
 QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.o: QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o
 
@@ -807,6 +834,21 @@ help:
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/State.o"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/State.i"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/State.s"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.o"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.i"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.s"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.o"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.i"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.s"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.o"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.i"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.s"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/main.o"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/main.i"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/main.s"
+	@echo "... QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.o"
+	@echo "... QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.i"
+	@echo "... QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.s"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Element.o"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Element.i"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Element.s"
@@ -822,18 +864,6 @@ help:
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Object.o"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Object.i"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Object.s"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.o"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.i"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.s"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.o"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.i"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.s"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Timer.o"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Timer.i"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Timer.s"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/main.o"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/main.i"
-	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/main.s"
 	@echo "... QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.o"
 	@echo "... QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.i"
 	@echo "... QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.s"

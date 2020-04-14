@@ -21,13 +21,14 @@
 #include <vector>
 #include <unordered_map>
 #include <tuple>
+#include <memory>
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h"
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
-#include "QuiteGoodMachine/Source/ObjectManager/Private/Timer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Object.h"
 
 #include "QuiteGoodMachine/Source/GameManager/Private/ContactListener.h"
@@ -38,6 +39,7 @@ class Level;
 class Enemy;
 class DevelZoom;
 class Notebook;
+class Animation;
 
 // For returning the screen position
 typedef struct {
@@ -169,7 +171,7 @@ class Application {
       };
 
       // Get FPS timer
-      Timer* getFPSTimer() {
+      FPSTimer* getFPSTimer() {
          return &fpsTimer;
       }
 
@@ -182,7 +184,7 @@ class Application {
          return &projectiles_;
       }
 
-      Player* get_player() {
+      std::shared_ptr<Player> get_player() {
          return player;
       }
 
@@ -194,7 +196,7 @@ class Application {
       }
 
       /******* DEATH TIMER ***********/
-      Timer death_timer_;
+      FPSTimer death_timer_;
 
       // Set game flag
       void set_game_flag(GAME_STATE new_flag) {
@@ -232,14 +234,14 @@ class Application {
       int pause;
 
       // FPS timers
-      Timer fpsTimer;
-      Timer capTimer;
+      FPSTimer fpsTimer;
+      FPSTimer capTimer;
 
       // Viewport
       GLFloatRect viewport;
    
       // Player object
-      Player *player;
+      std::shared_ptr<Player> player;
 
       // Enemy object
       Enemy *enemy;
@@ -356,7 +358,7 @@ class Application {
       /***** CLOUD LAYER **********/
       Element cloud_layer_;
       float cloud_pos_;
-      Timer cloud_timer_;
+      FPSTimer cloud_timer_;
       float cloud_last_frame_;
       float cloud_fps_;
 

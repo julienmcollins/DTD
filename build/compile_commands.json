@@ -1,0 +1,157 @@
+[
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Application.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Application.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/main.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/main.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Level.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Level.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/State.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/State.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp"
+}
+]

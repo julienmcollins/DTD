@@ -16,9 +16,11 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 
 // Prototype
 class Enemy;
+class Animation;
 
 /***** LEVEL CLASS *******/
 class Level {
@@ -36,10 +38,10 @@ class Level {
       void ClearBoard();
 
       // Add an enemy to the level
-      void add_enemy(Enemy *new_enemy);
+      void add_enemy(std::shared_ptr<Enemy> new_enemy);
 
       // Destroy enemy
-      void destroy_enemy(Enemy *enemy_to_delete);
+      void destroy_enemy(std::shared_ptr<Enemy> enemy_to_delete);
 
       // Flag for level completion
       bool completed;
@@ -53,7 +55,7 @@ class Level {
       // Textures for background and platforms
       Element background;
       Element fills;
-      Element platforms;
+      Platform platforms;
 
       // Animation map
       std::unordered_map<std::string, Animation *> animations;
@@ -77,9 +79,9 @@ class Level {
       int num_of_kills_;
 
       // Vector for the enemies
-      std::vector<Enemy *> enemies_;
-      std::vector<Enemy *> deferred_enemy_spawns_;
-      std::vector<Enemy *> enemies_marked_for_death_;
+      std::vector<std::shared_ptr<Enemy>> enemies_;
+      std::vector<std::shared_ptr<Enemy>> deferred_enemy_spawns_;
+      std::vector<std::shared_ptr<Enemy>> enemies_marked_for_death_;
 
       // Vector for the platforms
       std::vector<Platform *> platforms_;

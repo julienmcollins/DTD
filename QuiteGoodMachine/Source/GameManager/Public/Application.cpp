@@ -16,6 +16,7 @@
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
+#include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
 #include "QuiteGoodMachine/Source/Development/Private/DevelZoom.h"
 
@@ -194,13 +195,13 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    world_(gravity_), to_meters_(0.01f), to_pixels_(100.0f), test(0),
    timeStep_(1.0f / 60.0f), velocityIterations_(10), positionIterations_(10), animation_speed_(20.0f), 
    animation_update_time_(1.0f / animation_speed_), time_since_last_frame_(0.0f), 
-   menu_background_(0, 0, 1080, 1920),
-   menu_title_(640, 70, 513, 646),
-   ruler_(200, 722, 200, 50),
-   gameover_screen_(0, 0, 1920, 1080),
-   thanks_screen_(0, 0, 1920, 1080),
-   notebook_background_(0, 0, 1920, 1080),
-   cloud_layer_(0, 0, 5760, 1080) {
+   menu_background_("menu_background", 0, 0, 1080, 1920),
+   menu_title_("menu_title", 640, 70, 513, 646),
+   ruler_("ruler", 200, 722, 200, 50),
+   gameover_screen_("gameover_screen", 0, 0, 1920, 1080),
+   thanks_screen_("thanks_screen", 0, 0, 1920, 1080),
+   notebook_background_("notebook_background", 0, 0, 1920, 1080),
+   cloud_layer_("cloud_layer", 0, 0, 5760, 1080) {
     
    //Initialize SDL
    if (!Init()) {
@@ -237,7 +238,7 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
    // Create notebook
    notebook_ = new Notebook();
 
-   // Timer for cloud drift
+   // FPSTimer for cloud drift
    cloud_pos_ = 0.0f;
    cloud_last_frame_ = 0.0f;
    cloud_fps_ = 1.0f / 10.0f;
@@ -456,7 +457,7 @@ bool Application::LoadMedia() {
 // Setup main menu
 void Application::setup_menu() {
    // Create player
-   player = new Player();
+   player = std::make_shared<Player>();
    if (player->LoadMedia() == false) {
       quit = true;
    }
@@ -476,11 +477,11 @@ void Application::setup_menu() {
    player->set_y(782);
 
    // Setup platform
-   menu_platform_ = new Platform(960, 925, 1920, 10);
+   menu_platform_ = new Platform("menu_platform", 960, 925, 1920, 10);
    menu_platform_->setup();
 
    // Setup invisible wall
-   invisible_wall_ = new Platform(0, 1055, 10, 1000);
+   invisible_wall_ = new Platform("invisible_wall", 0, 1055, 10, 1000);
    invisible_wall_->setup();
 
    // Load and play music
@@ -525,7 +526,7 @@ void Application::Draw() {
       }
    } else {
       app_flag_ = GAMEOVER_SCREEN;
-      delete player;
+      player.reset();
       Level::GetInstance().ClearBoard();
       menu_flag = true;
    }
@@ -554,7 +555,7 @@ void Application::Update() {
       capTimer.Start();
 
       // Calculate and correct fps
-      float avgFPS = countedFrames / ( fpsTimer.GetTicks() / 1000.f );
+      float avgFPS = countedFrames / ( fpsTimer.GetTime() / 1000.f );
       if( avgFPS > 2000000 ) {
          avgFPS = 0;
       }
@@ -586,7 +587,7 @@ void Application::Update() {
          capTimer.Start();
 
          // Calculate and correct fps
-         float avgFPS = countedFrames / ( fpsTimer.GetTicks() / 1000.f );
+         float avgFPS = countedFrames / ( fpsTimer.GetTime() / 1000.f );
          if( avgFPS > 2000000 ) {
             avgFPS = 0;
          }
@@ -595,7 +596,7 @@ void Application::Update() {
          ++countedFrames;
 
          // If frame finished early
-         int frameTicks = capTimer.GetTicks();
+         int frameTicks = capTimer.GetTime();
          if (frameTicks < SCREEN_TICKS_PER_FRAME) {
             SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
          }
@@ -605,7 +606,7 @@ void Application::Update() {
       ++countedFrames;
 
       // If frame finished early
-      int frameTicks = capTimer.GetTicks();
+      int frameTicks = capTimer.GetTime();
       if (frameTicks < SCREEN_TICKS_PER_FRAME) {
          // Wait remaining time
          SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
@@ -635,7 +636,7 @@ void Application::gameover_screen() {
    capTimer.Start();
 
    // Calculate and correct fps
-   float avgFPS = countedFrames / ( fpsTimer.GetTicks() / 1000.f );
+   float avgFPS = countedFrames / ( fpsTimer.GetTime() / 1000.f );
    if( avgFPS > 2000000 ) {
       avgFPS = 0;
    }
@@ -649,7 +650,7 @@ void Application::gameover_screen() {
    ++countedFrames;
 
    // If frame finished early
-   int frameTicks = capTimer.GetTicks();
+   int frameTicks = capTimer.GetTime();
    if (frameTicks < SCREEN_TICKS_PER_FRAME) {
       // Wait remaining time
       SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
@@ -781,7 +782,7 @@ void Application::main_screen() {
       if (player->get_x() >= 1890) {
          // Set correct app flags
          app_flag_ = PLAYGROUND;
-         level_flag_ = FOREST1;
+         level_flag_ = FORESTBOSS;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -916,7 +917,7 @@ Application::~Application() {
 
 // Constructor
 Finger::Finger() : 
-   Element(700, 665, 67, 124), finger_state(SHAKE), updating(true) {}
+   Element("finger", 700, 665, 67, 124), finger_state(SHAKE), updating(true) {}
 
 Animation *Finger::GetAnimationFromState() {
    if (finger_state == SHAKE) {

@@ -5,13 +5,15 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <memory>
 
-#include "QuiteGoodMachine/Source/ObjectManager/Private/Timer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 
 // Dependencies
 class Entity;
+class Animation;
 
 // Shape struct
 typedef struct Shape {
@@ -40,11 +42,39 @@ typedef struct Shape {
    Shape() : shape_type(0, 0, 0.0f) {}
 } Shape;
 
+/**
+ * Very top abstract object type. All elements are objects with names.
+ */
+class Component {
+   public:
+      /**
+       * Constructor
+       * 
+       * @param name Name of the object
+       */
+      Component(std::string name) {
+         name_ = name;
+      }
+
+
+      /**
+       * Get's the object's name
+       * 
+       * @return string The name of the object
+       */
+      std::string GetName() const {
+         return name_;
+      }
+
+   private:
+      std::string name_;
+};
+
 // This will be the base class for all elements in the game, including players and objects
-class Element {
+class Element : public Component {
    public:
       // Constructor
-      Element(int x, int y, int width, int height);
+      Element(std::string name, int x, int y, int width, int height);
 
       /********** SETTERS AND GETTERS FOR MODEL AND HITBOX *******/
       void set_hitbox_x(float x);

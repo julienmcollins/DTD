@@ -13,12 +13,12 @@ class PigeonPostInterface {
       /**
        * Register an object to the Pigeon Post
        */
-      virtual void Register(const std::shared_ptr<Correspondent>& correspondent) = 0;
+      virtual void Register(std::string name, const std::shared_ptr<Correspondent>& correspondent) = 0;
       
       /**
        * Unregister a correspondent as a pigeon post
        */
-      virtual void Unregister(const std::shared_ptr<Correspondent>& correspondent) = 0;
+      virtual void Unregister(std::string name, const std::shared_ptr<Correspondent>& correspondent) = 0;
 
       /**
        * Sends a correspondence to multiple receivers

@@ -14,7 +14,7 @@
 
 #include "OpenGLIncludes.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h"
-#include "QuiteGoodMachine/Source/ObjectManager/Private/Timer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
 
 #include <string>
 #include <vector>
@@ -53,7 +53,7 @@ class Texture {
       int frame_num;
       float fps;
       float last_frame;
-      Timer fps_timer;
+      FPSTimer fps_timer;
 
       // Start and stop frames
       int reset_frame;
@@ -141,49 +141,6 @@ struct FrameData {
    GLdouble r;
    GLdouble b;
    GLdouble t;
-};
-
-/* Animations data */
-class Animation {
-   public:
-      /* Default constructor does not do anything (for now) */
-      Animation(Texture *texture, std::string name, GLdouble texture_width, GLdouble texture_height, GLdouble offset, int num_of_frames, float fps, int rows = 0, int columns = 0);
-
-      /* Function to flip animation */
-      void flipAnimation();
-
-      /* Texture reference */
-      Texture *parent;
-
-      /* Animation name */
-      std::string name;
-
-      /* Texture width */
-      GLdouble texture_width;
-      GLdouble texture_height;
-
-      /* Half width and height for vertext */
-      GLdouble half_width;
-      GLdouble half_height;
-
-      /* FRAME INFORMATION */
-      int num_of_frames;
-      int rows;
-      int columns;
-      int curr_frame;
-      int max_frame;
-      int reset_frame;
-      int stop_frame;
-      float last_frame;
-      float fps;
-      bool completed;
-      bool flipped;
-
-      /* FPS TIMER */
-      Timer fps_timer;
-
-      /* Animation data for the frame */
-      std::vector<FrameData> frames;
 };
 
 #endif /* Texture_h */

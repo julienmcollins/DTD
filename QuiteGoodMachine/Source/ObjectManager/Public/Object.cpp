@@ -4,6 +4,7 @@
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
+#include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
 #include "QuiteGoodMachine/Source/GameManager/Private/Application.h"
 
@@ -12,14 +13,14 @@
 /******************** Object Implementations **********************/
 
 // Constructor
-Object::Object(int x, int y, int width, int height, Entity* owner) :
-   Element(x, y, width, height), owning_entity(owner), shift(false) {}
+Object::Object(std::string name, int x, int y, int width, int height, Entity* owner) :
+   Element(name, x, y, width, height), owning_entity(owner), shift(false) {}
 
 /***************** Platform Implementations *************************/
 
 // Constructor
-Platform::Platform(int x, int y, int width, int height) :
-   Object(x, y, width, height, NULL) {
+Platform::Platform(std::string name, int x, int y, int width, int height) :
+   Object(name, x, y, width, height, NULL) {
 
    // Set position
    float x_pos = x * Application::GetInstance().to_meters_;
@@ -60,7 +61,7 @@ Platform::~Platform() {
 // Constructor
 Projectile::Projectile(std::string name, int x, int y, float width, float height,
       bool owner, int damage, float force_x, float force_y, Entity *entity) :
-   Object(x, y, 0.0f, 0.0f, entity), 
+   Object(name, x, y, 0.0f, 0.0f, entity), 
    owner_(owner), damage_(damage), normal_hit_diff_x_(0.0f), normal_hit_diff_y_(0.0f), name(name) {
 
    // Load the media

@@ -20,9 +20,13 @@ SET(DEVELOPMENT_SOURCE QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp)
 
 # GameManager
 SET(GAMEMANAGER_SOURCE QuiteGoodMachine/Source/GameManager/Public/Application.cpp
+                       QuiteGoodMachine/Source/GameManager/Public/main.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Level.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp
                        QuiteGoodMachine/Source/GameManager/Public/State.cpp
+                       QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp
+                       QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp
+                       QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp
@@ -33,11 +37,7 @@ SET(OBJECTMANAGER_SOURCE QuiteGoodMachine/Source/ObjectManager/Public/Element.cp
                          QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp
                          QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp
                          QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp
-                         QuiteGoodMachine/Source/ObjectManager/Public/main.cpp
-                         QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp
-                         QuiteGoodMachine/Source/ObjectManager/Public/ObjectManager.cpp
-                         QuiteGoodMachine/Source/ObjectManager/Public/SDLTimer.cpp
-                         QuiteGoodMachine/Source/ObjectManager/Public/Timer.cpp)
+                         QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp)
                
 # RenderingEngine
 SET(RENDERINGENGINE_SOURCE QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp
@@ -45,10 +45,18 @@ SET(RENDERINGENGINE_SOURCE QuiteGoodMachine/Source/RenderingEngine/Public/BasicS
                            QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp
                            QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp
                            QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp
-                           QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp)
+                           QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp
+                           QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp)
+
+# MemoryManager
+SET(MEMORYMANAGER_SOURCE QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp)
+
+# HUD
+SET(HUD_SOURCE QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp
+               QuiteGoodMachine/Source/HUD/Public/HUD.cpp)
 
 # Set sources
-SET(SOURCES ${DEVELOPMENT_SOURCE} ${GAMEMANAGER_SOURCE} ${OBJECTMANAGER_SOURCE} ${RENDERINGENGINE_SOURCE})
+SET(SOURCES ${DEVELOPMENT_SOURCE} ${GAMEMANAGER_SOURCE} ${OBJECTMANAGER_SOURCE} ${RENDERINGENGINE_SOURCE} ${MEMORYMANAGER_SOURCE} ${HUD_SOURCE})
 
 ## Header files
 # Development
@@ -59,6 +67,9 @@ SET(GAMEMANAGER_HEADER QuiteGoodMachine/Source/GameManager/Private/Application.h
                        QuiteGoodMachine/Source/GameManager/Private/Level.h
                        QuiteGoodMachine/Source/GameManager/Private/Notebook.h
                        QuiteGoodMachine/Source/GameManager/Private/State.h
+                       QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
+                       QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+                       QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h
@@ -75,10 +86,7 @@ SET(OBJECTMANAGER_HEADER QuiteGoodMachine/Source/ObjectManager/Private/Element.h
                          QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
                          QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
                          QuiteGoodMachine/Source/ObjectManager/Private/Global.h
-                         QuiteGoodMachine/Source/ObjectManager/Private/Object.h
-                         QuiteGoodMachine/Source/ObjectManager/Private/ObjectManager.h
-                         QuiteGoodMachine/Source/ObjectManager/Private/SDLTimer.h
-                         QuiteGoodMachine/Source/ObjectManager/Private/Timer.h)
+                         QuiteGoodMachine/Source/ObjectManager/Private/Object.h)
                
 # RenderingEngine
 SET(RENDERINGENGINE_HEADER QuiteGoodMachine/Source/RenderingEngine/Private/BasicShaderProgram.h
@@ -86,10 +94,21 @@ SET(RENDERINGENGINE_HEADER QuiteGoodMachine/Source/RenderingEngine/Private/Basic
                            QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
                            QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
                            QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
-                           QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h)
+                           QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+                           QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h)
+
+# MemoryManager
+SET(MEMORYMANAGER_HEADER QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
+                         QuiteGoodMachine/Source/MemoryManager/Interfaces/MemoryManagerInterface.h)
+
+# HUD
+SET(HUD_HEADER QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+               QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+               QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+               QuiteGoodMachine/Source/HUD/Private/HUD.h)
 
 # Set sources
-SET(HEADERS ${DEVELOPMENT_HEADER} ${GAMEMANAGER_HEADER} ${MATHSTRUCTURES_HEADER} ${OBJECTMANAGER_HEADER} ${RENDERINGENGINE_HEADER})
+SET(HEADERS ${DEVELOPMENT_HEADER} ${GAMEMANAGER_HEADER} ${MATHSTRUCTURES_HEADER} ${OBJECTMANAGER_HEADER} ${RENDERINGENGINE_HEADER} ${MEMORYMANAGER_HEADER} ${HUD_HEADER})
 
 ## Find packages
 # SDL2

@@ -1,6 +1,7 @@
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
+#include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
 

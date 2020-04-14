@@ -5,14 +5,20 @@
 
 #include "QuiteGoodMachine/Source/GameManager/Private/Application.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/Level.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
+#include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
 #include "QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h"
 
+#include "QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h"
+
 #include <stdio.h>
 #include <cmath>
+#include <memory>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include <iostream>
@@ -22,8 +28,8 @@
 
 /********************* ENEMY IMPLEMENTATIONS ******************/
 
-Enemy::Enemy(int x, int y, int width, int height) :
-   Entity(x, y, width, height), enemy_state_(IDLE), shoot_timer_(101) {
+Enemy::Enemy(std::string name, int x, int y, int width, int height) :
+   Entity(name, x, y, width, height), enemy_state_(IDLE), shoot_timer_(101) {
 
    // Set
    start_death_ = 0;
@@ -129,8 +135,8 @@ bool Enemy::within_bounds() {
 Enemy::~Enemy() {}
 
 /************** FECREEZ IMPLEMENTATIONS ********************/
-Fecreez::Fecreez(int x, int y) :
-   Enemy(x, y, 82, 92) {
+Fecreez::Fecreez(std::string name, int x, int y) :
+   Enemy(name, x, y, 82, 92) {
 
    // Set the hitboxes
    SetHitbox(x, y);
@@ -269,7 +275,7 @@ Fecreez::~Fecreez() {
 //////////////////////////////////////////////////////
 
 Arm::Arm(std::string name, int x, int y, int width, int height, Rosea *rosea) :
-   Enemy(x, y, width, height), rosea_(rosea), name_(name) {}
+   Enemy(name, x, y, width, height), rosea_(rosea), name_(name) {}
 
 Animation *Arm::GetAnimationFromState() {
    if (name_ == "still") {
@@ -290,7 +296,7 @@ Animation *Arm::GetAnimationFromState() {
 // Callback function for arm will set rosea's state to hurt
 void Arm::StartContact(Element *element) {
    if (element->type() == "Player") {
-      Player *temp = Application::GetInstance().get_player();
+      std::shared_ptr<Player> temp = Application::GetInstance().get_player();
       temp->TakeDamage(10);
       float f_y = temp->body->GetLinearVelocity().y < 0 ? -temp->body->GetLinearVelocity().y : temp->body->GetLinearVelocity().y;
       temp->body->SetLinearVelocity({-temp->body->GetLinearVelocity().x * 1.5f, f_y * 1.5f});
@@ -305,8 +311,8 @@ void Arm::StartContact(Element *element) {
 /****************** ROSEA ENEMY *********************/
 //////////////////////////////////////////////////////
 
-Rosea::Rosea(int x, int y, float angle) :
-   Enemy(x, y, 144, 189), 
+Rosea::Rosea(std::string name, int x, int y, float angle) :
+   Enemy(name, x, y, 144, 189), 
    arms_still("still", x - 46, y - 118, 122, 78, this),
    arms_attack("attack", x + 5, y - 230, 122, 387, this), 
    hurt_counter_(0), arm_state_(0), in_bounds_(false), angle_(angle),
@@ -578,8 +584,8 @@ Rosea::~Rosea() {}
 /************** MOSQUIBLER ENEMY *******************/
 /////////////////////////////////////////////////////
 
-Mosquibler::Mosquibler(int x, int y) :
-   Enemy(x, y, 107, 81) {
+Mosquibler::Mosquibler(std::string name, int x, int y) :
+   Enemy(name, x, y, 107, 81) {
 
    // Set element shape stuff
    element_shape.dynamic = true;
@@ -771,8 +777,8 @@ Mosquibler::~Mosquibler() {}
 ///////////////////////////////////////////////////
 
 // Constructor
-Fruig::Fruig(int x, int y) :
-   Enemy(x, y, 79, 110) {
+Fruig::Fruig(std::string name, int x, int y) :
+   Enemy(name, x, y, 79, 110) {
 
    // Set center
    element_shape.center = {0.0f, -0.1f};
@@ -899,8 +905,8 @@ void FleetSensor::EndContact(Element *element) {
 ///////////////////////////////////////////////////
 
 // Constructor
-Fleet::Fleet(int x, int y) :
-   Enemy(x, y, 49, 25) {
+Fleet::Fleet(std::string name, int x, int y) :
+   Enemy(name, x, y, 49, 25) {
    
    // Set shape
    element_shape.center = {0.0f, -0.08f};
@@ -1031,8 +1037,8 @@ void Fleet::StartContact(Element *element) {
 /*********** MOSQUEENBLER ENEMY ***************/
 ////////////////////////////////////////////////
 
-Mosqueenbler::Mosqueenbler(int x, int y) :
-   Enemy(x, y, 246, 134), spawn_num_of_egg_(1) {
+Mosqueenbler::Mosqueenbler(std::string name, int x, int y) :
+   Enemy(name, x, y, 246, 134), spawn_num_of_egg_(1) {
 
    // Set element shape stuff
    element_shape.dynamic = true;
@@ -1085,7 +1091,7 @@ bool Mosqueenbler::LoadMedia() {
 // Move function
 void Mosqueenbler::Move() {
    // Allow it to float
-   float y = 1 * cos(movement_timer_.GetTicks() / 1000.0f) + 0.197f;
+   float y = 1 * cos(movement_timer_.GetTime() / 1000.0f) + 0.197f;
    body->SetLinearVelocity({0.0f, y});
 
    // Spawn enemies
@@ -1093,7 +1099,7 @@ void Mosqueenbler::Move() {
       if (shoot_timer_ > 200) {
          enemy_state_ = ATTACK;
          if (GetAnimationByName("attack")->curr_frame == 8 && spawn_num_of_egg_ == 1) {
-            MosquiblerEgg *egg = new MosquiblerEgg(get_x() + 95, get_y() + 134);
+            std::shared_ptr<MosquiblerEgg> egg = std::make_shared<MosquiblerEgg>("mosquibler_egg", get_x() + 95, get_y() + 134);
             Application::GetInstance().get_level()->add_enemy(egg);
             spawn_num_of_egg_ = 0;
          } else if (GetAnimationByName("attack")->completed) {
@@ -1123,8 +1129,8 @@ void Mosqueenbler::Animate(Texture *tex, int reset, int max, int start) {
 ////////////////////////////////////////////////
 
 // Constructor
-MosquiblerEgg::MosquiblerEgg(int x, int y) :
-   Enemy(x, y, 28, 42) {
+MosquiblerEgg::MosquiblerEgg(std::string name, int x, int y) :
+   Enemy(name, x, y, 28, 42) {
 
    // Set hitbox
    element_shape.dynamic = true;
@@ -1151,8 +1157,8 @@ bool MosquiblerEgg::LoadMedia() {
 void MosquiblerEgg::Move() {
    if (enemy_state_ == ATTACK) {
       if (GetAnimationByName("attack")->completed) {
-         Application::GetInstance().get_level()->add_enemy(new Mosquibler(get_x(), get_y()));
-         Application::GetInstance().get_level()->destroy_enemy(this);
+         Application::GetInstance().get_level()->add_enemy(std::shared_ptr<Mosquibler>(new Mosquibler("mosquibler", get_x(), get_y())));
+         Application::GetInstance().get_level()->destroy_enemy(shared_from_this());
       }
    }
 }
@@ -1193,8 +1199,8 @@ void WormoredSensor::StartContact(Element *element) {
 }
 
 // Constructor for Wormored
-Wormored::Wormored(int x, int y) :
-   Enemy(x, y, 796, 418),
+Wormored::Wormored(std::string name, int x, int y) :
+   Enemy(name, x, y, 796, 418),
    body_1_heights_({{0, 0}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, 2}, {6, 2},
                   {7, 2}, {8, 2}}),
    body_2_heights_({{2, -3}, {3, -3}, {4, -3}, {5, -3}, {6, -3}, {7, 0}, {8, 0}, {9, 0}, {10, 0}, {11, 0}}),
@@ -1241,15 +1247,18 @@ Wormored::Wormored(int x, int y) :
 
    // Deactivate right facing sensors to begin with
    for (int i = 0; i < 6; i++) {
-      //right_facing_sensors_[i]->deactivate_sensor();
+      // right_facing_sensors_[i]->deactivate_sensor();
    }
 
    // Set state to idle
-   enemy_state_ = IDLE;
+   enemy_state_ = SLEEP;
    entity_direction = LEFT;
 }
 
 bool Wormored::LoadMedia() {
+   // Register as a correspondent
+   PigeonPost::GetInstance().Register(GetName(), getptr());
+
    bool success = true;
 
    std::string path = enemy_path + "Wormored/idle.png";
@@ -1260,10 +1269,19 @@ bool Wormored::LoadMedia() {
    attack_sheet = RenderingEngine::GetInstance().LoadTexture("wormored_attack_sheet", path.c_str());
    path = enemy_path + "Wormored/excrete.png";
    excrete_sheet = RenderingEngine::GetInstance().LoadTexture("wormored_excrete_sheet", path.c_str());
+   path = enemy_path + "Wormored/sleep.png";
+   sleep_sheet = RenderingEngine::GetInstance().LoadTexture("wormored_sleep_sheet", path.c_str());
+   path = enemy_path + "Wormored/awake.png";
+   awake_sheet = RenderingEngine::GetInstance().LoadTexture("wormored_awake_sheet", path.c_str());
+   path = enemy_path + "Wormored/tongue.png";
+   tongue_texture = RenderingEngine::GetInstance().LoadTexture("wormored_tongue_sheet", path.c_str());
    animations.emplace("idle", new Animation(idle_sheet, "idle", 796.0f, 418.0f, 0.0f, 21, 1 / 24.0f, 2));
    animations.emplace("turn", new Animation(turn_sheet, "turn", 796.0f, 418.0f, 0.0f, 29, 1.0f / 24.0f, 2));
    animations.emplace("attack", new Animation(attack_sheet, "attack", 796.0f, 418.0f, 0.0f, 22, 1.0f / 24.0f, 2));
    animations.emplace("excrete", new Animation(excrete_sheet, "excrete", 796.0f, 418.0f, 0.0f, 28, 1.0f / 24.0f, 2));
+   animations.emplace("sleep", new Animation(sleep_sheet, "sleep", 796.0f, 418.0f, 0.0f, 42, 1.0f / 24.0f, 3));
+   animations.emplace("awake", new Animation(awake_sheet, "awake", 796.0f, 418.0f, 0.0f, 42, 1.0f / 24.0f, 3));
+   animations.emplace("tongue", new Animation(tongue_texture, "tongue", 555.0f, 37.0f, 0.0f, 1, 1.0f / 1.0f));
    RenderingEngine::GetInstance().LoadResources(this);
 
    return success;
@@ -1282,13 +1300,22 @@ void Wormored::Update(bool freeze) {
    // Render enemy
    Animation *anim = GetAnimationFromState();
 
-   // Render player
+   // Render tongue
+   if (enemy_state_ == ATTACK) {
+      tongue_texture->Render(get_anim_x() + 110.0f, get_anim_y() + 310.0f, 0.0f, GetAnimationByName("tongue"));
+   }
+
+   // Render wormored
    if (anim) {
       anim->parent->Render(get_anim_x(), get_anim_y(), 0.0f, anim);
    }
 }
 
 void Wormored::Move() {
+   if (enemy_state_ == SLEEP) {
+      return;
+   }
+
    // Constantly move wormored
    if (enemy_state_ != ATTACK && (enemy_state_ == IDLE || enemy_state_ == TURN)) {
       if (entity_direction == LEFT) {
@@ -1300,27 +1327,27 @@ void Wormored::Move() {
          curr_frame = GetAnimationByName("idle")->curr_frame;
          if (curr_frame < 9) {
             left_facing_sensors_[0]->Update(0, body_1_heights_[curr_frame]);
-            left_facing_sensors_[0]->set_y(left_facing_sensors_[0]->get_y() + body_1_heights_[curr_frame]);
+            // left_facing_sensors_[0]->set_y(left_facing_sensors_[0]->get_y() + body_1_heights_[curr_frame]);
          }
          if (curr_frame > 1 && curr_frame < 12) {
             left_facing_sensors_[1]->Update(0, body_2_heights_[curr_frame]);
-            left_facing_sensors_[1]->set_y(left_facing_sensors_[1]->get_y() + body_2_heights_[curr_frame]);
+            // left_facing_sensors_[1]->set_y(left_facing_sensors_[1]->get_y() + body_2_heights_[curr_frame]);
          }
          if (curr_frame > 4 && curr_frame < 15) {
             left_facing_sensors_[2]->Update(0, body_3_heights_[curr_frame]);
-            left_facing_sensors_[2]->set_y(left_facing_sensors_[2]->get_y() + body_3_heights_[curr_frame]);
+            // left_facing_sensors_[2]->set_y(left_facing_sensors_[2]->get_y() + body_3_heights_[curr_frame]);
          }
          if (curr_frame > 6 && curr_frame < 18) {
             left_facing_sensors_[3]->Update(0, body_4_heights_[curr_frame]);
-            left_facing_sensors_[3]->set_y(left_facing_sensors_[3]->get_y() + body_4_heights_[curr_frame]);
+            // left_facing_sensors_[3]->set_y(left_facing_sensors_[3]->get_y() + body_4_heights_[curr_frame]);
          }
          if (curr_frame > 9 && curr_frame < 20) {
             left_facing_sensors_[4]->Update(0, body_5_heights_[curr_frame]);
-            left_facing_sensors_[4]->set_y(left_facing_sensors_[4]->get_y() + body_5_heights_[curr_frame]);
+            // left_facing_sensors_[4]->set_y(left_facing_sensors_[4]->get_y() + body_5_heights_[curr_frame]);
          }
          if (curr_frame > 11 && curr_frame < 21) {
             left_facing_sensors_[5]->Update(0, body_6_heights_[curr_frame]);
-            left_facing_sensors_[5]->set_y(left_facing_sensors_[5]->get_y() + body_6_heights_[curr_frame]);
+            // left_facing_sensors_[5]->set_y(left_facing_sensors_[5]->get_y() + body_6_heights_[curr_frame]);
          }
       } else if (entity_direction == RIGHT) {
          b2Vec2 vel = {0.25f, 0.0f};
@@ -1328,6 +1355,7 @@ void Wormored::Move() {
       }
    }
 
+   // TODO: on 5th frame, make tongue appear and start it moving
    if (enemy_state_ == ATTACK) {
       body->SetLinearVelocity({0.0f, 0.0f});
    }
@@ -1338,8 +1366,28 @@ void Wormored::Move() {
 }
 
 void Wormored::ChangeState() {
+   // Don't do anything if sleeping
+   if (enemy_state_ == SLEEP) {
+      return;
+   }
+
+   // Wait until done being awake to be idle
+   if (enemy_state_ == AWAKE) {
+      if (AnimationCompleted("awake")) {
+         enemy_state_ = IDLE;
+         std::vector<int> recipients;
+         int id = ObjectManager::GetInstance().GetUID("platform_texture");
+         int myid = ObjectManager::GetInstance().GetUID("wormored");
+         if (id != -1) {
+            recipients.push_back(id);
+            Correspondence correspondence = Correspondence::CompileCorrespondence((void *) "CloseDoors", "string", recipients, myid);
+            PigeonPost::GetInstance().Send(correspondence);
+         }
+      }
+   }
+
    // Attack if wormored and player facing left
-   Player *player = Application::GetInstance().get_player();
+   std::shared_ptr<Player> player = Application::GetInstance().get_player();
 
    // Turn if needed
    if (enemy_state_ != DEATH && enemy_state_ != ATTACK && enemy_state_ != EXCRETE) {
@@ -1350,7 +1398,7 @@ void Wormored::ChangeState() {
          // Activate left side and deactivate right side
          for (int i = 0; i < 6; i++) {
             left_facing_sensors_[i]->activate_sensor();
-            //right_facing_sensors_[i]->deactivate_sensor();
+            // right_facing_sensors_[i]->deactivate_sensor();
          }
       } else if (player->get_x() > (get_x() + get_width() / 2) && entity_direction == LEFT) {
          entity_direction = RIGHT;
@@ -1358,7 +1406,7 @@ void Wormored::ChangeState() {
 
          // Activate left side and deactivate right side
          for (int i = 0; i < 6; i++) {
-            //right_facing_sensors_[i]->activate_sensor();
+            // right_facing_sensors_[i]->activate_sensor();
             left_facing_sensors_[i]->deactivate_sensor();
          }
       }
@@ -1367,11 +1415,11 @@ void Wormored::ChangeState() {
    if (enemy_state_ != TURN) {
       if (entity_direction == LEFT && player->get_x() < (get_x() - get_width() / 2)) {
          // Add if check for timer
-         if (shoot_timer_ > 200) {
+         if (attack_timer_.GetTime() > 3.5) {
             enemy_state_ = ATTACK;
-            shoot_timer_ = 0;
+            attack_timer_.Reset();
          } else {
-            ++shoot_timer_;
+            attack_timer_.Start();
          }
       }
    }
@@ -1379,7 +1427,7 @@ void Wormored::ChangeState() {
    if (enemy_state_ == ATTACK) {
       if (AnimationCompleted("attack")) {
          enemy_state_ = IDLE;
-         shoot_timer_ = 0;
+         attack_timer_.Reset();
       }
    }
 }
@@ -1393,6 +1441,10 @@ void Wormored::Animate(Texture *tex, int reset, int max) {
       attack_sheet->Animate(GetAnimationByName("attack"));
    } else if (enemy_state_ == EXCRETE) {
       excrete_sheet->Animate(GetAnimationByName("excrete"));
+   } else if (enemy_state_ == SLEEP) {
+      sleep_sheet->Animate(GetAnimationByName("sleep"));
+   } else if (enemy_state_ == AWAKE) {
+      awake_sheet->Animate(GetAnimationByName("awake"));
    }
 }
 
@@ -1412,12 +1464,36 @@ Animation *Wormored::GetAnimationFromState() {
    if (enemy_state_ == EXCRETE) {
       return GetAnimationByName("excrete");
    }
+
+   if (enemy_state_ == SLEEP) {
+      return GetAnimationByName("sleep");
+   }
+
+   if (enemy_state_ == AWAKE) {
+      return GetAnimationByName("awake");
+   }
+
    return nullptr;
+}
+
+void Wormored::ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence) {
+   // Return if state not sleep
+   if (enemy_state_ != SLEEP) {
+      return;
+   }
+   
+   // Create strying from message
+   char *msg = (char *) (correspondence->GetMessage());
+   std::string fmsg(msg);
+   if (fmsg == "InitiateBattle") {
+      enemy_state_ = AWAKE;
+      attack_timer_.Start();
+   }
 }
 
 Wormored::~Wormored() {
    for (int i = 0; i < 5; i++) {
-      delete left_facing_sensors_[i];
-      //delete right_facing_sensors_[i];
+      // delete left_facing_sensors_[i];
+      // delete right_facing_sensors_[i];
    }
 }

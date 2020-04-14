@@ -13,32 +13,32 @@ class CorrespondentInterface {
       /**
        *  Register as a correspondent
        */
-      virtual void RegisterAsCorrespondent() = 0;
+      virtual void RegisterAsCorrespondent(std::string name) = 0;
 
       /** 
        * Unregister as a correspondent
        */
       virtual void UnregisterAsCorrespondent() = 0;
 
-      /**
-       * Register as a receiver
-       */
-      virtual void RegisterAsReceiver() = 0;
+      // /**
+      //  * Register as a receiver
+      //  */
+      // virtual void RegisterAsReceiver() = 0;
 
-      /**
-       * Register as a sender
-       */
-      virtual void RegisterAsSender() = 0;
+      // /**
+      //  * Register as a sender
+      //  */
+      // virtual void RegisterAsSender() = 0;
 
-      /**
-       * Register as a receiver
-       */
-      virtual void UnregisterAsReceiver() = 0;
+      // /**
+      //  * Register as a receiver
+      //  */
+      // virtual void UnregisterAsReceiver() = 0;
 
-      /**
-       * Register as a sender
-       */
-      virtual void UnregisterAsSender() = 0;
+      // /**
+      //  * Register as a sender
+      //  */
+      // virtual void UnregisterAsSender() = 0;
 
       /**
        * Receives the correspondence from message buss

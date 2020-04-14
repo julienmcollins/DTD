@@ -1,14 +1,16 @@
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
-#include "QuiteGoodMachine/Source/ObjectManager/Private/Timer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
 
 #include "QuiteGoodMachine/Source/GameManager/Private/Application.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
+#include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
 // Constructor for element
-Element::Element(int x, int y, int width, int height) :
+Element::Element(std::string name, int x, int y, int width, int height) :
+   Component(name),
    alive(true), body(NULL), flag_(false), element_shape(), 
    in_contact_down(false), in_contact_left(false), in_contact_right(false),
    texture_flipped(false) {
@@ -250,12 +252,6 @@ void Element::SetHitbox(int x, int y, SHAPE_TYPE type, int group) {
 
    // Set user data so it can react
    body->SetUserData(this);
-
-   // Run the load media function
-   if (LoadMedia() == false) {
-      std::cout << "Quit in here! " << this->type() << std::endl;
-      Application::GetInstance().set_quit();
-   }
 }
 
 void Element::CreateHitbox(float x, float y) {
@@ -343,7 +339,7 @@ Element::~Element() {
 
 /*************** SENSOR CLASS *************************/
 Sensor::Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y, float density, bool set_as_body) :
-   Element(center_x, center_y, height, width), sensor_contact(contact_type), owner_(entity), density_(density) {}
+   Element("", center_x, center_y, height, width), sensor_contact(contact_type), owner_(entity), density_(density) {}
 
 void Sensor::initialize(float width, float height, float center_x, float center_y, uint16 category, uint16 mask, bool is_sensor) {
    // Create box shape

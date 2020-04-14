@@ -8,17 +8,23 @@
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
-#include "QuiteGoodMachine/Source/ObjectManager/Private/Timer.h"
-#include "QuiteGoodMachine/Source/ObjectManager/Private/SDLTimer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 
 #include "QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h"
 
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h"
+
+class Correspondence;
+class Animation;
+
 class Enemy : public Entity {
    public:
       // Construct the enemy
-      Enemy(int x, int y, int width, int height);
+      Enemy(std::string name, int x, int y, int width, int height);
       
       // Different enemy states
       enum STATE {
@@ -29,6 +35,8 @@ class Enemy : public Entity {
          HURT,
          TURN,
          FALL,
+         AWAKE, // TERRIBLE WAY OF DOING THIS
+         SLEEP, // TERRIBLE WAY OF DOING THIS
          DEATH
       };
 
@@ -87,7 +95,7 @@ class Enemy : public Entity {
 class Fecreez : public Enemy {
    public:
       // Constructor for fecreez
-      Fecreez(int x, int y);
+      Fecreez(std::string name, int x, int y);
 
       // Load media
       virtual bool LoadMedia();
@@ -137,7 +145,7 @@ class Arm : public Enemy {
 class Rosea : public Enemy {
    public:
       // COnstructor for rosea
-      Rosea(int x, int y, float angle);
+      Rosea(std::string name, int x, int y, float angle);
 
       // Load Rosea media
       virtual bool LoadMedia();
@@ -202,7 +210,7 @@ class Rosea : public Enemy {
 class Mosquibler : public Enemy {
    public:
       // Constructor for mosquibler
-      Mosquibler(int x, int y);
+      Mosquibler(std::string name, int x, int y);
 
       // Load Rosea media
       virtual bool LoadMedia();
@@ -230,7 +238,7 @@ class Mosquibler : public Enemy {
 class Fruig : public Enemy {
    public:
       // Constructor
-      Fruig(int x, int y);
+      Fruig(std::string name, int x, int y);
 
       // Load fruig media
       virtual bool LoadMedia();
@@ -262,7 +270,7 @@ class FleetSensor : public Sensor {
 class Fleet : public Enemy {
    public:
       // Constructor
-      Fleet(int x, int y);
+      Fleet(std::string name, int x, int y);
 
       // Load fleet media
       virtual bool LoadMedia();
@@ -285,7 +293,7 @@ class Fleet : public Enemy {
 class Mosqueenbler : public Enemy {
    public:
       // Constructor
-      Mosqueenbler(int x, int y);
+      Mosqueenbler(std::string name, int x, int y);
 
       // Load fleet media
       virtual bool LoadMedia();
@@ -307,17 +315,18 @@ class Mosqueenbler : public Enemy {
          return "Mosqueenbler";
       }
    private:
-      // Timer for his movement
+      // FPSTimer for his movement
       SDLTimer movement_timer_;
 
       // Spawn number of mosquiblers
       int spawn_num_of_egg_;
 };
 
-class MosquiblerEgg : public Enemy {
+class MosquiblerEgg : public Enemy,
+                      public std::enable_shared_from_this<MosquiblerEgg> {
    public:
       // Constructor
-      MosquiblerEgg(int x, int y);
+      MosquiblerEgg(std::string name, int x, int y);
 
       // Load wormored media
       virtual bool LoadMedia();
@@ -351,10 +360,11 @@ class WormoredSensor : public Sensor {
       }
 };
 
-class Wormored : public Enemy {
-   public:
+class Wormored : public Enemy, 
+                 public Correspondent {
+   public:      
       // Constructor
-      Wormored(int x, int y);
+      Wormored(std::string name, int x, int y);
 
       // Load wormored media
       virtual bool LoadMedia();
@@ -365,6 +375,11 @@ class Wormored : public Enemy {
       void ChangeState();
       virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0);
       virtual Animation *GetAnimationFromState();
+
+      /**
+       * Virtual process correspondent function
+       */
+      virtual void ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence);
 
       // Wormored type
       virtual std::string type() {
@@ -396,6 +411,12 @@ class Wormored : public Enemy {
       Texture *turn_sheet;
       Texture *attack_sheet;
       Texture *excrete_sheet;
+      Texture *sleep_sheet;
+      Texture *awake_sheet;
+      Texture *tongue_texture;
+
+      // Wakeup timer
+      SecondsTimer attack_timer_;
 };
 
 #endif

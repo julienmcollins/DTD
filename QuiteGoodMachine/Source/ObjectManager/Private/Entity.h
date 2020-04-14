@@ -6,10 +6,12 @@
 #include <string>
 #include <vector>
 
-#include "QuiteGoodMachine/Source/ObjectManager/Private/Timer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
+
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h"
 
 #define PC_OFF_X 62.0f
 #define PC_OFF_Y 0.0f
@@ -18,11 +20,12 @@
 class Platform;
 class Projectile;
 class Player;
+class Animation;
 
 class Entity : public Element {
     public:
         // Constructor
-        Entity(int x_pos, int y_pos, double width, double height);
+        Entity(std::string name, int x_pos, int y_pos, double width, double height);
 
         // Flags
         int has_jumped_;
@@ -160,7 +163,8 @@ class PlayerLeg : public BodyPart {
 };
 
 // Player class
-class Player : public Entity {
+class Player : public Entity, 
+               public Correspondent {
    public:
       // Construct the player
       Player();
@@ -299,15 +303,15 @@ class Player : public Entity {
       bool left_deactivated_ = true;
 
       // Immunity timer
-      Timer immunity_timer_;
+      FPSTimer immunity_timer_;
       float immunity_duration_;
 
       // Edge timer
-      Timer edge_timer_;
+      FPSTimer edge_timer_;
       float edge_duration_;
 
       // Fall timer
-      Timer fall_timer_;
+      FPSTimer fall_timer_;
       float fall_duration_;
 
       // Projectile pointer

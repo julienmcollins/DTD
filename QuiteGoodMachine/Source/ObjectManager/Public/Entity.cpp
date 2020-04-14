@@ -1,12 +1,17 @@
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Object.h"
-#include "QuiteGoodMachine/Source/ObjectManager/Private/Timer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Global.h"
+#include "QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
+#include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
 #include "QuiteGoodMachine/Source/GameManager/Private/Application.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/Level.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h"
 
 #include <cmath>
 #include <stdlib.h>
@@ -17,13 +22,13 @@
 
 #define BOUNDED(var) (var > -0.0000001f && var < 0.0000001f)
 
-std::string Player::media_path = sprite_path + "Player/";
+std::string Player::media_path = sprite_path + std::string("Player/");
 
 /*************************** ENTITY IMPLEMENTATIONS ******************************/
 
 // Entity constructor which will provide basic establishment for all entities
-Entity::Entity(int x_pos, int y_pos, double width, double height) : 
-   Element(x_pos, y_pos, width, height),
+Entity::Entity(std::string name, int x_pos, int y_pos, double width, double height) : 
+   Element(name, x_pos, y_pos, width, height),
    has_jumped_(0), health(0), shift_(false), entity_direction(NEUTRAL),
    prev_entity_dir(NEUTRAL) {
 }
@@ -215,6 +220,16 @@ void PlayerLeg::StartContact(Element *element) {
    // Set contacts of player
    if (element && player) {
       if (element->type() == "Platform" || element->type() == "Mosqueenbler" || element->type() == "Wormored") {
+         if (element->type() == "Platform" && element->GetName() == "platform_2" && Level::GetInstance().level == Application::FORESTBOSS) {
+            std::vector<int> recipients;
+            int id = ObjectManager::GetInstance().GetUID("wormored");
+            int myid = ObjectManager::GetInstance().GetUID("player");
+            if (id != -1) {
+               recipients.push_back(id);
+               Correspondence correspondence = Correspondence::CompileCorrespondence((void *) "InitiateBattle", "string", recipients, myid);
+               PigeonPost::GetInstance().Send(correspondence);
+            }
+         }
          if (sub_type() == "PlayerLeftLeg") {
             player->contacts_[Player::LEFT_LEG] = 1;
             // std::cout << "PlayerLeg::StartContact() - in contact left leg: " << element->type() << std::endl;
@@ -261,7 +276,7 @@ void PlayerLeg::EndContact(Element *element) {
 Player::Player() : 
    // The new sprite is going to be 37 wide (the character itself)
    // TODO: Load in new smaller sprite sheet
-   Entity(960, 412, 31, 104), player_state_(STAND),
+   Entity("player", 960, 412, 31, 104), player_state_(STAND),
    shooting(false), arm_delta_x(12), arm_delta_y(64),
    arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
    immunity_duration_(1.0f), edge_duration_(0.025f), fall_duration_(0.015f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
@@ -660,7 +675,7 @@ void Player::change_player_state() {
       return;
    }
 
-   if (fall_timer_.GetTicks() / (double) CLOCKS_PER_SEC > fall_duration_) {
+   if (fall_timer_.GetTime() / (double) CLOCKS_PER_SEC > fall_duration_) {
       player_state_ = JUMP;
       fall_timer_.Stop();
    }
@@ -674,7 +689,7 @@ void Player::change_player_state() {
    // Change state to balance if one leg on and the other one not
    if ((contacts_[LEFT_LEG] && !contacts_[RIGHT_LEG] && entity_direction == RIGHT) || (!contacts_[LEFT_LEG] && contacts_[RIGHT_LEG] && entity_direction == LEFT)) {
       edge_timer_.Start();
-      if (edge_timer_.GetTicks() / (double) CLOCKS_PER_SEC > edge_duration_) {
+      if (edge_timer_.GetTime() / (double) CLOCKS_PER_SEC > edge_duration_) {
          player_state_ = BALANCE;
       } else {
          player_state_ = STAND;
@@ -736,7 +751,7 @@ void Player::Move() {
          shift_ = true;
       }
       if (GetAnimationByName("death")->curr_frame >= 19) {
-         if (((float) Application::GetInstance().death_timer_.GetTicks() / 1000.0f) >= 3.0f) {
+         if (((float) Application::GetInstance().death_timer_.GetTime() / 1000.0f) >= 3.0f) {
             std::cout << "In death\n";
             alive = false;
             Application::GetInstance().death_timer_.Stop();
@@ -913,12 +928,15 @@ void Player::EndContact(Element *element) {
 
 // Load media function
 bool Player::LoadMedia() {
+   // Register as correspondent
+   PigeonPost::GetInstance().Register(GetName(), getptr());
+
    // Temp flag
    bool success = true;
 
    // Instantiate sprite sheet for main player body
-   std::string player_path = media_path + "player_master_sheet.png";
-   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("player_master_sheet", player_path.c_str());
+   std::string p_path = player_path + "player_master_sheet.png";
+   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("player_master_sheet", p_path.c_str());
    animations.emplace("jump_push", new Animation(sprite_sheet, "jump_push", 61.0, 106.0, 0.0, 8, 1.0 / 20.0));
    animations.emplace("double_jump", new Animation(sprite_sheet, "double_jump", 61.0, 106.0, 106.0, 11, 1.0 / 24.0));
    animations.emplace("tap", new Animation(sprite_sheet, "tap", 61.0, 106.0, 212.0, 12, 1.0 / 24.0));
@@ -932,7 +950,7 @@ bool Player::LoadMedia() {
    animations.emplace("balance", new Animation(sprite_sheet, "balance", 128.0, 106.0, 1060.0, 19, 1.0 / 20.0));
 
    // Instantiate sprite sheet for arms
-   std::string arm_path = media_path + "arm_master_sheet.png";
+   std::string arm_path = player_path + "arm_master_sheet.png";
    arm_sheet = RenderingEngine::GetInstance().LoadTexture("arm_master_sheet", arm_path.c_str());
    animations.emplace("idle_arm", new Animation(arm_sheet, "idle_arm", 10.0, 27.0, 0.0, 1, 1.0 / 30.0));
    animations.emplace("double_jump_arm", new Animation(arm_sheet, "double_jump_arm", 9.0, 27.0, 27.0, 8, 1.0 / 24.0));
@@ -973,7 +991,7 @@ Projectile* Player::CreateProjectile(std::string name, float width, float height
 // Take damage function
 void Player::TakeDamage(int damage) {
    // Now check that a certain threshold has been reached
-   float delta = (float) immunity_timer_.getDeltaTime() / 1000.0f;
+   float delta = (float) immunity_timer_.GetDeltaTime() / 1000.0f;
    if (delta > immunity_duration_) {
       // Take damage
       if (health == 30) {
@@ -1003,7 +1021,7 @@ Player::~Player() {
 /////////////// HITMARKER CLASS ///////////////////////
 ///////////////////////////////////////////////////////
 Hitmarker::Hitmarker(int x, int y) :
-   Element(x, y, 103, 76), state(ALIVE) {
+   Element("", x, y, 103, 76), state(ALIVE) {
    
    // Load media
    LoadMedia();

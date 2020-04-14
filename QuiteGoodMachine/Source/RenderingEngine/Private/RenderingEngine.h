@@ -11,9 +11,10 @@
 #include <vector>
 #include <string>
 
+class Animation;
+
 /* This class will be a singleton responsible for all rendering related
    stuff */
-
 class RenderingEngine {
     public:
         /* Singleton instancing of this object 

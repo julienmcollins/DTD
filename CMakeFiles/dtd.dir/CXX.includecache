@@ -33,6 +33,8 @@ QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 QuiteGoodMachine/Source/Development/Private/DevelZoom.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/Development/Private/DevelZoom.h
 SDL2/SDL.h
@@ -91,10 +93,14 @@ QuiteGoodMachine/Source/GameManager/Private/Level.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/GameManager/Private/Level.h
 QuiteGoodMachine/Source/GameManager/Private/Application.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/GameManager/Private/Application.h
+QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
 QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
 QuiteGoodMachine/Source/ObjectManager/Private/Object.h
@@ -164,6 +170,26 @@ iostream
 stdio.h
 -
 
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUD.cpp
+QuiteGoodMachine/Source/HUD/Private/HUD.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/HUD/Private/HUD.h
+vector
+-
+string
+-
+memory
+-
+iostream
+-
+algorithm
+-
+QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp
+QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp
 QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/MemoryManager/Public/QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
@@ -187,6 +213,8 @@ QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp
 QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
@@ -203,12 +231,18 @@ QuiteGoodMachine/Source/GameManager/Private/Level.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/GameManager/Private/Level.h
 QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
+QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
 QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
+QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
 stdio.h
 -
 cmath
@@ -241,6 +275,8 @@ QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 QuiteGoodMachine/Source/GameManager/Private/Application.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/GameManager/Private/Application.h
 QuiteGoodMachine/Source/GameManager/Private/Level.h
@@ -283,10 +319,18 @@ QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 QuiteGoodMachine/Source/GameManager/Private/Application.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/GameManager/Private/Application.h
 iostream
 -
+
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp
 
@@ -309,6 +353,8 @@ QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 QuiteGoodMachine/Source/ObjectManager/Private/Element.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/QuiteGoodMachine/Source/ObjectManager/Private/Element.h
 QuiteGoodMachine/Source/GameManager/Private/Application.h
@@ -339,6 +385,8 @@ glm/gtc/type_ptr.hpp
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 QuiteGoodMachine/Source/RenderingEngine/Private/BasicShaderProgram.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/QuiteGoodMachine/Source/RenderingEngine/Private/BasicShaderProgram.h
 QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
@@ -536,6 +584,34 @@ QuiteGoodMachine/Source/GameManager/Private/Timers/QuiteGoodMachine/Source/GameM
 chrono
 -
 
+QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+
+QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+vector
+-
+memory
+-
+string
+-
+unordered_map
+-
+QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+QuiteGoodMachine/Source/HUD/Interfaces/QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+
+QuiteGoodMachine/Source/HUD/Private/HUD.h
+vector
+-
+string
+-
+memory
+-
+QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+QuiteGoodMachine/Source/HUD/Private/QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+
+QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+QuiteGoodMachine/Source/HUD/Private/QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+
 QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
 
 QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
@@ -543,6 +619,10 @@ unordered_map
 -
 unordered_set
 -
+string
+-
+
+QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
 string
 -
 
@@ -561,6 +641,8 @@ QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
 QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
 
 QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
 SDL2/SDL.h
@@ -627,6 +709,18 @@ QuiteGoodMachine/Source/ObjectManager/Private/Element.h
 QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/ObjectManager/Private/Element.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+string
+-
+SDL2/SDL.h
+-
+SDL2/SDL_image.h
+-
+QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+QuiteGoodMachine/Source/RenderingEngine/Private/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 
 QuiteGoodMachine/Source/RenderingEngine/Private/BasicShaderProgram.h
 

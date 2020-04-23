@@ -348,8 +348,32 @@ Rosea::Rosea(std::string name, int x, int y, float angle) :
 
    // TODO: translate should be based on sin and cos of angles given
 
+   // Set health
+   health = 100;
+}
+
+// Load media for rosea
+bool Rosea::LoadMedia() {
+   // Flag for success
+   bool success = true;
+
+   // Load rosea main body
+   std::string rosea_path = Application::GetInstance().sprite_path + "Enemies/Rosea/rosea_master_sheet.png";
+   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("rosea_master_sheet", rosea_path.c_str());
+   animations.emplace("idle", new Animation(sprite_sheet, "idle", 189.0, 144.0, 0.0, 15, 1.0 / 20.0));
+   animations.emplace("hurt", new Animation(sprite_sheet, "hurt", 189.0, 144.0, 144.0, 15, 1.0 / 20.0));
+   RenderingEngine::GetInstance().LoadResources(this);
+
+   std::string arm_path = Application::GetInstance().sprite_path + "Enemies/Rosea/rosea_arm_master_sheet.png";
+   arm_sheet = RenderingEngine::GetInstance().LoadTexture("rosea_arm_master_sheet", arm_path.c_str());
+   arms_still.animations.emplace("idle", new Animation(arm_sheet, "idle", 112.0, 78.0, 0.0, 15, 1.0 / 20.0));
+   arms_still.animations.emplace("hurt", new Animation(arm_sheet, "hurt", 112.0, 78.0, 78.0, 15, 1.0 / 20.0));
+   arms_attack.animations.emplace("attack", new Animation(arm_sheet, "attack", 122.0, 387.0, 156.0, 15, 1.0 / 20.0));
+   RenderingEngine::GetInstance().LoadResources(&arms_still);
+   RenderingEngine::GetInstance().LoadResources(&arms_attack);
+
    // Special state for 0 angle
-   if (angle == 0.0f) {
+   if (angle_ == 0.0f) {
       // Construct a matrix that will essentially rotate with the entire object
       arm_model = glm::translate(element_model, glm::vec3(10.0f, -(GetAnimationFromState()->half_height), 0.0f));
 
@@ -360,7 +384,7 @@ Rosea::Rosea(std::string name, int x, int y, float angle) :
    }
 
    // Need to change arm position if rotated
-   if (angle == 90.0f) {
+   if (angle_ == 90.0f) {
       // Construct a matrix that will essentially rotate with the entire object
       arm_model = glm::translate(element_model, glm::vec3(GetAnimationFromState()->half_width - 19.0f, 10.0f, 0.0f));
       arms_still.body->SetTransform(arms_still.body->GetPosition(), M_PI / 2.0f);
@@ -378,30 +402,6 @@ Rosea::Rosea(std::string name, int x, int y, float angle) :
    // Set hitbox to match locations
    arms_still.set_x(arm_model[3][0]);
    arms_still.set_y(arm_model[3][1]);
-
-   // Set health
-   health = 100;
-}
-
-// Load media for rosea
-bool Rosea::LoadMedia() {
-   // Flag for success
-   bool success = true;
-
-   // Load rosea main body
-   std::string rosea_path = enemy_path + "Rosea/rosea_master_sheet.png";
-   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("rosea_master_sheet", rosea_path.c_str());
-   animations.emplace("idle", new Animation(sprite_sheet, "idle", 189.0, 144.0, 0.0, 15, 1.0 / 20.0));
-   animations.emplace("hurt", new Animation(sprite_sheet, "hurt", 189.0, 144.0, 144.0, 15, 1.0 / 20.0));
-   RenderingEngine::GetInstance().LoadResources(this);
-
-   std::string arm_path = enemy_path + "Rosea/rosea_arm_master_sheet.png";
-   arm_sheet = RenderingEngine::GetInstance().LoadTexture("rosea_arm_master_sheet", arm_path.c_str());
-   arms_still.animations.emplace("idle", new Animation(arm_sheet, "idle", 112.0, 78.0, 0.0, 15, 1.0 / 20.0));
-   arms_still.animations.emplace("hurt", new Animation(arm_sheet, "hurt", 112.0, 78.0, 78.0, 15, 1.0 / 20.0));
-   arms_attack.animations.emplace("attack", new Animation(arm_sheet, "attack", 122.0, 387.0, 156.0, 15, 1.0 / 20.0));
-   RenderingEngine::GetInstance().LoadResources(&arms_still);
-   RenderingEngine::GetInstance().LoadResources(&arms_attack);
 
    // Return success
    return success;
@@ -547,6 +547,7 @@ Animation* Rosea::GetAnimationFromState() {
    if (enemy_state_ == HURT) {
       return GetAnimationByName("hurt");
    }
+
    return nullptr;
 }
 

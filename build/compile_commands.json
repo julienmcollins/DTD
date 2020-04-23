@@ -153,5 +153,17 @@
   "directory": "/home/juliencollins/Game_Dev/DTD/build",
   "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp",
   "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUD.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUD.cpp"
 }
 ]

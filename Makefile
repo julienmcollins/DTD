@@ -474,6 +474,60 @@ QuiteGoodMachine/Source/GameManager/Public/main.cpp.s:
 	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/main.cpp.s
 
+QuiteGoodMachine/Source/HUD/Public/HUD.o: QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUD.o
+
+# target to build an object file
+QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o
+
+QuiteGoodMachine/Source/HUD/Public/HUD.i: QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUD.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i
+
+QuiteGoodMachine/Source/HUD/Public/HUD.s: QuiteGoodMachine/Source/HUD/Public/HUD.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUD.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/HUD/Public/HUD.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.s
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUD.cpp.s
+
+QuiteGoodMachine/Source/HUD/Public/HUDElement.o: QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUDElement.o
+
+# target to build an object file
+QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o
+
+QuiteGoodMachine/Source/HUD/Public/HUDElement.i: QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUDElement.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i
+
+QuiteGoodMachine/Source/HUD/Public/HUDElement.s: QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUDElement.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.s
+.PHONY : QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.s
+
 QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.o: QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o
 
 .PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.o
@@ -635,6 +689,33 @@ QuiteGoodMachine/Source/ObjectManager/Public/Object.s: QuiteGoodMachine/Source/O
 QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s:
 	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s
+
+QuiteGoodMachine/Source/RenderingEngine/Public/Animation.o: QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Animation.o
+
+# target to build an object file
+QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o
+.PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o
+
+QuiteGoodMachine/Source/RenderingEngine/Public/Animation.i: QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Animation.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i
+.PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i
+
+QuiteGoodMachine/Source/RenderingEngine/Public/Animation.s: QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Animation.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.s
+.PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.s
 
 QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.o: QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o
 
@@ -846,6 +927,12 @@ help:
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/main.o"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/main.i"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/main.s"
+	@echo "... QuiteGoodMachine/Source/HUD/Public/HUD.o"
+	@echo "... QuiteGoodMachine/Source/HUD/Public/HUD.i"
+	@echo "... QuiteGoodMachine/Source/HUD/Public/HUD.s"
+	@echo "... QuiteGoodMachine/Source/HUD/Public/HUDElement.o"
+	@echo "... QuiteGoodMachine/Source/HUD/Public/HUDElement.i"
+	@echo "... QuiteGoodMachine/Source/HUD/Public/HUDElement.s"
 	@echo "... QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.o"
 	@echo "... QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.i"
 	@echo "... QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.s"
@@ -864,6 +951,9 @@ help:
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Object.o"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Object.i"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Object.s"
+	@echo "... QuiteGoodMachine/Source/RenderingEngine/Public/Animation.o"
+	@echo "... QuiteGoodMachine/Source/RenderingEngine/Public/Animation.i"
+	@echo "... QuiteGoodMachine/Source/RenderingEngine/Public/Animation.s"
 	@echo "... QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.o"
 	@echo "... QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.i"
 	@echo "... QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.s"

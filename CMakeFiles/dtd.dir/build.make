@@ -489,9 +489,81 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o.pro
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o.provides.build: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o
 
 
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o: CMakeFiles/dtd.dir/flags.make
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o: QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp > CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.i
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.s
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o.requires:
+
+.PHONY : CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o.requires
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o.provides: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o.requires
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o.provides.build
+.PHONY : CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o.provides
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o.provides.build: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o
+
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o: CMakeFiles/dtd.dir/flags.make
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o: QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp > CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.i
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.s
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o.requires:
+
+.PHONY : CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o.requires
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o.provides: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o.requires
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o.provides.build
+.PHONY : CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o.provides
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o.provides.build: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o
+
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o: CMakeFiles/dtd.dir/flags.make
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o: QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp > CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.i
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.s
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o.requires:
+
+.PHONY : CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o.requires
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o.provides: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o.requires
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o.provides.build
+.PHONY : CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o.provides
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o.provides.build: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o
+
+
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.i: cmake_force
@@ -515,7 +587,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderPro
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.i: cmake_force
@@ -539,7 +611,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.i: cmake_force
@@ -563,7 +635,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o.p
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.i: cmake_force
@@ -587,7 +659,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngin
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.i: cmake_force
@@ -611,7 +683,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.i: cmake_force
@@ -635,7 +707,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o.
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i: cmake_force
@@ -659,7 +731,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o: QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i: cmake_force
@@ -683,7 +755,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o: QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i: cmake_force
@@ -707,7 +779,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o.provides.
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o: CMakeFiles/dtd.dir/flags.make
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o: QuiteGoodMachine/Source/HUD/Public/HUD.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building CXX object CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUD.cpp
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i: cmake_force
@@ -749,6 +821,9 @@ dtd_OBJECTS = \
 "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o" \
 "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o" \
 "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o" \
+"CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o" \
+"CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o" \
+"CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o" \
 "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o" \
 "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o" \
 "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o" \
@@ -781,6 +856,9 @@ dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o
 dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o
 dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o
 dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o
+dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o
+dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o
+dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o
 dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o
 dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o
 dtd: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o
@@ -800,7 +878,7 @@ dtd: /usr/lib/x86_64-linux-gnu/libGLEW.so
 dtd: libBox2D.a
 dtd: /usr/lib/libSOIL.so
 dtd: CMakeFiles/dtd.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Linking CXX executable dtd"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Linking CXX executable dtd"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/dtd.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -826,6 +904,9 @@ CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectMa
 CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o.requires
 CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o.requires
 CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o.requires
+CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o.requires
+CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o.requires
+CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o.requires
 CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o.requires
 CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o.requires
 CMakeFiles/dtd.dir/requires: CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o.requires

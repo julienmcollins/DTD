@@ -60,39 +60,39 @@ CMAKE_SOURCE_DIR = /home/juliencollins/Game_Dev/DTD
 CMAKE_BINARY_DIR = /home/juliencollins/Game_Dev/DTD
 
 #=============================================================================
-# Target rules for target CMakeFiles/dtd.dir
+# Target rules for target CMakeFiles/dtd.exe.dir
 
 # All Build rule for target.
-CMakeFiles/dtd.dir/all:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/depend
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29 "Built target dtd"
-.PHONY : CMakeFiles/dtd.dir/all
+CMakeFiles/dtd.exe.dir/all:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/depend
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/juliencollins/Game_Dev/DTD/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32 "Built target dtd.exe"
+.PHONY : CMakeFiles/dtd.exe.dir/all
 
 # Include target in all.
-all: CMakeFiles/dtd.dir/all
+all: CMakeFiles/dtd.exe.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/dtd.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/juliencollins/Game_Dev/DTD/CMakeFiles 29
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/dtd.dir/all
+CMakeFiles/dtd.exe.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/juliencollins/Game_Dev/DTD/CMakeFiles 32
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/dtd.exe.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/juliencollins/Game_Dev/DTD/CMakeFiles 0
-.PHONY : CMakeFiles/dtd.dir/rule
+.PHONY : CMakeFiles/dtd.exe.dir/rule
 
 # Convenience name for target.
-dtd: CMakeFiles/dtd.dir/rule
+dtd.exe: CMakeFiles/dtd.exe.dir/rule
 
-.PHONY : dtd
-
-# clean rule for target.
-CMakeFiles/dtd.dir/clean:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/clean
-.PHONY : CMakeFiles/dtd.dir/clean
+.PHONY : dtd.exe
 
 # clean rule for target.
-clean: CMakeFiles/dtd.dir/clean
+CMakeFiles/dtd.exe.dir/clean:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/clean
+.PHONY : CMakeFiles/dtd.exe.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/dtd.exe.dir/clean
 
 .PHONY : clean
 

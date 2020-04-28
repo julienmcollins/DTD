@@ -61,3 +61,13 @@
 3748	4745	1587329704	dtd	b30fa90a473e52b6
 4	3258	1587330129	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o	d28d86bfe5fb58e1
 3258	3997	1587330130	dtd	b30fa90a473e52b6
+5	3488	1588054331	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o	a024674fd04cca53
+4	3555	1588054331	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o	8a172269a8a5c870
+4	3733	1588054331	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o	a49bd945529f9561
+5	3860	1588054331	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o	bb3abfd86c8a8924
+6	4278	1588054332	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o	f486febfb6d8478
+3	4769	1588054332	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o	a5f1c6ecb863190e
+2	5138	1588054332	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o	f868d9a3cb5836bc
+3	5653	1588054333	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o	d28d86bfe5fb58e1
+3	5938	1588054333	CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o	e98f6e8d6b362892
+5938	6742	1588054334	dtd	c344f8c857f57c0

@@ -2,13 +2,16 @@
 #define HUDELEMENT_H_
 
 #include "QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h"
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h"
 
-class HUDElement : public HUDElementInterface {
+#include "OpenGLIncludes.h"
+
+class HUDElement : public HUDElementInterface, public DrawableElement {
    public:
       /**
        * Constructor specifies the initial position
        */
-      HUDElement(int x, int y);
+      HUDElement(std::string name, glm::vec2 initial_position, glm::vec2 size);
 
       /**
        * Enables the element (allow it to be drawn on screen)

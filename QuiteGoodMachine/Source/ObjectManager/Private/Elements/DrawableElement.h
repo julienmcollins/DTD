@@ -1,22 +1,24 @@
 #ifndef DRAWABLEELEMENT_H_
 #define DRAWABLEELEMENT_H_
 
-#include "QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h"
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
 #include "QuiteGoodMachine/Source/GameManager/Private/State.h"
 
+#include "OpenGLIncludes.h"
+
 #include <string>
 #include <memory>
 
-class DrawableElement : virtual public ElementInterface {
+class DrawableElement : virtual public PositionalElement {
    public:
       /**
        * Constructor
        */
-      DrawableElement();
+      DrawableElement(std::string name, glm::vec2 initial_position, glm::vec2 size);
 
       /**
        * Update function will involve drawing if enabled
@@ -93,8 +95,8 @@ class DrawableElement : virtual public ElementInterface {
       std::shared_ptr<State> current_state_;
 
       // Drawing model and angle
-      glm::mat4 model_;
-      float angle_;
+      glm::mat4 draw_model_;
+      float draw_angle_;
 };
 
 #endif

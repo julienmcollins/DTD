@@ -8,6 +8,11 @@
 class ElementInterface : public Component {
    public:
       /**
+       * Constructor sets name of object
+       */
+      ElementInterface(std::string name) : Component(name) {}
+      
+      /**
        * Update
        * Updates the element, all elements need an update
        */
@@ -48,8 +53,8 @@ class ElementInterface : public Component {
       /**
        * Virtual destructor
        */
-      virtual ~ElementInterface() = 0;
-      
+      virtual ~ElementInterface() {};
+
    private:
       // Simple flag for enabled/disabled elements
       bool active_ = true;

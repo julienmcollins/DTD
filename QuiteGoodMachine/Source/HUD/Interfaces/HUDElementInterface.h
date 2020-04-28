@@ -1,10 +1,10 @@
 #ifndef HUDELEMENTINTERFACE_H_
 #define HUDELEMENTINTERFACE_H_
 
-#include "QuiteGoodMachine/Source/ObjectManager/Private/DrawableElement.h"
+#include "OpenGLIncludes.h"
 
-class HUDElementInterface : public DrawableElement {
-   public:
+class HUDElementInterface {
+   public:      
       /**
        * Enables the element (allow it to be drawn on screen)
        */

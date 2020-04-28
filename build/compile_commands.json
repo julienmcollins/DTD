@@ -109,6 +109,24 @@
 
 {
   "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
   "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp",
   "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp"
 },

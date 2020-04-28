@@ -1,6 +1,9 @@
 #include "QuiteGoodMachine/Source/HUD/Private/HUDElement.h"
 
-HUDElement::HUDElement(int x, int y) {}
+#include <string>
+
+HUDElement::HUDElement(std::string name, glm::vec2 initial_position, glm::vec2 size) 
+   : DrawableElement(name, initial_position, size) {}
 
 void HUDElement::Enable() {
    is_enabled_ = true;

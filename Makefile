@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named dtd
+# Target rules for targets named dtd.exe
 
 # Build rule for target.
-dtd: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 dtd
-.PHONY : dtd
+dtd.exe: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 dtd.exe
+.PHONY : dtd.exe
 
 # fast build rule for target.
-dtd/fast:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/build
-.PHONY : dtd/fast
+dtd.exe/fast:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/build
+.PHONY : dtd.exe/fast
 
 QuiteGoodMachine/Source/Development/Public/DevelZoom.o: QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.o
 
@@ -129,7 +129,7 @@ QuiteGoodMachine/Source/Development/Public/DevelZoom.o: QuiteGoodMachine/Source/
 
 # target to build an object file
 QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.o
 .PHONY : QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.o
 
 QuiteGoodMachine/Source/Development/Public/DevelZoom.i: QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.i
@@ -138,7 +138,7 @@ QuiteGoodMachine/Source/Development/Public/DevelZoom.i: QuiteGoodMachine/Source/
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.i
 .PHONY : QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.i
 
 QuiteGoodMachine/Source/Development/Public/DevelZoom.s: QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.s
@@ -147,7 +147,7 @@ QuiteGoodMachine/Source/Development/Public/DevelZoom.s: QuiteGoodMachine/Source/
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.s
 .PHONY : QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/Application.o: QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o
@@ -156,7 +156,7 @@ QuiteGoodMachine/Source/GameManager/Public/Application.o: QuiteGoodMachine/Sourc
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/Application.i: QuiteGoodMachine/Source/GameManager/Public/Application.cpp.i
@@ -165,7 +165,7 @@ QuiteGoodMachine/Source/GameManager/Public/Application.i: QuiteGoodMachine/Sourc
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/Application.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Application.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/Application.s: QuiteGoodMachine/Source/GameManager/Public/Application.cpp.s
@@ -174,7 +174,7 @@ QuiteGoodMachine/Source/GameManager/Public/Application.s: QuiteGoodMachine/Sourc
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/Application.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Application.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.o: QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o
@@ -183,7 +183,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.o: QuiteGoodMa
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.i: QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.i
@@ -192,7 +192,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.i: QuiteGoodMa
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.s: QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.s
@@ -201,7 +201,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.s: QuiteGoodMa
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.o: QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o
@@ -210,7 +210,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.o: QuiteGo
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.i: QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.i
@@ -219,7 +219,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.i: QuiteGo
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.s: QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.s
@@ -228,7 +228,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.s: QuiteGo
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.o: QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.o
@@ -237,7 +237,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.o: QuiteGoo
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.i: QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.i
@@ -246,7 +246,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.i: QuiteGoo
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.s: QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.s
@@ -255,7 +255,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.s: QuiteGoo
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.o: QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.o
@@ -264,7 +264,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.o: QuiteGoodMa
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.i: QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.i
@@ -273,7 +273,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.i: QuiteGoodMa
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.s: QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.s
@@ -282,7 +282,7 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.s: QuiteGoodMa
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/Level.o: QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o
@@ -291,7 +291,7 @@ QuiteGoodMachine/Source/GameManager/Public/Level.o: QuiteGoodMachine/Source/Game
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/Level.i: QuiteGoodMachine/Source/GameManager/Public/Level.cpp.i
@@ -300,7 +300,7 @@ QuiteGoodMachine/Source/GameManager/Public/Level.i: QuiteGoodMachine/Source/Game
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/Level.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Level.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/Level.s: QuiteGoodMachine/Source/GameManager/Public/Level.cpp.s
@@ -309,7 +309,7 @@ QuiteGoodMachine/Source/GameManager/Public/Level.s: QuiteGoodMachine/Source/Game
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/Level.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Level.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/Notebook.o: QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.o
@@ -318,7 +318,7 @@ QuiteGoodMachine/Source/GameManager/Public/Notebook.o: QuiteGoodMachine/Source/G
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/Notebook.i: QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.i
@@ -327,7 +327,7 @@ QuiteGoodMachine/Source/GameManager/Public/Notebook.i: QuiteGoodMachine/Source/G
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/Notebook.s: QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.s
@@ -336,7 +336,7 @@ QuiteGoodMachine/Source/GameManager/Public/Notebook.s: QuiteGoodMachine/Source/G
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/State.o: QuiteGoodMachine/Source/GameManager/Public/State.cpp.o
@@ -345,7 +345,7 @@ QuiteGoodMachine/Source/GameManager/Public/State.o: QuiteGoodMachine/Source/Game
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/State.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/State.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/State.i: QuiteGoodMachine/Source/GameManager/Public/State.cpp.i
@@ -354,7 +354,7 @@ QuiteGoodMachine/Source/GameManager/Public/State.i: QuiteGoodMachine/Source/Game
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/State.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/State.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/State.s: QuiteGoodMachine/Source/GameManager/Public/State.cpp.s
@@ -363,7 +363,7 @@ QuiteGoodMachine/Source/GameManager/Public/State.s: QuiteGoodMachine/Source/Game
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/State.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/State.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.o: QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o
@@ -372,7 +372,7 @@ QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.o: QuiteGoodMachine/S
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.i: QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.i
@@ -381,7 +381,7 @@ QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.i: QuiteGoodMachine/S
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.s: QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.s
@@ -390,7 +390,7 @@ QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.s: QuiteGoodMachine/S
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.o: QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o
@@ -399,7 +399,7 @@ QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.o: QuiteGoodMachine/S
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.i: QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.i
@@ -408,7 +408,7 @@ QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.i: QuiteGoodMachine/S
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.s: QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.s
@@ -417,7 +417,7 @@ QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.s: QuiteGoodMachine/S
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.o: QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o
@@ -426,7 +426,7 @@ QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.o: QuiteGoodMachi
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.i: QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.i
@@ -435,7 +435,7 @@ QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.i: QuiteGoodMachi
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.s: QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.s
@@ -444,7 +444,7 @@ QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.s: QuiteGoodMachi
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/main.o: QuiteGoodMachine/Source/GameManager/Public/main.cpp.o
@@ -453,7 +453,7 @@ QuiteGoodMachine/Source/GameManager/Public/main.o: QuiteGoodMachine/Source/GameM
 
 # target to build an object file
 QuiteGoodMachine/Source/GameManager/Public/main.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.o
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/main.cpp.o
 
 QuiteGoodMachine/Source/GameManager/Public/main.i: QuiteGoodMachine/Source/GameManager/Public/main.cpp.i
@@ -462,7 +462,7 @@ QuiteGoodMachine/Source/GameManager/Public/main.i: QuiteGoodMachine/Source/GameM
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/GameManager/Public/main.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.i
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/main.cpp.i
 
 QuiteGoodMachine/Source/GameManager/Public/main.s: QuiteGoodMachine/Source/GameManager/Public/main.cpp.s
@@ -471,7 +471,7 @@ QuiteGoodMachine/Source/GameManager/Public/main.s: QuiteGoodMachine/Source/GameM
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/GameManager/Public/main.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/main.cpp.s
 
 QuiteGoodMachine/Source/HUD/Public/HUD.o: QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o
@@ -480,7 +480,7 @@ QuiteGoodMachine/Source/HUD/Public/HUD.o: QuiteGoodMachine/Source/HUD/Public/HUD
 
 # target to build an object file
 QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o
 .PHONY : QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o
 
 QuiteGoodMachine/Source/HUD/Public/HUD.i: QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i
@@ -489,7 +489,7 @@ QuiteGoodMachine/Source/HUD/Public/HUD.i: QuiteGoodMachine/Source/HUD/Public/HUD
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i
 .PHONY : QuiteGoodMachine/Source/HUD/Public/HUD.cpp.i
 
 QuiteGoodMachine/Source/HUD/Public/HUD.s: QuiteGoodMachine/Source/HUD/Public/HUD.cpp.s
@@ -498,7 +498,7 @@ QuiteGoodMachine/Source/HUD/Public/HUD.s: QuiteGoodMachine/Source/HUD/Public/HUD
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/HUD/Public/HUD.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.s
 .PHONY : QuiteGoodMachine/Source/HUD/Public/HUD.cpp.s
 
 QuiteGoodMachine/Source/HUD/Public/HUDElement.o: QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o
@@ -507,7 +507,7 @@ QuiteGoodMachine/Source/HUD/Public/HUDElement.o: QuiteGoodMachine/Source/HUD/Pub
 
 # target to build an object file
 QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o
 .PHONY : QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o
 
 QuiteGoodMachine/Source/HUD/Public/HUDElement.i: QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i
@@ -516,7 +516,7 @@ QuiteGoodMachine/Source/HUD/Public/HUDElement.i: QuiteGoodMachine/Source/HUD/Pub
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i
 .PHONY : QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.i
 
 QuiteGoodMachine/Source/HUD/Public/HUDElement.s: QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.s
@@ -525,7 +525,7 @@ QuiteGoodMachine/Source/HUD/Public/HUDElement.s: QuiteGoodMachine/Source/HUD/Pub
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.s
 .PHONY : QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.s
 
 QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.o: QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o
@@ -534,7 +534,7 @@ QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.o: QuiteGoodMachine/S
 
 # target to build an object file
 QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o
 .PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o
 
 QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.i: QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i
@@ -543,7 +543,7 @@ QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.i: QuiteGoodMachine/S
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i
 .PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.i
 
 QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.s: QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.s
@@ -552,7 +552,7 @@ QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.s: QuiteGoodMachine/S
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.s
 .PHONY : QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.s
 
 QuiteGoodMachine/Source/ObjectManager/Public/Element.o: QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o
@@ -561,7 +561,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Element.o: QuiteGoodMachine/Source/
 
 # target to build an object file
 QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o
 
 QuiteGoodMachine/Source/ObjectManager/Public/Element.i: QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.i
@@ -570,7 +570,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Element.i: QuiteGoodMachine/Source/
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.i
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.i
 
 QuiteGoodMachine/Source/ObjectManager/Public/Element.s: QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.s
@@ -579,8 +579,89 @@ QuiteGoodMachine/Source/ObjectManager/Public/Element.s: QuiteGoodMachine/Source/
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.s
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.s
+
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.o: QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.o
+
+# target to build an object file
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o
+
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.i: QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.i
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.i
+
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.s: QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.s
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.s
+
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.o: QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.o
+
+# target to build an object file
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o
+
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.i: QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.i
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.i
+
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.s: QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.s
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.s
+
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.o: QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.o
+
+# target to build an object file
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o
+
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.i: QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.i
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.i
+
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.s: QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.s
+.PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.s
 
 QuiteGoodMachine/Source/ObjectManager/Public/Enemy.o: QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o
 
@@ -588,7 +669,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Enemy.o: QuiteGoodMachine/Source/Ob
 
 # target to build an object file
 QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o
 
 QuiteGoodMachine/Source/ObjectManager/Public/Enemy.i: QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.i
@@ -597,7 +678,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Enemy.i: QuiteGoodMachine/Source/Ob
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.i
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.i
 
 QuiteGoodMachine/Source/ObjectManager/Public/Enemy.s: QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.s
@@ -606,7 +687,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Enemy.s: QuiteGoodMachine/Source/Ob
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.s
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.s
 
 QuiteGoodMachine/Source/ObjectManager/Public/Entity.o: QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o
@@ -615,7 +696,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Entity.o: QuiteGoodMachine/Source/O
 
 # target to build an object file
 QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o
 
 QuiteGoodMachine/Source/ObjectManager/Public/Entity.i: QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.i
@@ -624,7 +705,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Entity.i: QuiteGoodMachine/Source/O
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.i
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.i
 
 QuiteGoodMachine/Source/ObjectManager/Public/Entity.s: QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.s
@@ -633,7 +714,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Entity.s: QuiteGoodMachine/Source/O
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.s
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.s
 
 QuiteGoodMachine/Source/ObjectManager/Public/Global.o: QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o
@@ -642,7 +723,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Global.o: QuiteGoodMachine/Source/O
 
 # target to build an object file
 QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o
 
 QuiteGoodMachine/Source/ObjectManager/Public/Global.i: QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.i
@@ -651,7 +732,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Global.i: QuiteGoodMachine/Source/O
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.i
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.i
 
 QuiteGoodMachine/Source/ObjectManager/Public/Global.s: QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.s
@@ -660,7 +741,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Global.s: QuiteGoodMachine/Source/O
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.s
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.s
 
 QuiteGoodMachine/Source/ObjectManager/Public/Object.o: QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o
@@ -669,7 +750,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Object.o: QuiteGoodMachine/Source/O
 
 # target to build an object file
 QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o
 
 QuiteGoodMachine/Source/ObjectManager/Public/Object.i: QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.i
@@ -678,7 +759,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Object.i: QuiteGoodMachine/Source/O
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.i
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.i
 
 QuiteGoodMachine/Source/ObjectManager/Public/Object.s: QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s
@@ -687,7 +768,7 @@ QuiteGoodMachine/Source/ObjectManager/Public/Object.s: QuiteGoodMachine/Source/O
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s
 .PHONY : QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.s
 
 QuiteGoodMachine/Source/RenderingEngine/Public/Animation.o: QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o
@@ -696,7 +777,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/Animation.o: QuiteGoodMachine/Sou
 
 # target to build an object file
 QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o
 
 QuiteGoodMachine/Source/RenderingEngine/Public/Animation.i: QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i
@@ -705,7 +786,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/Animation.i: QuiteGoodMachine/Sou
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.i
 
 QuiteGoodMachine/Source/RenderingEngine/Public/Animation.s: QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.s
@@ -714,7 +795,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/Animation.s: QuiteGoodMachine/Sou
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.s
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.s
 
 QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.o: QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o
@@ -723,7 +804,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.o: QuiteGoodMa
 
 # target to build an object file
 QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o
 
 QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.i: QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.i
@@ -732,7 +813,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.i: QuiteGoodMa
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.i
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.i
 
 QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.s: QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.s
@@ -741,7 +822,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.s: QuiteGoodMa
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.s
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.s
 
 QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.o: QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o
@@ -750,7 +831,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.o: QuiteGoodMachine/Sou
 
 # target to build an object file
 QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o
 
 QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.i: QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.i
@@ -759,7 +840,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.i: QuiteGoodMachine/Sou
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.i
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.i
 
 QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.s: QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.s
@@ -768,7 +849,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.s: QuiteGoodMachine/Sou
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.s
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.s
 
 QuiteGoodMachine/Source/RenderingEngine/Public/GLData.o: QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o
@@ -777,7 +858,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/GLData.o: QuiteGoodMachine/Source
 
 # target to build an object file
 QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o
 
 QuiteGoodMachine/Source/RenderingEngine/Public/GLData.i: QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.i
@@ -786,7 +867,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/GLData.i: QuiteGoodMachine/Source
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.i
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.i
 
 QuiteGoodMachine/Source/RenderingEngine/Public/GLData.s: QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.s
@@ -795,7 +876,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/GLData.s: QuiteGoodMachine/Source
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.s
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.s
 
 QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.o: QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o
@@ -804,7 +885,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.o: QuiteGoodMachi
 
 # target to build an object file
 QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o
 
 QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.i: QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.i
@@ -813,7 +894,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.i: QuiteGoodMachi
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.i
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.i
 
 QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.s: QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.s
@@ -822,7 +903,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.s: QuiteGoodMachi
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.s
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.s
 
 QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.o: QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o
@@ -831,7 +912,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.o: QuiteGoodMachine
 
 # target to build an object file
 QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o
 
 QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.i: QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.i
@@ -840,7 +921,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.i: QuiteGoodMachine
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.i
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.i
 
 QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.s: QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.s
@@ -849,7 +930,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.s: QuiteGoodMachine
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.s
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.s
 
 QuiteGoodMachine/Source/RenderingEngine/Public/Texture.o: QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o
@@ -858,7 +939,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/Texture.o: QuiteGoodMachine/Sourc
 
 # target to build an object file
 QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o
 
 QuiteGoodMachine/Source/RenderingEngine/Public/Texture.i: QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.i
@@ -867,7 +948,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/Texture.i: QuiteGoodMachine/Sourc
 
 # target to preprocess a source file
 QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.i:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.i
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.i
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.i
 
 QuiteGoodMachine/Source/RenderingEngine/Public/Texture.s: QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.s
@@ -876,7 +957,7 @@ QuiteGoodMachine/Source/RenderingEngine/Public/Texture.s: QuiteGoodMachine/Sourc
 
 # target to generate assembly for a file
 QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.s:
-	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.s
+	$(MAKE) -f CMakeFiles/dtd.exe.dir/build.make CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.s
 .PHONY : QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.s
 
 # Help Target
@@ -886,7 +967,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... dtd"
+	@echo "... dtd.exe"
 	@echo "... edit_cache"
 	@echo "... QuiteGoodMachine/Source/Development/Public/DevelZoom.o"
 	@echo "... QuiteGoodMachine/Source/Development/Public/DevelZoom.i"
@@ -939,6 +1020,15 @@ help:
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Element.o"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Element.i"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Element.s"
+	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.o"
+	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.i"
+	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.s"
+	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.o"
+	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.i"
+	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.s"
+	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.o"
+	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.i"
+	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.s"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Enemy.o"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Enemy.i"
 	@echo "... QuiteGoodMachine/Source/ObjectManager/Public/Enemy.s"

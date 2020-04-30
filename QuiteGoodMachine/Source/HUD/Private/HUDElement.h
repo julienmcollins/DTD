@@ -11,7 +11,7 @@ class HUDElement : public HUDElementInterface, public DrawableElement {
       /**
        * Constructor specifies the initial position
        */
-      HUDElement(std::string name, glm::vec2 initial_position, glm::vec2 size);
+      HUDElement(std::string name, glm::vec3 initial_position, glm::vec3 size);
 
       /**
        * Enables the element (allow it to be drawn on screen)

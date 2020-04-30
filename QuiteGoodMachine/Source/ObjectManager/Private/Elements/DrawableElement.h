@@ -6,8 +6,6 @@
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
-#include "QuiteGoodMachine/Source/GameManager/Private/State.h"
-
 #include "OpenGLIncludes.h"
 
 #include <string>
@@ -18,7 +16,12 @@ class DrawableElement : virtual public PositionalElement {
       /**
        * Constructor
        */
-      DrawableElement(std::string name, glm::vec2 initial_position, glm::vec2 size);
+      DrawableElement(std::string name, glm::vec3 initial_position, glm::vec3 size);
+
+      /**
+       * Registers the texture by file path
+       */
+      Texture *RegisterTexture(std::string file);
 
       /**
        * Update function will involve drawing if enabled
@@ -35,12 +38,12 @@ class DrawableElement : virtual public PositionalElement {
       /**
        * Draws the element
        */
-      void Draw();
+      virtual void Draw();
 
       /**
        * Animates the element
        */
-      void Animate();
+      virtual void Animate();
 
       /**
        * Get reference to animation by its name (if it exists)
@@ -82,17 +85,15 @@ class DrawableElement : virtual public PositionalElement {
 
    private:
       // Position vector
-      glm::vec2 draw_position_;
+      glm::vec3 draw_position_;
 
       // Main texture and extra textures
-      std::shared_ptr<Texture> main_texture_;
+      // std::shared_ptr<Texture> main_texture_;
+      Texture *main_texture_;
       std::unordered_map<std::string, std::shared_ptr<Texture>> additional_textures_;
 
       // Animation map
       std::unordered_map<std::string, std::shared_ptr<Animation>> animation_map_;
-
-      // Reference to current state
-      std::shared_ptr<State> current_state_;
 
       // Drawing model and angle
       glm::mat4 draw_model_;

@@ -48,7 +48,7 @@ class TangibleElement : virtual public PositionalElement {
        * Constructor
        * Sets up physical body (?)
        */
-      TangibleElement(std::string name, glm::vec2 initial_position, glm::vec2 size);
+      TangibleElement(std::string name, glm::vec3 initial_position, glm::vec3 size);
 
       /**
        * Update function
@@ -122,7 +122,7 @@ class TangibleElement : virtual public PositionalElement {
 
    private:
       // Physical location
-      glm::vec2 body_position_;
+      glm::vec3 body_position_;
 
       // BOX2D VARIABLES
       b2Body *body_;

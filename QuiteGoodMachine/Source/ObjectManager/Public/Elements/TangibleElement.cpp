@@ -5,7 +5,7 @@
 
 #include "OpenGLIncludes.h"
 
-TangibleElement::TangibleElement(std::string name, glm::vec2 initial_position, glm::vec2 size)
+TangibleElement::TangibleElement(std::string name, glm::vec3 initial_position, glm::vec3 size)
    : PositionalElement(name, initial_position, size) {}
 
 void TangibleElement::Update(bool freeze) {}

@@ -2,7 +2,7 @@
 
 #include <string>
 
-HUDElement::HUDElement(std::string name, glm::vec2 initial_position, glm::vec2 size) 
+HUDElement::HUDElement(std::string name, glm::vec3 initial_position, glm::vec3 size) 
    : DrawableElement(name, initial_position, size) {}
 
 void HUDElement::Enable() {

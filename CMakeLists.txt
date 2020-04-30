@@ -29,10 +29,11 @@ SET(GAMEMANAGER_SOURCE QuiteGoodMachine/Source/GameManager/Public/Application.cp
                        QuiteGoodMachine/Source/GameManager/Public/main.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Level.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp
-                       QuiteGoodMachine/Source/GameManager/Public/State.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp
+                       QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp
+                       QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp
@@ -67,6 +68,7 @@ SET(MEMORYMANAGER_SOURCE QuiteGoodMachine/Source/MemoryManager/Public/ObjectMana
 # HUD
 SET(HUD_SOURCE QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp
                QuiteGoodMachine/Source/HUD/Public/HUD.cpp
+               QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp
 )
 
 # Set sources
@@ -81,10 +83,13 @@ SET(DEVELOPMENT_HEADER QuiteGoodMachine/Source/Development/Private/DevelZoom.h
 SET(GAMEMANAGER_HEADER QuiteGoodMachine/Source/GameManager/Private/Application.h
                        QuiteGoodMachine/Source/GameManager/Private/Level.h
                        QuiteGoodMachine/Source/GameManager/Private/Notebook.h
-                       QuiteGoodMachine/Source/GameManager/Private/State.h
+                       QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
                        QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
                        QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
                        QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h
+                       QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
+                       QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+                       QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h
@@ -131,6 +136,7 @@ SET(HUD_HEADER QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
                QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
                QuiteGoodMachine/Source/HUD/Private/HUDElement.h
                QuiteGoodMachine/Source/HUD/Private/HUD.h
+               QuiteGoodMachine/Source/HUD/Private/PlayerLife.h
    )
 
 # Set sources

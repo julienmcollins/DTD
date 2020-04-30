@@ -28,6 +28,11 @@ class PigeonPostInterface {
       virtual void Send(const Correspondence &correspondence) = 0;
 
       /**
+       * Sends all correspondences
+       */
+      virtual void ProcessInbox() = 0;
+
+      /**
        * Virtual destructor
        */
       virtual ~PigeonPostInterface() {};

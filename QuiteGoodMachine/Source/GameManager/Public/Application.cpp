@@ -9,6 +9,7 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/Application.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/Level.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/Notebook.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h"
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Global.h"
@@ -560,6 +561,9 @@ void Application::Update() {
          avgFPS = 0;
       }
       
+      // Process pigeon post inbox
+      PigeonPost::GetInstance().ProcessInbox();
+
       // Update levels independently
       if (app_flag_ == MAIN_SCREEN) {
          if (pause == -1)
@@ -782,7 +786,7 @@ void Application::main_screen() {
       if (player->get_x() >= 1890) {
          // Set correct app flags
          app_flag_ = PLAYGROUND;
-         level_flag_ = FOREST2;
+         level_flag_ = FORESTBOSS;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;

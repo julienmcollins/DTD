@@ -12,6 +12,9 @@
 
 class PigeonPost : public PigeonPostInterface {
    public:
+      /**
+       * Instance of pigeonpost
+       */
       static PigeonPost& GetInstance() {
          static PigeonPost instance;
          return instance;
@@ -33,6 +36,11 @@ class PigeonPost : public PigeonPostInterface {
        * @param correspondence The correspondence to send
        */
       virtual void Send(const Correspondence &correspondence);
+
+      /**
+       * Sends all correspondences
+       */
+      virtual void ProcessInbox();
 
       // Subscribing function allows elements to subscribe to different events
       // void SubscribeToEvent(Element *element, const Event &event);

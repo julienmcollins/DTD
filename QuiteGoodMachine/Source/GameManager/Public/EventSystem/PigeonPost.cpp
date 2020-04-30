@@ -1,5 +1,7 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h"
 
+#include <iostream>
+
 PigeonPost::PigeonPost() {
    // Create the bird master
    bird_master_ = std::make_unique<BirdMaster>();
@@ -20,5 +22,10 @@ void PigeonPost::Unregister(std::string name, const std::shared_ptr<Corresponden
 
 void PigeonPost::Send(const Correspondence &correspondence) {
    // Relay to bird_master_
-   bird_master_->DirectMessage(std::make_shared<Correspondence>(correspondence));
+   // bird_master_->DirectCorrespondence(std::make_shared<Correspondence>(correspondence));
+   bird_master_->Enqueue(std::make_shared<Correspondence>(correspondence));
+}
+
+void PigeonPost::ProcessInbox() {
+   bird_master_->ProcessQueue();
 }

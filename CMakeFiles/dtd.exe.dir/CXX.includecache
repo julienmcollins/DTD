@@ -23,6 +23,8 @@ QuiteGoodMachine/Source/GameManager/Private/Level.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/GameManager/Private/Level.h
 QuiteGoodMachine/Source/GameManager/Private/Notebook.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/GameManager/Private/Notebook.h
+QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
 QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
 QuiteGoodMachine/Source/ObjectManager/Private/Global.h
@@ -87,6 +89,8 @@ memory
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp
 QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
+iostream
+-
 
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Level.cpp
 QuiteGoodMachine/Source/GameManager/Private/Level.h

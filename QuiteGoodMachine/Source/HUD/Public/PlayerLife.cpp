@@ -2,13 +2,17 @@
 
 #include "QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/Application.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 
 /** PLAYERLIFE **/
 PlayerLife::PlayerLife(std::string name, glm::vec3 initial_position)
-   : HUDElement(name, initial_position, glm::vec3(103.f, 76.f, 0.f)) {}
+   : HUDElement(name, initial_position, glm::vec3(103.f, 76.f, 0.f)) 
+{
+   Disable();
+}
 
 void PlayerLife::LoadMedia() {
    // Register texture first
@@ -19,9 +23,18 @@ void PlayerLife::LoadMedia() {
    GetStateContext()->RegisterState("alive", std::make_shared<PlayerLife_Alive>(temp, std::make_shared<Animation>(temp, "alive", 76.0f, 103.0f, 0.0f, 21, 1.0f / 20.0f)));
    GetStateContext()->RegisterState("dead", std::make_shared<PlayerLife_Dead>(temp, std::make_shared<Animation>(temp, "dead", 76.0f, 103.0f, 103.0f, 19, 1.0f / 20.0f)));
 
-   // Register as correspondent
+   // Register as correspondent (and state)
+   RegisterAsCorrespondent(GetName());
    PlayerLife_Alive *alive_state = static_cast<PlayerLife_Alive*>(GetStateContext()->GetState("alive").get());
-   alive_state->RegisterAsCorrespondent("PlayerLife_Alive");
+   alive_state->RegisterAsCorrespondent(GetName() + "_Alive");
+}
+
+void PlayerLife::ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence) {
+   char *msg = (char *) (correspondence->GetMessage());
+   std::string fmsg(msg);
+   if (fmsg == "LifeLost") {
+      PigeonPost::GetInstance().Forward(GetName() + "_Alive", correspondence);
+   }
 }
 
 /** PLAYERLIFE_ALIVE **/

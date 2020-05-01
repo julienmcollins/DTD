@@ -5,6 +5,8 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h"
 
+#include "QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h"
+
 void BirdMaster::AddCorrespondent(const std::shared_ptr<Correspondent>& correspondent) {
    // Add to active correspondents
    int cguid = correspondent->GetPostalCode();
@@ -34,6 +36,13 @@ void BirdMaster::DirectCorrespondence(std::shared_ptr<Correspondence> correspond
    // Receive messages
    for (auto& c : terminators) {
       c->ReceiveCorrespondence(correspondence);
+   }
+}
+
+void BirdMaster::Forward(std::string name, const std::shared_ptr<Correspondence>& correspondence) {
+   int rec = ObjectManager::GetInstance().GetUID(name);
+   if (active_correspondents_.count(rec) > 0) {
+      active_correspondents_[rec]->ReceiveCorrespondence(correspondence);
    }
 }
 

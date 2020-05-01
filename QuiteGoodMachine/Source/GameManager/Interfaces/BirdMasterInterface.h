@@ -33,6 +33,11 @@ class BirdMasterInterface {
       virtual void DirectCorrespondence(std::shared_ptr<Correspondence> correspondence) = 0;
 
       /**
+       * Forwards a correspondence
+       */
+      virtual void Forward(std::string name, const std::shared_ptr<Correspondence>& correspondence) = 0;
+
+      /**
        * Enqueue message
        * 
        * @param correspondence - the correspondence to enqueue

@@ -21,6 +21,8 @@
 
 #include "QuiteGoodMachine/Source/Development/Private/DevelZoom.h"
 
+#include "QuiteGoodMachine/Source/HUD/Private/PlayerLife.h"
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
@@ -247,6 +249,12 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 
    // Start counting frames per second
    fpsTimer.Start();
+
+   // Create new HUD
+   hud = std::make_unique<HUD>();
+   hud->AddHUDElement("PlayerLife1", std::make_shared<PlayerLife>("PlayerLife1", glm::vec3(0.f, 0.f, 0.f)));
+   hud->AddHUDElement("PlayerLife2", std::make_shared<PlayerLife>("PlayerLife2", glm::vec3(76.f, 0.f, 0.f)));
+   hud->AddHUDElement("PlayerLife3", std::make_shared<PlayerLife>("PlayerLife3", glm::vec3(152.f, 0.f, 0.f)));
 }
 
 // Initialize OpenGL
@@ -538,6 +546,8 @@ void Application::Draw() {
    */
 
    // drawLines();
+
+   // Draw hud
 }
 
 // Updates the screen

@@ -35,6 +35,11 @@ class PigeonPostInterface {
       virtual void SendDirect(const Correspondence &correspondence) = 0;
 
       /**
+       * Forward a message without looking at recipient
+       */
+      virtual void Forward(std::string name, const std::shared_ptr<Correspondence>& Correspondence) = 0;
+
+      /**
        * Sends all correspondences
        */
       virtual void ProcessInbox() = 0;

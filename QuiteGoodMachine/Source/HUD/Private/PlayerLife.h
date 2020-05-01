@@ -16,7 +16,8 @@
 class StateContext;
 class Texture;
 
-class PlayerLife_Alive : public DrawState, public Correspondent {
+class PlayerLife_Alive : public DrawState, 
+                         public Correspondent {
    public:
       /**
        * Constructor
@@ -41,8 +42,7 @@ class PlayerLife_Alive : public DrawState, public Correspondent {
       bool is_alive_;
 };
 
-class PlayerLife_Dead : public DrawState, 
-                        public Correspondent {
+class PlayerLife_Dead : public DrawState {
    public:
       /**
        * Constructor
@@ -50,7 +50,8 @@ class PlayerLife_Dead : public DrawState,
       PlayerLife_Dead(Texture *texture, std::shared_ptr<Animation> animation);
 };
 
-class PlayerLife : public HUDElement {
+class PlayerLife : public HUDElement,
+                   public Correspondent {
    public:
       /**
        * Constructor
@@ -61,6 +62,11 @@ class PlayerLife : public HUDElement {
        * Load media function (should theoretically populate the state animations)
        */
       virtual void LoadMedia();
+
+      /**
+       * Process correspondence --> transitions alive to dead
+       */
+      virtual void ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence);
 };
 
 #endif

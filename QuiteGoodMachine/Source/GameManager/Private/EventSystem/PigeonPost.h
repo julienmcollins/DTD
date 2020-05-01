@@ -37,13 +37,17 @@ class PigeonPost : public PigeonPostInterface {
        */
       virtual void Send(const Correspondence &correspondence);
 
-
       /**
        * Sends a correspondence to directly to receiver
        * 
        * @param correspondence The correspondence to send
        */
       virtual void SendDirect(const Correspondence &correspondence);
+     
+      /**
+       * Forward a message without looking at recipient
+       */
+      virtual void Forward(std::string name, const std::shared_ptr<Correspondence>& Correspondence);
 
       /**
        * Sends all correspondences

@@ -48,6 +48,11 @@ class PlayerLife_Dead : public DrawState {
        * Constructor
        */
       PlayerLife_Dead(Texture *texture, std::shared_ptr<Animation> animation);
+
+      /**
+       * Animate function (stops at 18th frame)
+       */
+      virtual void Animate();
 };
 
 class PlayerLife : public HUDElement,

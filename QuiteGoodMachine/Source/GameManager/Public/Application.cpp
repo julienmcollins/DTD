@@ -516,9 +516,9 @@ void Application::Draw() {
       player->Update();
 
       // Render the hit markers
-      for (int i = 0; i < player->hit_markers.size(); i++) {
-         player->hit_markers[i]->Update();
-      }
+      // for (int i = 0; i < player->hit_markers.size(); i++) {
+      //    player->hit_markers[i]->Update();
+      // }
 
       // Check for completed level and that player as walked to the edge of the screen
       if (Level::GetInstance().completed) {
@@ -546,6 +546,9 @@ void Application::Draw() {
    */
 
    // drawLines();
+
+   // Draw HUD
+   hud->DisplayHUD();
 }
 
 // Updates the screen
@@ -794,7 +797,7 @@ void Application::main_screen() {
       if (player->get_x() >= 1890) {
          // Set correct app flags
          app_flag_ = PLAYGROUND;
-         level_flag_ = FORESTBOSS;
+         level_flag_ = FOREST1;
          game_flag_ = SETUP;
          delete menu_platform_;
          delete invisible_wall_;
@@ -803,6 +806,9 @@ void Application::main_screen() {
          // Delete finger_
          delete finger_;
          finger_ = nullptr;
+
+         // Enable HUD (TODO: Need a better way to decide what to display)
+         hud->EnableHUD();
       }
    }
 

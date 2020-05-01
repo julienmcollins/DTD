@@ -60,30 +60,6 @@ class Entity : public Element {
         virtual ~Entity();
 };
 
-// Hit marker
-class Hitmarker : public Element {
-   public:
-      // Construct the hit marker object
-      Hitmarker(int x, int y);
-
-      // State of hit
-      enum STATE {
-         ALIVE,
-         DEAD
-      };
-
-      // Load media function
-      virtual bool LoadMedia();
-
-      // Update function
-      virtual void Update(bool freeze = false);
-      virtual void Animate();
-      virtual Animation *GetAnimationFromState();
-
-      // State
-      STATE state;
-};
-
 /************** PLAYER BODY PARTS ********************/
 class PlayerHead : public BodyPart {
    public:
@@ -274,9 +250,6 @@ class Player : public Entity,
       // Create projectile
       virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
             bool owner, bool damage, float force_x, float force_y);
-
-      // Hitmarkers
-      std::vector<Hitmarker *> hit_markers;
 
       // Flags for interactions
       bool contacts_[5];

@@ -346,15 +346,10 @@ Player::Player() :
    // }
 
    // Set health. TODO: set health in a better way
-   health = 3000;
+   health = 30;
 
    // TEMPORARY SOLUTION
    //textures["arm_throw"]->completed_ = true;
-
-   // Create hitmarkers
-   for (int i = 0; i < 3; i++) {
-      hit_markers.push_back(new Hitmarker(76 * i, 0));
-   }
 
    /************* PLAYER *******************************************/
    // Set in contact = false
@@ -993,13 +988,13 @@ void Player::TakeDamage(int damage) {
    // Now check that a certain threshold has been reached
    float delta = (float) immunity_timer_.GetDeltaTime() / 1000.0f;
    if (delta > immunity_duration_) {
-      // Take damage
-      if (health == 30) {
-         hit_markers[0]->state = Hitmarker::DEAD;
-      } else if (health == 20) {
-         hit_markers[1]->state = Hitmarker::DEAD;
-      } else if (health == 10) {
-         hit_markers[2]->state = Hitmarker::DEAD;
+      std::vector<int> recs;
+      int myid = ObjectManager::GetInstance().GetUID("player");
+      int id = ObjectManager::GetInstance().GetUID("PlayerLife" + std::to_string(health / 10));
+      if (id != -1) {
+         recs.push_back(id);
+         Correspondence cor = Correspondence::CompileCorrespondence((void *) "LifeLost", "string", recs, myid);
+         PigeonPost::GetInstance().Send(cor);
       }
       health -= damage;
       if (health == 0) {
@@ -1010,59 +1005,4 @@ void Player::TakeDamage(int damage) {
 }
 
 // Virtual destructor
-Player::~Player() {
-   // Delete hit markers
-   for (int i = 0; i < hit_markers.size(); i++) {
-      delete hit_markers[i];
-   }
-}
-
-///////////////////////////////////////////////////////
-/////////////// HITMARKER CLASS ///////////////////////
-///////////////////////////////////////////////////////
-Hitmarker::Hitmarker(int x, int y) :
-   Element("", x, y, 103, 76), state(ALIVE) {
-   
-   // Load media
-   LoadMedia();
-}
-
-// Load media function
-bool Hitmarker::LoadMedia() {
-   bool success = true;
-
-   std::string hitmarker = Application::GetInstance().sprite_path + "Player/hitmarker_master_sheet.png";
-   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("hitmarker_master_sheet", hitmarker.c_str());
-   animations.emplace("alive", new Animation(sprite_sheet, "alive", 76.0f, 103.0f, 0.0f, 21, 1.0f / 20.0f));
-   animations.emplace("dead", new Animation(sprite_sheet, "dead", 76.0f, 103.0f, 103.0f, 19, 1.0f / 20.0f));
-   RenderingEngine::GetInstance().LoadResources(this);
-
-   // Return success
-   return success;
-}
-
-// Animate
-void Hitmarker::Animate() {
-   if (state == ALIVE) {
-      sprite_sheet->Animate(GetAnimationFromState());
-   } else if (state == DEAD) {
-      sprite_sheet->Animate(GetAnimationFromState(), 18);
-   }
-}
-
-// Get texture
-Animation *Hitmarker::GetAnimationFromState() {
-   if (state == ALIVE) {
-      return GetAnimationByName("alive");
-   }
-   if (state == DEAD) {
-      return GetAnimationByName("dead");
-   }
-}
-
-// Update function
-void Hitmarker::Update(bool freeze) {
-   // Animate and Render
-   Animate();
-   sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
-}
+Player::~Player() {}

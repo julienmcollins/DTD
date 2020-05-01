@@ -29,9 +29,9 @@ void PlayerLife::LoadMedia() {
    GetStateContext()->RegisterState("dead", std::make_shared<PlayerLife_Dead>(temp, std::make_shared<Animation>(temp, "dead", 76.0f, 103.0f, 103.0f, 19, 1.0f / 20.0f)));
 
    // Register as correspondent (and state)
-   RegisterAsCorrespondent(GetName());
+   PigeonPost::GetInstance().Register(GetName(), getptr());
    PlayerLife_Alive *alive_state = static_cast<PlayerLife_Alive*>(GetStateContext()->GetState("alive").get());
-   alive_state->RegisterAsCorrespondent(GetName() + "_Alive");
+   PigeonPost::GetInstance().Register(GetName() + "_Alive", alive_state->getptr());
 
    // Set current state
    GetStateContext()->SetState(GetStateContext()->GetState("alive"));
@@ -68,3 +68,7 @@ void PlayerLife_Alive::ProcessCorrespondence(const std::shared_ptr<Correspondenc
 /** PLAYERLIFE_DEAD **/
 PlayerLife_Dead::PlayerLife_Dead(Texture *texture, std::shared_ptr<Animation> animation)
    : DrawState(texture, animation) {}
+
+void PlayerLife_Dead::Animate() {
+   GetTexture()->Animate(GetAnimation().get(), 18);
+}

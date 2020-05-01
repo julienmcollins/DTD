@@ -243,6 +243,7 @@ CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o: Quit
 CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
 CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Application.h
 CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o: QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
+CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o: QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
 CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o: QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
 CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
 CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h

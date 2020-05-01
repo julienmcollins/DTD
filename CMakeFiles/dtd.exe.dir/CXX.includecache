@@ -221,6 +221,8 @@ QuiteGoodMachine/Source/HUD/Private/PlayerLife.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/HUD/Private/PlayerLife.h
 QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
 QuiteGoodMachine/Source/GameManager/Private/Application.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/GameManager/Private/Application.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
@@ -711,6 +713,8 @@ OpenGLIncludes.h
 QuiteGoodMachine/Source/HUD/Private/OpenGLIncludes.h
 
 QuiteGoodMachine/Source/HUD/Private/PlayerLife.h
+QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
+QuiteGoodMachine/Source/HUD/Private/QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
 QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
 QuiteGoodMachine/Source/HUD/Private/QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
 QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h

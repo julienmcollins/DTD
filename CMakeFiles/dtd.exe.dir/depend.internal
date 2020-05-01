@@ -244,6 +244,7 @@ CMakeFiles/dtd.exe.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o
  QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
  QuiteGoodMachine/Source/GameManager/Private/Application.h
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
+ QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
  QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
  QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h

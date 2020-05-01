@@ -1,6 +1,7 @@
 #ifndef PLAYERLIFE_H_
 #define PLAYERLIFE_H_
 
+#include "QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h"
 
@@ -26,9 +27,18 @@ class PlayerLife_Alive : public DrawState, public Correspondent {
       PlayerLife_Alive(Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * Post transition function
+       * Pre transition
        */
-      virtual void PostTransition(StateContext *context);
+      virtual void PreTransition(StateContext *context);
+
+      /**
+       * Process correspondence
+       */
+      virtual void ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence);
+
+   private:
+      // Flag for alive
+      bool is_alive_;
 };
 
 class PlayerLife_Dead : public DrawState, 
@@ -45,7 +55,7 @@ class PlayerLife : public HUDElement {
       /**
        * Constructor
        */
-      PlayerLife(glm::vec3 initial_position);
+      PlayerLife(std::string name, glm::vec3 initial_position);
 
       /**
        * Load media function (should theoretically populate the state animations)

@@ -28,6 +28,13 @@ class PigeonPostInterface {
       virtual void Send(const Correspondence &correspondence) = 0;
 
       /**
+       * Sends a correspondence to multiple receivers
+       * 
+       * @param correspondence The correspondence to send
+       */
+      virtual void SendDirect(const Correspondence &correspondence) = 0;
+
+      /**
        * Sends all correspondences
        */
       virtual void ProcessInbox() = 0;

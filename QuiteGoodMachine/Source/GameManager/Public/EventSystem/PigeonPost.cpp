@@ -22,8 +22,11 @@ void PigeonPost::Unregister(std::string name, const std::shared_ptr<Corresponden
 
 void PigeonPost::Send(const Correspondence &correspondence) {
    // Relay to bird_master_
-   // bird_master_->DirectCorrespondence(std::make_shared<Correspondence>(correspondence));
    bird_master_->Enqueue(std::make_shared<Correspondence>(correspondence));
+}
+
+void PigeonPost::SendDirect(const Correspondence &correspondence) {
+   bird_master_->DirectCorrespondence(std::make_shared<Correspondence>(correspondence));
 }
 
 void PigeonPost::ProcessInbox() {

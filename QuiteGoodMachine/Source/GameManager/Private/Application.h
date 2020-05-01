@@ -28,10 +28,13 @@
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
-#include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Object.h"
 
+#include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/ContactListener.h"
+
+#include "QuiteGoodMachine/Source/HUD/Private/HUD.h"
+#include "QuiteGoodMachine/Source/HUD/Private/HUDElement.h"
 
 #define NUM_BLOCKS 6
 
@@ -242,6 +245,9 @@ class Application {
    
       // Player object
       std::shared_ptr<Player> player;
+
+      // HUD
+      std::unique_ptr<HUD> hud;
 
       // Enemy object
       Enemy *enemy;

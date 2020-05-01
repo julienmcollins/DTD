@@ -11,6 +11,8 @@
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 
+#include "QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h"
+
 // Dependencies
 class Entity;
 class Animation;
@@ -41,34 +43,6 @@ typedef struct Shape {
 
    Shape() : shape_type(0, 0, 0.0f) {}
 } Shape;
-
-/**
- * Very top abstract object type. All elements are objects with names.
- */
-class Component {
-   public:
-      /**
-       * Constructor
-       * 
-       * @param name Name of the object
-       */
-      Component(std::string name) {
-         name_ = name;
-      }
-
-
-      /**
-       * Get's the object's name
-       * 
-       * @return string The name of the object
-       */
-      std::string GetName() const {
-         return name_;
-      }
-
-   private:
-      std::string name_;
-};
 
 // This will be the base class for all elements in the game, including players and objects
 class Element : public Component {
@@ -174,7 +148,7 @@ class Element : public Component {
       virtual Animation *GetAnimationFromState() {};
       Animation *GetAnimationByName(std::string name);
 
-      /* Flip all animations of a texture */
+      /* Flip all animationsPrivate of a texture */
       void FlipAllAnimations();
 
       // Flag fo all animations flipped

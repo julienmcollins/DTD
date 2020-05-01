@@ -155,6 +155,24 @@ build CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp
   INCLUDES = -I../ -I/usr/include/SDL2
   OBJECT_DIR = CMakeFiles/dtd.dir
   OBJECT_FILE_DIR = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public
+build CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o: CXX_COMPILER__dtd ../QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp || cmake_object_order_depends_target_dtd
+  DEP_FILE = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o.d
+  FLAGS = -g   -std=gnu++1z
+  INCLUDES = -I../ -I/usr/include/SDL2
+  OBJECT_DIR = CMakeFiles/dtd.dir
+  OBJECT_FILE_DIR = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements
+build CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o: CXX_COMPILER__dtd ../QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp || cmake_object_order_depends_target_dtd
+  DEP_FILE = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o.d
+  FLAGS = -g   -std=gnu++1z
+  INCLUDES = -I../ -I/usr/include/SDL2
+  OBJECT_DIR = CMakeFiles/dtd.dir
+  OBJECT_FILE_DIR = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements
+build CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o: CXX_COMPILER__dtd ../QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp || cmake_object_order_depends_target_dtd
+  DEP_FILE = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o.d
+  FLAGS = -g   -std=gnu++1z
+  INCLUDES = -I../ -I/usr/include/SDL2
+  OBJECT_DIR = CMakeFiles/dtd.dir
+  OBJECT_FILE_DIR = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements
 build CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o: CXX_COMPILER__dtd ../QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp || cmake_object_order_depends_target_dtd
   DEP_FILE = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o.d
   FLAGS = -g   -std=gnu++1z
@@ -203,6 +221,18 @@ build CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectMana
   INCLUDES = -I../ -I/usr/include/SDL2
   OBJECT_DIR = CMakeFiles/dtd.dir
   OBJECT_FILE_DIR = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public
+build CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o: CXX_COMPILER__dtd ../QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp || cmake_object_order_depends_target_dtd
+  DEP_FILE = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o.d
+  FLAGS = -g   -std=gnu++1z
+  INCLUDES = -I../ -I/usr/include/SDL2
+  OBJECT_DIR = CMakeFiles/dtd.dir
+  OBJECT_FILE_DIR = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public
+build CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o: CXX_COMPILER__dtd ../QuiteGoodMachine/Source/HUD/Public/HUD.cpp || cmake_object_order_depends_target_dtd
+  DEP_FILE = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o.d
+  FLAGS = -g   -std=gnu++1z
+  INCLUDES = -I../ -I/usr/include/SDL2
+  OBJECT_DIR = CMakeFiles/dtd.dir
+  OBJECT_FILE_DIR = CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public
 
 # =============================================================================
 # Link build statements for EXECUTABLE target dtd
@@ -211,7 +241,7 @@ build CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectMana
 #############################################
 # Link the executable dtd
 
-build dtd: CXX_EXECUTABLE_LINKER__dtd CMakeFiles/dtd.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o | /usr/lib/x86_64-linux-gnu/libSDL2_image.so /usr/lib/x86_64-linux-gnu/libSDL2_mixer.so /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so /usr/lib/x86_64-linux-gnu/libGLEW.so ../libBox2D.a /usr/lib/libSOIL.so
+build dtd: CXX_EXECUTABLE_LINKER__dtd CMakeFiles/dtd.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/GLData.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngine.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/MemoryManager/Public/ObjectManager.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o | /usr/lib/x86_64-linux-gnu/libSDL2_image.so /usr/lib/x86_64-linux-gnu/libSDL2_mixer.so /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so /usr/lib/x86_64-linux-gnu/libGLEW.so ../libBox2D.a /usr/lib/libSOIL.so
   FLAGS = -g
   LINK_LIBRARIES = -lSDL2 /usr/lib/x86_64-linux-gnu/libSDL2_image.so /usr/lib/x86_64-linux-gnu/libSDL2_mixer.so /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so /usr/lib/x86_64-linux-gnu/libGLEW.so ../libBox2D.a /usr/lib/libSOIL.so
   OBJECT_DIR = CMakeFiles/dtd.dir

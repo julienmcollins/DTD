@@ -9,6 +9,7 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/Application.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/Level.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/Notebook.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h"
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Global.h"
@@ -19,6 +20,8 @@
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
 #include "QuiteGoodMachine/Source/Development/Private/DevelZoom.h"
+
+#include "QuiteGoodMachine/Source/HUD/Private/PlayerLife.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -246,6 +249,12 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 
    // Start counting frames per second
    fpsTimer.Start();
+
+   // Create new HUD
+   hud = std::make_unique<HUD>();
+   hud->AddHUDElement("PlayerLife1", std::make_shared<PlayerLife>("PlayerLife1", glm::vec3(51.5f, 38.f, 0.f)));
+   hud->AddHUDElement("PlayerLife2", std::make_shared<PlayerLife>("PlayerLife2", glm::vec3(127.5f, 38.f, 0.f)));
+   hud->AddHUDElement("PlayerLife3", std::make_shared<PlayerLife>("PlayerLife3", glm::vec3(203.5f, 38.f, 0.f)));
 }
 
 // Initialize OpenGL
@@ -560,6 +569,9 @@ void Application::Update() {
          avgFPS = 0;
       }
       
+      // Process pigeon post inbox
+      PigeonPost::GetInstance().ProcessInbox();
+
       // Update levels independently
       if (app_flag_ == MAIN_SCREEN) {
          if (pause == -1)
@@ -816,6 +828,9 @@ void Application::main_screen() {
    // world_.DrawDebugData();
    // drawHitBoxes(r);
    notebook_->Render();
+      
+   // Draw hud
+   hud->DisplayHUD();
 }
 
 // UPDATE PROJECTILES

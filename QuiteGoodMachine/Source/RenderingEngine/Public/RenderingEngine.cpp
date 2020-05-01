@@ -59,6 +59,31 @@ void RenderingEngine::LoadResources(Element *element) {
    }
 }
 
+void RenderingEngine::LoadResources(std::shared_ptr<Animation> animation) {
+   int i = 0;
+   int j = 0;
+   for (auto &frame : animation->frames) {
+      if (i == animation->num_of_frames) {
+         break;
+      }
+
+      // Automatically set the columns
+      frame.l = i * frame.normal_width;
+      frame.r = (i + 1) * frame.normal_width;
+      ++i;
+
+      // Automatically set the rows
+      if (animation->rows > 1) {
+         int mod = animation->columns > 0 ? animation->columns : (animation->num_of_frames + (animation->rows - 1)) / animation->rows;
+         frame.b = j * frame.normal_height;
+         frame.t = (j + 1) * frame.normal_height;
+         if (i % mod == 0) {
+            j++;
+         }
+      }
+   }
+}
+
 Texture *RenderingEngine::LoadTexture(std::string name, const GLchar *file, GLboolean alpha) {
    // Check if exists
    if (textures.find(name) == textures.end()) {

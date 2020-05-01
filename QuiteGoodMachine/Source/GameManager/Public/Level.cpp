@@ -76,7 +76,7 @@ bool Level::LoadMedia_() {
    RenderingEngine::GetInstance().LoadResources(&platforms);
 
    // Register platforms to pigeon post
-   PigeonPost::GetInstance().Register(platforms.GetName(), platforms.getptr());
+   // PigeonPost::GetInstance().Register(platforms.GetName(), platforms.getptr());
 
    // Return success
    return success;

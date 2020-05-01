@@ -10,10 +10,20 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/Development/Public/DevelZoom.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/Application.h
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
@@ -26,6 +36,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o
  QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h
  QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
  QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
  QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
  QuiteGoodMachine/Source/GameManager/Private/Application.h
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
@@ -35,15 +46,27 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
  QuiteGoodMachine/Source/GameManager/Private/Level.h
  QuiteGoodMachine/Source/GameManager/Private/Notebook.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/HUD/Private/PlayerLife.h
  QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Global.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
@@ -56,6 +79,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMa
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/BirdMaster.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+ QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o
  /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp
  QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
@@ -74,6 +98,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Corres
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
  QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
@@ -89,27 +114,43 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Pigeon
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o
  /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Level.cpp
  OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h
  QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h
  QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
  QuiteGoodMachine/Source/GameManager/Private/Application.h
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
+ QuiteGoodMachine/Source/GameManager/Private/EventSystem/BirdMaster.h
+ QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+ QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
  QuiteGoodMachine/Source/GameManager/Private/Level.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
  QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
  QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
@@ -124,18 +165,55 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
  QuiteGoodMachine/Source/GameManager/Private/Notebook.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
  QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
  QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
-CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.o
- /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/State.cpp
- QuiteGoodMachine/Source/GameManager/Private/State.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp.o
+ /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp
+ OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+ QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp.o
+ /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp
+ OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+ QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp.o
  /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp
  QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
@@ -156,10 +234,85 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/main.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/Application.h
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o
+ /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUD.cpp
+ OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+ QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp.o
+ /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUDElement.cpp
+ OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+ QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o
+ /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp
+ OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
+ QuiteGoodMachine/Source/GameManager/Private/Application.h
+ QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
+ QuiteGoodMachine/Source/GameManager/Private/EventSystem/BirdMaster.h
+ QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
+ QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+ QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+ QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/HUD/Private/PlayerLife.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
@@ -174,15 +327,58 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Element.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/Application.h
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
  QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
  QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp.o
+ /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/DrawableElement.cpp
+ OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+ QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp.o
+ /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/PositionalElement.cpp
+ OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp.o
+ /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Elements/TangibleElement.cpp
+ OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/TangibleElement.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o
  /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp
  OpenGLIncludes.h
@@ -197,15 +393,26 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
  QuiteGoodMachine/Source/GameManager/Private/Level.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
  QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
+ QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Global.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
@@ -225,12 +432,22 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
  QuiteGoodMachine/Source/GameManager/Private/Level.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
  QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Global.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
@@ -248,6 +465,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
  QuiteGoodMachine/Source/ObjectManager/Private/Global.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
@@ -260,18 +478,36 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/Application.h
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
  QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
  QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp.o
+ /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/Animation.cpp
+ OpenGLIncludes.h
+ QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
+ QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp.o
  /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/RenderingEngine/Public/BasicShaderProgram.cpp
@@ -288,11 +524,21 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/DebugDraw.cpp.
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Global.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
@@ -306,10 +552,20 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/RenderingEngin
  QuiteGoodMachine/Source/GameManager/Private/Application.h
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
@@ -323,10 +579,20 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/ShaderProgram.
  QuiteGoodMachine/Source/GameManager/Private/Application.h
  QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
  QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
@@ -344,11 +610,21 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/RenderingEngine/Public/Texture.cpp.o
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
  QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
+ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+ QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+ QuiteGoodMachine/Source/HUD/Private/HUD.h
+ QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+ QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
  QuiteGoodMachine/Source/ObjectManager/Private/Global.h
  QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/BasicShaderProgram.h
  QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h

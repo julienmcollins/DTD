@@ -31,7 +31,7 @@ class HUDInterface {
        * 
        * @param HUDElement - shared ptr to HUD element
        */
-      virtual void AddHUDElement(std::shared_ptr<HUDElement> HUD_element) = 0;
+      virtual void AddHUDElement(std::string name, std::shared_ptr<HUDElement> HUD_element) = 0;
 
       /**
        * Creates a HUD element using template and parameter list

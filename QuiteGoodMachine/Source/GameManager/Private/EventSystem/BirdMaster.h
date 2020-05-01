@@ -3,6 +3,9 @@
 
 #include "QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h"
 
+#include <unordered_map>
+#include <queue>
+
 class BirdMaster : public BirdMasterInterface {
    public:
       /**
@@ -30,7 +33,24 @@ class BirdMaster : public BirdMasterInterface {
        * 
        * @param Correspondence - the message and context to send
        */
-      virtual void DirectMessage(std::shared_ptr<Correspondence> correspondence);
+      virtual void DirectCorrespondence(std::shared_ptr<Correspondence> correspondence);
+      
+      /**
+       * Forwards a correspondence
+       */
+      virtual void Forward(std::string name, const std::shared_ptr<Correspondence>& correspondence);
+
+      /**
+       * Enqueues a message
+       * 
+       * @param correspondence - enqueues a message
+       */
+      virtual void Enqueue(std::shared_ptr<Correspondence> correspondence);
+
+      /**
+       * Process the queue (send out messages)
+       */
+      virtual void ProcessQueue();
 
       /**
        * Add a subscription
@@ -54,6 +74,9 @@ class BirdMaster : public BirdMasterInterface {
    private:
       /** Active recipients - map of address to correspondents */
       std::unordered_map<int, std::shared_ptr<Correspondent>> active_correspondents_;
+
+      // Queue for messages
+      std::queue<std::shared_ptr<Correspondence>> correspondence_queue_;
 };
 
 #endif

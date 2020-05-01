@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <memory>
 
 class Animation;
 
@@ -35,6 +36,7 @@ class RenderingEngine {
 
         /* Load resources for elements */
         void LoadResources(Element *element);
+        void LoadResources(std::shared_ptr<Animation> animation);
 
         /* Load textures and return texture functions */
         Texture *LoadTexture(std::string name, const GLchar *file, GLboolean alpha = true);

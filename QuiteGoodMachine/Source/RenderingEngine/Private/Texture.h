@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 
 class Element;
 class Animation;
@@ -38,6 +39,7 @@ class Texture {
       // Overloaded opengl Render function
       void Render(float x, float y, GLfloat rotate = 0.0f, Animation *clip = NULL, bool render_from_center = false, glm::vec3 color = glm::vec3(1.0f));
       void Render(glm::mat4 m, GLfloat rotate = 0.0f, Animation *clip = NULL, glm::vec3 color = glm::vec3(1.0f));
+      void Render(glm::vec3 position, GLfloat rotate = 0.0f, std::shared_ptr<Animation> clip = {}, glm::vec3 color = glm::vec3(1.0f));
       
       // Animate function
       void Animate(Animation *anim, int reset = 0, int max = 0, int start = 0);

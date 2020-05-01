@@ -19,6 +19,7 @@
 #include <iostream>
 #include <math.h>
 #include <glm/gtx/string_cast.hpp>
+#include <memory>
 
 using namespace std;
 
@@ -284,6 +285,17 @@ void Texture::Render(glm::mat4 m, GLfloat rotate, Animation *clip, glm::vec3 col
       glBindBuffer(GL_ARRAY_BUFFER, 0);
       glBindTexture(GL_TEXTURE_2D, 0);
    }
+}
+
+void Texture::Render(glm::vec3 position, GLfloat rotate, std::shared_ptr<Animation> clip, glm::vec3 color) {
+   // Identity matrix
+   glm::mat4 model = glm::mat4(1.0f);
+
+   // Translate
+   model = glm::translate(model, position);
+
+   // Call actual render
+   Render(model, rotate, clip.get(), color);
 }
 
 void Texture::Animate(Animation *anim, int reset, int max, int start) {

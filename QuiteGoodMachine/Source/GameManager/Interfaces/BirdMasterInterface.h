@@ -30,7 +30,24 @@ class BirdMasterInterface {
        * 
        * @param Correspondence - the message and context to send
        */
-      virtual void DirectMessage(std::shared_ptr<Correspondence> correspondence) = 0;
+      virtual void DirectCorrespondence(std::shared_ptr<Correspondence> correspondence) = 0;
+
+      /**
+       * Forwards a correspondence
+       */
+      virtual void Forward(std::string name, const std::shared_ptr<Correspondence>& correspondence) = 0;
+
+      /**
+       * Enqueue message
+       * 
+       * @param correspondence - the correspondence to enqueue
+       */
+      virtual void Enqueue(std::shared_ptr<Correspondence> correspondenec) = 0;
+
+      /**
+       * Process the queue (send out messages)
+       */
+      virtual void ProcessQueue() = 0;
 
       /**
        * Add a subscription

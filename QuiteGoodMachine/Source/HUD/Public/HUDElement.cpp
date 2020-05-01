@@ -3,7 +3,16 @@
 #include <string>
 
 HUDElement::HUDElement(std::string name, glm::vec3 initial_position, glm::vec3 size) 
-   : DrawableElement(name, initial_position, size) {}
+   : DrawableElement(name, initial_position, size)
+   , PositionalElement(name, initial_position, size)
+   , is_enabled_(true)
+   , is_interactable_(false) {}
+
+void HUDElement::Update(bool freeze) {
+   if (IsEnabled()) {
+      GetStateContext()->DoAction();
+   }
+}
 
 void HUDElement::Enable() {
    is_enabled_ = true;

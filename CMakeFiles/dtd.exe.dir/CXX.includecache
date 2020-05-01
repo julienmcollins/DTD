@@ -39,6 +39,8 @@ QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
 QuiteGoodMachine/Source/Development/Private/DevelZoom.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/Development/Private/DevelZoom.h
+QuiteGoodMachine/Source/HUD/Private/PlayerLife.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/QuiteGoodMachine/Source/HUD/Private/PlayerLife.h
 SDL2/SDL.h
 -
 SDL2/SDL_mixer.h
@@ -69,6 +71,8 @@ QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
 QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
+QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
 
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp
 QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
@@ -223,6 +227,8 @@ QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
 QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h
+QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
 QuiteGoodMachine/Source/GameManager/Private/Application.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/QuiteGoodMachine/Source/GameManager/Private/Application.h
 QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
@@ -555,12 +561,16 @@ QuiteGoodMachine/Source/ObjectManager/Private/Element.h
 QuiteGoodMachine/Source/GameManager/Private/QuiteGoodMachine/Source/ObjectManager/Private/Element.h
 QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
 QuiteGoodMachine/Source/GameManager/Private/QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
-QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
-QuiteGoodMachine/Source/GameManager/Private/QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
 QuiteGoodMachine/Source/ObjectManager/Private/Object.h
 QuiteGoodMachine/Source/GameManager/Private/QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+QuiteGoodMachine/Source/GameManager/Private/QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
 QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
 QuiteGoodMachine/Source/GameManager/Private/QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
+QuiteGoodMachine/Source/HUD/Private/HUD.h
+QuiteGoodMachine/Source/GameManager/Private/QuiteGoodMachine/Source/HUD/Private/HUD.h
+QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+QuiteGoodMachine/Source/GameManager/Private/QuiteGoodMachine/Source/HUD/Private/HUDElement.h
 
 QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
 Box2D/Box2D.h

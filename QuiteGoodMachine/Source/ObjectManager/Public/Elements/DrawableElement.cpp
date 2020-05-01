@@ -7,14 +7,15 @@
 #include <string>
 #include <memory>
 #include <cstddef>
+#include <iostream>
 
 DrawableElement::DrawableElement(std::string name, glm::vec3 initial_position, glm::vec3 size)
    : PositionalElement(name, initial_position, size) {}
 
 Texture *DrawableElement::RegisterTexture(std::string file) {
-   std::size_t found1 = file.find_first_of("/\\");
-   std::size_t found2 = file.find(".png");
-   std::string name = file.substr(found1 + 1, found2);
+   std::size_t found1 = file.find_last_of("/\\");
+   std::size_t found2 = file.find_last_of(".");
+   std::string name = file.substr(found1 + 1, found2 - (found1 + 1));
    main_texture_ = RenderingEngine::GetInstance().LoadTexture(name, file.c_str());
    return main_texture_;
 }
@@ -32,7 +33,7 @@ void DrawableElement::LoadMedia() {}
 
 void DrawableElement::Draw() {
    // Render to screen based on main texture
-   main_texture_->Render(GetPosition(), 0.0f, GetAnimationFromState());
+   main_texture_->Render(GetPosition(), GetAngle(), GetAnimationFromState());
 }
 
 void DrawableElement::Animate() {}

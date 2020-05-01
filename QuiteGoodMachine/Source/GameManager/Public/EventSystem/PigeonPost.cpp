@@ -29,6 +29,10 @@ void PigeonPost::SendDirect(const Correspondence &correspondence) {
    bird_master_->DirectCorrespondence(std::make_shared<Correspondence>(correspondence));
 }
 
+void PigeonPost::Forward(std::string name, const std::shared_ptr<Correspondence>& correspondence) {
+   bird_master_->Forward(name, correspondence);
+}
+
 void PigeonPost::ProcessInbox() {
    bird_master_->ProcessQueue();
 }

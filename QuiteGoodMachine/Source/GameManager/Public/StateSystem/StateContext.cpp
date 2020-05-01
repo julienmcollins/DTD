@@ -33,10 +33,12 @@ std::shared_ptr<StateInterface> StateContext::GetState(std::string name) {
 
 void StateContext::RegisterState(std::string name, std::shared_ptr<StateInterface> new_state) {
    // Insert only if unique within set
-   if (registered_states_.count(name) > 0) {
+   if (registered_states_.find(name) != registered_states_.end()) {
       return;
    }
-   registered_states_[name] = new_state;
+   // registered_states_[name] = new_state;
+   auto p = std::make_pair(name, new_state);
+   registered_states_.insert(p);
 }
 
 void StateContext::DoAction() {

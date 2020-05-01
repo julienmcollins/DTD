@@ -8,14 +8,14 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Compile for windows?
-set(CMAKE_SYSTEM_NAME WindowsStore)
-set(CMAKE_SYSTEM_VERSION 10.0)
+# set(CMAKE_SYSTEM_NAME WindowsStore)
+# set(CMAKE_SYSTEM_VERSION 10.0)
 
 ## Set cmake path for sdl2 modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 ## Set cmake path for toolchain
-set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cross_compile.cmake)
+# set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cross_compile.cmake)
 
 ## Include directories
 include_directories(${CMAKE_SOURCE_DIR})
@@ -172,5 +172,5 @@ find_library(LIBBOX2D Box2D .)
 find_library(LIBSOIL SOIL .)
 
 ## Add the executable
-add_executable(dtd.exe ${HEADERS} ${SOURCES})
-target_link_libraries(dtd.exe ${LIBRARIES} ${LIBBOX2D} ${LIBSOIL})
+add_executable(dtd ${HEADERS} ${SOURCES})
+target_link_libraries(dtd ${LIBRARIES} ${LIBBOX2D} ${LIBSOIL})

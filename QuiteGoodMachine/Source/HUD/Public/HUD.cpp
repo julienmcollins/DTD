@@ -22,8 +22,11 @@ std::shared_ptr<HUDElement> HUD::GetHUDElementByName(std::string name) {
 
 void HUD::AddHUDElement(std::string name, std::shared_ptr<HUDElement> HUD_element) {
    // Add to map and list
-   HUD_element_map_[name] = HUD_element;
+   HUD_element_map_.insert(std::make_pair(name, HUD_element));
    HUD_element_list_.push_back(HUD_element);
+
+   // Load HUDElement media
+   HUD_element->LoadMedia();
 }
 
 void HUD::RemoveHUDElement(std::string name) {
@@ -42,7 +45,7 @@ void HUD::ClearHUDElementList() {
 
 void HUD::DisplayHUD() {
    for (int i = 0; i < HUD_element_list_.size(); i++) {
-      HUD_element_list_[i]->Draw();
+      HUD_element_list_[i]->Update();
    }
 }
 

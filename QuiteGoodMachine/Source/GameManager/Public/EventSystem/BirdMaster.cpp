@@ -52,6 +52,7 @@ void BirdMaster::Enqueue(std::shared_ptr<Correspondence> correspondence) {
 
 void BirdMaster::ProcessQueue() {
    while (!correspondence_queue_.empty()) {
+      std::cout << "BirdMaster::ProcessQueue - Always processing queue\n";
       DirectCorrespondence(correspondence_queue_.front());
       correspondence_queue_.pop();
    }

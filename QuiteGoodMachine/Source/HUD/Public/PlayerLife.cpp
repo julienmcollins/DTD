@@ -3,20 +3,25 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h"
+
 #include "QuiteGoodMachine/Source/GameManager/Private/Application.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 
+#include <string>
+
 /** PLAYERLIFE **/
 PlayerLife::PlayerLife(std::string name, glm::vec3 initial_position)
-   : HUDElement(name, initial_position, glm::vec3(103.f, 76.f, 0.f)) 
+   : HUDElement(name, initial_position, glm::vec3(103.f, 76.f, 0.f))
+   , PositionalElement(name, initial_position, glm::vec3(103.f, 76.f, 0.f))
 {
    Disable();
 }
 
 void PlayerLife::LoadMedia() {
+   // TODO: Figure out why Application::GetInstance() doesn't work
    // Register texture first
-   std::string hitmarker = Application::GetInstance().sprite_path + "Player/hitmarker_master_sheet.png";
+   std::string hitmarker = "Media/Sprites/Player/hitmarker_master_sheet.png";
    Texture *temp = RegisterTexture(hitmarker);
 
    // Register animations with state context
@@ -27,6 +32,9 @@ void PlayerLife::LoadMedia() {
    RegisterAsCorrespondent(GetName());
    PlayerLife_Alive *alive_state = static_cast<PlayerLife_Alive*>(GetStateContext()->GetState("alive").get());
    alive_state->RegisterAsCorrespondent(GetName() + "_Alive");
+
+   // Set current state
+   GetStateContext()->SetState(GetStateContext()->GetState("alive"));
 }
 
 void PlayerLife::ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence) {

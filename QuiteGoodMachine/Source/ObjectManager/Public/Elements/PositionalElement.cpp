@@ -6,16 +6,24 @@
 #include <iostream>
 
 /** CONSTRUCTORS **/
-PositionalElement::PositionalElement()
-   : ElementInterface("")
-   , position_(glm::vec3(0.f, 0.f, 0.f))
-   , size_(glm::vec3(0.f, 0.f, 0.f)) {}
+// PositionalElement::PositionalElement()
+//    : ElementInterface("")
+//    , position_(glm::vec3(0.f, 0.f, 0.f))
+//    , size_(glm::vec3(0.f, 0.f, 0.f))
+//    , angle_(0.f) 
+// {
+//    std::cout << "PositionalElement::PositionalElement - calling default constructor" << std::endl;
+//    state_context_ = std::make_shared<StateContext>(this);
+// }
 
 PositionalElement::PositionalElement(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle)
    : ElementInterface(name)
    , position_(initial_position)
    , size_(size)
-   , angle_(angle) {}
+   , angle_(angle) 
+{
+   state_context_ = std::make_shared<StateContext>(this);
+}
 
 /** UPDATE **/
 void PositionalElement::Update(bool freeze) {}

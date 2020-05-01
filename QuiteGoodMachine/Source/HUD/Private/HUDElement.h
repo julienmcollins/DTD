@@ -6,12 +6,18 @@
 
 #include "OpenGLIncludes.h"
 
-class HUDElement : public HUDElementInterface, public DrawableElement {
+class HUDElement : public HUDElementInterface, 
+                   public DrawableElement {
    public:
       /**
        * Constructor specifies the initial position
        */
       HUDElement(std::string name, glm::vec3 initial_position, glm::vec3 size);
+
+      /**
+       * Update function simply calls do action on context
+       */
+      virtual void Update(bool freeze = false);
 
       /**
        * Enables the element (allow it to be drawn on screen)

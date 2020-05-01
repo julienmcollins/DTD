@@ -252,9 +252,9 @@ Application::Application() : SCREEN_WIDTH(1920.0f), SCREEN_HEIGHT(1080.0f),
 
    // Create new HUD
    hud = std::make_unique<HUD>();
-   hud->AddHUDElement("PlayerLife1", std::make_shared<PlayerLife>("PlayerLife1", glm::vec3(0.f, 0.f, 0.f)));
-   hud->AddHUDElement("PlayerLife2", std::make_shared<PlayerLife>("PlayerLife2", glm::vec3(76.f, 0.f, 0.f)));
-   hud->AddHUDElement("PlayerLife3", std::make_shared<PlayerLife>("PlayerLife3", glm::vec3(152.f, 0.f, 0.f)));
+   hud->AddHUDElement("PlayerLife1", std::make_shared<PlayerLife>("PlayerLife1", glm::vec3(51.5f, 38.f, 0.f)));
+   hud->AddHUDElement("PlayerLife2", std::make_shared<PlayerLife>("PlayerLife2", glm::vec3(127.5f, 38.f, 0.f)));
+   hud->AddHUDElement("PlayerLife3", std::make_shared<PlayerLife>("PlayerLife3", glm::vec3(203.5f, 38.f, 0.f)));
 }
 
 // Initialize OpenGL
@@ -546,8 +546,6 @@ void Application::Draw() {
    */
 
    // drawLines();
-
-   // Draw hud
 }
 
 // Updates the screen
@@ -830,6 +828,9 @@ void Application::main_screen() {
    // world_.DrawDebugData();
    // drawHitBoxes(r);
    notebook_->Render();
+      
+   // Draw hud
+   hud->DisplayHUD();
 }
 
 // UPDATE PROJECTILES

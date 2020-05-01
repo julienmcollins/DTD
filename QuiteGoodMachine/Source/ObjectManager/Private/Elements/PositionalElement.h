@@ -14,7 +14,7 @@ class PositionalElement : public ElementInterface {
       /**
        * Default constructor
        */
-      PositionalElement();
+      // PositionalElement();
 
       /**
        * Constructor

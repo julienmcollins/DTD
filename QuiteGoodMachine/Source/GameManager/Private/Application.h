@@ -32,6 +32,7 @@
 
 #include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/ContactListener.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/KeyHandler.h"
 
 #include "QuiteGoodMachine/Source/HUD/Private/HUD.h"
 #include "QuiteGoodMachine/Source/HUD/Private/HUDElement.h"
@@ -115,6 +116,8 @@ class Application {
 
       // Handles events
       SDL_Event e;
+
+      KeyHandler key_handler;
 
       /*********************************************/
 

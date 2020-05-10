@@ -695,6 +695,7 @@ void Application::main_screen() {
 
    // Get current keyboard states
    current_key_states_ = SDL_GetKeyboardState(NULL);
+   key_handler.ProcessKeys(SDL_GetKeyboardState(NULL));
 
    // Handle events on queue
    while (SDL_PollEvent( &e )) {
@@ -873,9 +874,10 @@ void Application::playground() {
 
    // Get current keyboard states
    current_key_states_ = SDL_GetKeyboardState(NULL);
+   key_handler.ProcessKeys(SDL_GetKeyboardState(NULL));
 
    // Handle events on queue
-   while (SDL_PollEvent( &e )) {
+   while (SDL_PollEvent( &e )) {      
       //User requests quit
       if (e.type == SDL_QUIT) {
           quit = true;

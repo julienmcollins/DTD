@@ -36,6 +36,11 @@ class DrawState : public StateInterface {
       std::shared_ptr<Animation> GetAnimation();
 
       /**
+       * Set animation
+       */
+      void SetAnimation(std::shared_ptr<Animation> anim);
+
+      /**
        * Animate the animation
        */
       virtual void Animate();

@@ -32,6 +32,10 @@ std::shared_ptr<Animation> DrawState::GetAnimation() {
    return animation_;
 }
 
+void DrawState::SetAnimation(std::shared_ptr<Animation> anim) {
+   animation_ = anim;
+}
+
 void DrawState::Animate() {
    texture_->Animate(animation_.get());
 }

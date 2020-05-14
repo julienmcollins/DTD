@@ -13,9 +13,14 @@
 
 #include "QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h"
 
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/TangibleElement.h"
+
+
 // Dependencies
 class Entity;
 class Animation;
+
+#if 1
 
 // Shape struct
 typedef struct Shape {
@@ -231,6 +236,8 @@ class Element : public Component {
       float height_;
       float width_;
 };
+
+#endif
 
 
 // Sensor class

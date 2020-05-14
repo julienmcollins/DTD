@@ -29,11 +29,13 @@ SET(GAMEMANAGER_SOURCE QuiteGoodMachine/Source/GameManager/Public/Application.cp
                        QuiteGoodMachine/Source/GameManager/Public/main.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Level.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Notebook.cpp
+                       QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Timers/SDLTimer.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Timers/FPSTimer.cpp
                        QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp
                        QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp
                        QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp
+                       QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp
@@ -83,6 +85,11 @@ SET(DEVELOPMENT_HEADER QuiteGoodMachine/Source/Development/Private/DevelZoom.h
 SET(GAMEMANAGER_HEADER QuiteGoodMachine/Source/GameManager/Private/Application.h
                        QuiteGoodMachine/Source/GameManager/Private/Level.h
                        QuiteGoodMachine/Source/GameManager/Private/Notebook.h
+                       QuiteGoodMachine/Source/GameManager/Private/ContactFilter.h
+                       QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
+                       QuiteGoodMachine/Source/GameManager/Private/DoOnce.h
+                       QuiteGoodMachine/Source/GameManager/Private/KeyHandler.h
+                       QuiteGoodMachine/Source/GameManager/Private/ClassType.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
                        QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
                        QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
@@ -90,6 +97,7 @@ SET(GAMEMANAGER_HEADER QuiteGoodMachine/Source/GameManager/Private/Application.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
                        QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
                        QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+                       QuiteGoodMachine/Source/GameManager/Private/StateSystem/PlayerStates.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h

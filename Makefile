@@ -285,6 +285,33 @@ QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.s:
 	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.cpp.s
 
+QuiteGoodMachine/Source/GameManager/Public/KeyHandler.o: QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/KeyHandler.o
+
+# target to build an object file
+QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.o
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.o
+
+QuiteGoodMachine/Source/GameManager/Public/KeyHandler.i: QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/KeyHandler.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.i
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.i
+
+QuiteGoodMachine/Source/GameManager/Public/KeyHandler.s: QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/KeyHandler.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.s
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.s
+
 QuiteGoodMachine/Source/GameManager/Public/Level.o: QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o
 
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/Level.o
@@ -365,6 +392,33 @@ QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.s: QuiteGoodMac
 QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp.s:
 	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp.s
 .PHONY : QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp.s
+
+QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.o: QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.o
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.o
+
+# target to build an object file
+QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.o:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.o
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.o
+
+QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.i: QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.i
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.i
+
+# target to preprocess a source file
+QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.i:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.i
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.i
+
+QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.s: QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.s
+
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.s
+
+# target to generate assembly for a file
+QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.s:
+	$(MAKE) -f CMakeFiles/dtd.dir/build.make CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.s
+.PHONY : QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.s
 
 QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.o: QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp.o
 
@@ -1041,6 +1095,9 @@ help:
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.o"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.i"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/EventSystem/PigeonPost.s"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/KeyHandler.o"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/KeyHandler.i"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/KeyHandler.s"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/Level.o"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/Level.i"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/Level.s"
@@ -1050,6 +1107,9 @@ help:
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.o"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.i"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.s"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.o"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.i"
+	@echo "... QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.s"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.o"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.i"
 	@echo "... QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.s"

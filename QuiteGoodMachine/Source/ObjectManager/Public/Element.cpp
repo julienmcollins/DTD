@@ -8,6 +8,8 @@
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
+#if 1
+
 // Constructor for element
 Element::Element(std::string name, int x, int y, int width, int height) :
    Component(name),
@@ -337,9 +339,16 @@ Element::~Element() {
    }
 }
 
+#endif
+
 /*************** SENSOR CLASS *************************/
-Sensor::Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y, float density, bool set_as_body) :
-   Element("", center_x, center_y, height, width), sensor_contact(contact_type), owner_(entity), density_(density) {}
+Sensor::Sensor(float height, float width, Entity *entity, CONTACT contact_type, float center_x, float center_y, float density, bool set_as_body) 
+: // TangibleElement("", glm::vec3(center_x, center_y, 0.f), glm::vec3(height, width, 0.f))
+   // , PositionalElement("", glm::vec3(center_x, center_y, 0.f), glm::vec3(height, width, 0.f))
+   Element("", center_x, center_y, width, height)
+   , sensor_contact(contact_type)
+   , owner_(entity)
+   , density_(density) {}
 
 void Sensor::initialize(float width, float height, float center_x, float center_y, uint16 category, uint16 mask, bool is_sensor) {
    // Create box shape
@@ -358,7 +367,7 @@ void Sensor::initialize(float width, float height, float center_x, float center_
    fixture_def.filter = filter;
 
    // Attach fixture
-   fixture_ = owner_->body->CreateFixture(&fixture_def);
+   fixture_ = owner_->GetBody()->CreateFixture(&fixture_def);
 }
 
 void Sensor::activate_sensor() {
@@ -386,11 +395,11 @@ BodyPart::BodyPart(Entity *owning_entity, float x_rel_to_owner, float y_rel_to_o
 }
 
 void BodyPart::initialize(float width, float height, float center_x, float center_y, uint16 category) {
-   type_ = owner_->type();
+   type_ = owner_->GetType();
 
    // Set x and y positions relative to owner
-   set_x(owner_->get_x() + x_rel);
-   set_y(owner_->get_y() + x_rel);
+   set_x(owner_->GetPosition().x + x_rel);
+   set_y(owner_->GetPosition().y + x_rel);
 
    // Create the main body
    // TODO: Add custom shapes other than squares as well
@@ -415,7 +424,7 @@ void BodyPart::initialize(float width, float height, float center_x, float cente
       fixture_ = body->CreateFixture(&fixture_def);
       body->SetUserData(this);
    } else {
-      fixture_ = owner_->body->CreateFixture(&fixture_def);
+      fixture_ = owner_->GetBody()->CreateFixture(&fixture_def);
    }
 
    // Set filter
@@ -427,5 +436,5 @@ void BodyPart::initialize(float width, float height, float center_x, float cente
 }
 
 void BodyPart::Update(int x_offset, int y_offset) {
-   set_x(owner_->get_x() + x_rel + x_offset);
+   set_x(owner_->GetPosition().x + x_rel + x_offset);
 }

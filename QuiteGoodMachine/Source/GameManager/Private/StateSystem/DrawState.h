@@ -13,17 +13,17 @@ class DrawState : public StateInterface {
       /**
        * Constructor takes an animation
        */
-      DrawState(Texture *texture, std::shared_ptr<Animation> animation);
+      DrawState(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Perform action --> gets decomposed further
        */
-      virtual void PerformAction(StateContext *context);
+      virtual void PerformAction();
 
       /**
        * Perform further action --> name better?
        */
-      virtual void PerformFurtherAction(StateContext *context);
+      virtual void PerformFurtherAction();
 
       /**
        * Get texture handle

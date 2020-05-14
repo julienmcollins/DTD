@@ -7,7 +7,11 @@
 #include <vector>
 
 #include "QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h"
+#include "QuiteGoodMachine/Source/GameManager/Private/ClassType.h"
+
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h"
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/TangibleElement.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 
@@ -22,42 +26,63 @@ class Projectile;
 class Player;
 class Animation;
 
-class Entity : public Element {
-    public:
-        // Constructor
-        Entity(std::string name, int x_pos, int y_pos, double width, double height);
+class Entity : public DrawableElement
+             , public TangibleElement {
+   public:
+      // Constructor
+      Entity(std::string name, glm::vec3 initial_position, glm::vec3 size);
 
-        // Flags
-        int has_jumped_;
+      // Movement and updating
+      virtual void Update(bool freeze = false);
 
-        // Movement and updating
-        virtual void Move() = 0;
-        virtual void Update(bool freeze = false);
+      // Get type
+      virtual std::string GetType() {
+         return "Entity";
+      }
 
-        // Health
-        int health;
+      // Create projectile (might need to add an entity pointer just in case)
+      // virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
+      //       bool owner, bool damage, float force_x, float force_y);
 
-        // Entity direction
-        DIRS entity_direction;
-        DIRS prev_entity_dir;
+      // Destructor
+      virtual ~Entity();
 
-        // Get the direction
-        int get_dir() const;
+   private:
+      // Health amount
+      int health_;
 
-        // Get type
-        virtual std::string type() {
-           return "Entity";
-        }
+      // Flag to determine if alive
+      bool alive_;
 
-        // Create projectile (might need to add an entity pointer just in case)
-        virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
-               bool owner, bool damage, float force_x, float force_y);
+   // Setters and getters
+   public:
+      /**
+       * Get health
+       */
+      int GetHealth() const {
+         return health_;
+      }
 
-         // Dumb flag for now, find a better way later
-         bool shift_;
+      /**
+       * Set health
+       */
+      void SetHealth(int health) {
+         health_ = health;
+      }
 
-        // Destructor
-        virtual ~Entity();
+      /**
+       * Check if alive
+       */
+      bool IsAlive() const {
+         return alive_;
+      }
+
+      /**
+       * Set is alive
+       */
+      void SetIsAlive(bool alive) {
+         alive_ = alive;
+      }
 };
 
 /************** PLAYER BODY PARTS ********************/
@@ -145,34 +170,6 @@ class Player : public Entity,
       // Construct the player
       Player();
 
-      // State construct for state machine
-      enum STATE {
-         STAND,
-         RUN,
-         JUMP,
-         DOUBLE_JUMP,
-         STOP,
-         RUN_AND_JUMP,
-         PUSH,
-         JUMP_AND_PUSH,
-         BALANCE,
-         DEATH
-      };
-
-      // Enum for current key
-      // TODO: MAKE THESE EXCLUSIVE BITS AND OR THEM TOGETHER
-      enum KEYS {
-         NONE, // = 0x0
-         KEY_LEFT, // = 0x00001
-         KEY_RIGHT, // = 0x00010
-         KEY_UP, // = 0x00100
-         KEY_DOWN, // = 0x01000
-         KEY_SPACE // = 0x10000
-      };
-
-      KEYS key;
-      KEYS last_key_pressed;
-
       // Contact enums
       enum CONTACTS {
          HEAD = 0,
@@ -184,22 +181,13 @@ class Player : public Entity,
          RIGHT_LEG = 6
       };
 
-      // Flag for locking direction
-      bool lock_dir_left;
-      bool lock_dir_right;
-      bool lock_dir_up;
+      // Flags
+      int has_jumped_;
 
       // Shooting flag
       bool shooting;
 
       /******** OPENGL ***********/
-      // Get animation from state...
-      virtual Animation *GetAnimationFromState();
-      
-      // Number for random idle anim
-      int rand_idle;
-      Animation *curr_idle_animation;
-      
       // Sheet for arms
       Texture *arm_sheet;
       Texture *projectile_sheet;
@@ -214,19 +202,8 @@ class Player : public Entity,
       // Adjust delta function
       void adjust_deltas();
 
-      // Get and set player state
-      STATE get_player_state();
-      void set_player_state(STATE new_state) {
-         player_state_ = new_state;
-      }
-
-      // Change player state
-      void change_player_state();
-
       // Update function now done in player
-      void ProcessInput(const Uint8 *key_state);
       virtual void Update(bool freeze = false);
-      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
       virtual void Move();
 
       // Contact listener
@@ -242,14 +219,11 @@ class Player : public Entity,
       }
 
       // Load media function for the player
-      virtual bool LoadMedia();
-
-      // File path
-      static std::string media_path;
+      virtual void LoadMedia();
 
       // Create projectile
-      virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
-            bool owner, bool damage, float force_x, float force_y);
+      // virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
+      //       bool owner, bool damage, float force_x, float force_y);
 
       // Flags for interactions
       bool contacts_[5];
@@ -257,16 +231,6 @@ class Player : public Entity,
       // Virtual destructor
       virtual ~Player();
    private:
-      // Player state
-      STATE player_state_;
-
-      // Previous position of player
-      float prev_pos_x_;
-      float prev_pos_y_;
-      float next_pos_x_;
-      float next_pos_y_;
-      b2Vec2 pos_vector_;
-
       // Player body parts
       std::vector<BodyPart*> player_body_right_;
       std::vector<BodyPart*> player_body_left_;
@@ -288,6 +252,7 @@ class Player : public Entity,
       float fall_duration_;
 
       // Projectile pointer
+      ClassType<Projectile> eraser;
       Projectile *eraser;
       int num_of_projectiles;
 };

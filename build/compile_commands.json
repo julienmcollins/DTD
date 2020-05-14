@@ -31,8 +31,8 @@
 
 {
   "directory": "/home/juliencollins/Game_Dev/DTD/build",
-  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/State.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/State.cpp",
-  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/State.cpp"
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/KeyHandler.cpp"
 },
 
 {
@@ -51,6 +51,24 @@
   "directory": "/home/juliencollins/Game_Dev/DTD/build",
   "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp",
   "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/Timers/SecondsTimer.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp"
 },
 
 {
@@ -183,5 +201,11 @@
   "directory": "/home/juliencollins/Game_Dev/DTD/build",
   "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/HUD.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUD.cpp",
   "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/HUD.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/HUD/Public/PlayerLife.cpp"
 }
 ]

@@ -22,28 +22,24 @@
 
 #define BOUNDED(var) (var > -0.0000001f && var < 0.0000001f)
 
-std::string Player::media_path = sprite_path + std::string("Player/");
-
 /*************************** ENTITY IMPLEMENTATIONS ******************************/
 
 // Entity constructor which will provide basic establishment for all entities
-Entity::Entity(std::string name, int x_pos, int y_pos, double width, double height) : 
-   Element(name, x_pos, y_pos, width, height),
-   has_jumped_(0), health(0), shift_(false), entity_direction(NEUTRAL),
-   prev_entity_dir(NEUTRAL) {
+Entity::Entity(std::string name, glm::vec3 initial_position, glm::vec3 size)
+   : TangibleElement(name, initial_position, size)
+   , DrawableElement(name, initial_position, size)
+   , PositionalElement(name, initial_position, size)
+{
 }
 
 // Update function for all entities. For now all it does is call move
 void Entity::Update(bool freeze) {
-   Move();
-}
-
-// Get direction
-int Entity::get_dir() const {
-   return entity_direction;
+   TangibleElement::Update(freeze);
+   DrawableElement::Update(freeze);
 }
 
 // Create projectile
+/*
 Projectile* Entity::CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y,
      bool owner, bool damage, float force_x, float force_y) {
    
@@ -65,6 +61,7 @@ Projectile* Entity::CreateProjectile(std::string name, float width, float height
    // Return projectile reference
    return proj;
 }
+*/
 
 // Destructor
 Entity::~Entity() {}
@@ -237,7 +234,7 @@ void PlayerLeg::StartContact(Element *element) {
             player->contacts_[Player::RIGHT_LEG] = 1;
             // std::cout << "PlayerLeg::StartContact() - in contact right leg: " << element->type() << std::endl;
          }
-         owner_->has_jumped_ = 0;
+         player->has_jumped_ = 0;
          owner_->GetAnimationByName("jump")->reset_frame = 0;
          owner_->GetAnimationByName("jump")->curr_frame = 0;
          owner_->GetAnimationByName("double_jump")->reset_frame = 0;
@@ -273,53 +270,59 @@ void PlayerLeg::EndContact(Element *element) {
 /////////////////////////////////////////////////////////////////////////
 
 // Initializ the player by calling it's constructor
-Player::Player() : 
-   // The new sprite is going to be 37 wide (the character itself)
-   // TODO: Load in new smaller sprite sheet
-   Entity("player", 960, 412, 31, 104), player_state_(STAND),
-   shooting(false), arm_delta_x(12), arm_delta_y(64),
-   arm_delta_shoot_x(12), arm_delta_shoot_y(51), prev_pos_x_(0.0f), prev_pos_y_(0.0f),
-   immunity_duration_(1.0f), edge_duration_(0.025f), fall_duration_(0.015f), key(NONE), last_key_pressed(NONE), lock_dir_left(false),
-   lock_dir_right(false), lock_dir_up(false), rand_idle(0), eraser(nullptr), num_of_projectiles(0) {
+Player::Player() 
+   : Entity("player", glm::vec3(960.f, 412.f, 0.f), glm::vec3(31.f, 104.f, 0.f))
+   , PositionalElement("player", glm::vec3(960.f, 412.f, 0.f), glm::vec3(31.f, 104.f, 0.f))
+   , shooting(false)
+   , arm_delta_x(12)
+   , arm_delta_y(64)
+   , arm_delta_shoot_x(12)
+   , arm_delta_shoot_y(51)
+   , immunity_duration_(1.0f)
+   , edge_duration_(0.025f)
+   , fall_duration_(0.015f)
+   ,eraser(nullptr)
+   , num_of_projectiles(0) 
+{
 
    // Set entity direction
-   entity_direction = RIGHT;
+   SetDirection(RIGHT);
 
    // Setup Box2D
    // Set body type
-   body_def.type = b2_dynamicBody;
+   body_def_.type = b2_dynamicBody;
 
    // Set initial position and set fixed rotation
    float x = 600.0f * Application::GetInstance().to_meters_;
    float y = -412.5f * Application::GetInstance().to_meters_;
-   body_def.position.Set(x, y);
-   body_def.fixedRotation = true;
+   body_def_.position.Set(x, y);
+   body_def_.fixedRotation = true;
 
    // Set transform
-   element_model = glm::translate(element_model, glm::vec3(x, y, 0.0f));
+   draw_model_ = glm::translate(draw_model_, glm::vec3(x, y, 0.0f));
 
    // Attach body to world
-   body = Application::GetInstance().world_.CreateBody(&body_def);
+   body_ = Application::GetInstance().world_.CreateBody(&body_def_);
 
    // Set box dimensions
-   float width = (get_width() / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
-   float height = (get_height() / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
-   const b2Vec2 center = {(PC_OFF_X - get_width()) / 2.0f * Application::GetInstance().to_meters_, 
+   float width = (GetSize().x / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
+   float height = (GetSize().y / 2.0f) * Application::GetInstance().to_meters_ - 0.02f;// - 0.11f;
+   const b2Vec2 center = {(PC_OFF_X - GetSize().x) / 2.0f * Application::GetInstance().to_meters_, 
                           PC_OFF_Y * Application::GetInstance().to_meters_};
-   box.SetAsBox(width, height);
+   shape_.SetAsBox(width, height);
 
    // Set various fixture definitions and create fixture
-   fixture_def.shape = &box;
-   fixture_def.density = 1.25f;
-   fixture_def.friction = 0.0f;
-   fixture_def.userData = this;
-   main_fixture = body->CreateFixture(&fixture_def);
+   fixture_def_.shape = &shape_;
+   fixture_def_.density = 1.25f;
+   fixture_def_.friction = 0.0f;
+   fixture_def_.userData = this;
+   main_fixture_ = body_->CreateFixture(&fixture_def_);
 
    // Set sensors to non interactive with da enemy
    b2Filter filter;
    filter.categoryBits = CAT_PLAYER;
    filter.maskBits = CAT_PLATFORM | CAT_PROJECTILE | CAT_ENEMY | CAT_BOSS;
-   b2Fixture *fixture_list = body->GetFixtureList();
+   b2Fixture *fixture_list = body_->GetFixtureList();
    fixture_list->SetFilterData(filter);
 
    // ADD BODY PARTS FOR LEFT BODY
@@ -346,7 +349,7 @@ Player::Player() :
    // }
 
    // Set health. TODO: set health in a better way
-   health = 30;
+   SetHealth(30);
 
    // TEMPORARY SOLUTION
    //textures["arm_throw"]->completed_ = true;
@@ -361,162 +364,48 @@ Player::Player() :
    immunity_timer_.Start();
 }
 
-Animation *Player::GetAnimationFromState() {
-   // Return run or stop texture (aka running texture)
-   if (player_state_ == RUN || player_state_ == STOP) {
-      return GetAnimationByName("running");
-   }
-
-   // Return jump texture
-   if (player_state_ == JUMP) {
-      return GetAnimationByName("jump");
-   }
-
-   // Return run and jump texture
-   if (player_state_ == RUN_AND_JUMP) {
-      return GetAnimationByName("running_jump");
-   }
-
-   // Return double jump
-   if (player_state_ == DOUBLE_JUMP) {
-      return GetAnimationByName("double_jump");
-   }
-
-   // Return push texture
-   if (player_state_ == PUSH) {
-      return GetAnimationByName("push");
-   }
-
-   // Return jump and push texture
-   if (player_state_ == JUMP_AND_PUSH) {
-      return GetAnimationByName("jump_push");
-   }
-
-   // Return balance
-   if (player_state_ == BALANCE) {
-      return GetAnimationByName("balance");
-   }
-
-   // Death
-   if (player_state_ == DEATH) {
-      return GetAnimationByName("death");
-   }
-
-   // Check which idle is being used and return it
-   if (rand_idle <= 98) {
-      return GetAnimationByName("tap");
-   }
-   if (rand_idle == 99) {
-      return GetAnimationByName("look");
-   }
-   if (rand_idle == 100) {
-      return GetAnimationByName("kick");
-   }
-}
-
-// Get player state
-Player::STATE Player::get_player_state() {
-   return player_state_;
-}
-
-// Process keyboard input
-void Player::ProcessInput(const Uint8 *key_state) {  
-   // Set previous direction
-   prev_entity_dir = entity_direction;
-
-   // Set key to none by default
-   key = NONE;
-
-   // Process left key
-   if (key_state[SDL_SCANCODE_LEFT]) {
-      if (!lock_dir_right) {
-         key = KEY_LEFT;
-         entity_direction = LEFT;
-         lock_dir_left = true;
-      }
-   } else {
-      lock_dir_left = false;
-   }
-
-   // Process right key
-   if (key_state[SDL_SCANCODE_RIGHT]) {
-      if (!lock_dir_left) {
-         key = KEY_RIGHT;
-         entity_direction = RIGHT;
-         lock_dir_right = true;
-      }
-   } else {
-      lock_dir_right = false;
-   }
-
-   // Process up key
-   if (key_state[SDL_SCANCODE_UP]) {
-      if (!lock_dir_up) {
-         key = KEY_UP;
-         lock_dir_up = true;
-         //std::cout << "LOCK JUMP\n";
-      }
-   } else {
-      //std::cout << "UNLOCK JUMP\n";
-      lock_dir_up = false;
-   }
-
-   // Process down key
-   if (key_state[SDL_SCANCODE_DOWN]) {
-      key = KEY_DOWN;
-   }
-
-   // Process space key
-   if (key_state[SDL_SCANCODE_SPACE] && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != BALANCE) {
-      shooting = true;
-   } else {
-      if (GetAnimationByName("arm_throw")->completed) {
-         shooting = false;
-      }
-   }
-}
-
 // Update function
 void Player::Update(bool freeze) {
    // Apply artificial force of gravity
    const b2Vec2 sim_grav = {0.0f, SIM_GRAV};
-   body->ApplyForceToCenter(sim_grav, true);
+   GetBody()->ApplyForceToCenter(sim_grav, true);
 
-   // Process key inputs
-   ProcessInput(Application::GetInstance().current_key_states_);
+   // // Animate the function
+   // Animate();
 
-   // Animate the function
-   Animate();
+   // // Update player if not frozen
+   // if (!freeze) {
+   //    Move();
+   // }
 
-   // Update player if not frozen
-   if (!freeze) {
-      Move();
-   }
+   // // Adjust deltas first
+   // adjust_deltas();
 
-   // Adjust deltas first
-   adjust_deltas();
+   // // Render arm if idle, Render shooting if not
+   // if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != BALANCE && player_state_ != DEATH) {
+   //    if (!shooting) {
+   //       std::string arm_type;
+   //       if (get_player_state() == RUN) {
+   //          arm_type = "running_arm";
+   //       } else if (get_player_state() == DOUBLE_JUMP) {
+   //          arm_type = "double_jump_arm";
+   //       } else {
+   //          arm_type = "idle_arm";
+   //       }
+   //       arm_sheet->Render(get_anim_x() + get_width() + arm_delta_x, 
+   //          get_anim_y() + arm_delta_y, 0.0f, GetAnimationByName(arm_type));
+   //    } else {
+   //       arm_sheet->Render(get_anim_x() + get_width() + arm_delta_shoot_x,
+   //          get_anim_y() + arm_delta_shoot_y, 0.0f, GetAnimationByName("arm_throw"));
+   //    }
+   // }
 
-   // Render arm if idle, Render shooting if not
-   if (player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != BALANCE && player_state_ != DEATH) {
-      if (!shooting) {
-         std::string arm_type;
-         if (get_player_state() == RUN) {
-            arm_type = "running_arm";
-         } else if (get_player_state() == DOUBLE_JUMP) {
-            arm_type = "double_jump_arm";
-         } else {
-            arm_type = "idle_arm";
-         }
-         arm_sheet->Render(get_anim_x() + get_width() + arm_delta_x, 
-            get_anim_y() + arm_delta_y, 0.0f, GetAnimationByName(arm_type));
-      } else {
-         arm_sheet->Render(get_anim_x() + get_width() + arm_delta_shoot_x,
-            get_anim_y() + arm_delta_shoot_y, 0.0f, GetAnimationByName("arm_throw"));
-      }
-   }
+   // // Render player
+   // sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
 
-   // Render player
-   sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
+   // Call tangible element update and drawableelement updates last
+   TangibleElement::Update(freeze);
+   DrawableElement::Update(freeze);
 }
 
 // Adjust delta function
@@ -572,6 +461,8 @@ void Player::adjust_deltas() {
       }
    }
 }
+
+#if 0
 
 // Animate based on state
 void Player::Animate(Texture *tex, int reset, int max, int start) {
@@ -735,6 +626,8 @@ void Player::change_player_state() {
       player_state_ = STAND;
    }
 }
+
+#endif
 
 // Movement logic of the player. Done through keyboard.
 void Player::Move() {
@@ -922,16 +815,13 @@ void Player::EndContact(Element *element) {
 }
 
 // Load media function
-bool Player::LoadMedia() {
+void Player::LoadMedia() {
    // Register as correspondent
    PigeonPost::GetInstance().Register(GetName(), getptr());
 
-   // Temp flag
-   bool success = true;
-
    // Instantiate sprite sheet for main player body
    std::string p_path = player_path + "player_master_sheet.png";
-   sprite_sheet = RenderingEngine::GetInstance().LoadTexture("player_master_sheet", p_path.c_str());
+   main_texture_ = RenderingEngine::GetInstance().LoadTexture("player_master_sheet", p_path.c_str());
    animations.emplace("jump_push", new Animation(sprite_sheet, "jump_push", 61.0, 106.0, 0.0, 8, 1.0 / 20.0));
    animations.emplace("double_jump", new Animation(sprite_sheet, "double_jump", 61.0, 106.0, 106.0, 11, 1.0 / 24.0));
    animations.emplace("tap", new Animation(sprite_sheet, "tap", 61.0, 106.0, 212.0, 12, 1.0 / 24.0));
@@ -955,9 +845,6 @@ bool Player::LoadMedia() {
 
    // Set current idle texture to tap
    curr_idle_animation = GetAnimationByName("tap");
-
-   // Return success
-   return success;
 }
 
 // Create projectile

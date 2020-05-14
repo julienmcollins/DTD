@@ -45,6 +45,40 @@ class TangibleElement : virtual public PositionalElement {
 
    public:
       /**
+       * Enums (find a better way of doing this)
+       */
+
+      enum DIRS {
+         LEFT,
+         RIGHT,
+         NEUTRAL
+      };
+
+      enum CONTACT {
+         CONTACT_LEFT = 0x0001,
+         CONTACT_RIGHT = 0x0002,
+         CONTACT_UP = 0x0004,
+         CONTACT_DOWN = 0x0008
+      };
+
+      enum COLLISIONS {
+         CAT_PLAYER = 0x0001,
+         CAT_PLATFORM = 0x0002,
+         CAT_PROJECTILE = 0x0004,
+         CAT_ENEMY = 0x0008,
+         CAT_BOSS = 0x0010,
+         CAT_SENSOR = 0x0020
+      };
+
+      enum ANTI_COLLISIONS {
+         ACAT_PLAYER = 0xFFFE,
+         ACAT_PLATFORM = 0xFFFD,
+         ACAT_PROJECTILE = 0xFFFB,
+         ACAT_ENEMY = 0xFFF7
+      };
+
+   public:
+      /**
        * Constructor
        * Sets up physical body (?)
        */
@@ -120,7 +154,7 @@ class TangibleElement : virtual public PositionalElement {
        */
       virtual ~TangibleElement();
 
-   private:
+   protected:
       // Physical location
       glm::vec3 body_position_;
 
@@ -128,6 +162,7 @@ class TangibleElement : virtual public PositionalElement {
       b2Body *body_;
       b2BodyDef body_def_;
       b2PolygonShape shape_;
+      b2CircleShape circle_;
       b2FixtureDef fixture_def_;
       b2Fixture *main_fixture_;
 
@@ -136,10 +171,42 @@ class TangibleElement : virtual public PositionalElement {
       float hitbox_angle_;
 
       // Actual shape of object
-      Shape element_shape;
+      Shape element_shape_;
 
       // Contact flags
-      uint8 contacts = 0; // Goes down, up, left and right (right to left)
+      uint8 contacts_ = 0; // Goes up, down, left and right (right to left)
+
+      // Current direction
+      DIRS current_direction_;
+
+   public:
+      /**
+       * Get body
+       */
+      b2Body *GetBody() {
+         return body_;
+      };
+
+      /**
+       * Get main fixture
+       */
+      b2Fixture *GetMainFixture() {
+         return main_fixture_;
+      };
+
+      /**
+       * Get direction
+       */
+      DIRS GetDirection() {
+         return current_direction_;
+      };
+
+      /**
+       * Set direction
+       */
+      void SetDirection(DIRS new_dir) {
+         current_direction_ = new_dir;
+      }
 };
 
 #endif

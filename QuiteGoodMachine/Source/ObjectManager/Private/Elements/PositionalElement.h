@@ -73,7 +73,7 @@ class PositionalElement : public ElementInterface {
        */
       virtual ~PositionalElement();
 
-   private:
+   protected:
       // Position vector
       glm::vec3 position_;
 

@@ -83,7 +83,7 @@ class DrawableElement : virtual public PositionalElement {
        */
       virtual ~DrawableElement();
 
-   private:
+   protected:
       // Position vector
       glm::vec3 draw_position_;
 

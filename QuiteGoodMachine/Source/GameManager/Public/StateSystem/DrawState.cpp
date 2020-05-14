@@ -5,23 +5,24 @@
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 
-DrawState::DrawState(Texture *texture, std::shared_ptr<Animation> animation)
-   : texture_(texture)
+DrawState::DrawState(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : StateInterface(context)
+   , texture_(texture)
    , animation_(animation) 
 {
    RenderingEngine::GetInstance().LoadResources(animation);
 }
 
-void DrawState::PerformAction(StateContext *context) {
+void DrawState::PerformAction() {
    // First, animate
    Animate();
 
    // Then, perform further action
-   PerformFurtherAction(context);
+   PerformFurtherAction();
 }
 
-void DrawState::PerformFurtherAction(StateContext *context) {
-   GetTexture()->Render(context->GetBase()->GetPosition(), context->GetBase()->GetAngle(), GetAnimation());
+void DrawState::PerformFurtherAction() {
+   GetTexture()->Render(GetContext()->GetBase()->GetPosition(), GetContext()->GetBase()->GetAngle(), GetAnimation());
 }
 
 Texture *DrawState::GetTexture() {

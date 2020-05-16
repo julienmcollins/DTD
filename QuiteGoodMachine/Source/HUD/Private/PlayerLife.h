@@ -25,7 +25,7 @@ class PlayerLife_Alive : public DrawState,
        * @param texture - texture related to the animation
        * @param animation - the animation itself
        */
-      PlayerLife_Alive(Texture *texture, std::shared_ptr<Animation> animation);
+      PlayerLife_Alive(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pre transition
@@ -47,7 +47,7 @@ class PlayerLife_Dead : public DrawState {
       /**
        * Constructor
        */
-      PlayerLife_Dead(Texture *texture, std::shared_ptr<Animation> animation);
+      PlayerLife_Dead(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Animate function (stops at 18th frame)

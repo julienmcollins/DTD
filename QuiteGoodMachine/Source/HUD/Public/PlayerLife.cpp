@@ -25,16 +25,16 @@ void PlayerLife::LoadMedia() {
    Texture *temp = RegisterTexture(hitmarker);
 
    // Register animations with state GetContext()
-   GetStateGetContext()()->RegisterState("alive", std::make_shared<PlayerLife_Alive>(temp, std::make_shared<Animation>(temp, "alive", 76.0f, 103.0f, 0.0f, 21, 1.0f / 20.0f)));
-   GetStateGetContext()()->RegisterState("dead", std::make_shared<PlayerLife_Dead>(temp, std::make_shared<Animation>(temp, "dead", 76.0f, 103.0f, 103.0f, 19, 1.0f / 20.0f)));
+   GetStateContext()->RegisterState("alive", std::make_shared<PlayerLife_Alive>(temp, std::make_shared<Animation>(temp, "alive", 76.0f, 103.0f, 0.0f, 21, 1.0f / 20.0f)));
+   GetStateContext()->RegisterState("dead", std::make_shared<PlayerLife_Dead>(temp, std::make_shared<Animation>(temp, "dead", 76.0f, 103.0f, 103.0f, 19, 1.0f / 20.0f)));
 
    // Register as correspondent (and state)
    PigeonPost::GetInstance().Register(GetName(), getptr());
-   PlayerLife_Alive *alive_state = static_cast<PlayerLife_Alive*>(GetStateGetContext()()->GetState("alive").get());
+   PlayerLife_Alive *alive_state = static_cast<PlayerLife_Alive*>(GetStateContext()->GetState("alive").get());
    PigeonPost::GetInstance().Register(GetName() + "_Alive", alive_state->getptr());
 
    // Set current state
-   GetStateGetContext()()->SetState(GetStateGetContext()()->GetState("alive"));
+   GetStateContext()->SetState(GetStateContext()->GetState("alive"));
 }
 
 void PlayerLife::ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence) {
@@ -46,8 +46,8 @@ void PlayerLife::ProcessCorrespondence(const std::shared_ptr<Correspondence>& co
 }
 
 /** PLAYERLIFE_ALIVE **/
-PlayerLife_Alive::PlayerLife_Alive(Texture *texture, std::shared_ptr<Animation> animation) 
-   : DrawState(texture, animation)
+PlayerLife_Alive::PlayerLife_Alive(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+   : DrawState(context, texture, animation)
    , is_alive_(true) {}
 
 void PlayerLife_Alive::PreTransition() {
@@ -66,8 +66,8 @@ void PlayerLife_Alive::ProcessCorrespondence(const std::shared_ptr<Correspondenc
 }
 
 /** PLAYERLIFE_DEAD **/
-PlayerLife_Dead::PlayerLife_Dead(Texture *texture, std::shared_ptr<Animation> animation)
-   : DrawState(texture, animation) {}
+PlayerLife_Dead::PlayerLife_Dead(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : DrawState(context, texture, animation) {}
 
 void PlayerLife_Dead::Animate() {
    GetTexture()->Animate(GetAnimation().get(), 18);

@@ -13,6 +13,8 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondence.h"
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h"
 
+#include "QuiteGoodMachine/Source/GameManager/Private/StateSystem/PlayerStates.h"
+
 #include <cmath>
 #include <stdlib.h>
 #include <SDL2/SDL_image.h>
@@ -21,6 +23,8 @@
 #include <Box2D/Box2D.h>
 
 #define BOUNDED(var) (var > -0.0000001f && var < 0.0000001f)
+
+using namespace std;
 
 /*************************** ENTITY IMPLEMENTATIONS ******************************/
 
@@ -278,6 +282,7 @@ Player::Player()
    , arm_delta_y(64)
    , arm_delta_shoot_x(12)
    , arm_delta_shoot_y(51)
+   , arm_("arm", glm::vec3(960.f, 412.f, 0.f), glm::vec3(9.f, 27.f, 0.f))
    , immunity_duration_(1.0f)
    , edge_duration_(0.025f)
    , fall_duration_(0.015f)
@@ -818,57 +823,60 @@ void Player::EndContact(Element *element) {
 void Player::LoadMedia() {
    // Register as correspondent
    PigeonPost::GetInstance().Register(GetName(), getptr());
+   string p_path = player_path + "player_master_sheet.png";
+   Texture *temp = RegisterTexture(p_path);
 
-   // Instantiate sprite sheet for main player body
-   std::string p_path = player_path + "player_master_sheet.png";
-   main_texture_ = RenderingEngine::GetInstance().LoadTexture("player_master_sheet", p_path.c_str());
-   animations.emplace("jump_push", new Animation(sprite_sheet, "jump_push", 61.0, 106.0, 0.0, 8, 1.0 / 20.0));
-   animations.emplace("double_jump", new Animation(sprite_sheet, "double_jump", 61.0, 106.0, 106.0, 11, 1.0 / 24.0));
-   animations.emplace("tap", new Animation(sprite_sheet, "tap", 61.0, 106.0, 212.0, 12, 1.0 / 24.0));
-   animations.emplace("running", new Animation(sprite_sheet, "running", 61.0, 106.0, 318.0, 15, 1.0 / 30.0));
-   animations.emplace("jump", new Animation(sprite_sheet, "jump", 61.0, 106.0, 424.0, 15, 1.0 / 24.0));
-   animations.emplace("running_jump", new Animation(sprite_sheet, "running_jump", 61.0, 106.0, 530.0, 15, 1.0 / 24.0));
-   animations.emplace("push", new Animation(sprite_sheet, "push", 61.0, 106.0, 636.0, 16, 1.0 / 20.0));
-   animations.emplace("kick", new Animation(sprite_sheet, "kick", 61.0, 106.0, 742.0, 17, 1.0 / 24.0));
-   animations.emplace("look", new Animation(sprite_sheet, "look", 61.0, 106.0, 848.0, 20, 1.0 / 24.0));
-   animations.emplace("death", new Animation(sprite_sheet, "death", 107.0, 106.0, 954.0, 20, 1.0 / 20.0));
-   animations.emplace("balance", new Animation(sprite_sheet, "balance", 128.0, 106.0, 1060.0, 19, 1.0 / 20.0));
+   // Register animations with state GetContext()
+   GetStateContext()->RegisterState("stand", make_shared<Player_Stand>(GetStateContext(), temp, make_shared<Animation>(temp, "tap", 61.f, 106.f, 212.f, 12, 1.f / 24.f),
+                                                                                                make_shared<Animation>(temp, "look", 61.f, 106.f, 848.f, 20, 1.f / 24.f),
+                                                                                                make_shared<Animation>(temp, "kick", 61.f, 106.f, 742.f, 17, 1.0f / 24.f)));
+   GetStateContext()->RegisterState("running", make_shared<Player_Run>(GetStateContext(), temp, make_shared<Animation>(temp, "running", 61.f, 106.f, 318.f, 15, 1.f / 30.f)));
+   GetStateContext()->RegisterState("jump", make_shared<Player_Jump>(temp, make_shared<Animation>(temp, "jump", 61.f, 106.f, 424.f, 15, 1.f / 24.f)));
+   GetStateContext()->RegisterState("double_jump", make_shared<Player_DoubleJump>(temp, make_shared<Animation>(temp, "double_jump", 61.f, 106.f, 106.f, 11, 1.f / 24.f)));
+   GetStateContext()->RegisterState("push", make_shared<Player_Push>(temp, make_shared<Animation>(temp, "push", 61.f, 106.f, 636.f, 16, 1.f / 20.f)));
+   // GetStateContext()->RegisterState("running_jump", make_shared<Player_Stand>(temp, make_shared<Animation>(temp, "jump_push", 61.f, 106.f, 0.f, 8, 1.f / 20.f)));
+   GetStateContext()->RegisterState("jump_push", make_shared<Player_JumpPush>(temp, make_shared<Animation>(temp, "jump_push", 61.f, 106.f, 0.f, 8, 1.f / 20.f)));
+   GetStateContext()->RegisterState("balance", make_shared<Player_Balance>(temp, make_shared<Animation>(temp, "balance", 128.f, 106.f, 1060.f, 19, 1.f / 20.f)));
+   GetStateContext()->RegisterState("death", make_shared<Player_Death>(temp, make_shared<Animation>(temp, "death", 107.f, 106.f, 954.f, 20, 1.f / 20.f)));
 
-   // Instantiate sprite sheet for arms
-   std::string arm_path = player_path + "arm_master_sheet.png";
-   arm_sheet = RenderingEngine::GetInstance().LoadTexture("arm_master_sheet", arm_path.c_str());
-   animations.emplace("idle_arm", new Animation(arm_sheet, "idle_arm", 10.0, 27.0, 0.0, 1, 1.0 / 30.0));
-   animations.emplace("double_jump_arm", new Animation(arm_sheet, "double_jump_arm", 9.0, 27.0, 27.0, 8, 1.0 / 24.0));
-   animations.emplace("running_arm", new Animation(arm_sheet, "running_arm", 9.0, 27.0, 54.0, 15, 1.0 / 30.0));
-   animations.emplace("arm_throw", new Animation(arm_sheet, "arm_throw", 44.0, 33.0, 81.0, 9, 1.0 / 20.0));
-   RenderingEngine::GetInstance().LoadResources(this);
+   // // Instantiate sprite sheet for main player body
+   // animations.emplace("running_jump", new Animation(sprite_sheet, "running_jump", 61.0, 106.0, 530.0, 15, 1.0 / 24.0));
 
-   // Set current idle texture to tap
-   curr_idle_animation = GetAnimationByName("tap");
+   // // Instantiate sprite sheet for arms
+   // std::string arm_path = player_path + "arm_master_sheet.png";
+   // arm_sheet = RenderingEngine::GetInstance().LoadTexture("arm_master_sheet", arm_path.c_str());
+   // animations.emplace("idle_arm", new Animation(arm_sheet, "idle_arm", 10.0, 27.0, 0.0, 1, 1.0 / 30.0));
+   // animations.emplace("double_jump_arm", new Animation(arm_sheet, "double_jump_arm", 9.0, 27.0, 27.0, 8, 1.0 / 24.0));
+   // animations.emplace("running_arm", new Animation(arm_sheet, "running_arm", 9.0, 27.0, 54.0, 15, 1.0 / 30.0));
+   // animations.emplace("arm_throw", new Animation(arm_sheet, "arm_throw", 44.0, 33.0, 81.0, 9, 1.0 / 20.0));
+   // RenderingEngine::GetInstance().LoadResources(this);
+
+   // // Set current idle texture to tap
+   // curr_idle_animation = GetAnimationByName("tap");
 }
 
 // Create projectile
-Projectile* Player::CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y,
-     bool owner, bool damage, float force_x, float force_y) {
+// Projectile* Player::CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y,
+//      bool owner, bool damage, float force_x, float force_y) {
 
-   // First, create a new projectile
-   Projectile *proj;
+//    // First, create a new projectile
+//    Projectile *proj;
 
-   // Create based on direction
-   if (entity_direction == RIGHT) {
-      proj = new Projectile(name, get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-            width, height, 1, 10, 10.4f, 0.0f, this);
-   } else {
-      proj = new Projectile(name, get_tex_x() + delta_x_l, get_tex_y() + delta_y,
-            width, height, 1, 10, 10.4f, 0.0f, this);
-   }
+//    // Create based on direction
+//    if (entity_direction == RIGHT) {
+//       proj = new Projectile(name, get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
+//             width, height, 1, 10, 10.4f, 0.0f, this);
+//    } else {
+//       proj = new Projectile(name, get_tex_x() + delta_x_l, get_tex_y() + delta_y,
+//             width, height, 1, 10, 10.4f, 0.0f, this);
+//    }
 
-   // Set shot direction
-   proj->shot_dir = entity_direction;
+//    // Set shot direction
+//    proj->shot_dir = entity_direction;
 
-   // Return projectile reference
-   return proj;
-}
+//    // Return projectile reference
+//    return proj;
+// }
 
 // Take damage function
 void Player::TakeDamage(int damage) {
@@ -877,15 +885,15 @@ void Player::TakeDamage(int damage) {
    if (delta > immunity_duration_) {
       std::vector<int> recs;
       int myid = ObjectManager::GetInstance().GetUID("player");
-      int id = ObjectManager::GetInstance().GetUID("PlayerLife" + std::to_string(health / 10));
+      int id = ObjectManager::GetInstance().GetUID("PlayerLife" + std::to_string(GetHealth() / 10));
       if (id != -1) {
          recs.push_back(id);
          Correspondence cor = Correspondence::CompileCorrespondence((void *) "LifeLost", "string", recs, myid);
          PigeonPost::GetInstance().Send(cor);
       }
-      health -= damage;
-      if (health == 0) {
-         player_state_ = DEATH;
+      SetHealth(GetHealth() - damage);
+      if (GetHealth() == 0) {
+         GetStateContext()->SetState(GetStateContext()->GetState("death"));
          Application::GetInstance().death_timer_.Start();
       }
    }

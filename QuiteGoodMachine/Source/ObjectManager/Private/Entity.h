@@ -231,6 +231,9 @@ class Player : public Entity,
       // Virtual destructor
       virtual ~Player();
    private:
+      // Has an arm
+      DrawableElement arm_;
+      
       // Player body parts
       std::vector<BodyPart*> player_body_right_;
       std::vector<BodyPart*> player_body_left_;

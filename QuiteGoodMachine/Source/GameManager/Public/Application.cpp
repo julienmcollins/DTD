@@ -531,10 +531,10 @@ void Application::Draw() {
          // Increment level_flag_
          int inc = static_cast<int>(level_flag_);
          level_flag_ = static_cast<FOREST>(inc + 1);
-         std::cout << level_flag_ << std::endl;
       }
    } else {
       app_flag_ = GAMEOVER_SCREEN;
+      std::cout << "Application::Draw - player use count = " << player.use_count() << std::endl;
       player.reset();
       Level::GetInstance().ClearBoard();
       menu_flag = true;
@@ -690,6 +690,7 @@ void Application::main_screen() {
    // Setup menu
    if (menu_flag) {
       setup_menu();
+      hud->ResetHUD();
       menu_flag = false;
    }
 
@@ -699,8 +700,8 @@ void Application::main_screen() {
    // Handle events on queue
    while (SDL_PollEvent( &e )) {
       //User requests quit
-      if(e.type == SDL_QUIT) {
-          quit = true;
+      if (e.type == SDL_QUIT) {
+         quit = true;
       } else if (e.type == SDL_KEYDOWN) {
          if (e.key.keysym.sym == SDLK_p) {
             pause *= -1;

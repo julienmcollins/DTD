@@ -28,6 +28,11 @@ class StateInterface {
          PerformAction(context);
          PostTransition(context);
       }
+
+      /**
+       * Reset function
+       */
+      virtual void Reset() {}
 };
 
 #endif

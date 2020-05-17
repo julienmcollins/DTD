@@ -37,6 +37,11 @@ class PlayerLife_Alive : public DrawState,
        */
       virtual void ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence);
 
+      /**
+       * Reset function
+       */
+      virtual void Reset();
+
    private:
       // Flag for alive
       bool is_alive_;
@@ -72,6 +77,11 @@ class PlayerLife : public HUDElement,
        * Process correspondence --> transitions alive to dead
        */
       virtual void ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence);
+
+      /**
+       * Virtual reset function
+       */
+      virtual void Reset();
 };
 
 #endif

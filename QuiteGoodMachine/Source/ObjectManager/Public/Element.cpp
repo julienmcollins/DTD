@@ -320,6 +320,7 @@ void Element::Update(bool freeze) {
 Element::~Element() {
    // Destroy body
    if (body) {
+      // TODO: fix this at some point?
       Application::GetInstance().world_.DestroyBody(body);
       body = nullptr;
    }

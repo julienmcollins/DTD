@@ -12,7 +12,7 @@ class HUDElement : public HUDElementInterface,
       /**
        * Constructor specifies the initial position
        */
-      HUDElement(std::string name, glm::vec3 initial_position, glm::vec3 size);
+      HUDElement(std::string name, glm::vec3 initial_position, glm::vec3 size, bool start_enabled = true);
 
       /**
        * Update function simply calls do action on context
@@ -48,6 +48,11 @@ class HUDElement : public HUDElementInterface,
        * Checks whether element is able to be interacted with (WIP)
        */
       virtual bool IsInteractable();
+
+      /**
+       * Reset state for if you ever wanna do that
+       */
+      virtual void Reset();
 
    private:
       // Simple drawing enabled/disabled flag

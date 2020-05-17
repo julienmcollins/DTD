@@ -45,12 +45,25 @@ class StateContext {
        */
       void DoAction();
 
+      /**
+       * Set reset state
+       */
+      void SetResetState(std::shared_ptr<StateInterface> reset_state);
+
+      /**
+       * Reset function for doing that i guess
+       */
+      void Reset();
+
    private:
       // Pointer to calling object --> used for gathering info
       PositionalElement *base_;
 
       // Current associated state
       std::shared_ptr<StateInterface> current_state_;
+
+      // Reset state
+      std::shared_ptr<StateInterface> reset_state_;
 
       // Set of states owned by the context
       std::unordered_map<std::string, std::shared_ptr<StateInterface>> registered_states_;

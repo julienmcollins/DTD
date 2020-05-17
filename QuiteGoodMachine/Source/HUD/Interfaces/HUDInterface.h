@@ -83,6 +83,11 @@ class HUDInterface {
        * @param string - name of HUD element to disable
        */
       virtual void DisableHUDElement(std::string name) = 0;
+
+      /**
+       * Reset HUD
+       */
+      virtual void ResetHUD() = 0;
 };
 
 #endif

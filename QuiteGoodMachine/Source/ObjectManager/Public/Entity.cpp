@@ -747,7 +747,6 @@ void Player::Move() {
       }
       if (GetAnimationByName("death")->curr_frame >= 19) {
          if (((float) Application::GetInstance().death_timer_.GetTime() / 1000.0f) >= 3.0f) {
-            std::cout << "In death\n";
             alive = false;
             Application::GetInstance().death_timer_.Stop();
          }

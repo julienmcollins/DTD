@@ -44,3 +44,12 @@ void StateContext::RegisterState(std::string name, std::shared_ptr<StateInterfac
 void StateContext::DoAction() {
    current_state_->DoAction(this);
 }
+
+void StateContext::SetResetState(std::shared_ptr<StateInterface> reset_state) {
+   reset_state_ = reset_state;
+}
+
+void StateContext::Reset() {
+   current_state_ = reset_state_;
+   current_state_->Reset();
+}

@@ -2,9 +2,12 @@
 #define TANGIBLEELEMENT_H_
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h"
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Element.h"
 
 #include <Box2D/Box2D.h>
 #include <string>
+
+#if 0
 
 // Shape struct
 typedef struct Shape {
@@ -32,6 +35,8 @@ typedef struct Shape {
 
    Shape() : shape_type(0, 0, 0.0f) {}
 } Shape;
+
+#endif
 
 /** Abstract base class (?) */
 class TangibleElement : virtual public PositionalElement {

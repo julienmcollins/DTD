@@ -22,9 +22,9 @@ class PlayerState : public DrawState {
       PlayerState(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * Perform Further action (should flip anims)
+       * Turn function flips
        */
-      virtual void PerformFurtherAction();
+      virtual void Turn();
    
    protected:
       // Player pointer
@@ -76,6 +76,11 @@ class Player_Run : public PlayerState {
        * PreTransition
        */
       virtual void PreTransition();
+
+      /**
+       * Reset
+       */
+      virtual void TransitionReset();
 };
 
 class Player_Jump : public PlayerState {
@@ -110,6 +115,11 @@ class Player_DoubleJump : public PlayerState {
        * Constructor
        */
       Player_DoubleJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+
+      /**
+       * Perform further action
+       */
+      virtual void PerformFurtherAction();
 
       /**
        * PreTransition
@@ -156,6 +166,19 @@ class Player_Balance : public PlayerState {
       virtual void PreTransition();
 };
 
+class Player_RunningJump : public PlayerState {
+   public:
+      /**
+       * Constructor
+       */
+      Player_RunningJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+
+      /**
+       * Pre transition
+       */
+      virtual void PreTransition();
+};
+
 class Player_Death : public PlayerState {
    public:
       /**
@@ -179,6 +202,74 @@ class Player_Death : public PlayerState {
 
       // Death timer
       SecondsTimer death_timer_;
+};
+
+/** ARM STATES **/
+
+class Arm_Idle : public PlayerState {
+   public:
+      /**
+       * Constructor
+       */
+      Arm_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+
+      /**
+       * Perform further action
+       */
+      virtual void PreTransition();
+};
+
+class Arm_DoubleJump : public PlayerState {
+   public:
+      /**
+       * Constructor
+       */
+      Arm_DoubleJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+
+      /**
+       * Perform further action function
+       */
+      virtual void PerformFurtherAction();
+
+      /**
+       * Pre transition
+       */
+      virtual void PreTransition();
+
+      /**
+       * Reset function
+       */
+      virtual void Reset();
+
+   private:
+      // Do once for setting reset frame
+      DoOnce do_once_;
+};
+
+class Arm_Running : public PlayerState {
+   public:
+      /**
+       * Constructor
+       */
+      Arm_Running(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+
+      /**
+       * Transition function
+       */
+      virtual void PreTransition();
+};
+
+class Arm_Shooting : public PlayerState {
+   public:
+      /**
+       * Constructor
+       */
+      Arm_Shooting(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+
+      /**
+       * Transition function
+       */
+      virtual void PreTransition();
 };
 
 #endif

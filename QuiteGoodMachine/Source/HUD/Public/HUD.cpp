@@ -72,3 +72,9 @@ void HUD::DisableHUDElement(std::string name) {
       HUD_element_map_[name]->Disable();
    }
 }
+
+void HUD::ResetHUD() {
+   for (int i = 0; i < HUD_element_list_.size(); i++) {
+      HUD_element_list_[i]->Reset();
+   }
+}

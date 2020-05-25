@@ -14,6 +14,9 @@ TangibleElement::TangibleElement(std::string name, glm::vec3 initial_position, g
 void TangibleElement::Update(bool freeze) {
    // As of now, this only calls the move functions
    Move();
+
+   // Set position relative to body
+   SetPosition(glm::vec3(body_->GetPosition().x * 100.f, body_->GetPosition().y * -100.f, 0.f));
 }
 
 void TangibleElement::SetCollision(uint16 collision_types, b2Fixture *fixture) {

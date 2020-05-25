@@ -34,6 +34,11 @@ class HUDElementInterface {
        * Checks whether element is able to be interacted with (WIP)
        */
       virtual bool IsInteractable() = 0;
+
+      /**
+       * Reset function
+       */
+      virtual void Reset() = 0;
 };
 
 #endif

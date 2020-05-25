@@ -10,7 +10,10 @@
 #include <iostream>
 
 DrawableElement::DrawableElement(std::string name, glm::vec3 initial_position, glm::vec3 size)
-   : PositionalElement(name, initial_position, size) {}
+   : PositionalElement(name, initial_position, size)
+{
+   state_context_ = std::make_shared<DrawStateContext>(this);
+}
 
 Texture *DrawableElement::RegisterTexture(std::string file) {
    std::size_t found1 = file.find_last_of("/\\");
@@ -21,11 +24,8 @@ Texture *DrawableElement::RegisterTexture(std::string file) {
 }
 
 void DrawableElement::Update(bool freeze) {
-   // First, animate
-   Animate();
-
-   // Then, draw
-   Draw();
+   // Rely on state
+   GetStateContext()->DoAction();
 }
 
 // TODO: Add a MediaFile with specific format

@@ -45,16 +45,49 @@ class StateContext {
        */
       void DoAction();
 
-   private:
+      /**
+       * Set reset state
+       */
+      void SetResetState(std::shared_ptr<StateInterface> reset_state);
+
+      /**
+       * Set initial state
+       */
+      void SetInitialState(std::shared_ptr<StateInterface> initial_state);
+
+      /**
+       * Reset function for doing that i guess
+       */
+      void Reset();
+
+   protected:
       // Pointer to calling object --> used for gathering info
       PositionalElement *base_;
 
       // Current associated state
       std::shared_ptr<StateInterface> current_state_;
 
+      // Reset state
+      std::shared_ptr<StateInterface> reset_state_;
+
       // Set of states owned by the context
       std::unordered_map<std::string, std::shared_ptr<StateInterface>> registered_states_;
 
+};
+
+/** DRAW STATE CONTEXT **/
+
+class DrawStateContext : public StateContext {
+   public:
+      /**
+       * Constructor
+       */
+      DrawStateContext(PositionalElement *base);
+
+      /**
+       * Flip animations
+       */
+      void FlipAllAnimations();
 };
 
 #endif

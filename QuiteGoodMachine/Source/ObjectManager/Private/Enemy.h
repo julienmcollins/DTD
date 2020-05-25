@@ -1,6 +1,8 @@
 #ifndef ENEMY_H_
 #define ENEMY_H_
 
+#if 0
+
 #include <SDL2/SDL.h>
 #include <Box2D/Box2D.h>
 #include <string>
@@ -418,5 +420,7 @@ class Wormored : public Enemy,
       // Wakeup timer
       SecondsTimer attack_timer_;
 };
+
+#endif
 
 #endif

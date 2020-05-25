@@ -23,6 +23,7 @@
 #include <Box2D/Box2D.h>
 
 #define BOUNDED(var) (var > -0.0000001f && var < 0.0000001f)
+#define KH Application::GetInstance().key_handler
 
 using namespace std;
 
@@ -38,12 +39,20 @@ Entity::Entity(std::string name, glm::vec3 initial_position, glm::vec3 size)
 
 // Update function for all entities. For now all it does is call move
 void Entity::Update(bool freeze) {
-   TangibleElement::Update(freeze);
+   // Call move first
+   Move();
+
+   // Render at center of draw
+   DrawState *draw_state = static_cast<DrawState*>(GetStateContext()->GetCurrentState().get());
+   float x = (body_->GetPosition().x * 100.f) - (draw_state->GetAnimation()->texture_width / 2.0f);
+   float y = (body_->GetPosition().y * -100.f) - (draw_state->GetAnimation()->texture_height / 2.0f);
+   SetPosition(glm::vec3(x, y, 0.f));
+
+   // Call element draw
    DrawableElement::Update(freeze);
 }
 
 // Create projectile
-/*
 Projectile* Entity::CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y,
      bool owner, bool damage, float force_x, float force_y) {
    
@@ -51,21 +60,21 @@ Projectile* Entity::CreateProjectile(std::string name, float width, float height
    Projectile *proj;
 
    // Create based on direction
-   if (entity_direction == RIGHT) {
-      proj = new Projectile("none", get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
+   if (GetDirection() == RIGHT) {
+      proj = new Projectile("none", GetPosition().x + GetSize().x + delta_x_r, GetPosition().y + delta_y, 
             0.0f, 0.0f, owner, damage, force_x, force_y, this);
    } else {
-      proj = new Projectile("none", get_tex_x() + delta_x_l, get_tex_y() + delta_y, owner,
+      proj = new Projectile("none", GetPosition().x + delta_x_l, GetPosition().y + delta_y, owner,
             0.0f, 0.0f, damage, force_x, force_y, this);
    }
 
    // Set shot direction
-   proj->shot_dir = entity_direction;
+   proj->shot_dir = GetDirection();
 
    // Return projectile reference
    return proj;
 }
-*/
+
 
 // Destructor
 Entity::~Entity() {}
@@ -239,12 +248,12 @@ void PlayerLeg::StartContact(Element *element) {
             // std::cout << "PlayerLeg::StartContact() - in contact right leg: " << element->type() << std::endl;
          }
          player->has_jumped_ = 0;
-         owner_->GetAnimationByName("jump")->reset_frame = 0;
-         owner_->GetAnimationByName("jump")->curr_frame = 0;
-         owner_->GetAnimationByName("double_jump")->reset_frame = 0;
-         owner_->GetAnimationByName("double_jump")->curr_frame = 0;
-         owner_->GetAnimationByName("running_jump")->reset_frame = 0;
-         owner_->GetAnimationByName("running_jump")->curr_frame = 0;
+         // owner_->GetAnimationByName("jump")->reset_frame = 0;
+         // owner_->GetAnimationByName("jump")->curr_frame = 0;
+         // owner_->GetAnimationByName("double_jump")->reset_frame = 0;
+         // owner_->GetAnimationByName("double_jump")->curr_frame = 0;
+         // owner_->GetAnimationByName("running_jump")->reset_frame = 0;
+         // owner_->GetAnimationByName("running_jump")->curr_frame = 0;
       } else if (element->type() == "Projectile" || !element->is_enemy()) {
          player->TakeDamage(10);
       }
@@ -413,10 +422,20 @@ void Player::Update(bool freeze) {
    DrawableElement::Update(freeze);
 }
 
+#define STAND GetStateContext()->GetState("stand")
+#define RUN GetStateContext()->GetState("running")
+#define BALANCE GetStateContext()->GetState("balance")
+#define JUMP GetStateContext()->GetState("jump")
+#define RUN_AND_JUMP GetStateContext()->GetState("running_jump")
+#define DOUBLE_JUMP GetStateContext()->GetState("double_jump")
+#define JUMP_AND_PUSH GetStateContext()->GetState("jump_push")
+#define PUSH GetStateContext()->GetState("push")
+
 // Adjust delta function
 void Player::adjust_deltas() {
+   shared_ptr<StateInterface> player_state_ = GetStateContext()->GetCurrentState();
    if (player_state_ == STAND) {
-      if (entity_direction == RIGHT) {
+      if (GetDirection() == RIGHT) {
          arm_delta_x = 2;
          arm_delta_y = 44;
          arm_delta_shoot_x = 3;
@@ -428,7 +447,7 @@ void Player::adjust_deltas() {
          arm_delta_shoot_y = 39;
       }
    } else if (player_state_ == RUN && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
-      if (entity_direction == RIGHT) {
+      if (GetDirection() == RIGHT) {
          arm_delta_x = 2;
          arm_delta_y = 44;
          arm_delta_shoot_x = 8;
@@ -439,21 +458,9 @@ void Player::adjust_deltas() {
          arm_delta_shoot_x = -52;
          arm_delta_shoot_y = 39;
       }
-   } else if (player_state_ == STOP && (contacts_[LEFT_LEG] || contacts_[RIGHT_LEG])) {
-      if (entity_direction == RIGHT) {
-         arm_delta_x = 2;
-         arm_delta_y = 43;
-         arm_delta_shoot_x = 2;
-         arm_delta_shoot_y = 34;
-      } else {
-         arm_delta_x = -14;
-         arm_delta_y = 43;
-         arm_delta_shoot_x = -52;
-         arm_delta_shoot_y = 34;
-      }
    } else if (player_state_ == RUN_AND_JUMP || player_state_ == JUMP || player_state_ == DOUBLE_JUMP) {
       // Adjust deltas
-      if (entity_direction == RIGHT) {
+      if (GetDirection() == RIGHT) {
          arm_delta_x = 3;
          arm_delta_y = 43;
          arm_delta_shoot_x = 4;
@@ -636,84 +643,28 @@ void Player::change_player_state() {
 
 // Movement logic of the player. Done through keyboard.
 void Player::Move() {
-   // Death 
-   if (player_state_ == DEATH) {
-      // TODO: FIX DEATH CLIPPING THROUGH PLATFORM
-      if (!shift_) {
-         body->SetLinearVelocity({0.0f, body->GetLinearVelocity().y});
-         shift_ = true;
-      }
-      if (GetAnimationByName("death")->curr_frame >= 19) {
-         if (((float) Application::GetInstance().death_timer_.GetTime() / 1000.0f) >= 3.0f) {
-            std::cout << "In death\n";
-            alive = false;
-            Application::GetInstance().death_timer_.Stop();
-         }
-      }
+   // Body pointer
+   b2Body *body = GetBody();
 
-      // Set collision to only platform
-      SetCollision(CAT_PLATFORM, main_fixture);
-      return;
-   }
+   // Current anim pointer
+   shared_ptr<StateInterface> player_state_ = GetStateContext()->GetCurrentState();
 
    // Check if shooting
    if (shooting) {
       if (GetAnimationByName("arm_throw")->curr_frame > 0) {
          num_of_projectiles++;
          if (num_of_projectiles == 1) {
-            CreateProjectile("player_projectile", 21.0f, 12.0f, 38, -12, 41, 1, 10, 0.0f, 0.0f);
+            //CreateProjectile("player_projectile", 21.0f, 12.0f, 38, -12, 41, 1, 10, 0.0f, 0.0f);
          }
       } else {
          num_of_projectiles = 0;
       }
    }
 
-   // Reset frames
-   if (player_state_ != DOUBLE_JUMP) {
-      GetAnimationByName("double_jump_arm")->reset_frame = 0;
-   } else {
-      GetAnimationByName("double_jump_arm")->reset_frame = GetAnimationByName("double_jump_arm")->max_frame;
-   }
-
-   // Check for changing directions on second jump
-   if (key == KEY_RIGHT && prev_entity_dir == LEFT) {    
-      if (has_jumped_ > 0) {
-         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
-         body->SetLinearVelocity(vel);
-      }
-   }
-   if (key == KEY_LEFT && prev_entity_dir == RIGHT) {
-      if (has_jumped_ > 0) {
-         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
-         body->SetLinearVelocity(vel);
-      }
-   }
-
-   // If not running or running and jumping, then set linear velocity to 0
-   if (player_state_ != RUN) {
-      // Reset running arm
-      GetAnimationByName("running_arm")->curr_frame = GetAnimationByName("running")->curr_frame;
-      if (player_state_ != RUN_AND_JUMP && player_state_ != JUMP && player_state_ != PUSH && player_state_ != JUMP_AND_PUSH && player_state_ != DOUBLE_JUMP) {
-         b2Vec2 vel = {0, body->GetLinearVelocity().y};
-         body->SetLinearVelocity(vel);
-         //player_state_ = STOP;
-      }
-   }
-
    // Player running left
-   if (key == KEY_LEFT) {
-      // TESTING
-      contacts_[RIGHT_ARM] = 0;
-
-      // Check for flag
-      if (!TextureFlipped()) {
-         FlipAllAnimations();
-         texture_flipped = true;
-      }
-
+   if (KH.GetKeyPressed(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT)) {
       // Check for midair
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == BALANCE) {
-         //player_state_ = RUN;
          b2Vec2 vel = {-5.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP || player_state_ == DOUBLE_JUMP) {
@@ -723,25 +674,16 @@ void Player::Move() {
             const b2Vec2 force = {-5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
-      } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == RIGHT) {
-         contacts_[RIGHT_ARM] = 0;
       }
-   } 
+   } else if (KH.GetKeyReleased(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT)) { // Handle release of left key
+      b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+      body->SetLinearVelocity(vel);
+   }
 
    // Deal with basic movement for now
-   if (key == KEY_RIGHT) {
-      // TESTING
-      contacts_[LEFT_ARM] = 0;
-      
-      // Check for flag
-      if (TextureFlipped()) {
-         FlipAllAnimations();
-         texture_flipped = false;
-      }
-
+   if (KH.GetKeyPressed(KEY_RIGHT) && !KH.GetKeyPressed(KEY_LEFT)) {
       // Set to jump and run if not on the ground
       if (player_state_ == RUN || player_state_ == STAND || player_state_ == BALANCE) {
-         //player_state_ = RUN;
          b2Vec2 vel = {5.5f, body->GetLinearVelocity().y};
          body->SetLinearVelocity(vel);
       } else if (player_state_ == JUMP || player_state_ == RUN_AND_JUMP || player_state_ == DOUBLE_JUMP) {
@@ -751,60 +693,44 @@ void Player::Move() {
             const b2Vec2 force = {5.4f, 0};
             body->ApplyForce(force, body->GetPosition(), true);
          }
-      } else if ((player_state_ == JUMP_AND_PUSH || player_state_ == PUSH) && entity_direction == LEFT) {
-         contacts_[LEFT_ARM] = 0;
       }
+   } else if (KH.GetKeyReleased(KEY_RIGHT) && !KH.GetKeyPressed(KEY_LEFT)) {
+      b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+      body->SetLinearVelocity(vel);
    }
 
    // Player jumping
-   if (key == KEY_UP) {
-      if (has_jumped_ < 2) {
-         if (has_jumped_ == 0) {
-            if (player_state_ == RUN) {
-               GetAnimationByName("running_jump")->reset_frame = 14;
-               GetAnimationByName("running_jump")->stop_frame = 14;
-            } else {
-               GetAnimationByName("jump")->reset_frame = GetAnimationByName("jump")->max_frame;
-               GetAnimationByName("jump")->stop_frame = GetAnimationByName("jump")->max_frame;
-            }
-
+   if (has_jumped_ < 2) {
+      if (KH.GetKeyPressedOnce(KEY_UP)) {
+         if (has_jumped_ < 1) {
             // Apply an impulse
             const b2Vec2 force = {0, 2.8f};
             body->ApplyLinearImpulse(force, body->GetPosition(), true);
 
+            // Force set contacts to null
+            contacts_[LEFT_LEG] = 0;
+            contacts_[RIGHT_LEG] = 0;
+
             // Set the flags
             ++has_jumped_;
          } else {
-            if (player_state_ == RUN) {
-               GetAnimationByName("running_jump")->reset_frame = 14;
-               GetAnimationByName("running_jump")->stop_frame = 14;
-            } else {
-               GetAnimationByName("double_jump")->reset_frame = GetAnimationByName("double_jump")->max_frame;
-               GetAnimationByName("double_jump")->stop_frame = GetAnimationByName("double_jump")->max_frame;
-            }
-
             // Set y velocity to 0
             b2Vec2 vel = {body->GetLinearVelocity().x, 0.0f};
             body->SetLinearVelocity(vel);
 
-            //std::cout << body->GetLinearVelocity().y << std::endl;
-
             // Apply an impulse
             const b2Vec2 force = {0, 2.4f};
             body->ApplyLinearImpulse(force, body->GetPosition(), true);
+
+            // Force set contacts to null
+            contacts_[LEFT_LEG] = 0;
+            contacts_[RIGHT_LEG] = 0;
 
             // Set the flags
             ++has_jumped_;
          }
       }
    } 
-
-   // Update player state
-   change_player_state();
-
-   // Set previous position
-   prev_pos_x_ = body->GetPosition().x; 
-   prev_pos_y_ = body->GetPosition().y;
 }
 
 // Start contact function
@@ -823,60 +749,57 @@ void Player::EndContact(Element *element) {
 void Player::LoadMedia() {
    // Register as correspondent
    PigeonPost::GetInstance().Register(GetName(), getptr());
-   string p_path = player_path + "player_master_sheet.png";
+   string p_path = "Media/Sprites/Player/player_master_sheet.png";
    Texture *temp = RegisterTexture(p_path);
 
    // Register animations with state GetContext()
-   GetStateContext()->RegisterState("stand", make_shared<Player_Stand>(GetStateContext(), temp, make_shared<Animation>(temp, "tap", 61.f, 106.f, 212.f, 12, 1.f / 24.f),
-                                                                                                make_shared<Animation>(temp, "look", 61.f, 106.f, 848.f, 20, 1.f / 24.f),
-                                                                                                make_shared<Animation>(temp, "kick", 61.f, 106.f, 742.f, 17, 1.0f / 24.f)));
-   GetStateContext()->RegisterState("running", make_shared<Player_Run>(GetStateContext(), temp, make_shared<Animation>(temp, "running", 61.f, 106.f, 318.f, 15, 1.f / 30.f)));
-   GetStateContext()->RegisterState("jump", make_shared<Player_Jump>(temp, make_shared<Animation>(temp, "jump", 61.f, 106.f, 424.f, 15, 1.f / 24.f)));
-   GetStateContext()->RegisterState("double_jump", make_shared<Player_DoubleJump>(temp, make_shared<Animation>(temp, "double_jump", 61.f, 106.f, 106.f, 11, 1.f / 24.f)));
-   GetStateContext()->RegisterState("push", make_shared<Player_Push>(temp, make_shared<Animation>(temp, "push", 61.f, 106.f, 636.f, 16, 1.f / 20.f)));
-   // GetStateContext()->RegisterState("running_jump", make_shared<Player_Stand>(temp, make_shared<Animation>(temp, "jump_push", 61.f, 106.f, 0.f, 8, 1.f / 20.f)));
-   GetStateContext()->RegisterState("jump_push", make_shared<Player_JumpPush>(temp, make_shared<Animation>(temp, "jump_push", 61.f, 106.f, 0.f, 8, 1.f / 20.f)));
-   GetStateContext()->RegisterState("balance", make_shared<Player_Balance>(temp, make_shared<Animation>(temp, "balance", 128.f, 106.f, 1060.f, 19, 1.f / 20.f)));
-   GetStateContext()->RegisterState("death", make_shared<Player_Death>(temp, make_shared<Animation>(temp, "death", 107.f, 106.f, 954.f, 20, 1.f / 20.f)));
+   GetStateContext()->RegisterState("stand", make_shared<Player_Stand>(GetStateContext().get(), temp, make_shared<Animation>(temp, "tap", 61.f, 106.f, 212.f, 12, 1.f / 24.f),
+                                                                                                      make_shared<Animation>(temp, "look", 61.f, 106.f, 848.f, 20, 1.f / 24.f),
+                                                                                                      make_shared<Animation>(temp, "kick", 61.f, 106.f, 742.f, 17, 1.0f / 24.f)));
+   GetStateContext()->RegisterState("running", make_shared<Player_Run>(GetStateContext().get(), temp, make_shared<Animation>(temp, "running", 61.f, 106.f, 318.f, 15, 1.f / 30.f)));
+   GetStateContext()->RegisterState("jump", make_shared<Player_Jump>(GetStateContext().get(), temp, make_shared<Animation>(temp, "jump", 61.f, 106.f, 424.f, 15, 1.f / 24.f)));
+   GetStateContext()->RegisterState("double_jump", make_shared<Player_DoubleJump>(GetStateContext().get(), temp, make_shared<Animation>(temp, "double_jump", 61.f, 106.f, 106.f, 11, 1.f / 24.f)));
+   GetStateContext()->RegisterState("push", make_shared<Player_Push>(GetStateContext().get(), temp, make_shared<Animation>(temp, "push", 61.f, 106.f, 636.f, 16, 1.f / 20.f)));
+   GetStateContext()->RegisterState("running_jump", make_shared<Player_RunningJump>(GetStateContext().get(), temp, make_shared<Animation>(temp, "running_jump", 61.f, 106.f, 530.f, 15, 1.f / 24.f)));
+   GetStateContext()->RegisterState("jump_push", make_shared<Player_JumpPush>(GetStateContext().get(), temp, make_shared<Animation>(temp, "jump_push", 61.f, 106.f, 0.f, 8, 1.f / 20.f)));
+   GetStateContext()->RegisterState("balance", make_shared<Player_Balance>(GetStateContext().get(), temp, make_shared<Animation>(temp, "balance", 128.f, 106.f, 1060.f, 19, 1.f / 20.f)));
+   GetStateContext()->RegisterState("death", make_shared<Player_Death>(GetStateContext().get(), temp, make_shared<Animation>(temp, "death", 107.f, 106.f, 954.f, 20, 1.f / 20.f)));
 
-   // // Instantiate sprite sheet for main player body
-   // animations.emplace("running_jump", new Animation(sprite_sheet, "running_jump", 61.0, 106.0, 530.0, 15, 1.0 / 24.0));
+   // Instantiate sprite sheet for arms
+   string arm_path = "Media/Sprites/Player/arm_master_sheet.png";
+   temp = RegisterTexture(arm_path);
+   arm_.GetStateContext()->RegisterState("idle", make_shared<Arm_Idle>(GetStateContext().get(), temp, make_shared<Animation>(temp, "idle", 10.f, 27.f, 0.f, 1, 1.f / 30.f)));
+   arm_.GetStateContext()->RegisterState("running", make_shared<Arm_Running>(GetStateContext().get(), temp, make_shared<Animation>(temp, "running", 9.f, 27.f, 54.f, 15, 1.f / 30.f)));
+   arm_.GetStateContext()->RegisterState("double_jump", make_shared<Arm_DoubleJump>(GetStateContext().get(), temp, make_shared<Animation>(temp, "double_jump", 9.f, 27.f, 0.f, 8, 1.f / 24.f)));
+   arm_.GetStateContext()->RegisterState("shooting", make_shared<Arm_Shooting>(GetStateContext().get(), temp, make_shared<Animation>(temp, "shooting", 44.f, 33.f, 81.f, 9, 1.f / 20.f)));
 
-   // // Instantiate sprite sheet for arms
-   // std::string arm_path = player_path + "arm_master_sheet.png";
-   // arm_sheet = RenderingEngine::GetInstance().LoadTexture("arm_master_sheet", arm_path.c_str());
-   // animations.emplace("idle_arm", new Animation(arm_sheet, "idle_arm", 10.0, 27.0, 0.0, 1, 1.0 / 30.0));
-   // animations.emplace("double_jump_arm", new Animation(arm_sheet, "double_jump_arm", 9.0, 27.0, 27.0, 8, 1.0 / 24.0));
-   // animations.emplace("running_arm", new Animation(arm_sheet, "running_arm", 9.0, 27.0, 54.0, 15, 1.0 / 30.0));
-   // animations.emplace("arm_throw", new Animation(arm_sheet, "arm_throw", 44.0, 33.0, 81.0, 9, 1.0 / 20.0));
-   // RenderingEngine::GetInstance().LoadResources(this);
-
-   // // Set current idle texture to tap
-   // curr_idle_animation = GetAnimationByName("tap");
+   // Set initial and reset
+   GetStateContext()->SetResetState(GetStateContext()->GetState("stand"));
+   GetStateContext()->SetInitialState(GetStateContext()->GetState("stand"));
 }
 
 // Create projectile
-// Projectile* Player::CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y,
-//      bool owner, bool damage, float force_x, float force_y) {
+Projectile* Player::CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y,
+     bool owner, bool damage, float force_x, float force_y) {
 
-//    // First, create a new projectile
-//    Projectile *proj;
+   // // First, create a new projectile
+   // Projectile *proj;
 
-//    // Create based on direction
-//    if (entity_direction == RIGHT) {
-//       proj = new Projectile(name, get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
-//             width, height, 1, 10, 10.4f, 0.0f, this);
-//    } else {
-//       proj = new Projectile(name, get_tex_x() + delta_x_l, get_tex_y() + delta_y,
-//             width, height, 1, 10, 10.4f, 0.0f, this);
-//    }
+   // // Create based on direction
+   // if (GetDirection() == RIGHT) {
+   //    proj = new Projectile(name, GetPosition().x + GetSize().x + delta_x_r, GetPosition().y + delta_y, 
+   //          width, height, 1, 10, 10.4f, 0.0f, this);
+   // } else {
+   //    proj = new Projectile(name, GetPosition().x + delta_x_l, GetPosition().y + delta_y,
+   //          width, height, 1, 10, 10.4f, 0.0f, this);
+   // }
 
-//    // Set shot direction
-//    proj->shot_dir = entity_direction;
+   // // Set shot direction
+   // proj->shot_dir = GetDirection();
 
-//    // Return projectile reference
-//    return proj;
-// }
+   // // Return projectile reference
+   // return proj;
+}
 
 // Take damage function
 void Player::TakeDamage(int damage) {

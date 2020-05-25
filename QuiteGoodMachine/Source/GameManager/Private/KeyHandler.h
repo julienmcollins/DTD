@@ -1,6 +1,8 @@
 #ifndef KEYHANDLER_H_
 #define KEYHANDLER_H_
 
+#include "QuiteGoodMachine/Source/GameManager/Private/DoOnce.h"
+
 #include <SDL2/SDL.h>
 
 #include <unordered_map>
@@ -18,6 +20,11 @@ typedef enum {
 class KeyHandler {
    public:
       /**
+       * Constructor
+       */
+      KeyHandler();
+
+      /**
        * Process keys
        */
       void ProcessKeys(const Uint8 *states);
@@ -32,9 +39,32 @@ class KeyHandler {
        */
       bool GetKeyReleased(KeyMap key);
 
+      /**
+       * Get single key press
+       */
+      bool GetKeyPressedOnce(KeyMap key);
+
+      /**
+       * Get single key released
+       */
+      bool GetKeyReleasedOnce(KeyMap key);
+
+      /**
+       * Check that key is released
+       */
+      void CheckKeyReleased(KeyMap key);
+
+      /**
+       * Key is locked
+       */
+      bool KeyIsLocked(KeyMap key);
+      
    private:
       // Holds key state for registered key
       const Uint8 *states_;
+
+      // Do onces for single key press
+      std::unordered_map<KeyMap, DoOnce> single_presses_;
 };
 
 #endif

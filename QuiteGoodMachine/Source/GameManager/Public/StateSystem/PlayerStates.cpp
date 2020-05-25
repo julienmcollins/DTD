@@ -3,9 +3,11 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/Application.h"
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h"
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
+#include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 
 #include <cmath>
 
@@ -18,15 +20,17 @@ PlayerState::PlayerState(StateContext *context, Texture *texture, std::shared_pt
    player = dynamic_cast<Player*>(GetContext()->GetBase());
 }
 
-void PlayerState::PerformFurtherAction() {
+void PlayerState::Turn() {
    // Handle flipping if changing directions
    if (player->GetDirection() == TangibleElement::RIGHT) {
       if (KH.GetKeyPressed(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT)) {
-         player->FlipAllAnimations();
+         static_cast<DrawStateContext*>(GetContext())->FlipAllAnimations();
+         player->SetDirection(TangibleElement::LEFT);
       }
    } else if (player->GetDirection() == TangibleElement::LEFT) {
       if (KH.GetKeyPressed(KEY_RIGHT) && !KH.GetKeyPressed(KEY_LEFT)) {
-         player->FlipAllAnimations();
+         static_cast<DrawStateContext*>(GetContext())->FlipAllAnimations();
+         player->SetDirection(TangibleElement::RIGHT);
       }
    }
 }
@@ -36,7 +40,11 @@ Player_Stand::Player_Stand(StateContext *context, Texture *texture, std::shared_
    : PlayerState(context, texture, animation1)
    , anim_1_(animation1)
    , anim_2_(animation2)
-   , anim_3_(animation3) {}
+   , anim_3_(animation3) 
+{
+   RenderingEngine::GetInstance().LoadResources(animation2);
+   RenderingEngine::GetInstance().LoadResources(animation3);
+}
 
 void Player_Stand::PerformFurtherAction() {
    // Change anim by chance
@@ -60,39 +68,49 @@ void Player_Stand::PerformFurtherAction() {
       || (player->contacts_[player->RIGHT_LEG] && !player->contacts_[player->LEFT_LEG])) {
       balance_timer_.Start();
    }
+
+   // Perform further action if needed
 }
 
 void Player_Stand::PreTransition() {
-   // Check if balance limit exceeded
-   if (balance_timer_.GetTime() > 1.0) {
-      balance_timer_.Stop();
-      balance_timer_.Reset();
-      GetContext()->SetState(GetContext()->GetState("balance"));
-   }
-}
-
-void Player_Stand::PostTransition() {
    // If facing opposite direction of key press, flip anim
    if (player->GetDirection() == TangibleElement::RIGHT && KH.GetKeyPressed(KEY_LEFT)) {
-      player->FlipAllAnimations();
       GetContext()->SetState(GetContext()->GetState("running"));
+      return;
    } else if (player->GetDirection() == TangibleElement::LEFT && KH.GetKeyPressed(KEY_RIGHT)) {
-      player->FlipAllAnimations();
       GetContext()->SetState(GetContext()->GetState("running"));
+      return;
    } else if (KH.GetKeyPressed(KEY_RIGHT) || KH.GetKeyPressed(KEY_LEFT)) {
       GetContext()->SetState(GetContext()->GetState("running"));
+      return;
    }
 
    // Deal with jump
-   if (KH.GetKeyPressed(KEY_UP)) {
+   if (KH.GetKeyPressed(KEY_UP) && KH.KeyIsLocked(KEY_UP)) {
+      PlayerState *j = static_cast<PlayerState*>(GetContext()->GetState("jump").get());
+      j->GetAnimation()->reset_frame = j->GetAnimation()->max_frame;
+      j->GetAnimation()->stop_frame = j->GetAnimation()->max_frame;
       GetContext()->SetState(GetContext()->GetState("jump"));
+      return;
    }
 
    // Deal with pushing
    if (player->GetDirection() == TangibleElement::RIGHT && player->contacts_[player->RIGHT_ARM] && KH.GetKeyPressed(KEY_RIGHT)) {
       GetContext()->SetState(GetContext()->GetState("push"));
+      return;
    } else if (player->GetDirection() == TangibleElement::LEFT && player->contacts_[player->LEFT_ARM] && KH.GetKeyPressed(KEY_LEFT)) {
       GetContext()->SetState(GetContext()->GetState("push"));
+      return;
+   }
+}
+
+void Player_Stand::PostTransition() {
+   // Check if balance limit exceeded
+   if (balance_timer_.GetTime() > 1.0) {
+      balance_timer_.Stop();
+      balance_timer_.Reset();
+      GetContext()->SetState(GetContext()->GetState("balance"));
+      return;
    }
 }
 
@@ -100,27 +118,39 @@ void Player_Stand::PostTransition() {
 Player_Run::Player_Run(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    PlayerState(context, texture, animation) {}
 
-void Player_Stand::PreTransition() {
+void Player_Run::PreTransition() {
    // Handle no key pressed --> transition to idle
      if (!KH.GetKeyPressed(KEY_UP) && !KH.GetKeyPressed(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT)) {
       GetContext()->SetState(GetContext()->GetState("stand"));
+      return;
    }
 
    // Handle jump
-   if (KH.GetKeyPressed(KEY_UP)) {
+   if (KH.GetKeyPressedOnce(KEY_UP)) {
+      PlayerState *rj = static_cast<PlayerState*>(GetContext()->GetState("running_jump").get());
+      rj->GetAnimation()->reset_frame = 14;
+      rj->GetAnimation()->stop_frame = 14;
       GetContext()->SetState(GetContext()->GetState("running_jump"));
+      return;
    }
 
    // Handle wall push
    if (KH.GetKeyPressed(KEY_RIGHT) && player->contacts_[player->RIGHT_ARM]
     || KH.GetKeyPressed(KEY_LEFT) && player->contacts_[player->LEFT_ARM]) {
       GetContext()->SetState(GetContext()->GetState("push"));
+      return;
    }
 
    // Handle running off ledge
    if (!player->contacts_[player->LEFT_LEG] && !player->contacts_[player->RIGHT_LEG]) {
       GetContext()->SetState(GetContext()->GetState("fall"));
+      return;
    }
+}
+
+void Player_Run::TransitionReset() {
+   PlayerState *r = static_cast<PlayerState*>(player->arm_.GetStateContext()->GetState("running").get());
+   r->GetAnimation()->curr_frame = GetAnimation()->curr_frame;
 }
 
 /** PLAYER_JUMP **/
@@ -129,19 +159,26 @@ Player_Jump::Player_Jump(StateContext *context, Texture *texture, std::shared_pt
 
 void Player_Jump::PreTransition() {
    // Handle double jump
-   if (KH.GetKeyPressed(KEY_UP)) {
+   std::cout << "Player_Jump::PreTransition - player has jumped = " << player->has_jumped_ << std::endl;
+   if (KH.GetKeyPressed(KEY_UP) && KH.KeyIsLocked(KEY_UP) && player->has_jumped_ > 1) {
+      PlayerState *dj = static_cast<PlayerState*>(GetContext()->GetState("double_jump").get());
+      dj->GetAnimation()->reset_frame = dj->GetAnimation()->max_frame;
+      dj->GetAnimation()->stop_frame = dj->GetAnimation()->max_frame;
       GetContext()->SetState(GetContext()->GetState("double_jump"));
+      return;
    }
 
    // Handle wall push
    if ((KH.GetKeyPressed(KEY_LEFT) && player->contacts_[player->LEFT_ARM])
     || (KH.GetKeyPressed(KEY_RIGHT) && player->contacts_[player->RIGHT_ARM])) {
       GetContext()->SetState(GetContext()->GetState("jump_push"));
+      return;
    }
 
    // Handle land
    if (player->contacts_[player->LEFT_LEG] || player->contacts_[player->RIGHT_LEG]) {
       GetContext()->SetState(GetContext()->GetState("stand"));
+      return;
    }
 }
 
@@ -149,15 +186,26 @@ void Player_Jump::PreTransition() {
 Player_DoubleJump::Player_DoubleJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    PlayerState(context, texture, animation) {}
 
+void Player_DoubleJump::PerformFurtherAction() {
+   if ((KH.GetKeyPressed(KEY_RIGHT) && player->GetDirection() == player->LEFT) ||
+       (KH.GetKeyPressed(KEY_LEFT) && player->GetDirection() == player->RIGHT)) 
+   {
+      b2Vec2 vel = {0.0f, player->GetBody()->GetLinearVelocity().y};
+      player->GetBody()->SetLinearVelocity(vel);
+   }
+}
+
 void Player_DoubleJump::PreTransition() {
    // Handle wall push
    if ((KH.GetKeyPressed(KEY_LEFT) && player->contacts_[player->LEFT_ARM]) || (KH.GetKeyPressed(KEY_RIGHT) && player->contacts_[player->RIGHT_ARM])) {
       GetContext()->SetState(GetContext()->GetState("jump_push"));
+      return;
    }
 
    // Handle land
    if (player->contacts_[player->LEFT_LEG] || player->contacts_[player->RIGHT_LEG]) {
       GetContext()->SetState(GetContext()->GetState("stand"));
+      return;
    }
 }
 
@@ -170,16 +218,19 @@ void Player_Push::PreTransition() {
    if (player->contacts_[player->LEFT_ARM]) {
       if (KH.GetKeyPressed(KEY_RIGHT)) {
          GetContext()->SetState(GetContext()->GetState("running"));
+         return;
       }
    } else if (player->contacts_[player->RIGHT_ARM]) {
       if (KH.GetKeyPressed(KEY_LEFT)) {
          GetContext()->SetState(GetContext()->GetState("running"));
+         return;
       }
    }
 
    // Handle jump push
    if (KH.GetKeyPressed(KEY_UP)) {
       GetContext()->SetState(GetContext()->GetState("jump_push"));
+      return;
    }
 }
 
@@ -191,11 +242,19 @@ void Player_JumpPush::PreTransition() {
    // Handle detach from wall
    if (player->contacts_[player->LEFT_ARM]) {
       if (KH.GetKeyPressed(KEY_RIGHT)) {
+         PlayerState *j = static_cast<PlayerState*>(GetContext()->GetState("jump").get());
+         j->GetAnimation()->reset_frame = j->GetAnimation()->max_frame;
+         j->GetAnimation()->stop_frame = j->GetAnimation()->max_frame;
          GetContext()->SetState(GetContext()->GetState("jump"));
+         return;
       }
    } else if (player->contacts_[player->RIGHT_ARM]) {
       if (KH.GetKeyPressed(KEY_LEFT)) {
+         PlayerState *j = static_cast<PlayerState*>(GetContext()->GetState("jump").get());
+         j->GetAnimation()->reset_frame = j->GetAnimation()->max_frame;
+         j->GetAnimation()->stop_frame = j->GetAnimation()->max_frame;
          GetContext()->SetState(GetContext()->GetState("jump"));
+         return;
       }
    }
 
@@ -203,8 +262,10 @@ void Player_JumpPush::PreTransition() {
    if ((player->contacts_[player->LEFT_LEG] || player->contacts_[player->RIGHT_LEG])) {
       if (!(KH.GetKeyPressed(KEY_LEFT) || KH.GetKeyPressed(KEY_RIGHT))) {
          GetContext()->SetState(GetContext()->GetState("stand"));
+         return;
       } else { // Might need to refine this else
          GetContext()->SetState(GetContext()->GetState("push"));
+         return;
       }
    }
 }
@@ -216,12 +277,17 @@ Player_Balance::Player_Balance(StateContext *context, Texture *texture, std::sha
 void Player_Balance::PreTransition() {
    // Handle jump
    if (KH.GetKeyPressed(KEY_UP)) {
+      PlayerState *j = static_cast<PlayerState*>(GetContext()->GetState("jump").get());
+      j->GetAnimation()->reset_frame = j->GetAnimation()->max_frame;
+      j->GetAnimation()->stop_frame = j->GetAnimation()->max_frame;
       GetContext()->SetState(GetContext()->GetState("jump"));
+      return;
    }
 
    // Handle run
    if (KH.GetKeyPressed(KEY_LEFT) || KH.GetKeyPressed(KEY_RIGHT)) {
       GetContext()->SetState(GetContext()->GetState("running"));
+      return;
    }
 }
 
@@ -233,12 +299,42 @@ void Player_Fall::PreTransition() {
    // Handle land
    if (player->contacts_[player->LEFT_LEG] || player->contacts_[player->RIGHT_LEG]) {
       GetContext()->SetState(GetContext()->GetState("stand"));
+      return;
+   }
+}
+
+/** PLAYER_RUNNING_JUMP **/
+Player_RunningJump::Player_RunningJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : PlayerState(context, texture, animation) {}
+
+void Player_RunningJump::PreTransition() {
+   if (KH.GetKeyPressedOnce(KEY_UP)) {
+      PlayerState *dj = static_cast<PlayerState*>(GetContext()->GetState("double_jump").get());
+      dj->GetAnimation()->reset_frame = dj->GetAnimation()->max_frame;
+      dj->GetAnimation()->stop_frame = dj->GetAnimation()->max_frame;
+      GetContext()->SetState(GetContext()->GetState("double_jump"));
+      return;
+   }
+
+   if (player->contacts_[player->LEFT_ARM] || player->contacts_[player->RIGHT_ARM]) {
+      GetContext()->SetState(GetContext()->GetState("jump_push"));
+      return;
+   }
+
+   if (player->contacts_[player->LEFT_LEG] || player->contacts_[player->RIGHT_LEG]) {
+      if (KH.GetKeyPressed(KEY_RIGHT) || KH.GetKeyPressed(KEY_LEFT)) {
+         GetContext()->SetState(GetContext()->GetState("running"));
+         return;
+      } else {
+         GetContext()->SetState(GetContext()->GetState("stand"));
+         return;
+      }
    }
 }
 
 /** PLAYER_DEATH **/
-Player_Death::Player_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
-   PlayerState(context, texture, animation) {}
+Player_Death::Player_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+   : PlayerState(context, texture, animation) {}
 
 void Player_Death::PerformFurtherAction() {
    do_once_([&]() {
@@ -256,4 +352,82 @@ void Player_Death::PerformFurtherAction() {
 
 void Player_Death::Animate() {
    GetTexture()->Animate(GetAnimation().get(), 19, 19);
+}
+
+/**************/
+
+/** ARM IDLE **/
+Arm_Idle::Arm_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : PlayerState(context, texture, animation) {}
+
+void Arm_Idle::PreTransition() {
+   if (KH.GetKeyPressed(KEY_RIGHT) || KH.GetKeyPressed(KEY_LEFT)) {
+      GetContext()->SetState(GetContext()->GetState("running"));
+      return;
+   }
+
+   if (KH.GetKeyPressed(KEY_SPACE)) {
+      GetContext()->SetState(GetContext()->GetState("shooting"));
+      return;
+   }
+
+   if (player->GetStateContext()->GetCurrentState() == player->GetStateContext()->GetState("jump") && KH.GetKeyPressed(KEY_UP)) {
+      GetContext()->SetState(GetContext()->GetState("double_jump"));
+      return;
+   }
+}
+
+/** ARM_RUNNING **/
+Arm_Running::Arm_Running(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : PlayerState(context, texture, animation) {}
+
+void Arm_Running::PreTransition() {
+   if (!KH.GetKeyPressed(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT) && !KH.GetKeyPressed(KEY_UP)) {
+      GetContext()->SetState(GetContext()->GetState("idle"));
+      return;
+   }
+
+   if (KH.GetKeyPressed(KEY_SPACE)) {
+      GetContext()->SetState(GetContext()->GetState("shooting"));
+      return;
+   }
+}
+
+/** ARM_DOUBLEJUMP **/
+Arm_DoubleJump::Arm_DoubleJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : PlayerState(context, texture, animation) {}
+
+void Arm_DoubleJump::PerformFurtherAction() {
+   do_once_([&]() {
+      GetAnimation()->reset_frame = GetAnimation()->max_frame;
+   });
+}
+
+void Arm_DoubleJump::PreTransition() {
+   if (KH.GetKeyPressed(KEY_SPACE)) {
+      GetContext()->SetState(GetContext()->GetState("shooting"));
+      return;
+   }
+
+   if (player->contacts_[player->LEFT_LEG] || player->contacts_[player->RIGHT_LEG]) {
+      GetContext()->SetState(GetContext()->GetState("idle"));
+      return;
+   }
+}
+
+void Arm_DoubleJump::Reset() {
+   GetAnimation()->reset_frame = 0;
+   DrawState::Reset();
+   do_once_.Reset();
+}
+
+/** ARM_SHOOTING **/
+Arm_Shooting::Arm_Shooting(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : PlayerState(context, texture, animation) {}
+
+void Arm_Shooting::PreTransition() {
+   if (GetAnimation()->completed && !KH.GetKeyPressed(KEY_SPACE)) {
+      GetContext()->SetState(GetContext()->GetState("idle"));
+      return;
+   }
 }

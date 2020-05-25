@@ -83,6 +83,11 @@ class HUD : public HUDInterface {
        */
       virtual void DisableHUDElement(std::string name);
 
+      /**
+       * Reset hud by resetting all hud elements
+       */
+      virtual void ResetHUD();
+
    private:
       // List of hud elements
       std::vector<std::shared_ptr<HUDElement>> HUD_element_list_;

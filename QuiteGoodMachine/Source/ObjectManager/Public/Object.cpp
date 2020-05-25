@@ -2,6 +2,8 @@
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h"
 
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/TangibleElement.h"
+
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
@@ -101,7 +103,7 @@ Projectile::Projectile(std::string name, int x, int y, float width, float height
 
    // Give it an x direction impulse
    b2Vec2 force;
-   if (owning_entity->entity_direction == RIGHT) {
+   if (owning_entity->GetDirection() == TangibleElement::RIGHT) {
       force = {force_x, force_y};
    } else {
       force = {-force_x, force_y};

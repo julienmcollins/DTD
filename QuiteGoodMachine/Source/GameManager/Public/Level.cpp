@@ -24,6 +24,8 @@
 
 using namespace std;
 
+#define ENABLE_ENEMY 0
+
 /************************** LEVEL CLASS ********************/
 
 // Constructor will do all of the setting up essentially
@@ -94,12 +96,14 @@ void Level::Update() {
       }
 
       //std::cout << "Level::Update() - level = " << level << std::endl;
-      if ((level < Application::FOREST6 || level == Application::FOREST9) && Application::GetInstance().get_player()->get_x() >= 1890) {
+      if ((level < Application::FOREST6 || level == Application::FOREST9) && Application::GetInstance().get_player()->GetPosition().x >= 1890) {
          completed = true;
-      } else if (level >= Application::FOREST6 && Application::GetInstance().get_player()->get_y() <= -100) {
+      } else if (level >= Application::FOREST6 && Application::GetInstance().get_player()->GetPosition().y <= -100) {
          completed = true;
       }
    }
+
+#if ENABLE_ENEMY
 
    // Spawn enemies that were marked for deferred spawning
    if (!deferred_enemy_spawns_.empty()) {
@@ -136,6 +140,8 @@ void Level::Update() {
       }
    }
 
+#endif
+
    // TODO: Keep track of projectiles
 
    // Render the background
@@ -153,6 +159,8 @@ void Level::Update() {
       platforms.extra_sheets["forest_boss"]->Render(0.0f, 0.0f, 0.0f, platforms.GetAnimationByName(pf));
    }
 
+#if ENABLE_ENEMY
+
    // Render enemies
    for (vector<std::shared_ptr<Enemy>>::iterator it = enemies_.begin(); it != enemies_.end();) {
       if (*it) {
@@ -162,6 +170,9 @@ void Level::Update() {
          it = enemies_.erase(it);
       }
    }
+
+#endif
+
 }
 
 void Level::SetBoard(std::string file, Application::FOREST level) {
@@ -188,6 +199,8 @@ void Level::SetBoard(std::string file, Application::FOREST level) {
       file.erase(pos, 6);
       dir_ = file;
    }
+
+#if ENABLE_ENEMY
 
    // Get the enemies and their position
    input >> num_of_enemies_;
@@ -231,6 +244,8 @@ void Level::SetBoard(std::string file, Application::FOREST level) {
       }
    }
 
+#endif
+
    // Get the platforms and their position
    int cnt = 0;
    input >> num_of_platforms_;
@@ -254,8 +269,9 @@ void Level::SetBoard(std::string file, Application::FOREST level) {
    // Set player's location
    int x, y;
    input >> x >> y;
-   Application::GetInstance().get_player()->set_x(x);
-   Application::GetInstance().get_player()->set_y(y);
+   Application::GetInstance().get_player()->SetPosition(glm::vec3(x, y, 0.f));
+   // Application::GetInstance().get_player()->set_x(x);
+   // Application::GetInstance().get_player()->set_y(y);
 }
 
 void Level::ClearBoard() {
@@ -265,6 +281,8 @@ void Level::ClearBoard() {
          delete (*it);
       }
    }
+
+#if ENABLE_ENEMY
 
    // Delete enemies
    for (vector<std::shared_ptr<Enemy>>::iterator it = enemies_.begin(); it != enemies_.end(); ++it) {
@@ -287,6 +305,8 @@ void Level::ClearBoard() {
       }
    }
 
+#endif
+
    // Clear both vectors
    platforms_.clear();
    enemies_.clear();
@@ -294,17 +314,25 @@ void Level::ClearBoard() {
 
 // Add an enemy to the level
 void Level::add_enemy(std::shared_ptr<Enemy> new_enemy) {
+
+#if ENABLE_ENEMY
    new_enemy->LoadMedia();
    deferred_enemy_spawns_.push_back(new_enemy);
    //std::cout << "Level::add_enemy() - enemy = " << new_enemy->type() << std::endl;
    //std::cout << "Level::add_enemy() - size of array = " << enemies_.size() << std::endl;
    num_of_kills_ += 1;
+#endif
+
 }
 
 // Destroy enemy
 void Level::destroy_enemy(std::shared_ptr<Enemy> enemy_to_delete) {
+
+#if ENABLE_ENEMY
    enemies_marked_for_death_.push_back(enemy_to_delete);
    num_of_kills_ -= 1;
+#endif
+
 }
 
 // Level destructor will just delete everything related to the level

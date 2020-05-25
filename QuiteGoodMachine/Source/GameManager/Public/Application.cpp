@@ -467,9 +467,7 @@ bool Application::LoadMedia() {
 void Application::setup_menu() {
    // Create player
    player = std::make_shared<Player>();
-   if (player->LoadMedia() == false) {
-      quit = true;
-   }
+   player->LoadMedia();
 
    // Create finger
    finger_ = new Finger();
@@ -482,8 +480,7 @@ void Application::setup_menu() {
    clicked = false;
 
    // Set player location
-   player->set_x(50);
-   player->set_y(782);
+   player->SetPosition(glm::vec3(50.f, 782.f, 0.f));
 
    // Setup platform
    menu_platform_ = new Platform("menu_platform", 960, 925, 1920, 10);
@@ -511,7 +508,7 @@ void Application::Draw() {
    update_projectiles();
       
    // Update player
-   if (player->is_alive()) {
+   if (player->IsAlive()) {
       // Update player
       player->Update();
 
@@ -698,7 +695,7 @@ void Application::main_screen() {
    key_handler.ProcessKeys(SDL_GetKeyboardState(NULL));
 
    // Handle events on queue
-   while (SDL_PollEvent( &e )) {
+   while (SDL_PollEvent( &e )) {      
       //User requests quit
       if(e.type == SDL_QUIT) {
           quit = true;
@@ -795,7 +792,7 @@ void Application::main_screen() {
       update_projectiles();
 
       // Check to see if player has reached the edge
-      if (player->get_x() >= 1890) {
+      if (player->GetPosition().x >= 1890) {
          // Set correct app flags
          app_flag_ = PLAYGROUND;
          level_flag_ = FOREST1;

@@ -1,6 +1,8 @@
 #ifndef STATEINTERFACE_H_
 #define STATEINTERFACE_H_
 
+#include <iostream>
+
 class StateContext;
 
 class StateInterface {
@@ -42,6 +44,16 @@ class StateInterface {
          PostTransition();
       }
    
+      /**
+       * reset function
+       */
+      virtual void Reset() {}
+
+      /**
+       * Transition reset function for during state change
+       */
+      virtual void TransitionReset() {}
+
    private:
       // State context pointer
       StateContext *context_;

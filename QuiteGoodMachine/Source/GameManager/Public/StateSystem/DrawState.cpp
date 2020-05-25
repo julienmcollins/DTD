@@ -17,13 +17,17 @@ void DrawState::PerformAction() {
    // First, animate
    Animate();
 
+   // Draw
+   Draw();
+
+   // Turn if you need to
+   Turn();
+
    // Then, perform further action
    PerformFurtherAction();
 }
 
-void DrawState::PerformFurtherAction() {
-   GetTexture()->Render(GetContext()->GetBase()->GetPosition(), GetContext()->GetBase()->GetAngle(), GetAnimation());
-}
+void DrawState::PerformFurtherAction() {}
 
 Texture *DrawState::GetTexture() {
    return texture_;
@@ -39,4 +43,18 @@ void DrawState::SetAnimation(std::shared_ptr<Animation> anim) {
 
 void DrawState::Animate() {
    texture_->Animate(animation_.get());
+}
+
+void DrawState::Draw() {
+   GetTexture()->Render(GetContext()->GetBase()->GetPosition(), GetContext()->GetBase()->GetAngle(), GetAnimation());
+}
+
+void DrawState::Turn() {}
+
+void DrawState::Reset() {
+   animation_->curr_frame = animation_->reset_frame;
+}
+
+void DrawState::TransitionReset() {
+   Reset();
 }

@@ -41,8 +41,8 @@ class Entity : public DrawableElement
       }
 
       // Create projectile (might need to add an entity pointer just in case)
-      // virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
-      //       bool owner, bool damage, float force_x, float force_y);
+      virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
+            bool owner, bool damage, float force_x, float force_y);
 
       // Destructor
       virtual ~Entity();
@@ -164,8 +164,12 @@ class PlayerLeg : public BodyPart {
 };
 
 // Player class
-class Player : public Entity, 
-               public Correspondent {
+class Player : public Entity
+             , public Correspondent {
+
+   // Set friend class
+   friend class Player_Run;
+
    public:
       // Construct the player
       Player();
@@ -186,12 +190,6 @@ class Player : public Entity,
 
       // Shooting flag
       bool shooting;
-
-      /******** OPENGL ***********/
-      // Sheet for arms
-      Texture *arm_sheet;
-      Texture *projectile_sheet;
-      /***************************/
 
       // Arm delta displacement
       int arm_delta_x;
@@ -214,7 +212,7 @@ class Player : public Entity,
       void TakeDamage(int damage);
 
       // Get type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Player";
       }
 
@@ -222,8 +220,8 @@ class Player : public Entity,
       virtual void LoadMedia();
 
       // Create projectile
-      // virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
-      //       bool owner, bool damage, float force_x, float force_y);
+      virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
+            bool owner, bool damage, float force_x, float force_y);
 
       // Flags for interactions
       bool contacts_[5];
@@ -255,7 +253,7 @@ class Player : public Entity,
       float fall_duration_;
 
       // Projectile pointer
-      ClassType<Projectile> eraser;
+      // ClassType<Projectile> eraser;
       Projectile *eraser;
       int num_of_projectiles;
 };

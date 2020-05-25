@@ -15,6 +15,20 @@ class DoOnce {
          }
       }
 
+      /**
+       * Reset function for allowing do once to repeate
+       */
+      void Reset() {
+         done_ = false;
+      }
+
+      /**
+       * Check if locked
+       */
+      bool Locked() {
+         return (done_ == true);
+      }
+
    private:
       // Flag for doing once
       bool done_ = false;

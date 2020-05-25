@@ -175,6 +175,9 @@ include_directories(${GLEW_INCLUDE_DIRS})
 # Compile libraries
 SET(LIBRARIES ${SDL2_LIBRARY_LIST} ${OPENGL_LIBRARIES} ${GLM_LIBRARIES} ${GLEW_LIBRARIES})
 
+# Set debug
+set(CMAKE_BUILD_TYPE Debug)
+
 # Find static libraries
 find_library(LIBBOX2D Box2D .)
 find_library(LIBSOIL SOIL .)

@@ -12,11 +12,8 @@
 
 /** PLAYERLIFE **/
 PlayerLife::PlayerLife(std::string name, glm::vec3 initial_position)
-   : HUDElement(name, initial_position, glm::vec3(103.f, 76.f, 0.f))
-   , PositionalElement(name, initial_position, glm::vec3(103.f, 76.f, 0.f))
-{
-   Disable();
-}
+   : HUDElement(name, initial_position, glm::vec3(103.f, 76.f, 0.f), false)
+   , PositionalElement(name, initial_position, glm::vec3(103.f, 76.f, 0.f)) {}
 
 void PlayerLife::LoadMedia() {
    // TODO: Figure out why Application::GetInstance() doesn't work
@@ -24,17 +21,18 @@ void PlayerLife::LoadMedia() {
    std::string hitmarker = "Media/Sprites/Player/hitmarker_master_sheet.png";
    Texture *temp = RegisterTexture(hitmarker);
 
-   // Register animations with state GetContext()
-   GetStateContext()->RegisterState("alive", std::make_shared<PlayerLife_Alive>(temp, std::make_shared<Animation>(temp, "alive", 76.0f, 103.0f, 0.0f, 21, 1.0f / 20.0f)));
-   GetStateContext()->RegisterState("dead", std::make_shared<PlayerLife_Dead>(temp, std::make_shared<Animation>(temp, "dead", 76.0f, 103.0f, 103.0f, 19, 1.0f / 20.0f)));
+   // Register animations with state context
+   GetStateContext()->RegisterState("alive", std::make_shared<PlayerLife_Alive>(GetStateContext().get(), temp, std::make_shared<Animation>(temp, "alive", 76.0f, 103.0f, 0.0f, 21, 1.0f / 20.0f)));
+   GetStateContext()->RegisterState("dead", std::make_shared<PlayerLife_Dead>(GetStateContext().get(), temp, std::make_shared<Animation>(temp, "dead", 76.0f, 103.0f, 103.0f, 19, 1.0f / 20.0f)));
 
    // Register as correspondent (and state)
    PigeonPost::GetInstance().Register(GetName(), getptr());
    PlayerLife_Alive *alive_state = static_cast<PlayerLife_Alive*>(GetStateContext()->GetState("alive").get());
    PigeonPost::GetInstance().Register(GetName() + "_Alive", alive_state->getptr());
 
-   // Set current state
-   GetStateContext()->SetState(GetStateContext()->GetState("alive"));
+   // Set reset and initial state
+   GetStateContext()->SetResetState(GetStateContext()->GetState("alive"));
+   GetStateContext()->SetInitialState(GetStateContext()->GetState("alive"));
 }
 
 void PlayerLife::ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence) {
@@ -43,6 +41,11 @@ void PlayerLife::ProcessCorrespondence(const std::shared_ptr<Correspondence>& co
    if (fmsg == "LifeLost") {
       PigeonPost::GetInstance().Forward(GetName() + "_Alive", correspondence);
    }
+}
+
+void PlayerLife::Reset() {
+   HUDElement::Reset();
+   Disable();
 }
 
 /** PLAYERLIFE_ALIVE **/
@@ -63,6 +66,10 @@ void PlayerLife_Alive::ProcessCorrespondence(const std::shared_ptr<Correspondenc
    if (fmsg == "LifeLost") {
       is_alive_ = false;
    }
+}
+
+void PlayerLife_Alive::Reset() {
+   is_alive_ = true;
 }
 
 /** PLAYERLIFE_DEAD **/

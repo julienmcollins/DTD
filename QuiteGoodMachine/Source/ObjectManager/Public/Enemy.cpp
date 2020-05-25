@@ -1,3 +1,5 @@
+#if 0
+
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Entity.h"
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Object.h"
@@ -28,8 +30,11 @@
 
 /********************* ENEMY IMPLEMENTATIONS ******************/
 
-Enemy::Enemy(std::string name, int x, int y, int width, int height) :
-   Entity(name, x, y, width, height), enemy_state_(IDLE), shoot_timer_(101) {
+Enemy::Enemy(std::string name, int x, int y, int width, int height)
+   : Entity(name, glm::vec3(x, y, 0.f), glm::vec3(width, height, 0.f))
+   , enemy_state_(IDLE)
+   , shoot_timer_(101) 
+{
 
    // Set
    start_death_ = 0;
@@ -55,16 +60,16 @@ Projectile* Enemy::CreateProjectile(std::string name, float width, float height,
    Projectile *proj;
 
    // Create based on direction
-   if (entity_direction == RIGHT) {
-      proj = new Projectile(name, get_tex_x() + get_width() + delta_x_r, get_tex_y() + delta_y, 
+   if (GetDirection() == RIGHT) {
+      proj = new Projectile(name, GetPosition().x + GetSize().x + delta_x_r, GetPosition().y + delta_y, 
             width, height, 0, damage, force_x, force_y, this);
    } else {
-      proj = new Projectile(name, get_tex_x() + delta_x_l, get_tex_y() + delta_y,
+      proj = new Projectile(name, GetPosition().x + delta_x_l, GetPosition().y + delta_y,
             width, height, 0, damage, force_x, force_y, this);
    }
 
    // Set shot direction
-   proj->shot_dir = entity_direction;
+   proj->shot_dir = GetDirection();
 
    // Return projectile reference
    return proj;
@@ -1498,3 +1503,5 @@ Wormored::~Wormored() {
       // delete right_facing_sensors_[i];
    }
 }
+
+#endif

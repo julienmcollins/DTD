@@ -45,6 +45,26 @@ class DrawState : public StateInterface {
        */
       virtual void Animate();
 
+      /**
+       * Main draw function
+       */
+      virtual void Draw();
+
+      /**
+       * Flip function
+       */
+      virtual void Turn();
+
+      /**
+       * Reset function
+       */
+      virtual void Reset();
+
+      /**
+       * Transition reset function for during state change
+       */
+      virtual void TransitionReset();
+
    private:
       // Texture for animation handle
       Texture *texture_;

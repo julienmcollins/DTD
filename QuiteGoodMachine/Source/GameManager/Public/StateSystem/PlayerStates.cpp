@@ -126,7 +126,7 @@ void Player_Run::PreTransition() {
    }
 
    // Handle jump
-   if (KH.GetKeyPressedOnce(KEY_UP)) {
+   if (KH.GetKeyPressed(KEY_UP) && KH.KeyIsLocked(KEY_UP)) {
       PlayerState *rj = static_cast<PlayerState*>(GetContext()->GetState("running_jump").get());
       rj->GetAnimation()->reset_frame = 14;
       rj->GetAnimation()->stop_frame = 14;
@@ -159,7 +159,6 @@ Player_Jump::Player_Jump(StateContext *context, Texture *texture, std::shared_pt
 
 void Player_Jump::PreTransition() {
    // Handle double jump
-   std::cout << "Player_Jump::PreTransition - player has jumped = " << player->has_jumped_ << std::endl;
    if (KH.GetKeyPressed(KEY_UP) && KH.KeyIsLocked(KEY_UP) && player->has_jumped_ > 1) {
       PlayerState *dj = static_cast<PlayerState*>(GetContext()->GetState("double_jump").get());
       dj->GetAnimation()->reset_frame = dj->GetAnimation()->max_frame;
@@ -308,7 +307,8 @@ Player_RunningJump::Player_RunningJump(StateContext *context, Texture *texture, 
    : PlayerState(context, texture, animation) {}
 
 void Player_RunningJump::PreTransition() {
-   if (KH.GetKeyPressedOnce(KEY_UP)) {
+   std::cout << "Player_RunningJump::PreTransition - has jumped = " << player->has_jumped_ << std::endl;
+   if (KH.GetKeyPressed(KEY_UP) && KH.KeyIsLocked(KEY_UP) && player->has_jumped_ > 1) {
       PlayerState *dj = static_cast<PlayerState*>(GetContext()->GetState("double_jump").get());
       dj->GetAnimation()->reset_frame = dj->GetAnimation()->max_frame;
       dj->GetAnimation()->stop_frame = dj->GetAnimation()->max_frame;

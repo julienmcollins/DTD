@@ -494,8 +494,8 @@ void Application::setup_menu() {
    invisible_wall_->setup();
 
    // Load and play music
-   music = Mix_LoadMUS("sounds/hobbits.mp3");
-   //Mix_PlayMusic(music, 1);
+   music = Mix_LoadMUS("Media/Audio/2.mp3");
+   Mix_PlayMusic(music, 1);
 
    // Set menu screen to first screen
    menu_screen_ = FIRST;
@@ -534,7 +534,6 @@ void Application::Draw() {
       }
    } else {
       app_flag_ = GAMEOVER_SCREEN;
-      std::cout << "Application::Draw - player use count = " << player.use_count() << std::endl;
       player.reset();
       Level::GetInstance().ClearBoard();
       menu_flag = true;

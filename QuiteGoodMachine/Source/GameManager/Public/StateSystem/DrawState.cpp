@@ -29,6 +29,10 @@ void DrawState::PerformAction() {
 
 void DrawState::PerformFurtherAction() {}
 
+void DrawState::SetState(std::string name) {
+   GetContext()->SetState(GetContext()->GetState(name));
+}
+
 Texture *DrawState::GetTexture() {
    return texture_;
 }

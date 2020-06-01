@@ -54,6 +54,9 @@ class Entity : public DrawableElement
       // Flag to determine if alive
       bool alive_;
 
+      // Flag to determine if need to kill
+      bool marked_for_death_;
+
    // Setters and getters
    public:
       /**
@@ -82,6 +85,20 @@ class Entity : public DrawableElement
        */
       void SetIsAlive(bool alive) {
          alive_ = alive;
+      }
+
+      /**
+       * Check if marked for death
+       */
+      bool MarkedForDeath() const {
+         return marked_for_death_;
+      }
+
+      /**
+       * Set marked for death
+       */
+      void SetMarkedForDeath() {
+         marked_for_death_ = true;
       }
 };
 

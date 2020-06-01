@@ -7,6 +7,7 @@
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h"
 
 #include <memory>
+#include <string>
 
 class DrawState : public StateInterface {
    public:
@@ -24,6 +25,11 @@ class DrawState : public StateInterface {
        * Perform further action --> name better?
        */
       virtual void PerformFurtherAction();
+
+      /**
+       * Set state function for short hand
+       */
+      void SetState(std::string name);
 
       /**
        * Get texture handle

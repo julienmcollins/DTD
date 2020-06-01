@@ -54,6 +54,11 @@ class StateInterface {
        */
       virtual void TransitionReset() {}
 
+      /**
+       * Initializer function if just jumped to this state
+       */
+      virtual void TransitionInitialize() {}
+
    private:
       // State context pointer
       StateContext *context_;

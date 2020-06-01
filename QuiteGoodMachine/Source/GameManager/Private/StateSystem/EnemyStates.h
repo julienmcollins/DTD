@@ -23,11 +23,14 @@ class EnemyState : public DrawState {
       /**
        * Perform Further action (should flip anims)
        */
-      virtual void PerformFurtherAction();
+      virtual void PerformAction();
    
    protected:
       // Player pointer
       Enemy *enemy;
+
+   private:
+      DoOnce do_once_death_;
 };
 
 class Enemy_Turn : public EnemyState {
@@ -56,6 +59,11 @@ class Fecreez_Idle : public EnemyState {
        * Pretransition
        */
       virtual void PreTransition();
+
+      /**
+       * Reset function
+       */
+      virtual void TransitionReset();
 };
 
 class Fecreez_Attack : public EnemyState {
@@ -77,11 +85,6 @@ class Fecreez_Death : public EnemyState {
        * Constructor
        */
       Fecreez_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
-
-      /**
-       * Pretransition
-       */
-      virtual void PreTransition();
 };
 
 /** Rosea **/
@@ -136,6 +139,11 @@ class Rosea_ArmAttack : public EnemyState {
        * Pretransition
        */
       virtual void PreTransition();
+
+      /**
+       * Transition initialize sets reset/max to 7
+       */
+      virtual void TransitionInitialize();
 };
 
 class Rosea_ArmHurt : public EnemyState {
@@ -198,11 +206,6 @@ class Mosquibler_Death : public EnemyState {
        * Constructor
        */
       Mosquibler_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
-
-      /**
-       * Pretransition
-       */
-      virtual void PreTransition();
 };
 
 /** FRUIG **/

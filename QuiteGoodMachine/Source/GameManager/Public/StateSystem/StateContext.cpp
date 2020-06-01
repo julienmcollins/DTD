@@ -20,6 +20,7 @@ void StateContext::SetState(std::shared_ptr<StateInterface> state) {
    // Call current state reset first
    current_state_->TransitionReset();
    current_state_ = state;
+   current_state_->TransitionInitialize();
 }
 
 std::shared_ptr<StateInterface> StateContext::GetCurrentState() {

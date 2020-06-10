@@ -307,7 +307,7 @@ Player_RunningJump::Player_RunningJump(StateContext *context, Texture *texture, 
    : PlayerState(context, texture, animation) {}
 
 void Player_RunningJump::PreTransition() {
-   std::cout << "Player_RunningJump::PreTransition - has jumped = " << player->has_jumped_ << std::endl;
+   // std::cout << "Player_RunningJump::PreTransition - has jumped = " << player->has_jumped_ << std::endl;
    if (KH.GetKeyPressed(KEY_UP) && KH.KeyIsLocked(KEY_UP) && player->has_jumped_ > 1) {
       PlayerState *dj = static_cast<PlayerState*>(GetContext()->GetState("double_jump").get());
       dj->GetAnimation()->reset_frame = dj->GetAnimation()->max_frame;

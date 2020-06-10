@@ -1,0 +1,301 @@
+// Constructors
+template <typename T>
+Vector<3, T>::Vector(T a, T b, T c, T d) {
+   x = r = w = a;
+   y = g = h = b;
+   z = b = d = c;
+}
+
+template <typename T>
+Vector<3, T>::Vector(T a, T b, T c) {
+   x = r = w = a;
+   y = g = h = b;
+   z = b = d = c;
+}
+
+template <typename T>
+Vector<3, T>::Vector(glm::vec4 vec) {
+   x = r = w = vec.x;
+   y = g = h = vec.y;
+   z = b = d = vec.z;
+}
+
+template <typename T>
+Vector<3, T>::Vector(glm::vec3 vec) {
+   x = r = w = vec.x;
+   y = g = h = vec.y;
+   z = b = d = vec.z;
+}
+
+// Operators
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator=(Vector<3, T> const& v) {
+   this->x = this->w = this->r = v.x;
+   this->y = this->h = this->g = v.y;
+   this->z = this->d = this->b = v.z;
+   return *this;
+}
+
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator=(glm::vec3 const& v) {
+   this->x = this->w = this->r = v.x;
+   this->y = this->h = this->g = v.y;
+   this->z = this->d = this->b = v.z;
+   return *this;
+}
+
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator+(Vector<3, T> const& v) {
+   return Vector<3, T>(this->x + v.x, this->y + v.y, this->z + v.z);
+}
+
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator+(glm::vec3 const& v) {
+   return Vector<3, T>(this->x + v.x, this->y + v.y, this->z + v.z);
+}
+
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator+=(Vector<3, T> const& v) {
+   this->x = this->w = this->r += v.x;
+   this->y = this->h = this->g += v.y;
+   this->z = this->d = this->b += v.z;
+   return *this;
+}
+
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator+=(glm::vec3 const& v) {
+   this->x = this->w = this->r += v.x;
+   this->y = this->h = this->g += v.y;
+   this->z = this->d = this->b += v.z;
+   return *this;
+}
+
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator-(Vector<3, T> const& v) {
+   return Vector<3, T>(this->x - v.x, this->y - v.y, this->z - v.z);
+}
+
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator-(glm::vec3 const& v) {
+   return Vector<3, T>(this->x - v.x, this->y - v.y, this->z - v.z);
+}
+
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator-=(Vector<3, T> const& v) {
+   this->x = this->w = this->r -= v.x;
+   this->y = this->h = this->g -= v.y;
+   this->z = this->d = this->b -= v.z;
+   return *this;
+}
+
+template <typename T>
+Vector<3, T>& Vector<3, T>::operator-=(glm::vec3 const& v) {
+   this->x = this->w = this->r -= v.x;
+   this->y = this->h = this->g -= v.y;
+   this->z = this->d = this->b -= v.z;
+   return *this;
+}
+
+template <typename T>
+glm::vec3 Vector<3, T>::ToGLM() {
+   return glm::vec3(this->x, this->y, this->z);
+}
+
+template <typename T>
+void Vector<3, T>::Set(T x, T y, T z) {
+   this->x = this->w = this->r = x;
+   this->y = this->h = this->g = y;
+   this->z = this->d = this->b = z;
+}
+
+template <typename T>
+void Vector<3, T>::Set(glm::vec3 pos) {
+   this->x = this->w = this->r = pos.x;
+   this->y = this->h = this->g = pos.y;
+   this->z = this->d = this->b = pos.z;
+}
+
+/** VECTOR 4 **/
+
+// Constructors
+template <typename T>
+Vector<4, T>::Vector(T a, T b, T c, T d) {
+   x = r = w = a;
+   y = g = h = b;
+   z = b = d = c;
+   u = a = m = d;
+}
+
+template <typename T>
+Vector<4, T>::Vector(glm::vec4 vec) {
+   x = r = w = vec.x;
+   y = g = h = vec.y;
+   z = b = d = vec.z;
+   u = a = m = vec.w;
+}
+
+// Operators
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator=(Vector<4, T> const& v) {
+   this->x = this->w = this->r = v.x;
+   this->y = this->h = this->g = v.y;
+   this->z = this->d = this->b = v.z;
+   this->u = this->m = this->a = v.w;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator=(Vector<3, T> const& v) {
+   this->x = this->w = this->r = v.x;
+   this->y = this->h = this->g = v.y;
+   this->z = this->d = this->b = v.z;
+   this->u = this->m = this->a = 1;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator=(glm::vec4 const& v) {
+   this->x = this->w = this->r = v.x;
+   this->y = this->h = this->g = v.y;
+   this->z = this->d = this->b = v.z;
+   this->u = this->m = this->a = v.w;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator=(glm::vec3 const& v) {
+   this->x = this->w = this->r = v.x;
+   this->y = this->h = this->g = v.y;
+   this->z = this->d = this->b = v.z;
+   this->u = this->m = this->a = 1;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator+(Vector<4, T> const& v) {
+   return Vector<4, T>(this->x + v.x, this->y + v.y, this->z + v.z, this->u + v.u);
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator+(Vector<3, T> const& v) {
+   return Vector<4, T>(this->x + v.x, this->y + v.y, this->z + v.z, 1);
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator+(glm::vec4 const& v) {
+   return Vector<4, T>(this->x + v.x, this->y + v.y, this->z + v.z, this->u + v.w);
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator+(glm::vec3 const& v) {
+   return Vector<4, T>(this->x + v.x, this->y + v.y, this->z + v.z, 1);
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator+=(Vector<4, T> const& v) {
+   this->x = this->w = this->r += v.x;
+   this->y = this->h = this->g += v.y;
+   this->z = this->d = this->b += v.z;
+   this->u = this->m = this->a += v.w;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator+=(Vector<3, T> const& v) {
+   this->x = this->w = this->r += v.x;
+   this->y = this->h = this->g += v.y;
+   this->z = this->d = this->b += v.z;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator+=(glm::vec4 const& v) {
+   this->x = this->w = this->r += v.x;
+   this->y = this->h = this->g += v.y;
+   this->z = this->d = this->b += v.z;
+   this->u = this->m = this->a += v.w;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator+=(glm::vec3 const& v) {
+   this->x = this->w = this->r += v.x;
+   this->y = this->h = this->g += v.y;
+   this->z = this->d = this->b += v.z;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator-(Vector<4, T> const& v) {
+   return Vector<4, T>(this->x - v.x, this->y - v.y, this->z - v.z, this->u - v.u);
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator-(Vector<3, T> const& v) {
+   return Vector<4, T>(this->x - v.x, this->y - v.y, this->z - v.z, 1);
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator-(glm::vec4 const& v) {
+   return Vector<4, T>(this->x - v.x, this->y - v.y, this->z - v.z, this->u - v.w);
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator-(glm::vec3 const& v) {
+   return Vector<4, T>(this->x - v.x, this->y - v.y, this->z - v.z, 1);
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator-=(Vector<4, T> const& v) {
+   this->x = this->w = this->r -= v.x;
+   this->y = this->h = this->g -= v.y;
+   this->z = this->d = this->b -= v.z;
+   this->u = this->m = this->a -= v.w;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator-=(Vector<3, T> const& v) {
+   this->x = this->w = this->r -= v.x;
+   this->y = this->h = this->g -= v.y;
+   this->z = this->d = this->b -= v.z;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator-=(glm::vec4 const& v) {
+   this->x = this->w = this->r -= v.x;
+   this->y = this->h = this->g -= v.y;
+   this->z = this->d = this->b -= v.z;
+   this->u = this->m = this->a -= v.w;
+   return *this;
+}
+
+template <typename T>
+Vector<4, T>& Vector<4, T>::operator-=(glm::vec3 const& v) {
+   this->x = this->w = this->r -= v.x;
+   this->y = this->h = this->g -= v.y;
+   this->z = this->d = this->b -= v.z;
+   return *this;
+}
+
+template <typename T>
+glm::vec4 Vector<4, T>::ToGLM() {
+   return glm::vec4(this->x, this->y, this->z, this->u);
+}
+
+template <typename T>
+void Vector<4, T>::Set(T x, T y, T z, T u) {
+   this->x = this->w = this->r = x;
+   this->y = this->h = this->g = y;
+   this->z = this->d = this->b = z;
+   this->u = this->m = this->a = u;
+}
+
+template <typename T>
+void Vector<4, T>::Set(glm::vec4 pos) {
+   this->x = this->w = this->r = pos.x;
+   this->y = this->h = this->g = pos.y;
+   this->z = this->d = this->b = pos.z;
+   this->u = this->m = this->a = pos.w;
+}

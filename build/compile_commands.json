@@ -73,6 +73,12 @@
 
 {
   "directory": "/home/juliencollins/Game_Dev/DTD/build",
+  "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp",
+  "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp"
+},
+
+{
+  "directory": "/home/juliencollins/Game_Dev/DTD/build",
   "command": "/usr/bin/c++   -I../ -I/usr/include/SDL2  -g   -std=gnu++1z -o CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o -c /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp",
   "file": "/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp"
 },

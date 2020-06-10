@@ -36,6 +36,7 @@ SET(GAMEMANAGER_SOURCE QuiteGoodMachine/Source/GameManager/Public/Application.cp
                        QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp
                        QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp
                        QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp
+                       QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp
                        QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp
@@ -98,6 +99,7 @@ SET(GAMEMANAGER_HEADER QuiteGoodMachine/Source/GameManager/Private/Application.h
                        QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
                        QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
                        QuiteGoodMachine/Source/GameManager/Private/StateSystem/PlayerStates.h
+                       QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
                        QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h
@@ -109,6 +111,7 @@ SET(GAMEMANAGER_HEADER QuiteGoodMachine/Source/GameManager/Private/Application.h
 
 # MathStructures
 SET(MATHSTRUCTURES_HEADER QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
+                          QuiteGoodMachine/Source/MathStructures/Private/Vector.h
    )
 
 # ObjectManager

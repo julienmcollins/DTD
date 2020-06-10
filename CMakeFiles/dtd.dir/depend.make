@@ -53,6 +53,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o:
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Level.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Notebook.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Application.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
@@ -135,6 +136,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: OpenG
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Application.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/ClassType.h
@@ -146,6 +148,8 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: Quite
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/KeyHandler.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Level.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/Level.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
@@ -220,6 +224,42 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawSt
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Private/ShaderProgram.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
+
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: OpenGLIncludes.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Application.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/ClassType.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/ContactListener.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/DoOnce.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/KeyHandler.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/HUD/Interfaces/HUDElementInterface.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/HUD/Private/HUD.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/ObjectManager/Private/Elements/TangibleElement.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/ObjectManager/Private/Object.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Private/DebugDraw.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o: QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.o: QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.o: OpenGLIncludes.h
@@ -473,6 +513,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: Ope
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/BirdMasterInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/PigeonPostInterface.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Application.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/ClassType.h
@@ -484,6 +525,8 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: Qui
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/KeyHandler.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Level.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Enemy.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h
@@ -537,6 +580,8 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o: Qu
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o: QuiteGoodMachine/Source/HUD/Interfaces/HUDInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o: QuiteGoodMachine/Source/HUD/Private/HUD.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o: QuiteGoodMachine/Source/HUD/Private/HUDElement.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o: QuiteGoodMachine/Source/MathStructures/Private/Vector.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o: QuiteGoodMachine/Source/MathStructures/Private/Vector.imp
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o: QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o: QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Entity.cpp.o: QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
@@ -574,6 +619,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Global.cpp.o: Qu
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: OpenGLIncludes.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/CorrespondentInterface.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/StateInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Interfaces/TimerInterface.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Application.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/ClassType.h
@@ -581,6 +627,8 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: Qu
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/DoOnce.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/KeyHandler.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
 CMakeFiles/dtd.dir/QuiteGoodMachine/Source/ObjectManager/Public/Object.cpp.o: QuiteGoodMachine/Source/GameManager/Private/Timers/SDLTimer.h

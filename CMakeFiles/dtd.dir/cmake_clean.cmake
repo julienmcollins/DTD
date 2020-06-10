@@ -11,6 +11,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawState.cpp.o"
   "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateContext.cpp.o"
   "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp.o"
+  "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp.o"
   "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/BirdMaster.cpp.o"
   "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondence.cpp.o"
   "CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/EventSystem/Correspondent.cpp.o"

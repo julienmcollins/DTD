@@ -9,7 +9,14 @@
 
 TangibleElement::TangibleElement(std::string name, glm::vec3 initial_position, glm::vec3 size)
    : PositionalElement(name, initial_position, size)
-   , current_direction_(NEUTRAL) {}
+   , current_direction_(NEUTRAL) 
+{
+   // Initial
+   hitbox_model_ = glm::mat4(1.0f);
+
+   // Translate over
+   hitbox_model_ = glm::translate(hitbox_model_, initial_position);
+}
 
 void TangibleElement::Update(bool freeze) {
    // As of now, this only calls the move functions

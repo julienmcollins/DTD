@@ -1,7 +1,7 @@
 #ifndef ENEMY_H_
 #define ENEMY_H_
 
-#if 0
+#if 1
 
 #include <SDL2/SDL.h>
 #include <Box2D/Box2D.h>
@@ -20,37 +20,23 @@
 
 #include "QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h"
 
+#include "QuiteGoodMachine/Source/GameManager/Private/DoOnce.h"
+
+#include "QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h"
+
 class Correspondence;
 class Animation;
 
 class Enemy : public Entity {
    public:
       // Construct the enemy
-      Enemy(std::string name, int x, int y, int width, int height);
-      
-      // Different enemy states
-      enum STATE {
-         IDLE,
-         ATTACK,
-         EXCRETE,
-         RETREAT,
-         HURT,
-         TURN,
-         FALL,
-         AWAKE, // TERRIBLE WAY OF DOING THIS
-         SLEEP, // TERRIBLE WAY OF DOING THIS
-         DEATH
-      };
+      Enemy(std::string name, glm::vec3 initial_position, glm::vec3 size);
 
       // Update function and get texture
       virtual void Update(bool freeze = false);   
-      virtual Animation *GetAnimationFromState();
-   
-      // Turning
-      void Turn();
 
       // Get type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Enemy";
       }
 
@@ -59,13 +45,8 @@ class Enemy : public Entity {
          return true;
       }
 
-      // Get the enemy state
-      STATE get_enemy_state() const;
-
-      // Set enemy_state_
-      void set_state(STATE state) {
-         enemy_state_ = state;
-      }
+      // Get enemy state
+      std::shared_ptr<EnemyState> GetCurrentEnemyState();
 
       // Within bounds function
       virtual bool within_bounds();
@@ -74,14 +55,17 @@ class Enemy : public Entity {
       virtual Projectile* CreateProjectile(std::string name, float width, float height, int delta_x_r, int delta_x_l, int delta_y, 
             bool owner, bool damage, float force_x, float force_y);
 
-      // Destructotr
-      virtual ~Enemy() = 0;
-   
-   protected:
+      // Flag for damage
+      bool was_hurt;
+      bool hit_ground;
+      
       // States and timers
-      STATE enemy_state_;
       int shoot_timer_;
 
+      // Destructotr
+      virtual ~Enemy();
+   
+   protected:
       // Flag for death
       int start_death_;
       int end_death_;
@@ -97,25 +81,29 @@ class Enemy : public Entity {
 class Fecreez : public Enemy {
    public:
       // Constructor for fecreez
-      Fecreez(std::string name, int x, int y);
+      Fecreez(std::string name, glm::vec3 initial_position);
 
       // Load media
-      virtual bool LoadMedia();
+      virtual void LoadMedia();
 
       // Update, move and animate functions
       virtual void Move();
-      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0);
 
       // Contact listener
       virtual void StartContact(Element *element = NULL);
 
       // Get type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Fecreez";
       }
 
       // Destructor
       virtual ~Fecreez();
+
+   private:
+      // Do once shift
+      DoOnce do_shift_once_;
+
 };
 
 // ROsea prototype
@@ -125,17 +113,20 @@ class Rosea;
 class Arm : public Enemy {
    public:
       // Constructor for arm
-      Arm(std::string name, int x, int y, int width, int height, Rosea *rosea);
+      Arm(std::string name, glm::vec3 initial_position, glm::vec3 size, Rosea *rosea);
+
+      // Friend class Rosea
+      friend class Rosea;
 
       // Callback function will set enemy's state to HURT
       virtual void StartContact(Element *element = NULL);
 
       // Define abstract functions
       virtual void Move() {}
-      virtual Animation *GetAnimationFromState();
 
       // Static position
       std::unordered_map<std::string, Space2D> static_positions;
+
    private:
       // Rosea parent class
       Rosea *rosea_;
@@ -147,30 +138,21 @@ class Arm : public Enemy {
 class Rosea : public Enemy {
    public:
       // COnstructor for rosea
-      Rosea(std::string name, int x, int y, float angle);
+      Rosea(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle);
 
       // Load Rosea media
-      virtual bool LoadMedia();
+      virtual void LoadMedia();
 
       // Update, move and animate functions
       virtual void Update(bool freeze = false);
       virtual void Move();
-      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
-
-      // Get texture for rosea
-      virtual Animation *GetAnimationFromState();
 
       // Get contact
       virtual void StartContact(Element *element = NULL);
 
       // Get type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Rosea";
-      }
-
-      // get enemy state
-      STATE get_state() const {
-         return enemy_state_;
       }
 
       // Within bounds function
@@ -178,28 +160,17 @@ class Rosea : public Enemy {
 
       // Destructor for rosea
       virtual ~Rosea();
+
    private:
       // Element for the arms idle/hurt
-      Arm arms_still;
+      Arm arms_;
 
-      // Element for the arms attacking
-      Arm arms_attack;
+      // // Element for the arms attacking
+      // Arm arms_;
 
-      // Texture for arms
-      Texture *arm_sheet;
-
-      // Model for the arm
-      glm::mat4 arm_model;
-      glm::mat4 attack_model;
-
-      // Counter for hurt
-      int hurt_counter_;
-
-      // Arm state for when player is near
-      int arm_state_;
-
-      // Check to see if player is within bounds
-      bool in_bounds_;
+      // // Model for the arm
+      // glm::mat4 arm_model;
+      // glm::mat4 attack_model;
 
       // Dictionary linking box to frames
       std::unordered_map<int, int> arm_heights_;
@@ -212,24 +183,20 @@ class Rosea : public Enemy {
 class Mosquibler : public Enemy {
    public:
       // Constructor for mosquibler
-      Mosquibler(std::string name, int x, int y);
+      Mosquibler(std::string name, glm::vec3 initial_position);
 
       // Load Rosea media
-      virtual bool LoadMedia();
+      virtual void LoadMedia();
 
       // Update, move and animate functions
       virtual void Move();
-      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0, int start = 0);
-
-      // Get texture for rosea
-      virtual Animation *GetAnimationFromState();
 
       // Get contact
       virtual void StartContact(Element *element = NULL);
       virtual void EndContact(Element *element = NULL);
 
       // Get type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Mosquibler";
       }
 
@@ -240,29 +207,33 @@ class Mosquibler : public Enemy {
 class Fruig : public Enemy {
    public:
       // Constructor
-      Fruig(std::string name, int x, int y);
+      Fruig(std::string name, glm::vec3 initial_position);
 
       // Load fruig media
-      virtual bool LoadMedia();
+      virtual void LoadMedia();
 
       // Update, move and animate functions
       virtual void Move();
-      virtual void Animate(Texture *tex, int reset, int max, int start);
 
       // Get contact
       virtual void StartContact(Element *element = NULL);
 
       // Get type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Fruig";
       }
 };
+
+class Fleet;
 
 // Fleet Sensor
 class FleetSensor : public Sensor {
    public:
       // Constructor
-      FleetSensor(float width, float height, Entity *entity, CONTACT contact_type, float center_x, float center_y);
+      FleetSensor(float width, float height, Entity *entity, Element::CONTACT contact_type, float center_x, float center_y);
+
+      // Friend
+      friend class Fleet;
 
       // Contact functions
       virtual void StartContact(Element *element);
@@ -272,20 +243,19 @@ class FleetSensor : public Sensor {
 class Fleet : public Enemy {
    public:
       // Constructor
-      Fleet(std::string name, int x, int y);
+      Fleet(std::string name, glm::vec3 initial_position);
 
       // Load fleet media
-      virtual bool LoadMedia();
+      virtual void LoadMedia();
 
       // Move and animate functions
       virtual void Move();
-      virtual void Animate(Texture *tex, int reset, int max, int start);
 
       // Get contact function
       virtual void StartContact(Element *element = NULL);
 
       // Get type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Fleet";
       }
    private:
@@ -295,17 +265,13 @@ class Fleet : public Enemy {
 class Mosqueenbler : public Enemy {
    public:
       // Constructor
-      Mosqueenbler(std::string name, int x, int y);
+      Mosqueenbler(std::string name, glm::vec3 initial_position);
 
       // Load fleet media
-      virtual bool LoadMedia();
+      virtual void LoadMedia();
 
       // Move and animate functions
       virtual void Move();
-      virtual void Animate(Texture *tex, int reset, int max, int start);
-
-      // Get contact function
-      //virtual void StartContact(Element *element = NULL);
 
       // Set is enemy false
       virtual bool is_enemy() {
@@ -313,7 +279,7 @@ class Mosqueenbler : public Enemy {
       }
 
       // Get type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Mosqueenbler";
       }
    private:
@@ -328,20 +294,19 @@ class MosquiblerEgg : public Enemy,
                       public std::enable_shared_from_this<MosquiblerEgg> {
    public:
       // Constructor
-      MosquiblerEgg(std::string name, int x, int y);
+      MosquiblerEgg(std::string name, glm::vec3 initial_position);
 
       // Load wormored media
-      virtual bool LoadMedia();
+      virtual void LoadMedia();
 
       // Move and animate functions
       virtual void Move();
-      virtual void Animate(Texture *tex, int reset, int max, int start);
 
       // Start contact function
       virtual void StartContact(Element *element = NULL);
 
       // Wormored type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "MosquiblerEgg";
       }
 };
@@ -357,7 +322,7 @@ class WormoredSensor : public Sensor {
       virtual void EndContact(Element *element) {};
 
       // State type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Wormored";
       }
 };
@@ -366,17 +331,14 @@ class Wormored : public Enemy,
                  public Correspondent {
    public:      
       // Constructor
-      Wormored(std::string name, int x, int y);
+      Wormored(std::string name, glm::vec3 initial_position);
 
       // Load wormored media
-      virtual bool LoadMedia();
+      virtual void LoadMedia();
 
       // Move and animate functions
       virtual void Update(bool freeze = false);
       virtual void Move();
-      void ChangeState();
-      virtual void Animate(Texture *tex = NULL, int reset = 0, int max = 0);
-      virtual Animation *GetAnimationFromState();
 
       /**
        * Virtual process correspondent function
@@ -384,7 +346,7 @@ class Wormored : public Enemy,
       virtual void ProcessCorrespondence(const std::shared_ptr<Correspondence>& correspondence);
 
       // Wormored type
-      virtual std::string type() {
+      virtual std::string GetType() {
          return "Wormored";
       }
 
@@ -419,6 +381,9 @@ class Wormored : public Enemy,
 
       // Wakeup timer
       SecondsTimer attack_timer_;
+
+      // Tongue enemy
+      Enemy tongue_;
 };
 
 #endif

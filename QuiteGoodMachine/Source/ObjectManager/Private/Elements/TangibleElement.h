@@ -40,18 +40,15 @@ typedef struct Shape {
 
 /** Abstract base class (?) */
 class TangibleElement : virtual public PositionalElement {
-   private:
-      // Shape specification
-      // TODO: Make this better...
-      enum SHAPE_TYPE {
-         SQUARE,
-         CIRCLE
-      };
-
    public:
       /**
        * Enums (find a better way of doing this)
        */
+
+      enum SHAPE_TYPE {
+         SQUARE,
+         CIRCLE
+      };
 
       enum DIRS {
          LEFT,
@@ -171,7 +168,7 @@ class TangibleElement : virtual public PositionalElement {
       b2FixtureDef fixture_def_;
       b2Fixture *main_fixture_;
 
-      // Matrix representation of position
+      // Matrix representation of position, rotation and scale
       glm::mat4 hitbox_model_;
       float hitbox_angle_;
 

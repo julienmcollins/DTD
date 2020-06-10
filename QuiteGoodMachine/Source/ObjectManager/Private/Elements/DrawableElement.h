@@ -59,6 +59,11 @@ class DrawableElement : virtual public PositionalElement {
       virtual std::shared_ptr<Animation> GetAnimationFromState();
 
       /**
+       * Get state context?
+       */
+      std::shared_ptr<DrawStateContext> GetStateContext();
+
+      /**
        * Flips specified animation
        */
       void FlipAnimation(std::string name);
@@ -90,7 +95,7 @@ class DrawableElement : virtual public PositionalElement {
       // Main texture and extra textures
       // std::shared_ptr<Texture> main_texture_;
       Texture *main_texture_;
-      std::unordered_map<std::string, std::shared_ptr<Texture>> additional_textures_;
+      std::unordered_map<std::string, Texture*> additional_textures_;
 
       // Animation map
       std::unordered_map<std::string, std::shared_ptr<Animation>> animation_map_;

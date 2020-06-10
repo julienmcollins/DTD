@@ -1,0 +1,17 @@
+template <typename T>
+Matrix::Matrix(T init) {
+   Mat = {
+      init, 0, 0, 0,
+      0, init, 0, 0,
+      0, 0, init, 0,
+      0, 0, 0, init / init
+   };
+}
+
+template <typename T>
+Matrix::Matrix(glm::mat4 mat) {
+   this->col[0] = mat[0];
+   this->col[1] = mat[1];
+   this->col[2] = mat[2];
+   this->col[3] = mat[3];
+}

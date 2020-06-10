@@ -15,6 +15,8 @@
 
 #include "QuiteGoodMachine/Source/GameManager/Private/StateSystem/PlayerStates.h"
 
+#include "QuiteGoodMachine/Source/MathStructures/Private/Vector.h"
+
 #include <cmath>
 #include <stdlib.h>
 #include <SDL2/SDL_image.h>
@@ -295,7 +297,7 @@ Player::Player()
    , immunity_duration_(1.0f)
    , edge_duration_(0.025f)
    , fall_duration_(0.015f)
-   ,eraser(nullptr)
+   , eraser(nullptr)
    , num_of_projectiles(0) 
 {
 

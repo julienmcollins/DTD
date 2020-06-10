@@ -69,7 +69,7 @@ void Fecreez_Idle::PreTransition() {
    if (Application::GetInstance().get_player()->GetPosition().y >= enemy->GetPosition().y - enemy->GetSize().y &&
        Application::GetInstance().get_player()->GetPosition().y <= enemy->GetPosition().y + enemy->GetSize().y)
    {
-      if (enemy->shoot_timer >= 100) {
+      if (enemy->shoot_timer_ >= 100) {
          GetContext()->SetState(GetContext()->GetState("attack"));
          return;
       }
@@ -78,7 +78,7 @@ void Fecreez_Idle::PreTransition() {
 
 void Fecreez_Idle::TransitionReset() {
    DrawState::TransitionReset();
-   enemy->shoot_timer = 0;
+   enemy->shoot_timer_ = 0;
 }
 
 Fecreez_Attack::Fecreez_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
@@ -158,16 +158,28 @@ Rosea_ArmAttack::Rosea_ArmAttack(StateContext *context, Texture *texture, std::s
 
 void Rosea_ArmAttack::PreTransition() {
    if (!enemy->within_bounds()) {
-      GetAnimation()->reset_frame = GetAnimation()->max_frame;
-      if (GetAnimation()->completed) {
-         GetContext()->SetState(GetContext()->GetState("idle"));
-         return;
-      }
+      SetState("retreat");
+      return;
    }
 }
 
-void Rosea_ArmAttack::TransitionInitialize() {
+Rosea_ArmRetreat::Rosea_ArmRetreat(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Rosea*>(context->GetBase());
    GetAnimation()->reset_frame = 7;
+}
+
+void Rosea_ArmRetreat::PreTransition() {
+   if (enemy->within_bounds()) {
+      SetState("attack");
+      return;
+   }
+
+   if (GetAnimation()->completed) {
+      SetState("idle");
+      return;
+   }
 }
 
 Rosea_ArmHurt::Rosea_ArmHurt(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
@@ -197,6 +209,14 @@ Mosquibler_Idle::Mosquibler_Idle(StateContext *context, Texture *texture, std::s
 }
 
 void Mosquibler_Idle::PreTransition() {
+   if (Application::GetInstance().get_player()->GetPosition().x <= enemy->GetPosition().x && enemy->GetDirection() == TangibleElement::RIGHT) {
+      SetState("turn");
+      return;
+   } else if (Application::GetInstance().get_player()->GetPosition().x > enemy->GetPosition().x && enemy->GetDirection() == TangibleElement::LEFT) {
+      SetState("turn");
+      return;
+   }
+
    if (enemy->was_hurt) {
       SetState("hit");
       return;
@@ -233,4 +253,127 @@ Mosquibler_Death::Mosquibler_Death(StateContext *context, Texture *texture, std:
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Mosquibler*>(context->GetBase());
+}
+
+/** FRUIG **/
+
+Fruig_Idle::Fruig_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Fruig*>(context->GetBase());
+}
+
+Fruig_Death::Fruig_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Fruig*>(context->GetBase());
+}
+
+void Fruig_Death::TransitionInitialize() {
+   GetAnimation()->reset_frame = 14;
+}
+
+/** FLEET **/
+
+Fleet_Idle::Fleet_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Fleet*>(context->GetBase());
+}
+
+Fleet_Death::Fleet_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Fleet*>(context->GetBase());
+}
+
+/** MOSQUEENBLER **/
+
+Mosqueenbler_Idle::Mosqueenbler_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Mosqueenbler*>(context->GetBase());
+}
+
+void Mosqueenbler_Idle::PreTransition() {
+   if (enemy->shoot_timer_ > 200) {
+      SetState("attack");
+      return;
+   }
+}
+
+Mosqueenbler_Attack::Mosqueenbler_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Mosqueenbler*>(context->GetBase());
+}
+
+void Mosqueenbler_Attack::PreTransition() {
+   if (GetAnimation()->completed) {
+      SetState("attack");
+   }
+}
+
+void Mosqueenbler_Attack::TransitionReset() {
+   DrawState::TransitionReset();
+   enemy->shoot_timer_ = 0;
+}
+
+/** MOSQUIBLER EGG **/
+
+MosquiblerEgg_Idle::MosquiblerEgg_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<MosquiblerEgg*>(context->GetBase());
+}
+
+void MosquiblerEgg_Idle::PreTransition() {
+   if (enemy->hit_ground) {
+      SetState("attack");
+      return;
+   }
+}
+
+MosquiblerEgg_Attack::MosquiblerEgg_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<MosquiblerEgg*>(context->GetBase());
+}
+
+void MosquiblerEgg_Attack::PerformFurtherAction() {
+   if (GetAnimation()->completed) {
+      enemy->SetIsAlive(false);
+   }
+}
+
+/** WORMORED **/
+
+Wormored_Idle::Wormored_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Wormored*>(context->GetBase());
+}
+
+Wormored_Attack::Wormored_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Wormored*>(context->GetBase());
+}
+
+Wormored_Excrete::Wormored_Excrete(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Wormored*>(context->GetBase());
+}
+
+Wormored_Sleep::Wormored_Sleep(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Wormored*>(context->GetBase());
+}
+
+Wormored_Awake::Wormored_Awake(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+   : EnemyState(context, texture, animation)
+{
+   enemy = dynamic_cast<Wormored*>(context->GetBase());
 }

@@ -160,6 +160,14 @@ QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
 QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h
 
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/EnemyStates.cpp
+QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
+QuiteGoodMachine/Source/GameManager/Private/Application.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/QuiteGoodMachine/Source/GameManager/Private/Application.h
+QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/QuiteGoodMachine/Source/ObjectManager/Private/Enemy.h
+
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/PlayerStates.cpp
 QuiteGoodMachine/Source/GameManager/Private/StateSystem/PlayerStates.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/GameManager/Public/StateSystem/QuiteGoodMachine/Source/GameManager/Private/StateSystem/PlayerStates.h
@@ -355,6 +363,8 @@ QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
 QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
+QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
 stdio.h
 -
 cmath
@@ -399,6 +409,8 @@ QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/GameManager/Private/EventSystem/PigeonPost.h
 QuiteGoodMachine/Source/GameManager/Private/StateSystem/PlayerStates.h
 /home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/GameManager/Private/StateSystem/PlayerStates.h
+QuiteGoodMachine/Source/MathStructures/Private/Vector.h
+/home/juliencollins/Game_Dev/DTD/QuiteGoodMachine/Source/ObjectManager/Public/QuiteGoodMachine/Source/MathStructures/Private/Vector.h
 cmath
 -
 stdlib.h
@@ -715,6 +727,18 @@ QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 QuiteGoodMachine/Source/GameManager/Private/StateSystem/QuiteGoodMachine/Source/RenderingEngine/Private/Texture.h
 memory
 -
+string
+-
+
+QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
+QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+QuiteGoodMachine/Source/GameManager/Private/StateSystem/QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
+QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+QuiteGoodMachine/Source/GameManager/Private/StateSystem/QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
+QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h
+QuiteGoodMachine/Source/GameManager/Private/StateSystem/QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h
+QuiteGoodMachine/Source/GameManager/Private/DoOnce.h
+QuiteGoodMachine/Source/GameManager/Private/StateSystem/QuiteGoodMachine/Source/GameManager/Private/DoOnce.h
 
 QuiteGoodMachine/Source/GameManager/Private/StateSystem/PlayerStates.h
 QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h
@@ -807,6 +831,14 @@ memory
 -
 
 QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
+
+QuiteGoodMachine/Source/MathStructures/Private/Vector.h
+OpenGLIncludes.h
+QuiteGoodMachine/Source/MathStructures/Private/OpenGLIncludes.h
+Vector.imp
+QuiteGoodMachine/Source/MathStructures/Private/Vector.imp
+
+QuiteGoodMachine/Source/MathStructures/Private/Vector.imp
 
 QuiteGoodMachine/Source/MemoryManager/Private/ObjectManager.h
 unordered_map
@@ -903,6 +935,10 @@ QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
 QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/MathStructures/Private/Coordinates.h
 QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
 QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/GameManager/Private/EventSystem/Correspondent.h
+QuiteGoodMachine/Source/GameManager/Private/DoOnce.h
+QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/GameManager/Private/DoOnce.h
+QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
+QuiteGoodMachine/Source/ObjectManager/Private/QuiteGoodMachine/Source/GameManager/Private/StateSystem/EnemyStates.h
 
 QuiteGoodMachine/Source/ObjectManager/Private/Entity.h
 SDL2/SDL.h

@@ -23,7 +23,7 @@ class StateInterface {
       /**
        * Pretransition --> if you want to transition before doing something
        */
-      virtual void PreTransition() {}
+      virtual void PreAction() {}
 
       /**
        * Performs action --> performs the action
@@ -33,15 +33,15 @@ class StateInterface {
       /**
        * Posttransition --> if you want to transition after doing something
        */
-      virtual void PostTransition() {}
+      virtual void PostAction() {}
 
       /**
        * Performs action using context
        */
       virtual void DoAction() {
-         PreTransition();
+         PreAction();
          PerformAction();
-         PostTransition();
+         PostAction();
       }
    
       /**
@@ -52,12 +52,12 @@ class StateInterface {
       /**
        * Transition reset function for during state change
        */
-      virtual void TransitionReset() {}
+      virtual void PreTransition() {}
 
       /**
        * Initializer function if just jumped to this state
        */
-      virtual void TransitionInitialize() {}
+      virtual void PostTransition() {}
 
    private:
       // State context pointer

@@ -65,7 +65,7 @@ Fecreez_Idle::Fecreez_Idle(DrawStateContext *context, Texture *texture, std::sha
    enemy = dynamic_cast<Fecreez*>(context->GetBase());
 }
 
-void Fecreez_Idle::PreTransition() {
+void Fecreez_Idle::PreAction() {
    if (Application::GetInstance().get_player()->GetPosition().y >= enemy->GetPosition().y - enemy->GetSize().y &&
        Application::GetInstance().get_player()->GetPosition().y <= enemy->GetPosition().y + enemy->GetSize().y)
    {
@@ -76,8 +76,8 @@ void Fecreez_Idle::PreTransition() {
    }
 }
 
-void Fecreez_Idle::TransitionReset() {
-   DrawState::TransitionReset();
+void Fecreez_Idle::PreTransition() {
+   DrawState::PreTransition();
    enemy->shoot_timer_ = 0;
 }
 
@@ -87,7 +87,7 @@ Fecreez_Attack::Fecreez_Attack(DrawStateContext *context, Texture *texture, std:
    enemy = dynamic_cast<Fecreez*>(context->GetBase());
 }
 
-void Fecreez_Attack::PreTransition() {
+void Fecreez_Attack::PreAction() {
    if (Application::GetInstance().get_player()->GetPosition().y >= enemy->GetPosition().y - enemy->GetSize().y &&
        Application::GetInstance().get_player()->GetPosition().y <= enemy->GetPosition().y + enemy->GetSize().y)
    {
@@ -112,7 +112,7 @@ Rosea_Idle::Rosea_Idle(DrawStateContext *context, Texture *texture, std::shared_
    enemy = dynamic_cast<Rosea*>(context->GetBase());
 }
 
-void Rosea_Idle::PreTransition() {
+void Rosea_Idle::PreAction() {
    if (enemy->was_hurt) {
       GetContext()->SetState(GetContext()->GetState("hurt"));
       return;
@@ -125,7 +125,7 @@ Rosea_Hurt::Rosea_Hurt(DrawStateContext *context, Texture *texture, std::shared_
    enemy = dynamic_cast<Rosea*>(context->GetBase());
 }
 
-void Rosea_Hurt::PreTransition() {
+void Rosea_Hurt::PreAction() {
    if (GetAnimation()->completed) {
       GetContext()->SetState(GetContext()->GetState("idle"));
       return;
@@ -138,7 +138,7 @@ Rosea_ArmIdle::Rosea_ArmIdle(DrawStateContext *context, Texture *texture, std::s
    enemy = dynamic_cast<Rosea*>(context->GetBase());
 }
 
-void Rosea_ArmIdle::PreTransition() {
+void Rosea_ArmIdle::PreAction() {
    if (enemy->was_hurt) {
       GetContext()->SetState(GetContext()->GetState("arm_hurt"));
       return;
@@ -156,7 +156,7 @@ Rosea_ArmAttack::Rosea_ArmAttack(DrawStateContext *context, Texture *texture, st
    enemy = dynamic_cast<Rosea*>(context->GetBase());
 }
 
-void Rosea_ArmAttack::PreTransition() {
+void Rosea_ArmAttack::PreAction() {
    if (!enemy->within_bounds()) {
       SetState("retreat");
       return;
@@ -170,7 +170,7 @@ Rosea_ArmRetreat::Rosea_ArmRetreat(DrawStateContext *context, Texture *texture, 
    GetAnimation()->reset_frame = 7;
 }
 
-void Rosea_ArmRetreat::PreTransition() {
+void Rosea_ArmRetreat::PreAction() {
    if (enemy->within_bounds()) {
       SetState("attack");
       return;
@@ -188,7 +188,7 @@ Rosea_ArmHurt::Rosea_ArmHurt(DrawStateContext *context, Texture *texture, std::s
    enemy = dynamic_cast<Rosea*>(context->GetBase());
 }
 
-void Rosea_ArmHurt::PreTransition() {
+void Rosea_ArmHurt::PreAction() {
    if (enemy->within_bounds() && GetAnimation()->completed) {
       SetState("attack");
       return;
@@ -208,7 +208,7 @@ Mosquibler_Idle::Mosquibler_Idle(DrawStateContext *context, Texture *texture, st
    enemy = dynamic_cast<Mosquibler*>(context->GetBase());
 }
 
-void Mosquibler_Idle::PreTransition() {
+void Mosquibler_Idle::PreAction() {
    if (Application::GetInstance().get_player()->GetPosition().x <= enemy->GetPosition().x && enemy->GetDirection() == TangibleElement::RIGHT) {
       SetState("turn");
       return;
@@ -229,7 +229,7 @@ Mosquibler_Hit::Mosquibler_Hit(DrawStateContext *context, Texture *texture, std:
    enemy = dynamic_cast<Mosquibler*>(context->GetBase());
 }
 
-void Mosquibler_Hit::PreTransition() {
+void Mosquibler_Hit::PreAction() {
    if (GetAnimation()->completed) {
       SetState("fall");
       return;
@@ -242,7 +242,7 @@ Mosquibler_Fall::Mosquibler_Fall(DrawStateContext *context, Texture *texture, st
    enemy = dynamic_cast<Mosquibler*>(context->GetBase());
 }
 
-void Mosquibler_Fall::PreTransition() {
+void Mosquibler_Fall::PreAction() {
    if (enemy->hit_ground) {
       enemy->SetMarkedForDeath();
       return;
@@ -269,7 +269,7 @@ Fruig_Death::Fruig_Death(DrawStateContext *context, Texture *texture, std::share
    enemy = dynamic_cast<Fruig*>(context->GetBase());
 }
 
-void Fruig_Death::TransitionInitialize() {
+void Fruig_Death::PostTransition() {
    GetAnimation()->reset_frame = 14;
 }
 
@@ -295,7 +295,7 @@ Mosqueenbler_Idle::Mosqueenbler_Idle(DrawStateContext *context, Texture *texture
    enemy = dynamic_cast<Mosqueenbler*>(context->GetBase());
 }
 
-void Mosqueenbler_Idle::PreTransition() {
+void Mosqueenbler_Idle::PreAction() {
    if (enemy->shoot_timer_ > 200) {
       SetState("attack");
       return;
@@ -308,14 +308,14 @@ Mosqueenbler_Attack::Mosqueenbler_Attack(DrawStateContext *context, Texture *tex
    enemy = dynamic_cast<Mosqueenbler*>(context->GetBase());
 }
 
-void Mosqueenbler_Attack::PreTransition() {
+void Mosqueenbler_Attack::PreAction() {
    if (GetAnimation()->completed) {
       SetState("attack");
    }
 }
 
-void Mosqueenbler_Attack::TransitionReset() {
-   DrawState::TransitionReset();
+void Mosqueenbler_Attack::PreTransition() {
+   DrawState::PreTransition();
    enemy->shoot_timer_ = 0;
 }
 
@@ -327,7 +327,7 @@ MosquiblerEgg_Idle::MosquiblerEgg_Idle(DrawStateContext *context, Texture *textu
    enemy = dynamic_cast<MosquiblerEgg*>(context->GetBase());
 }
 
-void MosquiblerEgg_Idle::PreTransition() {
+void MosquiblerEgg_Idle::PreAction() {
    if (enemy->hit_ground) {
       SetState("attack");
       return;

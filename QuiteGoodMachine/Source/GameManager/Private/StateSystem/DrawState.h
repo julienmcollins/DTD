@@ -71,7 +71,7 @@ class DrawState : public StateInterface {
       /**
        * Transition reset function for during state change
        */
-      virtual void TransitionReset();
+      virtual void PreTransition();
 
    private:
       // Texture for animation handle

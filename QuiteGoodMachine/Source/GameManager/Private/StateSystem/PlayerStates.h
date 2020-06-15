@@ -47,13 +47,13 @@ class Player_Stand : public PlayerState {
        * Pre transition
        * From stand to balance if timer goes off
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 
       /**
        * Post transition function
        * From stand -> left/right goes to running, up goes to jump
        */
-      virtual void PostTransition();
+      virtual void PostAction();
    
    private:
       // Extra animations
@@ -73,14 +73,14 @@ class Player_Run : public PlayerState {
       Player_Run(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 
       /**
        * Reset
        */
-      virtual void TransitionReset();
+      virtual void PreTransition();
 };
 
 class Player_Jump : public PlayerState {
@@ -91,9 +91,9 @@ class Player_Jump : public PlayerState {
       Player_Jump(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Player_Fall : public PlayerState {
@@ -104,9 +104,9 @@ class Player_Fall : public PlayerState {
       Player_Fall(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Player_DoubleJump : public PlayerState {
@@ -122,9 +122,9 @@ class Player_DoubleJump : public PlayerState {
       virtual void PerformFurtherAction();
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Player_Push : public PlayerState {
@@ -135,9 +135,9 @@ class Player_Push : public PlayerState {
       Player_Push(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Player_JumpPush : public PlayerState {
@@ -148,9 +148,9 @@ class Player_JumpPush : public PlayerState {
       Player_JumpPush(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Player_Balance : public PlayerState {
@@ -161,9 +161,9 @@ class Player_Balance : public PlayerState {
       Player_Balance(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Player_RunningJump : public PlayerState {
@@ -176,7 +176,7 @@ class Player_RunningJump : public PlayerState {
       /**
        * Pre transition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Player_Death : public PlayerState {
@@ -228,12 +228,12 @@ class Arm_Idle : public ArmState {
       /**
        * Perform further action
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 
       /**
        * Initialize back to normal vector
        */
-      virtual void TransitionInitialize();
+      virtual void PostTransition();
 };
 
 class Arm_DoubleJump : public ArmState {
@@ -251,7 +251,7 @@ class Arm_DoubleJump : public ArmState {
       /**
        * Pre transition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 
       /**
        * Reset function
@@ -273,12 +273,12 @@ class Arm_Running : public ArmState {
       /**
        * Transition function
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 
       /**
        * Transition initialize for when coming from anything else?
        */
-      virtual void TransitionInitialize();
+      virtual void PostTransition();
 };
 
 class Arm_Shooting : public ArmState {
@@ -291,7 +291,7 @@ class Arm_Shooting : public ArmState {
       /**
        * Transition function
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 #endif

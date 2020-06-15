@@ -62,6 +62,6 @@ void DrawState::Reset() {
    animation_->curr_frame = animation_->reset_frame;
 }
 
-void DrawState::TransitionReset() {
+void DrawState::PreTransition() {
    Reset();
 }

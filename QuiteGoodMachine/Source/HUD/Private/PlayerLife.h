@@ -30,7 +30,7 @@ class PlayerLife_Alive : public DrawState,
       /**
        * Pre transition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 
       /**
        * Process correspondence

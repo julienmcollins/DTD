@@ -19,9 +19,9 @@ PositionalElement *StateContext::GetBase() const {
 
 void StateContext::SetState(std::shared_ptr<StateInterface> state) {
    // Call current state reset first
-   current_state_->TransitionReset();
+   current_state_->PreTransition();
    current_state_ = state;
-   current_state_->TransitionInitialize();
+   current_state_->PostTransition();
 }
 
 std::shared_ptr<StateInterface> StateContext::GetCurrentState() {

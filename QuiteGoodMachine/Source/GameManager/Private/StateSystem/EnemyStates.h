@@ -58,12 +58,12 @@ class Fecreez_Idle : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 
       /**
        * Reset function
        */
-      virtual void TransitionReset();
+      virtual void PreTransition();
 };
 
 class Fecreez_Attack : public EnemyState {
@@ -76,7 +76,7 @@ class Fecreez_Attack : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Fecreez_Death : public EnemyState {
@@ -99,7 +99,7 @@ class Rosea_Idle : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Rosea_Hurt : public EnemyState {
@@ -112,7 +112,7 @@ class Rosea_Hurt : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Rosea_ArmIdle : public EnemyState {
@@ -125,7 +125,7 @@ class Rosea_ArmIdle : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Rosea_ArmAttack : public EnemyState {
@@ -138,7 +138,7 @@ class Rosea_ArmAttack : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Rosea_ArmRetreat : public EnemyState {
@@ -151,7 +151,7 @@ class Rosea_ArmRetreat : public EnemyState {
       /**
        * Pre transition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Rosea_ArmHurt : public EnemyState {
@@ -164,7 +164,7 @@ class Rosea_ArmHurt : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 /** Mosquibler **/
@@ -179,7 +179,7 @@ class Mosquibler_Idle : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Mosquibler_Hit : public EnemyState {
@@ -192,7 +192,7 @@ class Mosquibler_Hit : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Mosquibler_Fall : public EnemyState {
@@ -205,7 +205,7 @@ class Mosquibler_Fall : public EnemyState {
       /**
        * Pretransition
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Mosquibler_Death : public EnemyState {
@@ -236,7 +236,7 @@ class Fruig_Death : public EnemyState {
       /**
        * Transition initialize
        */
-      virtual void TransitionInitialize();
+      virtual void PostTransition();
 };
 
 /** Fleet **/
@@ -267,9 +267,9 @@ class Mosqueenbler_Idle : public EnemyState {
       Mosqueenbler_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class Mosqueenbler_Attack : public EnemyState {
@@ -280,14 +280,14 @@ class Mosqueenbler_Attack : public EnemyState {
       Mosqueenbler_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 
       /**
        * Transition reset
        */
-      virtual void TransitionReset();
+      virtual void PreTransition();
 };
 
 /** Mosquibler Egg **/
@@ -300,9 +300,9 @@ class MosquiblerEgg_Idle : public EnemyState {
       MosquiblerEgg_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition();
+      virtual void PreAction();
 };
 
 class MosquiblerEgg_Attack : public EnemyState {
@@ -328,9 +328,9 @@ class Wormored_Idle : public EnemyState {
       Wormored_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition() {}
+      virtual void PreAction() {}
 };
 
 class Wormored_Attack : public EnemyState {
@@ -341,9 +341,9 @@ class Wormored_Attack : public EnemyState {
       Wormored_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition() {}
+      virtual void PreAction() {}
 };
 
 class Wormored_Excrete : public EnemyState {
@@ -354,9 +354,9 @@ class Wormored_Excrete : public EnemyState {
       Wormored_Excrete(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition() {}
+      virtual void PreAction() {}
 };
 
 class Wormored_Sleep : public EnemyState {
@@ -367,9 +367,9 @@ class Wormored_Sleep : public EnemyState {
       Wormored_Sleep(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition() {}
+      virtual void PreAction() {}
 };
 
 class Wormored_Awake : public EnemyState {
@@ -380,9 +380,9 @@ class Wormored_Awake : public EnemyState {
       Wormored_Awake(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
-       * PreTransition
+       * PreAction
        */
-      virtual void PreTransition() {}
+      virtual void PreAction() {}
 };
 
 #endif

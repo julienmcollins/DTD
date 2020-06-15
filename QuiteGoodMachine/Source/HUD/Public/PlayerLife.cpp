@@ -53,7 +53,7 @@ PlayerLife_Alive::PlayerLife_Alive(DrawStateContext *context, Texture *texture, 
    : DrawState(context, texture, animation)
    , is_alive_(true) {}
 
-void PlayerLife_Alive::PreTransition() {
+void PlayerLife_Alive::PreAction() {
    if (!is_alive_) {
       GetContext()->SetState(GetContext()->GetState("dead"));
    }

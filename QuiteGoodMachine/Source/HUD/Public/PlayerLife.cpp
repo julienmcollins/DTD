@@ -49,7 +49,7 @@ void PlayerLife::Reset() {
 }
 
 /** PLAYERLIFE_ALIVE **/
-PlayerLife_Alive::PlayerLife_Alive(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+PlayerLife_Alive::PlayerLife_Alive(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
    : DrawState(context, texture, animation)
    , is_alive_(true) {}
 
@@ -73,7 +73,7 @@ void PlayerLife_Alive::Reset() {
 }
 
 /** PLAYERLIFE_DEAD **/
-PlayerLife_Dead::PlayerLife_Dead(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+PlayerLife_Dead::PlayerLife_Dead(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : DrawState(context, texture, animation) {}
 
 void PlayerLife_Dead::Animate() {

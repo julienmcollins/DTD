@@ -16,7 +16,11 @@ class DrawableElement : virtual public PositionalElement {
       /**
        * Constructor
        */
-      DrawableElement(std::string name, glm::vec3 initial_position, glm::vec3 size);
+      DrawableElement(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle = 0.f, glm::mat4 *parent = nullptr);
+
+      // Friend class texture
+      friend class Texture;
+      friend class DrawState;
 
       /**
        * Registers the texture by file path
@@ -77,6 +81,11 @@ class DrawableElement : virtual public PositionalElement {
        * Checks if all animations are flipped
        */
       bool AllAnimationsFlipped();
+
+      /**
+       * Set draw_model_
+       */
+      void SetDrawModel(glm::mat4 m);
 
       /**
        * GetType function returns the type this element

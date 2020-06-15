@@ -10,7 +10,7 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/DoOnce.h"
 
 class Texture;
-class StateContext;
+class DrawStateContext;
 class Enemy;
 
 class EnemyState : public DrawState {
@@ -18,7 +18,7 @@ class EnemyState : public DrawState {
       /**
        * Constructor
        */
-      EnemyState(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      EnemyState(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Perform Further action (should flip anims)
@@ -38,7 +38,7 @@ class Enemy_Turn : public EnemyState {
       /**
        * Constructor
        */
-      Enemy_Turn(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Enemy_Turn(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Perform further action (flips anims)
@@ -53,7 +53,7 @@ class Fecreez_Idle : public EnemyState {
       /**
        * Constructor
        */
-      Fecreez_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Fecreez_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -71,7 +71,7 @@ class Fecreez_Attack : public EnemyState {
       /**
        * Constructor
        */
-      Fecreez_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Fecreez_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -84,7 +84,7 @@ class Fecreez_Death : public EnemyState {
       /**
        * Constructor
        */
-      Fecreez_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Fecreez_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 };
 
 /** Rosea **/
@@ -94,7 +94,7 @@ class Rosea_Idle : public EnemyState {
       /**
        * Constructor
        */
-      Rosea_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Rosea_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -107,7 +107,7 @@ class Rosea_Hurt : public EnemyState {
       /**
        * Constructor
        */
-      Rosea_Hurt(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Rosea_Hurt(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -120,7 +120,7 @@ class Rosea_ArmIdle : public EnemyState {
       /**
        * Constructor
        */
-      Rosea_ArmIdle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Rosea_ArmIdle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -133,7 +133,7 @@ class Rosea_ArmAttack : public EnemyState {
       /**
        * Constructor
        */
-      Rosea_ArmAttack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Rosea_ArmAttack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -146,7 +146,7 @@ class Rosea_ArmRetreat : public EnemyState {
       /**
        * Constructor
        */
-      Rosea_ArmRetreat(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Rosea_ArmRetreat(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pre transition
@@ -159,7 +159,7 @@ class Rosea_ArmHurt : public EnemyState {
       /**
        * Constructor
        */
-      Rosea_ArmHurt(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Rosea_ArmHurt(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -174,7 +174,7 @@ class Mosquibler_Idle : public EnemyState {
       /**
        * Constructor
        */
-      Mosquibler_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Mosquibler_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -187,7 +187,7 @@ class Mosquibler_Hit : public EnemyState {
       /**
        * Constructor
        */
-      Mosquibler_Hit(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Mosquibler_Hit(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -200,7 +200,7 @@ class Mosquibler_Fall : public EnemyState {
       /**
        * Constructor
        */
-      Mosquibler_Fall(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Mosquibler_Fall(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pretransition
@@ -213,7 +213,7 @@ class Mosquibler_Death : public EnemyState {
       /**
        * Constructor
        */
-      Mosquibler_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Mosquibler_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 };
 
 /** FRUIG **/
@@ -223,7 +223,7 @@ class Fruig_Idle : public EnemyState {
       /**
        * Constructor
        */
-      Fruig_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Fruig_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 };
 
 class Fruig_Death : public EnemyState {
@@ -231,7 +231,7 @@ class Fruig_Death : public EnemyState {
       /**
        * Constructor
        */
-      Fruig_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Fruig_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Transition initialize
@@ -246,7 +246,7 @@ class Fleet_Idle : public EnemyState {
       /**
        * Constructor
        */
-      Fleet_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Fleet_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 };
 
 class Fleet_Death : public EnemyState {
@@ -254,7 +254,7 @@ class Fleet_Death : public EnemyState {
       /**
        * Constructor
        */
-      Fleet_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Fleet_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 };
 
 /** Mosqueenbler **/
@@ -264,7 +264,7 @@ class Mosqueenbler_Idle : public EnemyState {
       /**
        * Constructor
        */
-      Mosqueenbler_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Mosqueenbler_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -277,7 +277,7 @@ class Mosqueenbler_Attack : public EnemyState {
       /**
        * Constructor
        */
-      Mosqueenbler_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Mosqueenbler_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -297,7 +297,7 @@ class MosquiblerEgg_Idle : public EnemyState {
       /**
        * Constructor
        */
-      MosquiblerEgg_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      MosquiblerEgg_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -310,7 +310,7 @@ class MosquiblerEgg_Attack : public EnemyState {
       /**
        * Constrcutor
        */
-      MosquiblerEgg_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      MosquiblerEgg_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Perform further action
@@ -325,7 +325,7 @@ class Wormored_Idle : public EnemyState {
       /**
        * Constructor
        */
-      Wormored_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Wormored_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -338,7 +338,7 @@ class Wormored_Attack : public EnemyState {
       /**
        * Constructor
        */
-      Wormored_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Wormored_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -351,7 +351,7 @@ class Wormored_Excrete : public EnemyState {
       /**
        * Constructor
        */
-      Wormored_Excrete(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Wormored_Excrete(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -364,7 +364,7 @@ class Wormored_Sleep : public EnemyState {
       /**
        * Constructor
        */
-      Wormored_Sleep(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Wormored_Sleep(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -377,7 +377,7 @@ class Wormored_Awake : public EnemyState {
       /**
        * Constructor
        */
-      Wormored_Awake(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Wormored_Awake(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition

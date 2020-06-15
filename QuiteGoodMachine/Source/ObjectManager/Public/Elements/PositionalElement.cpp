@@ -16,13 +16,14 @@
 //    state_context_ = std::make_shared<StateContext>(this);
 // }
 
-PositionalElement::PositionalElement(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle)
+PositionalElement::PositionalElement(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle, glm::mat4 *parent)
    : ElementInterface(name)
    , position_(initial_position)
    , size_(size)
-   , angle_(angle) 
+   , angle_(angle)
 {
    state_context_ = std::make_shared<StateContext>(this);
+   parent_ = parent ? parent : new glm::mat4(1.f);
 }
 
 /** UPDATE **/

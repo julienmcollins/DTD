@@ -293,14 +293,13 @@ Player::Player()
    , arm_delta_y(64)
    , arm_delta_shoot_x(12)
    , arm_delta_shoot_y(51)
-   , arm_("arm", glm::vec3(960.f, 412.f, 0.f), glm::vec3(9.f, 27.f, 0.f))
+   , arm_("arm", glm::vec3(9.5f, 6.f, 0.f), glm::vec3(9.f, 27.f, 0.f), 0.f, &draw_model_)
    , immunity_duration_(1.0f)
    , edge_duration_(0.025f)
    , fall_duration_(0.015f)
    , eraser(nullptr)
    , num_of_projectiles(0) 
 {
-
    // Set entity direction
    SetDirection(RIGHT);
 
@@ -420,6 +419,7 @@ void Player::Update(bool freeze) {
    // sprite_sheet->Render(get_anim_x(), get_anim_y(), 0.0f, GetAnimationFromState());
 
    // Call tangible element update and drawableelement updates last
+   arm_.Update(freeze);
    TangibleElement::Update(freeze);
    DrawableElement::Update(freeze);
 }
@@ -663,6 +663,15 @@ void Player::Move() {
       }
    }
 
+   // Check for direction
+   if (GetDirection() == RIGHT && KH.GetKeyPressed(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT)) {
+      b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+      body->SetLinearVelocity(vel);
+   } else if (GetDirection() == LEFT && KH.GetKeyPressed(KEY_RIGHT) && !KH.GetKeyPressed(KEY_LEFT)) {
+      b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+      body->SetLinearVelocity(vel);
+   }
+
    // Player running left
    if (KH.GetKeyPressed(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT)) {
       // Check for midair
@@ -678,8 +687,10 @@ void Player::Move() {
          }
       }
    } else if (KH.GetKeyReleased(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT)) { // Handle release of left key
-      b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
-      body->SetLinearVelocity(vel);
+      if (player_state_ != JUMP && player_state_ != RUN_AND_JUMP && player_state_ != DOUBLE_JUMP) {
+         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+         body->SetLinearVelocity(vel);
+      }
    }
 
    // Deal with basic movement for now
@@ -697,8 +708,10 @@ void Player::Move() {
          }
       }
    } else if (KH.GetKeyReleased(KEY_RIGHT) && !KH.GetKeyPressed(KEY_LEFT)) {
-      b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
-      body->SetLinearVelocity(vel);
+      if (player_state_ != JUMP && player_state_ != RUN_AND_JUMP && player_state_ != DOUBLE_JUMP) {
+         b2Vec2 vel = {0.0f, body->GetLinearVelocity().y};
+         body->SetLinearVelocity(vel);
+      }
    }
 
    // Player jumping
@@ -769,15 +782,17 @@ void Player::LoadMedia() {
 
    // Instantiate sprite sheet for arms
    string arm_path = "Media/Sprites/Player/arm_master_sheet.png";
-   temp = RegisterTexture(arm_path);
-   arm_.GetStateContext()->RegisterState("idle", make_shared<Arm_Idle>(GetStateContext().get(), temp, make_shared<Animation>(temp, "idle", 10.f, 27.f, 0.f, 1, 1.f / 30.f)));
-   arm_.GetStateContext()->RegisterState("running", make_shared<Arm_Running>(GetStateContext().get(), temp, make_shared<Animation>(temp, "running", 9.f, 27.f, 54.f, 15, 1.f / 30.f)));
-   arm_.GetStateContext()->RegisterState("double_jump", make_shared<Arm_DoubleJump>(GetStateContext().get(), temp, make_shared<Animation>(temp, "double_jump", 9.f, 27.f, 0.f, 8, 1.f / 24.f)));
-   arm_.GetStateContext()->RegisterState("shooting", make_shared<Arm_Shooting>(GetStateContext().get(), temp, make_shared<Animation>(temp, "shooting", 44.f, 33.f, 81.f, 9, 1.f / 20.f)));
+   temp = arm_.RegisterTexture(arm_path);
+   arm_.GetStateContext()->RegisterState("idle", make_shared<Arm_Idle>(arm_.GetStateContext().get(), temp, make_shared<Animation>(temp, "idle", 10.f, 27.f, 0.f, 1, 1.f / 30.f), this));
+   arm_.GetStateContext()->RegisterState("running", make_shared<Arm_Running>(arm_.GetStateContext().get(), temp, make_shared<Animation>(temp, "running", 9.f, 27.f, 54.f, 15, 1.f / 30.f), this));
+   arm_.GetStateContext()->RegisterState("double_jump", make_shared<Arm_DoubleJump>(arm_.GetStateContext().get(), temp, make_shared<Animation>(temp, "double_jump", 9.f, 27.f, 0.f, 8, 1.f / 24.f), this));
+   arm_.GetStateContext()->RegisterState("shooting", make_shared<Arm_Shooting>(arm_.GetStateContext().get(), temp, make_shared<Animation>(temp, "shooting", 44.f, 33.f, 81.f, 9, 1.f / 20.f), this));
 
    // Set initial and reset
    GetStateContext()->SetResetState(GetStateContext()->GetState("stand"));
    GetStateContext()->SetInitialState(GetStateContext()->GetState("stand"));
+   arm_.GetStateContext()->SetResetState(arm_.GetStateContext()->GetState("idle"));
+   arm_.GetStateContext()->SetInitialState(arm_.GetStateContext()->GetState("idle"));
 }
 
 // Create projectile

@@ -11,8 +11,8 @@
 
 using namespace std;
 
-DrawableElement::DrawableElement(std::string name, glm::vec3 initial_position, glm::vec3 size)
-   : PositionalElement(name, initial_position, size)
+DrawableElement::DrawableElement(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle, glm::mat4 *parent)
+   : PositionalElement(name, initial_position, size, angle, parent)
    , main_texture_(nullptr)
 {
    state_context_ = std::make_shared<DrawStateContext>(this);
@@ -28,9 +28,11 @@ Texture *DrawableElement::RegisterTexture(std::string file) {
    std::string name = file.substr(found1 + 1, found2 - (found1 + 1));
    if (!main_texture_) {
       main_texture_ = RenderingEngine::GetInstance().LoadTexture(name, file.c_str());
+      main_texture_->element_ = this;
       return main_texture_;
    } else {
       additional_textures_.emplace(pair<string, Texture*>(name, RenderingEngine::GetInstance().LoadTexture(name, file.c_str())));
+      additional_textures_[name]->element_ = this;
       return additional_textures_[name];
    }
 }
@@ -66,6 +68,10 @@ void DrawableElement::FlipAnimation(std::string name) {}
 void DrawableElement::FlipAllAnimations() {}
 
 bool DrawableElement::AllAnimationsFlipped() {}
+
+void DrawableElement::SetDrawModel(glm::mat4 m) {
+   draw_model_ = m;
+}
 
 std::string DrawableElement::GetType() {
    return "DrawableElement";

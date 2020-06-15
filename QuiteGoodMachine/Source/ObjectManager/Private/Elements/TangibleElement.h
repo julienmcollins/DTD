@@ -84,7 +84,7 @@ class TangibleElement : virtual public PositionalElement {
        * Constructor
        * Sets up physical body (?)
        */
-      TangibleElement(std::string name, glm::vec3 initial_position, glm::vec3 size);
+      TangibleElement(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle = 0.f, glm::mat4 *parent = nullptr);
 
       /**
        * Update function

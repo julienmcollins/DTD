@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 class PositionalElement;
+class DrawableElement;
 class StateInterface;
 class Animation;
 
@@ -82,12 +83,21 @@ class DrawStateContext : public StateContext {
       /**
        * Constructor
        */
-      DrawStateContext(PositionalElement *base);
+      DrawStateContext(DrawableElement *base);
+
+      /**
+       * Get draw state
+       */
+      DrawableElement *GetBase() const;
 
       /**
        * Flip animations
        */
       void FlipAllAnimations();
+   
+   protected:
+      // Drawable element pointer
+      DrawableElement *drawable_element_;
 };
 
 #endif

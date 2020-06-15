@@ -14,7 +14,7 @@
 #define KH Application::GetInstance().key_handler
 
 /** PLAYERSTATE **/
-PlayerState::PlayerState(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
+PlayerState::PlayerState(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    DrawState(context, texture, animation) 
 {
    player = dynamic_cast<Player*>(GetContext()->GetBase());
@@ -24,19 +24,23 @@ void PlayerState::Turn() {
    // Handle flipping if changing directions
    if (player->GetDirection() == TangibleElement::RIGHT) {
       if (KH.GetKeyPressed(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT)) {
-         static_cast<DrawStateContext*>(GetContext())->FlipAllAnimations();
+         GetContext()->FlipAllAnimations();
+         player->arm_.GetStateContext()->FlipAllAnimations();
+         player->arm_.SetPosition(glm::vec3(-player->arm_.GetPosition().x, player->arm_.GetPosition().y, 0.f));
          player->SetDirection(TangibleElement::LEFT);
       }
    } else if (player->GetDirection() == TangibleElement::LEFT) {
       if (KH.GetKeyPressed(KEY_RIGHT) && !KH.GetKeyPressed(KEY_LEFT)) {
-         static_cast<DrawStateContext*>(GetContext())->FlipAllAnimations();
+         GetContext()->FlipAllAnimations();
+         player->arm_.GetStateContext()->FlipAllAnimations();
+         player->arm_.SetPosition(glm::vec3(-player->arm_.GetPosition().x, player->arm_.GetPosition().y, 0.f));
          player->SetDirection(TangibleElement::RIGHT);
       }
    }
 }
 
 /** PLAYER_STAND **/
-Player_Stand::Player_Stand(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation1, std::shared_ptr<Animation> animation2, std::shared_ptr<Animation> animation3)
+Player_Stand::Player_Stand(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation1, std::shared_ptr<Animation> animation2, std::shared_ptr<Animation> animation3)
    : PlayerState(context, texture, animation1)
    , anim_1_(animation1)
    , anim_2_(animation2)
@@ -115,7 +119,7 @@ void Player_Stand::PostTransition() {
 }
 
 /** PLAYER_RUN **/
-Player_Run::Player_Run(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
+Player_Run::Player_Run(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    PlayerState(context, texture, animation) {}
 
 void Player_Run::PreTransition() {
@@ -154,7 +158,7 @@ void Player_Run::TransitionReset() {
 }
 
 /** PLAYER_JUMP **/
-Player_Jump::Player_Jump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
+Player_Jump::Player_Jump(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    PlayerState(context, texture, animation) {}
 
 void Player_Jump::PreTransition() {
@@ -182,7 +186,7 @@ void Player_Jump::PreTransition() {
 }
 
 /** PLAYER_DOUBLEJUMP **/
-Player_DoubleJump::Player_DoubleJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
+Player_DoubleJump::Player_DoubleJump(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    PlayerState(context, texture, animation) {}
 
 void Player_DoubleJump::PerformFurtherAction() {
@@ -209,7 +213,7 @@ void Player_DoubleJump::PreTransition() {
 }
 
 /** PLAYER_PUSH **/
-Player_Push::Player_Push(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
+Player_Push::Player_Push(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    PlayerState(context, texture, animation) {}
 
 void Player_Push::PreTransition() {
@@ -234,7 +238,7 @@ void Player_Push::PreTransition() {
 }
 
 /** PLAYER_JUMPPUSH **/
-Player_JumpPush::Player_JumpPush(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
+Player_JumpPush::Player_JumpPush(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    PlayerState(context, texture, animation) {}
 
 void Player_JumpPush::PreTransition() {
@@ -270,7 +274,7 @@ void Player_JumpPush::PreTransition() {
 }
 
 /** PLAYER_BALANCE **/
-Player_Balance::Player_Balance(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
+Player_Balance::Player_Balance(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    PlayerState(context, texture, animation) {}
 
 void Player_Balance::PreTransition() {
@@ -291,7 +295,7 @@ void Player_Balance::PreTransition() {
 }
 
 /** PLAYER_FALL **/
-Player_Fall::Player_Fall(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
+Player_Fall::Player_Fall(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) :
    PlayerState(context, texture, animation) {}
 
 void Player_Fall::PreTransition() {
@@ -303,7 +307,7 @@ void Player_Fall::PreTransition() {
 }
 
 /** PLAYER_RUNNING_JUMP **/
-Player_RunningJump::Player_RunningJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Player_RunningJump::Player_RunningJump(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : PlayerState(context, texture, animation) {}
 
 void Player_RunningJump::PreTransition() {
@@ -333,7 +337,7 @@ void Player_RunningJump::PreTransition() {
 }
 
 /** PLAYER_DEATH **/
-Player_Death::Player_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+Player_Death::Player_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
    : PlayerState(context, texture, animation) {}
 
 void Player_Death::PerformFurtherAction() {
@@ -356,13 +360,18 @@ void Player_Death::Animate() {
 
 /**************/
 
+ArmState::ArmState(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player)
+   : DrawState(context, texture, animation)
+   , player(player) {}
+
 /** ARM IDLE **/
-Arm_Idle::Arm_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
-   : PlayerState(context, texture, animation) {}
+Arm_Idle::Arm_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player)
+   : ArmState(context, texture, animation, player) {}
 
 void Arm_Idle::PreTransition() {
    if (KH.GetKeyPressed(KEY_RIGHT) || KH.GetKeyPressed(KEY_LEFT)) {
       GetContext()->SetState(GetContext()->GetState("running"));
+      std::cout << "Arm_Idle::PreTransition - transitioning to running\n";
       return;
    }
 
@@ -377,9 +386,14 @@ void Arm_Idle::PreTransition() {
    }
 }
 
+void Arm_Idle::TransitionInitialize() {
+   float x = player->GetDirection() == TangibleElement::RIGHT ? 9.5f : -9.5f;
+   GetContext()->GetBase()->SetPosition(glm::vec3(x, 6.f, 0.f));
+}
+
 /** ARM_RUNNING **/
-Arm_Running::Arm_Running(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
-   : PlayerState(context, texture, animation) {}
+Arm_Running::Arm_Running(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player)
+   : ArmState(context, texture, animation, player) {}
 
 void Arm_Running::PreTransition() {
    if (!KH.GetKeyPressed(KEY_LEFT) && !KH.GetKeyPressed(KEY_RIGHT) && !KH.GetKeyPressed(KEY_UP)) {
@@ -393,9 +407,14 @@ void Arm_Running::PreTransition() {
    }
 }
 
+void Arm_Running::TransitionInitialize() {
+   float offset = player->GetDirection() == TangibleElement::RIGHT ? 10.f : -10.f;
+   GetContext()->GetBase()->SetPosition(glm::vec3(GetContext()->GetBase()->GetPosition().x + offset, GetContext()->GetBase()->GetPosition().y, 0.f));
+}
+
 /** ARM_DOUBLEJUMP **/
-Arm_DoubleJump::Arm_DoubleJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
-   : PlayerState(context, texture, animation) {}
+Arm_DoubleJump::Arm_DoubleJump(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player)
+   : ArmState(context, texture, animation, player) {}
 
 void Arm_DoubleJump::PerformFurtherAction() {
    do_once_([&]() {
@@ -422,8 +441,8 @@ void Arm_DoubleJump::Reset() {
 }
 
 /** ARM_SHOOTING **/
-Arm_Shooting::Arm_Shooting(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
-   : PlayerState(context, texture, animation) {}
+Arm_Shooting::Arm_Shooting(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player)
+   : ArmState(context, texture, animation, player) {}
 
 void Arm_Shooting::PreTransition() {
    if (GetAnimation()->completed && !KH.GetKeyPressed(KEY_SPACE)) {

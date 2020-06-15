@@ -19,7 +19,7 @@ class PositionalElement : public ElementInterface {
       /**
        * Constructor
        */
-      PositionalElement(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle = 0.f);
+      PositionalElement(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle = 0.f, glm::mat4 *parent = nullptr);
 
       /**
        * Update
@@ -83,8 +83,19 @@ class PositionalElement : public ElementInterface {
       // Angle
       float angle_;
 
+      // Parent transform
+      glm::mat4 *parent_;
+
       // Reference to current state
       std::shared_ptr<StateContext> state_context_;
+
+   public:
+      /**
+       * Get the parent transform
+       */
+      glm::mat4 &GetParentTransform() {
+         return *parent_;
+      }
 };
 
 #endif

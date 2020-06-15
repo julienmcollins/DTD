@@ -11,7 +11,7 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/Timers/SecondsTimer.h"
 
 class Texture;
-class StateContext;
+class DrawStateContext;
 class Player;
 
 class PlayerState : public DrawState {
@@ -19,7 +19,7 @@ class PlayerState : public DrawState {
       /**
        * Constructor
        */
-      PlayerState(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      PlayerState(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Turn function flips
@@ -36,7 +36,7 @@ class Player_Stand : public PlayerState {
       /**
        * Constructor
        */
-      Player_Stand(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation1, std::shared_ptr<Animation> animation2, std::shared_ptr<Animation> animation3);
+      Player_Stand(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation1, std::shared_ptr<Animation> animation2, std::shared_ptr<Animation> animation3);
 
       /**
        * Perform Further action
@@ -70,7 +70,7 @@ class Player_Run : public PlayerState {
       /**
        * Constructor
        */
-      Player_Run(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Player_Run(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -88,7 +88,7 @@ class Player_Jump : public PlayerState {
       /**
        * Constructor
        */
-      Player_Jump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Player_Jump(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -101,7 +101,7 @@ class Player_Fall : public PlayerState {
       /**
        * Constructor
        */
-      Player_Fall(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Player_Fall(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -114,7 +114,7 @@ class Player_DoubleJump : public PlayerState {
       /**
        * Constructor
        */
-      Player_DoubleJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Player_DoubleJump(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Perform further action
@@ -132,7 +132,7 @@ class Player_Push : public PlayerState {
       /**
        * Constructor
        */
-      Player_Push(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Player_Push(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -145,7 +145,7 @@ class Player_JumpPush : public PlayerState {
       /**
        * Constructor
        */
-      Player_JumpPush(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Player_JumpPush(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -158,7 +158,7 @@ class Player_Balance : public PlayerState {
       /**
        * Constructor
        */
-      Player_Balance(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Player_Balance(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * PreTransition
@@ -171,7 +171,7 @@ class Player_RunningJump : public PlayerState {
       /**
        * Constructor
        */
-      Player_RunningJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Player_RunningJump(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Pre transition
@@ -184,7 +184,7 @@ class Player_Death : public PlayerState {
       /**
        * Constructor
        */
-      Player_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Player_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Perform further action
@@ -206,25 +206,42 @@ class Player_Death : public PlayerState {
 
 /** ARM STATES **/
 
-class Arm_Idle : public PlayerState {
+class ArmState : public DrawState {
    public:
       /**
        * Constructor
        */
-      Arm_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      ArmState(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player);
+
+   protected:
+      // Player ptr
+      Player *player;
+};
+
+class Arm_Idle : public ArmState {
+   public:
+      /**
+       * Constructor
+       */
+      Arm_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player);
 
       /**
        * Perform further action
        */
       virtual void PreTransition();
+
+      /**
+       * Initialize back to normal vector
+       */
+      virtual void TransitionInitialize();
 };
 
-class Arm_DoubleJump : public PlayerState {
+class Arm_DoubleJump : public ArmState {
    public:
       /**
        * Constructor
        */
-      Arm_DoubleJump(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Arm_DoubleJump(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player);
 
       /**
        * Perform further action function
@@ -246,25 +263,30 @@ class Arm_DoubleJump : public PlayerState {
       DoOnce do_once_;
 };
 
-class Arm_Running : public PlayerState {
+class Arm_Running : public ArmState {
    public:
       /**
        * Constructor
        */
-      Arm_Running(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Arm_Running(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player);
 
       /**
        * Transition function
        */
       virtual void PreTransition();
+
+      /**
+       * Transition initialize for when coming from anything else?
+       */
+      virtual void TransitionInitialize();
 };
 
-class Arm_Shooting : public PlayerState {
+class Arm_Shooting : public ArmState {
    public:
       /**
        * Constructor
        */
-      Arm_Shooting(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      Arm_Shooting(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation, Player *player);
 
       /**
        * Transition function

@@ -7,8 +7,8 @@
 
 #include "OpenGLIncludes.h"
 
-TangibleElement::TangibleElement(std::string name, glm::vec3 initial_position, glm::vec3 size)
-   : PositionalElement(name, initial_position, size)
+TangibleElement::TangibleElement(std::string name, glm::vec3 initial_position, glm::vec3 size, float angle, glm::mat4 *parent)
+   : PositionalElement(name, initial_position, size, angle, parent)
    , current_direction_(NEUTRAL) 
 {
    // Initial

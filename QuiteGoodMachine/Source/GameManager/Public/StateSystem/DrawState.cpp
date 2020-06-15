@@ -2,13 +2,15 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/StateSystem/StateContext.h"
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h"
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/RenderingEngine.h"
 
-DrawState::DrawState(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+DrawState::DrawState(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : StateInterface(context)
    , texture_(texture)
-   , animation_(animation) 
+   , animation_(animation)
+   , draw_context_(context)
 {
    RenderingEngine::GetInstance().LoadResources(animation);
 }
@@ -50,7 +52,8 @@ void DrawState::Animate() {
 }
 
 void DrawState::Draw() {
-   GetTexture()->Render(GetContext()->GetBase()->GetPosition(), GetContext()->GetBase()->GetAngle(), GetAnimation());
+   GetContext()->GetBase()->draw_model_ = GetTexture()->Render(GetContext()->GetBase()->GetPosition(), GetContext()->GetBase()->GetAngle(), GetAnimation());
+   // std::cout << "DrawState::Draw - draw_model_[3][0] = " << GetContext()->GetBase()->draw_model_[3][0] << std::endl;
 }
 
 void DrawState::Turn() {}

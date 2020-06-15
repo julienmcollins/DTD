@@ -219,6 +219,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/DrawSt
  QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
  QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
  QuiteGoodMachine/Source/ObjectManager/Private/Element.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h
@@ -306,6 +307,7 @@ CMakeFiles/dtd.dir/QuiteGoodMachine/Source/GameManager/Public/StateSystem/StateC
  QuiteGoodMachine/Source/GameManager/Private/Timers/FPSTimer.h
  QuiteGoodMachine/Source/ObjectManager/Interfaces/Component.h
  QuiteGoodMachine/Source/ObjectManager/Interfaces/ElementInterface.h
+ QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h
  QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h
  QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h
  QuiteGoodMachine/Source/RenderingEngine/Private/GLData.h

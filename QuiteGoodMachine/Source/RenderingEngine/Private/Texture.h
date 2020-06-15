@@ -21,14 +21,14 @@
 #include <unordered_map>
 #include <memory>
 
-class Element;
+class DrawableElement;
 class Animation;
 
 class Texture {
    public:
       // Initialize
-      Texture(Element *element = NULL, int max_frame = 0, float fps_val = 0);
-      
+      Texture(DrawableElement *element = NULL, int max_frame = 0, float fps_val = 0);
+
       // Load image at specified path
       bool LoadFromFile(const GLchar *file, GLboolean alpha);
       
@@ -39,7 +39,7 @@ class Texture {
       // Overloaded opengl Render function
       void Render(float x, float y, GLfloat rotate = 0.0f, Animation *clip = NULL, bool render_from_center = false, glm::vec3 color = glm::vec3(1.0f));
       void Render(glm::mat4 m, GLfloat rotate = 0.0f, Animation *clip = NULL, glm::vec3 color = glm::vec3(1.0f));
-      void Render(glm::vec3 position, GLfloat rotate = 0.0f, std::shared_ptr<Animation> clip = {}, glm::vec3 color = glm::vec3(1.0f));
+      glm::mat4 Render(glm::vec3 position, GLfloat rotate = 0.0f, std::shared_ptr<Animation> clip = {}, glm::vec3 color = glm::vec3(1.0f));
       
       // Animate function
       void Animate(Animation *anim, int reset = 0, int max = 0, int start = 0);
@@ -99,7 +99,7 @@ class Texture {
       int get_y() const;
 
       // Element referring to the texture
-      Element *element_;
+      DrawableElement *element_;
    
       // Destructor
       ~Texture();

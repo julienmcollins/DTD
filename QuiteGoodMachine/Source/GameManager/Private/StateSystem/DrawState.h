@@ -9,12 +9,14 @@
 #include <memory>
 #include <string>
 
+class DrawStateContext;
+
 class DrawState : public StateInterface {
    public:
       /**
        * Constructor takes an animation
        */
-      DrawState(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
+      DrawState(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation);
 
       /**
        * Perform action --> gets decomposed further
@@ -77,6 +79,17 @@ class DrawState : public StateInterface {
 
       // Animation handle
       std::shared_ptr<Animation> animation_;
+
+      // Draw state context
+      DrawStateContext *draw_context_;
+
+   public:
+      /**
+       * Get draw state context
+       */
+      DrawStateContext *GetContext() {
+         return draw_context_;
+      }
 };
 
 #endif

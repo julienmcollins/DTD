@@ -3,6 +3,7 @@
 #include "QuiteGoodMachine/Source/GameManager/Private/StateSystem/DrawState.h"
 
 #include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/PositionalElement.h"
+#include "QuiteGoodMachine/Source/ObjectManager/Private/Elements/DrawableElement.h"
 
 #include "QuiteGoodMachine/Source/RenderingEngine/Private/Animation.h"
 
@@ -64,8 +65,13 @@ void StateContext::Reset() {
 
 /** Draw state context **/
 
-DrawStateContext::DrawStateContext(PositionalElement *base)
-   : StateContext(base) {}
+DrawStateContext::DrawStateContext(DrawableElement *base)
+   : StateContext(base)
+   , drawable_element_(base) {}
+
+DrawableElement *DrawStateContext::GetBase() const {
+   return drawable_element_;
+}
 
 void DrawStateContext::FlipAllAnimations() {
    for (std::pair<std::string, std::shared_ptr<StateInterface>> state : registered_states_) {

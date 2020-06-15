@@ -6,7 +6,7 @@
 #define KH Application::GetInstance().key_handler
 
 /** ENEMY STATE **/
-EnemyState::EnemyState(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+EnemyState::EnemyState(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : DrawState(context, texture, animation) 
 {
    enemy = dynamic_cast<Enemy*>(context->GetBase());
@@ -35,7 +35,7 @@ void EnemyState::PerformAction() {
 
 
 /** ENEMY TURN **/
-Enemy_Turn::Enemy_Turn(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Enemy_Turn::Enemy_Turn(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation) {}
 
 void Enemy_Turn::PerformFurtherAction() {
@@ -59,7 +59,7 @@ void Enemy_Turn::PerformFurtherAction() {
 
 /** FECREEZ **/
 
-Fecreez_Idle::Fecreez_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Fecreez_Idle::Fecreez_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation) 
 {
    enemy = dynamic_cast<Fecreez*>(context->GetBase());
@@ -81,7 +81,7 @@ void Fecreez_Idle::TransitionReset() {
    enemy->shoot_timer_ = 0;
 }
 
-Fecreez_Attack::Fecreez_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Fecreez_Attack::Fecreez_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation) 
 {
    enemy = dynamic_cast<Fecreez*>(context->GetBase());
@@ -98,7 +98,7 @@ void Fecreez_Attack::PreTransition() {
    }
 }
 
-Fecreez_Death::Fecreez_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Fecreez_Death::Fecreez_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation) 
 {
    enemy = dynamic_cast<Fecreez*>(context->GetBase());
@@ -106,7 +106,7 @@ Fecreez_Death::Fecreez_Death(StateContext *context, Texture *texture, std::share
 
 /** ROSEA **/
 
-Rosea_Idle::Rosea_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Rosea_Idle::Rosea_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation) 
 {
    enemy = dynamic_cast<Rosea*>(context->GetBase());
@@ -119,7 +119,7 @@ void Rosea_Idle::PreTransition() {
    }
 }
 
-Rosea_Hurt::Rosea_Hurt(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Rosea_Hurt::Rosea_Hurt(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Rosea*>(context->GetBase());
@@ -132,7 +132,7 @@ void Rosea_Hurt::PreTransition() {
    }
 }
 
-Rosea_ArmIdle::Rosea_ArmIdle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Rosea_ArmIdle::Rosea_ArmIdle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Rosea*>(context->GetBase());
@@ -150,7 +150,7 @@ void Rosea_ArmIdle::PreTransition() {
    }
 }
 
-Rosea_ArmAttack::Rosea_ArmAttack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Rosea_ArmAttack::Rosea_ArmAttack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation) 
 {
    enemy = dynamic_cast<Rosea*>(context->GetBase());
@@ -163,7 +163,7 @@ void Rosea_ArmAttack::PreTransition() {
    }
 }
 
-Rosea_ArmRetreat::Rosea_ArmRetreat(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Rosea_ArmRetreat::Rosea_ArmRetreat(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Rosea*>(context->GetBase());
@@ -182,7 +182,7 @@ void Rosea_ArmRetreat::PreTransition() {
    }
 }
 
-Rosea_ArmHurt::Rosea_ArmHurt(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Rosea_ArmHurt::Rosea_ArmHurt(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Rosea*>(context->GetBase());
@@ -202,7 +202,7 @@ void Rosea_ArmHurt::PreTransition() {
 
 /** MOSQUIBLER **/
 
-Mosquibler_Idle::Mosquibler_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Mosquibler_Idle::Mosquibler_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Mosquibler*>(context->GetBase());
@@ -223,7 +223,7 @@ void Mosquibler_Idle::PreTransition() {
    }
 }
 
-Mosquibler_Hit::Mosquibler_Hit(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Mosquibler_Hit::Mosquibler_Hit(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Mosquibler*>(context->GetBase());
@@ -236,7 +236,7 @@ void Mosquibler_Hit::PreTransition() {
    }
 }
 
-Mosquibler_Fall::Mosquibler_Fall(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Mosquibler_Fall::Mosquibler_Fall(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Mosquibler*>(context->GetBase());
@@ -249,7 +249,7 @@ void Mosquibler_Fall::PreTransition() {
    }
 }
 
-Mosquibler_Death::Mosquibler_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Mosquibler_Death::Mosquibler_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Mosquibler*>(context->GetBase());
@@ -257,13 +257,13 @@ Mosquibler_Death::Mosquibler_Death(StateContext *context, Texture *texture, std:
 
 /** FRUIG **/
 
-Fruig_Idle::Fruig_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Fruig_Idle::Fruig_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Fruig*>(context->GetBase());
 }
 
-Fruig_Death::Fruig_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Fruig_Death::Fruig_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Fruig*>(context->GetBase());
@@ -275,13 +275,13 @@ void Fruig_Death::TransitionInitialize() {
 
 /** FLEET **/
 
-Fleet_Idle::Fleet_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Fleet_Idle::Fleet_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Fleet*>(context->GetBase());
 }
 
-Fleet_Death::Fleet_Death(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Fleet_Death::Fleet_Death(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Fleet*>(context->GetBase());
@@ -289,7 +289,7 @@ Fleet_Death::Fleet_Death(StateContext *context, Texture *texture, std::shared_pt
 
 /** MOSQUEENBLER **/
 
-Mosqueenbler_Idle::Mosqueenbler_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Mosqueenbler_Idle::Mosqueenbler_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Mosqueenbler*>(context->GetBase());
@@ -302,7 +302,7 @@ void Mosqueenbler_Idle::PreTransition() {
    }
 }
 
-Mosqueenbler_Attack::Mosqueenbler_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+Mosqueenbler_Attack::Mosqueenbler_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Mosqueenbler*>(context->GetBase());
@@ -321,7 +321,7 @@ void Mosqueenbler_Attack::TransitionReset() {
 
 /** MOSQUIBLER EGG **/
 
-MosquiblerEgg_Idle::MosquiblerEgg_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+MosquiblerEgg_Idle::MosquiblerEgg_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<MosquiblerEgg*>(context->GetBase());
@@ -334,7 +334,7 @@ void MosquiblerEgg_Idle::PreTransition() {
    }
 }
 
-MosquiblerEgg_Attack::MosquiblerEgg_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
+MosquiblerEgg_Attack::MosquiblerEgg_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation)
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<MosquiblerEgg*>(context->GetBase());
@@ -348,31 +348,31 @@ void MosquiblerEgg_Attack::PerformFurtherAction() {
 
 /** WORMORED **/
 
-Wormored_Idle::Wormored_Idle(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+Wormored_Idle::Wormored_Idle(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Wormored*>(context->GetBase());
 }
 
-Wormored_Attack::Wormored_Attack(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+Wormored_Attack::Wormored_Attack(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Wormored*>(context->GetBase());
 }
 
-Wormored_Excrete::Wormored_Excrete(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+Wormored_Excrete::Wormored_Excrete(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Wormored*>(context->GetBase());
 }
 
-Wormored_Sleep::Wormored_Sleep(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+Wormored_Sleep::Wormored_Sleep(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Wormored*>(context->GetBase());
 }
 
-Wormored_Awake::Wormored_Awake(StateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
+Wormored_Awake::Wormored_Awake(DrawStateContext *context, Texture *texture, std::shared_ptr<Animation> animation) 
    : EnemyState(context, texture, animation)
 {
    enemy = dynamic_cast<Wormored*>(context->GetBase());

@@ -185,6 +185,7 @@ class Player : public Entity
              , public Correspondent {
 
    // Set friend class
+   friend class PlayerState;
    friend class Player_Run;
 
    public:

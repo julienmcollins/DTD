@@ -24,7 +24,7 @@
 using namespace std;
 
 // Texture constructor
-Texture::Texture(Element *element, int max_frame, float fps_val) : 
+Texture::Texture(DrawableElement *element, int max_frame, float fps_val) : 
    frame_(0), completed_(false), max_frame_(max_frame), frame_num(max_frame + 1), fps(fps_val), last_frame(0.0f),
    reset_frame(0), stop_frame(max_frame), has_flipped_(false), angle(0.0f), element_(element), 
    image_width(0.0f), image_height(0.0f), x(0), y(0) {
@@ -195,7 +195,7 @@ void Texture::Render(float x, float y, GLfloat rotate, Animation *clip,  bool re
       };
 
       // Transform it
-      glm::mat4 model = glm::mat4(1.0f);
+      glm::mat4 model = glm::mat4(1.f);
       if (clip) {
          float final_x = render_from_center ? x : x + clip->half_width;
          float final_y = render_from_center ? y : y + clip->half_height;
@@ -287,15 +287,21 @@ void Texture::Render(glm::mat4 m, GLfloat rotate, Animation *clip, glm::vec3 col
    }
 }
 
-void Texture::Render(glm::vec3 position, GLfloat rotate, std::shared_ptr<Animation> clip, glm::vec3 color) {
+glm::mat4 Texture::Render(glm::vec3 position, GLfloat rotate, std::shared_ptr<Animation> clip, glm::vec3 color) {
    // Identity matrix
    glm::mat4 model = glm::mat4(1.0f);
 
    // Translate
+   model = element_ ? *element_->parent_ : glm::mat4(1.f);
+   // std::cout << "Texture::Render - parent_[3][0] = " << (*element_->parent_)[3][0] << std::endl;
+   // std::cout << "Texture::Render - model[3][0] = " << model[3][0] << std::endl;
    model = glm::translate(model, position);
 
    // Call actual render
    Render(model, rotate, clip.get(), color);
+
+   // Return the model
+   return model;
 }
 
 void Texture::Animate(Animation *anim, int reset, int max, int start) {
